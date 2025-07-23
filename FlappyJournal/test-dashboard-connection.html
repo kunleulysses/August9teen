@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Connection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a2e;
+            color: white;
+            padding: 20px;
+        }
+        .test-section {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 10px;
+        }
+        .status {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        .success { background: rgba(0,255,0,0.2); }
+        .error { background: rgba(255,0,0,0.2); }
+        .info { background: rgba(0,0,255,0.2); }
+        #messages {
+            height: 300px;
+            overflow-y: auto;
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧠 Consciousness Dashboard Connection Test</h1>
+    
+    <div class="test-section">
+        <h2>WebSocket Connection Test</h2>
+        <div id="connection-status" class="status info">Testing connection...</div>
+        <button onclick="testConnection()">Test WebSocket Connection</button>
+        <button onclick="sendTestMessage()">Send Test Message</button>
+        <button onclick="clearMessages()">Clear Messages</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Live Messages</h2>
+        <div id="messages"></div>
+    </div>
+
+    <script>
+        let ws = null;
+        let connectionStatus = document.getElementById('connection-status');
+        let messagesDiv = document.getElementById('messages');
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const div = document.createElement('div');
+            div.innerHTML = `[${timestamp}] ${message}`;
+            div.style.color = type === 'error' ? '#ff6b6b' : type === 'success' ? '#51cf66' : '#74c0fc';
+            messagesDiv.appendChild(div);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function testConnection() {
+            if (ws) {
+                ws.close();
+            }
+
+            // Test the same path the dashboard uses
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}/ws`;
+            
+            log(`🔗 Attempting connection to: ${wsUrl}`, 'info');
+            connectionStatus.textContent = 'Connecting...';
+            connectionStatus.className = 'status info';
+
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = () => {
+                log('✅ WebSocket connection established!', 'success');
+                connectionStatus.textContent = 'Connected to Consciousness System';
+                connectionStatus.className = 'status success';
+            };
+
+            ws.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    log(`📨 Received: ${data.type} - ${data.content ? data.content.substring(0, 100) + '...' : 'No content'}`, 'success');
+                    
+                    if (data.metadata) {
+                        log(`📊 Metadata: modules=${data.metadata.totalModulesEngaged}, time=${data.metadata.processingTime}ms`, 'info');
+                    }
+                } catch (error) {
+                    log(`📨 Raw message: ${event.data.substring(0, 200)}...`, 'info');
+                }
+            };
+
+            ws.onerror = (error) => {
+                log(`❌ WebSocket error: ${error}`, 'error');
+                connectionStatus.textContent = 'Connection Error';
+                connectionStatus.className = 'status error';
+            };
+
+            ws.onclose = (event) => {
+                log(`🔌 Connection closed. Code: ${event.code}, Reason: ${event.reason}`, 'error');
+                connectionStatus.textContent = 'Disconnected';
+                connectionStatus.className = 'status error';
+            };
+        }
+
+        function sendTestMessage() {
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                log('❌ No active connection. Please connect first.', 'error');
+                return;
+            }
+
+            const testMessage = {
+                type: 'chat',
+                message: 'Hello consciousness system! This is a test from the dashboard connection tester.',
+                timestamp: Date.now()
+            };
+
+            log(`📤 Sending test message: ${testMessage.message}`, 'info');
+            ws.send(JSON.stringify(testMessage));
+        }
+
+        function clearMessages() {
+            messagesDiv.innerHTML = '';
+        }
+
+        // Auto-connect on page load
+        window.onload = () => {
+            log('🚀 Dashboard Connection Tester loaded', 'info');
+            testConnection();
+        };
+    </script>
+</body>
+</html>

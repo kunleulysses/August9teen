@@ -1,0 +1,70 @@
+FROM node:20-alpine AS builder
+
+RUN apk add --no-cache curl bash git python3 make g++
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+COPY tsconfig.json ./
+
+# Copy config files if they exist
+COPY vite.config.js ./
+COPY tailwind.config.js ./
+COPY postcss.config.js ./
+
+# Install all dependencies
+RUN npm ci
+
+# Copy source code
+COPY client ./client/
+COPY server ./server/
+COPY shared ./shared/
+COPY public ./public/
+
+# Build the application
+RUN npm run build
+
+# Check what was built
+RUN ls -la dist/ || echo "No dist directory"
+RUN ls -la server/ || echo "No server directory"
+
+# Production stage
+FROM node:20-alpine
+
+RUN apk add --no-cache curl bash
+
+WORKDIR /opt/app
+
+# Copy package files
+COPY package*.json ./
+
+# Install production dependencies
+RUN npm ci --only=production && npm cache clean --force
+
+# Copy built application from builder stage
+COPY --from=builder /app/dist ./dist/
+COPY --from=builder /app/public ./public/
+COPY --from=builder /app/server ./server/
+COPY --from=builder /app/shared ./shared/
+
+# Create directories
+RUN mkdir -p /opt/app/uploads
+
+# Set permissions
+RUN chown -R node:node /opt/app
+
+USER node
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+    CMD curl -f http://localhost:3000/health || exit 1
+
+EXPOSE 3000
+
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOST=0.0.0.0
+
+# Try multiple startup options
+CMD ["sh", "-c", "node dist/index.js || node server/index.js || node server/app.js || node server/server.js"]

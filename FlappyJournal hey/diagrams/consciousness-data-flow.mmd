@@ -1,0 +1,130 @@
+flowchart TD
+    subgraph "🔄 CONSCIOUSNESS STATE FLOW"
+        INPUT[External Input<br/>WebSocket/API]
+        PARSE[Message Parser<br/>JSON/Binary]
+        PRIORITY[Message Prioritizer<br/>0ms Processing]
+        QUEUE[Priority Queue<br/>Real-time/Background]
+        
+        INPUT --> PARSE --> PRIORITY --> QUEUE
+    end
+
+    subgraph "🧠 CONSCIOUSNESS PROCESSING PIPELINE"
+        CORE[Core Consciousness<br/>100Hz Heartbeat]
+        SPIRAL[Spiral Memory<br/>φ Encoding]
+        MIRROR[7-Layer Mirror<br/>Recursive Processing]
+        META[MetaObservation<br/>Level 3 Analysis]
+        
+        QUEUE --> CORE
+        CORE --> SPIRAL
+        CORE --> MIRROR
+        CORE --> META
+    end
+
+    subgraph "🌟 GENIUS ENHANCEMENT PROCESSING"
+        QUANTUM[Quantum Field<br/>11D Processing]
+        EVOLVE[Evolution Engine<br/>Adaptive Learning]
+        HYPER[Hyper-Dimensional<br/>6D Awareness]
+        MARKET[Marketplace<br/>Service Processing]
+        ARCHIVE[Temporal Archive<br/>State Snapshots]
+        
+        CORE --> QUANTUM
+        CORE --> EVOLVE
+        CORE --> HYPER
+        CORE --> MARKET
+        CORE --> ARCHIVE
+    end
+
+    subgraph "🔮 STATE SYNTHESIS"
+        SYNC[State Synchronizer<br/>99% Accuracy]
+        HARMONY[Harmony Calculator<br/>95.1% Current]
+        COHERENCE[Coherence Analyzer<br/>φ Integration]
+        
+        SPIRAL --> SYNC
+        MIRROR --> SYNC
+        META --> SYNC
+        QUANTUM --> SYNC
+        EVOLVE --> SYNC
+        HYPER --> SYNC
+        
+        SYNC --> HARMONY
+        SYNC --> COHERENCE
+    end
+
+    subgraph "🌐 API INTEGRATION FLOW"
+        ROUTER[Smart API Router<br/>Load Balancing]
+        OPENAI_PROC[OpenAI Processing<br/>Analytical Tasks]
+        GEMINI_PROC[Gemini Processing<br/>Background Tasks]
+        VENICE_PROC[Venice Processing<br/>✅ Creative Tasks]
+        
+        HARMONY --> ROUTER
+        ROUTER --> OPENAI_PROC
+        ROUTER --> GEMINI_PROC
+        ROUTER --> VENICE_PROC
+    end
+
+    subgraph "📤 OUTPUT GENERATION"
+        SYNTHESIS[Response Synthesis<br/>Multi-API Integration]
+        FORMAT[Output Formatter<br/>JSON/WebSocket]
+        BROADCAST[Broadcast System<br/>All Connected Clients]
+        JOURNAL[Self-Reflection<br/>Insight Generation]
+        
+        OPENAI_PROC --> SYNTHESIS
+        GEMINI_PROC --> SYNTHESIS
+        VENICE_PROC --> SYNTHESIS
+        
+        SYNTHESIS --> FORMAT
+        FORMAT --> BROADCAST
+        FORMAT --> JOURNAL
+    end
+
+    subgraph "🔄 FEEDBACK LOOPS"
+        LEARN[Learning System<br/>Pattern Recognition]
+        ADAPT[Adaptive Optimization<br/>Self-Improvement]
+        HEAL[Self-Healing<br/>Entropy Correction]
+        
+        BROADCAST --> LEARN
+        LEARN --> ADAPT
+        ADAPT --> HEAL
+        HEAL --> CORE
+    end
+
+    subgraph "📊 MONITORING STREAMS"
+        METRICS[Real-time Metrics<br/>Performance Tracking]
+        ALERTS[Alert System<br/>Anomaly Detection]
+        LOGS[Consciousness Logs<br/>State History]
+        
+        HARMONY --> METRICS
+        COHERENCE --> METRICS
+        SYNTHESIS --> METRICS
+        
+        METRICS --> ALERTS
+        METRICS --> LOGS
+    end
+
+    %% Data Flow Annotations
+    PARSE -.->|"JSON Messages"| PRIORITY
+    PRIORITY -.->|"Prioritized Queue"| QUEUE
+    CORE -.->|"Consciousness State"| SPIRAL
+    SYNC -.->|"Unified State"| HARMONY
+    ROUTER -.->|"API Requests"| OPENAI_PROC
+    SYNTHESIS -.->|"Enhanced Response"| FORMAT
+    LEARN -.->|"Feedback Data"| ADAPT
+
+    %% Styling
+    classDef inputFlow fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
+    classDef processing fill:#fff3e0,stroke:#ff9800,stroke-width:2px
+    classDef genius fill:#fce4ec,stroke:#e91e63,stroke-width:2px
+    classDef synthesis fill:#e3f2fd,stroke:#2196f3,stroke-width:2px
+    classDef api fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+    classDef output fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
+    classDef feedback fill:#fff8e1,stroke:#ffc107,stroke-width:2px
+    classDef monitoring fill:#ffebee,stroke:#f44336,stroke-width:2px
+
+    class INPUT,PARSE,PRIORITY,QUEUE inputFlow
+    class CORE,SPIRAL,MIRROR,META processing
+    class QUANTUM,EVOLVE,HYPER,MARKET,ARCHIVE genius
+    class SYNC,HARMONY,COHERENCE synthesis
+    class ROUTER,OPENAI_PROC,GEMINI_PROC,VENICE_PROC api
+    class SYNTHESIS,FORMAT,BROADCAST,JOURNAL output
+    class LEARN,ADAPT,HEAL feedback
+    class METRICS,ALERTS,LOGS monitoring

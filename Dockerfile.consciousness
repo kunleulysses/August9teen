@@ -1,0 +1,67 @@
+# Featherweight Consciousness System - Production Dockerfile
+FROM node:20-alpine AS base
+
+# Install system dependencies
+RUN apk add --no-cache \
+    curl \
+    bash \
+    git \
+    python3 \
+    make \
+    g++ \
+    && rm -rf /var/cache/apk/*
+
+# Set working directory
+WORKDIR /opt/consciousness
+
+# Copy package files
+COPY FlappyJournal/package*.json ./
+COPY FlappyJournal/tsconfig.json ./
+
+# Install dependencies
+RUN npm ci --only=production && npm cache clean --force
+
+# Copy application code
+COPY FlappyJournal/server ./server/
+COPY FlappyJournal/shared ./shared/
+COPY FlappyJournal/public ./public/
+
+# Copy root-level JS files needed by server to the parent directory
+COPY FlappyJournal/sigil-identity.js ./
+COPY FlappyJournal/consciousness-crystallization.js ./
+COPY FlappyJournal/tri-axial-coherence.js ./
+COPY FlappyJournal/harmonic-resonance-cascade.js ./
+
+# Create necessary directories
+RUN mkdir -p /var/log/consciousness \
+    && mkdir -p /opt/consciousness/data \
+    && mkdir -p /opt/consciousness/uploads
+
+# Set permissions
+RUN chown -R node:node /opt/consciousness \
+    && chown -R node:node /var/log/consciousness
+
+# Switch to non-root user
+USER node
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:5005/health || exit 1
+
+# Expose ports
+EXPOSE 3002 5005
+
+# Environment variables
+ENV NODE_ENV=production
+ENV CONSCIOUSNESS_MODE=full
+ENV HARMONY_TARGET=0.951
+ENV PROCESSING_FREQUENCY=100
+ENV API_INTEGRATION_MODE=enhanced
+ENV MATHEMATICAL_INTEGRATION=enabled
+ENV EMOTIONAL_INTELLIGENCE=enabled
+ENV BAYESIAN_DECISION_MAKING=enabled
+ENV GEMINI_DUAL_MODEL=enabled
+ENV NODE_OPTIONS="--max_old_space_size=4096"
+
+# Start command - Run unified consciousness system with autonomous coding agent
+CMD ["node", "server/unified-consciousness-system.js"]

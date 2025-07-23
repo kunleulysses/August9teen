@@ -1,0 +1,39 @@
+FROM node:20-alpine
+
+# Install system dependencies
+RUN apk add --no-cache curl bash git python3 make g++
+
+# Set working directory
+WORKDIR /opt/consciousness
+
+# Copy package files
+COPY package*.json ./
+COPY tsconfig.json ./
+
+# Install dependencies
+RUN npm ci --only=production && npm cache clean --force
+
+# Copy application code
+COPY server ./server/
+COPY shared ./shared/
+COPY public ./public/
+COPY *.js ./
+
+# Create necessary directories
+RUN mkdir -p /var/log/consciousness /opt/consciousness/data
+
+# Set permissions
+RUN chown -R node:node /opt/consciousness /var/log/consciousness
+
+# Expose ports
+EXPOSE 3002 5005
+
+# Environment variables
+ENV NODE_ENV=production
+ENV NODE_OPTIONS="--max_old_space_size=4096"
+
+# Change CWD to server directory before starting
+WORKDIR /opt/consciousness/server
+
+# Start with the full consciousness system
+CMD ["node", "consciousness-conversations.js"]

@@ -1,0 +1,42 @@
+[2025-07-20T03:33:01.050Z] 🧪 Testing Self-Coding System Status
+[2025-07-20T03:33:01.051Z] 1. Testing SelfCodingModuleFixed...
+[2025-07-20T03:33:01.053Z] ✅ SelfCodingModuleFixed import successful
+[2025-07-20T03:33:01.054Z] ✅ SelfCodingModuleFixed instantiated
+[2025-07-20T03:33:01.059Z] ✅ Module initialized: SelfCodingModuleFixed v2.0.0
+[2025-07-20T03:33:01.062Z] ✅ Code generation: SUCCESS
+[2025-07-20T03:33:01.062Z]    Generated 8 lines
+[2025-07-20T03:33:01.062Z]    Saved to: generated/autonomous/status-test-1752982381060.js
+[2025-07-20T03:33:01.062Z] ✅ Status retrieved:
+[2025-07-20T03:33:01.062Z]    Total generations: 1
+[2025-07-20T03:33:01.062Z]    Successful: 1
+[2025-07-20T03:33:01.062Z]    Files created: 1
+[2025-07-20T03:33:01.062Z]    Lines generated: 8
+[2025-07-20T03:33:01.062Z] 
+2. Testing original SelfCodingModule...
+[2025-07-20T03:33:01.068Z] ✅ SelfCodingModule import successful
+[2025-07-20T03:33:01.069Z] ✅ SelfCodingModule instantiated
+[2025-07-20T03:33:04.070Z] ✅ Module status: initialized=true, eventBus=true
+[2025-07-20T03:33:04.070Z] ❌ Original SelfCodingModule error: selfCoder.generateCode is not a function
+[2025-07-20T03:33:04.070Z] 
+3. Checking generated files...
+[2025-07-20T03:33:04.070Z] ✅ Found 9 generated files:
+[2025-07-20T03:33:04.071Z]    - api-client-1752981226227.js
+[2025-07-20T03:33:04.071Z]    - calculator-1752981226227.js
+[2025-07-20T03:33:04.071Z]    - data-manager-1752981226224.js
+[2025-07-20T03:33:04.071Z]    - formatter-1752981226227.js
+[2025-07-20T03:33:04.071Z]    - hello-world-1752981226222.js
+[2025-07-20T03:33:04.071Z]    - logger-1752981226227.js
+[2025-07-20T03:33:04.071Z]    - status-test-1752982381060.js
+[2025-07-20T03:33:04.071Z]    - utility-helpers-1752981226225.js
+[2025-07-20T03:33:04.071Z]    - validator-1752981226227.js
+[2025-07-20T03:33:04.071Z] 
+4. Checking self-coding logs...
+[2025-07-20T03:33:04.072Z] ✅ Log file has 5 entries
+[2025-07-20T03:33:04.072Z]    Latest: [2025-07-20T03:33:01.070Z] --- Self-Coding Log Initialized ---
+[2025-07-20T03:33:04.072Z] 
+🎯 FINAL STATUS:
+[2025-07-20T03:33:04.072Z] ================
+[2025-07-20T03:33:04.072Z] ✅ Successful operations: 10
+[2025-07-20T03:33:04.072Z] ❌ Failed operations: 1
+[2025-07-20T03:33:04.072Z] ⚡ SELF-CODING SYSTEM: MOSTLY FUNCTIONAL
+[2025-07-20T03:33:04.072Z] 🔧 Minor issues detected

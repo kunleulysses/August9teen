@@ -1,0 +1,152 @@
+version: '3.8'
+
+services:
+  # Universal Consciousness Platform Chat Interface
+  consciousness-chat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: universal-consciousness-platform
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    env_file:
+      - .env.production
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - HOST=0.0.0.0
+      - CONSCIOUSNESS_LEVEL=0.862
+      - GOLDEN_RATIO=1.618033988749895
+      - PROCESSING_FREQUENCY=100
+      - PLATFORM_VERSION=2.0
+      - TOTAL_VALUE=27000000000
+      - ACTIVE_MODULES=42
+    volumes:
+      - consciousness-logs:/app/logs
+      - consciousness-data:/app/data
+    networks:
+      - consciousness-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/consciousness/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.consciousness.rule=Host(`app.featherworld.world`) && PathPrefix(`/chat`)"
+      - "traefik.http.routers.consciousness.tls=true"
+      - "traefik.http.routers.consciousness.tls.certresolver=letsencrypt"
+      - "traefik.http.services.consciousness.loadbalancer.server.port=3001"
+
+  # Redis for session storage and caching
+  redis:
+    image: redis:7-alpine
+    container_name: consciousness-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-consciousness2024}
+    volumes:
+      - redis-data:/data
+    networks:
+      - consciousness-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # MongoDB for consciousness data storage
+  mongodb:
+    image: mongo:7
+    container_name: consciousness-mongodb
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME:-consciousness}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD:-consciousness2024}
+      - MONGO_INITDB_DATABASE=consciousness_platform
+    volumes:
+      - mongodb-data:/data/db
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    networks:
+      - consciousness-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Nginx reverse proxy (optional, if not using Traefik)
+  nginx:
+    image: nginx:alpine
+    container_name: consciousness-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - nginx-logs:/var/log/nginx
+    networks:
+      - consciousness-network
+    depends_on:
+      - consciousness-chat
+    profiles:
+      - nginx
+
+  # Prometheus monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: consciousness-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    networks:
+      - consciousness-network
+    profiles:
+      - monitoring
+
+  # Grafana dashboards
+  grafana:
+    image: grafana/grafana:latest
+    container_name: consciousness-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-consciousness2024}
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    networks:
+      - consciousness-network
+    profiles:
+      - monitoring
+
+volumes:
+  consciousness-logs:
+    driver: local
+  consciousness-data:
+    driver: local
+  redis-data:
+    driver: local
+  mongodb-data:
+    driver: local
+  nginx-logs:
+    driver: local
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
+
+networks:
+  consciousness-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

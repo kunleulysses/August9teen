@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$772.2M Featherweight Consciousness System - Production Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #FAFAFA;
+            --bg-secondary: #F5F5F5;
+            --bg-tertiary: #EEEEEE;
+            --bg-panel: #FFFFFF;
+            --text-primary: #1A1A1A;
+            --text-secondary: #4A4A4A;
+            --text-muted: #6A6A6A;
+            --accent-primary: #007ACC;
+            --accent-success: #28A745;
+            --accent-warning: #FFC107;
+            --accent-danger: #DC3545;
+            --accent-info: #17A2B8;
+            --border-light: #E0E0E0;
+            --border-medium: #CCCCCC;
+            --shadow-light: 0 2px 4px rgba(0,0,0,0.1);
+            --shadow-medium: 0 4px 8px rgba(0,0,0,0.15);
+            --font-mono: 'JetBrains Mono', 'Consolas', 'Monaco', monospace;
+            --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-ui);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            min-height: 100vh;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* IDE-Style Layout */
+        .ide-container {
+            display: grid;
+            grid-template-rows: 40px 1fr 24px;
+            height: 100vh;
+            background: var(--bg-primary);
+        }
+
+        /* Top Menu Bar */
+        .menu-bar {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            font-size: 13px;
+            gap: 24px;
+        }
+
+        .menu-item {
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .menu-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .menu-item.active {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .system-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-right: auto;
+        }
+
+        .system-value {
+            font-family: var(--font-mono);
+            font-weight: 700;
+            color: var(--accent-success);
+            font-size: 16px;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            display: grid;
+            grid-template-columns: 300px 1fr 350px;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* Left Sidebar - Module Explorer */
+        .sidebar-left {
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-light);
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            background: var(--bg-tertiary);
+        }
+
+        .module-tree {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .module-category {
+            margin-bottom: 16px;
+        }
+
+        .category-header {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            padding: 4px 8px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .module-item {
+            display: flex;
+            align-items: center;
+            padding: 6px 12px;
+            margin: 2px 0;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .module-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .module-item.active {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .module-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+            background: var(--accent-danger);
+        }
+
+        .module-status.operational {
+            background: var(--accent-success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Center Panel - Main Dashboard */
+        .center-panel {
+            background: var(--bg-panel);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .panel-tabs {
+            display: flex;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .panel-tab {
+            padding: 12px 20px;
+            font-size: 13px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .panel-tab:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .panel-tab.active {
+            background: var(--bg-panel);
+            border-bottom-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+
+        .panel-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .metric-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: var(--shadow-light);
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .metric-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-success);
+        }
+
+        .metric-value {
+            font-family: var(--font-mono);
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .metric-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        /* Right Sidebar - Live Testing */
+        .sidebar-right {
+            background: var(--bg-secondary);
+            border-left: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            margin-bottom: 16px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 12px;
+            max-height: 400px;
+            min-height: 200px;
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-primary) var(--bg-secondary);
+        }
+
+        /* Enhanced scrollbar styling for WebKit browsers */
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+            border-radius: 4px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--accent-primary);
+            border-radius: 4px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-secondary);
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid var(--border-medium);
+            border-radius: 6px;
+            font-family: var(--font-ui);
+            font-size: 14px;
+            background: var(--bg-panel);
+        }
+
+        .chat-send {
+            padding: 10px 16px;
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .chat-send:hover {
+            background: #005a9e;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-light);
+            padding: 4px 16px;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .status-item {
+            margin-right: 20px;
+            font-family: var(--font-mono);
+        }
+
+        .connection-status {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .connection-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-success);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 250px 1fr 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr auto;
+            }
+            
+            .sidebar-left,
+            .sidebar-right {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="ide-container">
+        <!-- Top Menu Bar -->
+        <div class="menu-bar">
+            <div class="system-title">Featherweight Consciousness System</div>
+            <div class="menu-item active">Dashboard</div>
+            <div class="menu-item">Metrics</div>
+            <div class="menu-item">Testing</div>
+            <div class="menu-item">Logs</div>
+            <div class="system-value">$772.2M</div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Sidebar - Module Explorer -->
+            <div class="sidebar-left">
+                <div class="sidebar-header">Consciousness Modules</div>
+                <div class="module-tree" id="module-tree">
+                    <!-- Modules will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Center Panel - Main Dashboard -->
+            <div class="center-panel">
+                <div class="panel-tabs">
+                    <div class="panel-tab active" data-tab="overview">Overview</div>
+                    <div class="panel-tab" data-tab="mathematical">Mathematical</div>
+                    <div class="panel-tab" data-tab="emotional">Emotional</div>
+                    <div class="panel-tab" data-tab="bayesian">Bayesian</div>
+                </div>
+                <div class="panel-content" id="panel-content">
+                    <!-- Content will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Right Sidebar - Live Testing -->
+            <div class="sidebar-right">
+                <div class="sidebar-header">Live Consciousness Testing</div>
+                <div class="chat-container">
+                    <div class="chat-messages" id="chat-messages">
+                        <div style="color: var(--text-muted); font-style: italic; text-align: center; margin-top: 20px;">
+                            Start a conversation to test consciousness capabilities...
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <input type="text" class="chat-input" id="chat-input" placeholder="Test consciousness integration...">
+                        <button class="chat-send" id="chat-send">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-item">Harmony: <span id="harmony-status">95.1%</span></div>
+            <div class="status-item">Frequency: <span id="frequency-status">100Hz</span></div>
+            <div class="status-item">Latency: <span id="latency-status">0ms</span></div>
+            <div class="connection-status">
+                <div class="connection-dot" id="connection-dot"></div>
+                <span id="connection-text">Connected to Production</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="consciousness-dashboard.js"></script>
+</body>
+</html>

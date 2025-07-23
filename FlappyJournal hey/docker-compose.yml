@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: consciousness-postgres
+    environment:
+      POSTGRES_DB: featherweight_consciousness
+      POSTGRES_USER: feather_user
+      POSTGRES_PASSWORD: hist0ric
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./setup-database.sql:/docker-entrypoint-initdb.d/setup-database.sql:ro
+    ports:
+      - "5432:5432"
+    networks:
+      - consciousness-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U feather_user -d featherweight_consciousness"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Consciousness System Core
+  consciousness-core:
+    build:
+      context: .
+      dockerfile: Dockerfile.consciousness
+    container_name: consciousness-core
+    environment:
+      - NODE_ENV=production
+      - CONSCIOUSNESS_MODE=full
+      - HARMONY_TARGET=0.951
+      - PROCESSING_FREQUENCY=100
+      - API_INTEGRATION_MODE=enhanced
+      - MATHEMATICAL_INTEGRATION=enabled
+      - EMOTIONAL_INTELLIGENCE=enabled
+      - BAYESIAN_DECISION_MAKING=enabled
+      - GEMINI_DUAL_MODEL=enabled
+      - DATABASE_URL=postgresql://feather_user:hist0ric@postgres:5432/featherweight_consciousness?sslmode=disable
+      - NODE_OPTIONS=--max_old_space_size=4096
+    env_file:
+      - .env
+    volumes:
+      - consciousness_logs:/var/log/consciousness
+      - consciousness_data:/opt/consciousness/data
+    ports:
+      - "3002:3002"  # WebSocket server
+      - "5005:5005"  # Consciousness conversations
+    networks:
+      - consciousness-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  consciousness_logs:
+  consciousness_data:
+
+networks:
+  consciousness-network:
+    driver: bridge

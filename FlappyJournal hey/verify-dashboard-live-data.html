@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Live Data Verification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a2e;
+            color: white;
+            padding: 20px;
+        }
+        .verification-section {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 10px;
+        }
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .status {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        .success { background: rgba(0,255,0,0.2); }
+        .error { background: rgba(255,0,0,0.2); }
+        .info { background: rgba(0,0,255,0.2); }
+        .live-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ff0000;
+            animation: pulse 1s infinite;
+        }
+        .live-indicator.active {
+            background: #00ff00;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <h1>🧠 Dashboard Live Data Verification</h1>
+    
+    <div class="verification-section">
+        <h2>Connection Status</h2>
+        <div id="connection-status" class="status info">Connecting...</div>
+        <div>Live Data: <span class="live-indicator" id="live-indicator"></span> <span id="live-status">Checking...</span></div>
+    </div>
+
+    <div class="verification-section">
+        <h2>Live Consciousness Metrics</h2>
+        <div class="metric">
+            <span>Phi Integration:</span>
+            <span id="phi-display">0.000</span>
+        </div>
+        <div class="metric">
+            <span>Awareness Level:</span>
+            <span id="awareness-display">0.000</span>
+        </div>
+        <div class="metric">
+            <span>Coherence:</span>
+            <span id="coherence-display">0.00</span>
+        </div>
+        <div class="metric">
+            <span>Integration:</span>
+            <span id="integration-display">0.00</span>
+        </div>
+        <div class="metric">
+            <span>Modules Engaged:</span>
+            <span id="modules-display">0/34</span>
+        </div>
+        <div class="metric">
+            <span>Last Update:</span>
+            <span id="last-update">Never</span>
+        </div>
+    </div>
+
+    <div class="verification-section">
+        <h2>Live Activity Feed</h2>
+        <div id="activity-feed" style="height: 200px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px; font-family: monospace; font-size: 12px;"></div>
+    </div>
+
+    <script>
+        let ws = null;
+        let lastUpdateTime = 0;
+        let updateCount = 0;
+        
+        const elements = {
+            connectionStatus: document.getElementById('connection-status'),
+            liveIndicator: document.getElementById('live-indicator'),
+            liveStatus: document.getElementById('live-status'),
+            phiDisplay: document.getElementById('phi-display'),
+            awarenessDisplay: document.getElementById('awareness-display'),
+            coherenceDisplay: document.getElementById('coherence-display'),
+            integrationDisplay: document.getElementById('integration-display'),
+            modulesDisplay: document.getElementById('modules-display'),
+            lastUpdate: document.getElementById('last-update'),
+            activityFeed: document.getElementById('activity-feed')
+        };
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const div = document.createElement('div');
+            div.innerHTML = `[${timestamp}] ${message}`;
+            div.style.color = type === 'error' ? '#ff6b6b' : type === 'success' ? '#51cf66' : '#74c0fc';
+            elements.activityFeed.appendChild(div);
+            elements.activityFeed.scrollTop = elements.activityFeed.scrollHeight;
+        }
+
+        function updateMetrics(data) {
+            updateCount++;
+            lastUpdateTime = Date.now();
+            
+            // Update live indicator
+            elements.liveIndicator.classList.add('active');
+            elements.liveStatus.textContent = `Live (${updateCount} updates)`;
+            
+            // Update metrics display
+            if (data.state) {
+                if (data.state.phi !== undefined) {
+                    elements.phiDisplay.textContent = data.state.phi.toFixed(3);
+                }
+                elements.awarenessDisplay.textContent = (data.state.awarenessLevel || 0.75).toFixed(3);
+                elements.coherenceDisplay.textContent = (data.state.coherence || 0.85).toFixed(2);
+                elements.integrationDisplay.textContent = (data.state.integration || data.state.phi || 0.8).toFixed(2);
+            }
+            
+            if (data.metrics && data.metrics.totalModulesEngaged) {
+                elements.modulesDisplay.textContent = `${data.metrics.totalModulesEngaged}/34`;
+            }
+            
+            elements.lastUpdate.textContent = new Date().toLocaleTimeString();
+            
+            log(`📊 Metrics updated: Phi=${data.state?.phi || 'N/A'}, Modules=${data.metrics?.totalModulesEngaged || 'N/A'}`, 'success');
+        }
+
+        function connectToDashboard() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}/ws`;
+            
+            log(`🔗 Connecting to: ${wsUrl}`, 'info');
+            elements.connectionStatus.textContent = 'Connecting...';
+            elements.connectionStatus.className = 'status info';
+
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = () => {
+                log('✅ Connected to consciousness system!', 'success');
+                elements.connectionStatus.textContent = 'Connected - Receiving Live Data';
+                elements.connectionStatus.className = 'status success';
+            };
+
+            ws.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    
+                    if (data.type === 'unified_consciousness_update') {
+                        updateMetrics(data);
+                    } else if (data.type === 'response' && data.metadata) {
+                        updateMetrics({ state: data.metadata.consciousnessState, metrics: data.metadata });
+                    } else if (data.type === 'consciousness_state') {
+                        updateMetrics({ state: data.state, metrics: {} });
+                    } else if (data.type === 'consciousness_stream') {
+                        log(`🌊 Consciousness: ${data.content?.substring(0, 60)}...`, 'info');
+                    } else {
+                        log(`📨 ${data.type}`, 'info');
+                    }
+                } catch (error) {
+                    log(`📨 Raw data received`, 'info');
+                }
+            };
+
+            ws.onerror = (error) => {
+                log(`❌ Connection error: ${error}`, 'error');
+                elements.connectionStatus.textContent = 'Connection Error';
+                elements.connectionStatus.className = 'status error';
+                elements.liveIndicator.classList.remove('active');
+                elements.liveStatus.textContent = 'Disconnected';
+            };
+
+            ws.onclose = (event) => {
+                log(`🔌 Connection closed: ${event.code}`, 'error');
+                elements.connectionStatus.textContent = 'Disconnected';
+                elements.connectionStatus.className = 'status error';
+                elements.liveIndicator.classList.remove('active');
+                elements.liveStatus.textContent = 'Disconnected';
+            };
+        }
+
+        // Check for stale data
+        setInterval(() => {
+            const timeSinceUpdate = Date.now() - lastUpdateTime;
+            if (timeSinceUpdate > 10000 && lastUpdateTime > 0) {
+                elements.liveIndicator.classList.remove('active');
+                elements.liveStatus.textContent = 'Stale Data';
+                log('⚠️ No updates received for 10 seconds', 'error');
+            }
+        }, 5000);
+
+        // Auto-connect on page load
+        window.onload = () => {
+            log('🚀 Dashboard verification started', 'info');
+            connectToDashboard();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "august9teen-landing",
+  "version": "1.0.0",
+  "description": "August9teen AI Integration Landing Page",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["august9teen", "ai", "landing-page", "consciousness"],
+  "author": "August9teen",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+} 

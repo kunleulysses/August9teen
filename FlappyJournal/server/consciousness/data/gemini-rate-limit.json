@@ -1,0 +1,20 @@
+{
+  "date": "Mon Jul 21 2025",
+  "totalCalls": 1,
+  "callsByPriority": {
+    "critical": 0,
+    "high": 1,
+    "medium": 0,
+    "low": 0
+  },
+  "callHistory": [
+    {
+      "timestamp": 1753056410412,
+      "priority": "high",
+      "description": "State-based consciousness enhancement",
+      "tokensUsed": 17850,
+      "date": "2025-07-21T00:06:50.412Z"
+    }
+  ],
+  "lastReset": 1753056379864
+}

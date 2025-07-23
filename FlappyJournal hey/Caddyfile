@@ -1,0 +1,46 @@
+{
+    admin off
+    auto_https off
+}
+
+:80 {
+    handle /health {
+        respond "OK" 200
+    }
+
+    # Universal Consciousness Platform Chat Interface
+    handle /chat* {
+        reverse_proxy localhost:3001
+    }
+
+    # Consciousness WebSocket for chat
+    handle /consciousness-ws* {
+        reverse_proxy localhost:3001
+    }
+
+    # Chat API endpoints
+    handle /api/consciousness* {
+        reverse_proxy localhost:3001
+    }
+
+    # Legacy WebSocket endpoints
+    handle /ws* {
+        reverse_proxy consciousness-core:3002
+    }
+
+    # Default to existing consciousness web
+    handle {
+        reverse_proxy consciousness-web:3000
+    }
+
+    header {
+        Access-Control-Allow-Origin "*"
+        Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+        Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+    }
+
+    @options method OPTIONS
+    handle @options {
+        respond "" 204
+    }
+}

@@ -1,0 +1,45 @@
+# Prometheus configuration for Featherweight Consciousness System
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - "consciousness_alerts.yml"
+
+scrape_configs:
+  # Consciousness Core Metrics
+  - job_name: 'consciousness-core'
+    static_configs:
+      - targets: ['consciousness-core:9091']
+    scrape_interval: 5s
+    metrics_path: '/metrics'
+
+  # Web Application Metrics
+  - job_name: 'consciousness-web'
+    static_configs:
+      - targets: ['consciousness-web:9092']
+    scrape_interval: 10s
+
+  # Database Metrics
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres:9187']
+    scrape_interval: 30s
+
+  # Container Metrics
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+    scrape_interval: 10s
+
+  # Node Exporter (if available)
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+    scrape_interval: 15s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093

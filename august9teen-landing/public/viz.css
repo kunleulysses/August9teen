@@ -1,0 +1,5 @@
+.shader-box{width:240px;height:140px;border-radius:12px;background:#111;transition:filter .4s}
+.noir{filter:grayscale(1) contrast(1.5) brightness(.8)}
+.neon{filter:hue-rotate(110deg) saturate(2)}
+.glitch{filter:contrast(2) hue-rotate(220deg)}
+canvas#hb{background:#000;border-radius:8px}

@@ -1,0 +1,78 @@
+{
+  "name": "universal-consciousness-platform-frontend",
+  "version": "1.0.0",
+  "description": "Universal Consciousness Platform - Frontend Chat Interface",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^14.5.1",
+    "@types/jest": "^27.5.2",
+    "@types/node": "^16.18.68",
+    "@types/react": "^18.2.42",
+    "@types/react-dom": "^18.2.17",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "typescript": "^4.9.5",
+    "web-vitals": "^2.1.4",
+    "styled-components": "^6.1.1",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.15.0",
+    "@mui/icons-material": "^5.15.0",
+    "@mui/lab": "^5.0.0-alpha.155",
+    "framer-motion": "^10.16.16",
+    "recharts": "^2.8.0",
+    "react-router-dom": "^6.20.1",
+    "axios": "^1.6.2",
+    "moment": "^2.29.4",
+    "lodash": "^4.17.21",
+    "uuid": "^9.0.1",
+    "react-markdown": "^9.0.1",
+    "react-syntax-highlighter": "^15.5.0",
+    "react-hot-toast": "^2.4.1",
+    "react-use-websocket": "^4.5.0",
+    "mathjs": "^11.11.0",
+    "d3": "^7.8.5",
+    "three": "^0.158.0",
+    "@react-three/fiber": "^8.15.12",
+    "@react-three/drei": "^9.88.17",
+    "react-spring": "^9.7.3",
+    "lottie-react": "^2.4.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "analyze": "npm run build && npx bundle-analyzer build/static/js/*.js"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.202",
+    "@types/uuid": "^9.0.7",
+    "@types/d3": "^7.4.3",
+    "@types/three": "^0.158.3",
+    "webpack-bundle-analyzer": "^4.10.1"
+  },
+  "proxy": "http://localhost:3001",
+  "homepage": "https://app.featherworld.world/chat"
+}

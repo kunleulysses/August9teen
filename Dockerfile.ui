@@ -1,0 +1,84 @@
+# Featherweight Web Application - Production Dockerfile
+FROM node:20-alpine AS builder
+
+# Install build dependencies
+RUN apk add --no-cache \
+    curl \
+    bash \
+    git \
+    python3 \
+    make \
+    g++
+
+WORKDIR /app
+
+# Copy package files
+COPY FlappyJournal/package*.json ./
+COPY FlappyJournal/tsconfig.json ./
+COPY FlappyJournal/vite.config.js ./
+COPY FlappyJournal/tailwind.config.js ./
+COPY FlappyJournal/postcss.config.js ./
+
+# Install all dependencies (including dev)
+RUN npm ci
+
+# Copy source code
+COPY FlappyJournal/client ./client/
+COPY FlappyJournal/server ./server/
+COPY FlappyJournal/shared ./shared/
+COPY FlappyJournal/public ./public/
+
+# Build the application
+RUN npm run build
+
+# Production stage
+FROM node:20-alpine AS production
+
+# Install runtime dependencies
+RUN apk add --no-cache curl bash
+
+WORKDIR /opt/app
+
+# Copy package files
+COPY FlappyJournal/package*.json ./
+
+# Install production dependencies only
+RUN npm ci --only=production && npm cache clean --force
+
+# Copy built application
+COPY --from=builder /app/dist ./dist/
+COPY --from=builder /app/public ./public/
+COPY --from=builder /app/server ./server/
+COPY --from=builder /app/shared ./shared/
+
+# Copy root-level JS files (needed for imports)
+COPY FlappyJournal/sigil-identity.js ./
+COPY FlappyJournal/consciousness-crystallization.js ./
+COPY FlappyJournal/tri-axial-coherence.js ./
+COPY FlappyJournal/harmonic-resonance-cascade.js ./
+
+# Create necessary directories
+RUN mkdir -p /opt/app/uploads \
+    && mkdir -p /var/log/web
+
+# Set permissions
+RUN chown -R node:node /opt/app \
+    && chown -R node:node /var/log/web
+
+# Switch to non-root user
+USER node
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+    CMD curl -f http://localhost:3000/health || exit 1
+
+# Expose port
+EXPOSE 3000
+
+# Environment variables
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOST=0.0.0.0
+
+# Start command
+CMD ["node", "server/simple-web-server.js"]
