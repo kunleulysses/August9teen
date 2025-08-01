@@ -1615,17 +1615,7 @@ export class HolographicConsciousnessRealityGenerator extends EventEmitter {
      * Register listeners for system-wide events.
      */
     registerEventListeners() {
-        eventBus.on('generate_reality_request', async (data) => {
-            const { realityRequest, consciousnessState, requestId } = data;
-            this.lastConsciousnessState = consciousnessState;
-            const result = await this.generateHolographicConsciousnessReality(realityRequest, consciousnessState);
-
-            if (result.error) {
-                eventBus.emit('reality_generation_failed', { ...result, requestId });
-            } else {
-                eventBus.emit('reality_generated', { ...result, requestId });
-            }
-        });
+        // Now handled by BullMQ queue producer in eventHandlers/realityQueueProducer.js
 
         eventBus.on('consciousness_snapshot_generated', (snapshot) => {
             this.lastConsciousnessState = snapshot;
