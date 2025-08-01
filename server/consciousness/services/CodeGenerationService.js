@@ -2,6 +2,7 @@ import SelfCodingModule from '../modules/SelfCodingModule.js';
 import { EventEmitter } from 'events';
 import eventBus from '../ConsciousnessEventBus.js';
 import { sanitizeSlug } from '../utils/path-utils.js';
+import { safeImport } from '../utils/safe-loader.js';
 
 class CodeGenerationService extends EventEmitter {
     constructor(goalSystem) {
@@ -107,11 +108,11 @@ class CodeGenerationService extends EventEmitter {
                 writeToFile: request.writeToFile !== false,
                 filePath: request.filePath || this.generateFilePath(request)
             });
-            
+
             // Track the generation
             this.activeGenerations.set(project.id, project);
             this.codeProjects.push(project);
-            
+
             // Emit success event
             eventBus.emit('code:generated', {
                 projectId: project.id,
@@ -119,14 +120,25 @@ class CodeGenerationService extends EventEmitter {
                 filePath: project.filePath,
                 timestamp: new Date()
             });
-            
+
+            // PHASE A: Validate the module via safeImport before integrating
+            if (project.filePath && request.writeToFile !== false) {
+                try {
+                    await safeImport(`./${project.filePath}`);
+                    eventBus.emit('module:validated', { filePath: project.filePath });
+                } catch (err) {
+                    console.warn(`[CodeGen] safeImport failed: ${err.message}`);
+                    eventBus.emit('module:invalid', { filePath: project.filePath, error: err.message });
+                }
+            }
+
             // If it's a consciousness module, integrate it
             if (request.purpose.includes('consciousness')) {
                 await this.integrateConsciousnessModule(project);
             }
-            
+
             return project;
-            
+
         } catch (error) {
             console.error('Code generation failed:', error);
             eventBus.emit('code:generation-failed', {
