@@ -1,0 +1,38 @@
+name: Node CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+      - name: Install
+        run: npm ci
+      - name: Generate Prisma Client
+        run: npm run db:push -- --skip-generate
+      - name: Run CI script
+        env:
+          DATABASE_URL: "file:./consciousness-ci.db"
+          REDIS_URL: "redis://localhost:6379"
+        run: npm run ci
+      - name: Upload test coverage
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379

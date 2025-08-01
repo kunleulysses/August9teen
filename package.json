@@ -5,6 +5,9 @@
   "license": "MIT",
   "scripts": {
     "test": "jest",
+    "lint": "eslint .",
+    "type-check": "tsc -p tsconfig.json --noEmit",
+    "ci": "npm run lint && npm run type-check && npm run test && npm audit --audit-level=moderate",
     "db:push": "prisma db push",
     "postinstall": "prisma db push",
     "dev:redis": "docker run -d -p 6379:6379 redis:7-alpine",
