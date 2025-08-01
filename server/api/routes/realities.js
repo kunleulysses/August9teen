@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import realityService from '../services/realityService.js';
 import { z } from 'zod';
+import { realitiesCreated } from '../metrics.js';
 
 const router = Router();
 
@@ -30,6 +31,7 @@ function validate(schema) {
 router.post('/', validate(realitySchema), async (req, res) => {
   const reality = req.body;
   const encoded = await realityService.encodeReality(reality);
+  realitiesCreated.inc();
   res.status(201).json({ id: encoded.id });
 });
 

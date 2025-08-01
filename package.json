@@ -21,6 +21,7 @@
     "swagger-ui-express": "^4.7.1",
     "yamljs": "^0.3.0",
     "jsonwebtoken": "^9.0.2",
+    "prom-client": "^15.4.0",
     // ...existing deps
   },
   "scripts": {

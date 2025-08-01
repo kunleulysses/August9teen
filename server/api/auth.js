@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import config from '../common/config.js';
 import logger from '../common/logger.js';
+import { authErrors } from './metrics.js';
 
 const JWT_SECRET = process.env.API_JWT_SECRET || 'changeme';
 
@@ -13,6 +14,7 @@ export function authMiddleware(req, res, next) {
   }
   const auth = req.headers.authorization;
   if (!auth || !auth.startsWith('Bearer ')) {
+    authErrors.inc();
     return res.status(401).json({ error: 'Unauthorized' });
   }
   const token = auth.slice('Bearer '.length);
@@ -21,6 +23,7 @@ export function authMiddleware(req, res, next) {
     next();
   } catch (err) {
     logger.warn({ err }, 'JWT error');
+    authErrors.inc();
     return res.status(401).json({ error: 'Unauthorized' });
   }
 }
