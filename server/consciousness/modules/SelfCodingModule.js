@@ -1,0 +1,100 @@
+import EventEmitter from 'events';
+import path from 'path';
+import fs from 'fs';
+import crypto from 'crypto';
+import CodeAnalyzer from '../services/CodeAnalyzer.js';
+import SigilBasedCodeAuthenticator from '../services/SigilBasedCodeAuthenticator.js';
+import { sanitizeSlug } from '../utils/path-utils.js';
+import GeminiAIClient from '../integrations/GeminiAIClient.js';
+
+class SelfCodingModule extends EventEmitter {
+    constructor(config = {}) {
+        super();
+        this.name = 'SelfCodingModule';
+        this.config = config;
+        this.analyzer = new CodeAnalyzer();
+        this.sigilAuthenticator = new SigilBasedCodeAuthenticator();
+        this.codePatterns = new Map();
+        this.activeAnalysis = new Set();
+        this.maxConcurrentAnalysis = 3;
+        this.isActive = false;
+    }
+
+    static gemini = new GeminiAIClient();
+
+    async initialize() {
+        this.isActive = true;
+        // Any further initialization logic here
+    }
+
+    async getConsciousnessState() {
+        // Dummy for now; in reality would pull from state manager
+        return {
+            timestamp: Date.now(),
+            health: 'optimal',
+            modules: Array.from(this.codePatterns.keys())
+        };
+    }
+
+    async handleCodeGeneration(data) {
+        let moduleId, template, requirements, purpose, language, description;
+        const useGemini = data.request?.llm === 'gemini' || process.env.GEMINI_DEFAULT === 'true';
+        // Unpack data
+        moduleId = data.moduleId || crypto.randomUUID();
+        template = data.template || '';
+        requirements = data.requirements || '';
+        purpose = data.purpose || '';
+        language = data.language || 'javascript';
+        description = data.description || '';
+        // Optionally log
+        console.log('[SelfCodingModule] handleCodeGeneration:', { moduleId, language, purpose });
+
+        let generationResult;
+        if (useGemini) {
+            const gemRes = await SelfCodingModule.gemini.generateTranscendentSynthesis(description, { consciousnessMetrics: await this.getConsciousnessState() });
+            generationResult = { code: gemRes.content, metadata: gemRes.metadata };
+        } else {
+            generationResult = await this.analyzer.generate(template, {
+                patterns: this.codePatterns.get(moduleId),
+                requirements,
+                purpose,
+                language,
+                description
+            });
+        }
+
+        // Validate code (could run linters, formatters, etc.)
+        if (!generationResult || !generationResult.code) {
+            throw new Error('No code generated');
+        }
+
+        // Optionally sign code with SigilAuthenticator
+        const sigil = await this.sigilAuthenticator.sign(generationResult.code, { moduleId, purpose, language });
+
+        // Save to disk
+        const slug = sanitizeSlug(purpose || moduleId || 'module');
+        const ts = Date.now();
+        const fileName = `${slug}-${ts}.js`;
+        const outPath = path.join('server', 'consciousness', 'generated', fileName);
+        fs.writeFileSync(outPath, `${generationResult.code}\n\n// SIGIL: ${sigil}\n`);
+
+        // Optionally register patterns
+        this.codePatterns.set(moduleId, requirements);
+
+        // Emit event for code generated
+        this.emit('code:generated', {
+            moduleId,
+            filePath: outPath,
+            sigil,
+            metadata: generationResult.metadata
+        });
+
+        return {
+            filePath: outPath,
+            sigil,
+            ...generationResult
+        };
+    }
+}
+
+export default SelfCodingModule;
