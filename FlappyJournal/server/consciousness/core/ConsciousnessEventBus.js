@@ -4,6 +4,7 @@
  */
 
 import { EventEmitter } from 'events';
+import { verify } from './security/eventSign.js';
 
 class ConsciousnessEventBus extends EventEmitter {
     constructor() {
@@ -15,6 +16,31 @@ class ConsciousnessEventBus extends EventEmitter {
         this.subscribers = new Map();
         
         console.log('[ConsciousnessEventBus] Initialized');
+    }
+
+    /**
+     * Subscribe to an event with signature verification (opts.verifySignature)
+     */
+    subscribe(moduleName, eventName, handler, opts = {}) {
+        if (!this.subscribers.has(eventName)) {
+            this.subscribers.set(eventName, new Set());
+        }
+        this.subscribers.get(eventName).add({
+            module: moduleName,
+            handler: handler
+        });
+        if (!opts.verifySignature) {
+            this.on(eventName, handler);
+        } else {
+            this.on(eventName, (payload) => {
+                if (!payload.signature || !verify(payload, payload.signature)) {
+                    this.emit('event:invalid_signature', { event: eventName, payload });
+                    return;
+                }
+                handler(payload);
+            });
+        }
+        console.log(`[ConsciousnessEventBus] ${moduleName} subscribed to ${eventName}${opts.verifySignature ? " (verifying signature)" : ""}`);
     }
 
     /**

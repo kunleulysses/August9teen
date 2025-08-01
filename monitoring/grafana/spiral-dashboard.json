@@ -1,0 +1,26 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Spiral Memory Dashboard",
+    "panels": [
+      {
+        "type": "timeseries",
+        "title": "Total Spiral Memories (All Tiers)",
+        "targets": [
+          {
+            "expr": "sum by (tier) (spiral_memory_total)"
+          }
+        ]
+      },
+      {
+        "type": "timeseries",
+        "title": "GC Pause p95 (ms)",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, sum(rate(spiral_gc_pause_ms_bucket[5m])) by (le))"
+          }
+        ]
+      }
+    ]
+  }
+}

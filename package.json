@@ -8,7 +8,19 @@
     "test:single": "jest --runInBand",
     "lint:selfcode": "eslint --config .eslintrc-selfcoding.json",
     "format:selfcode": "prettier --write server/consciousness/generated/**/*.js",
-    "rollback": "node bin/rollback-module.js"
+    "rollback": "node bin/rollback-module.js",
+    "spiral:audit": "node audit/spiral-memory-baseline.js",
+    "spiral:migrate": "node scripts/spiral-migrate-local-to-redis.js",
+    "spiral:bench": "node scripts/bench-spiral.js",
+    "spiral:build": "tsc -p tsconfig.override.json",
+    "spiral:test": "jest --coverage",
+    "spiral:serve": "node dist-spiral/spiral-metrics-server.js",
+    "spiral:cluster": "node scripts/spiral-launch-cluster.js",
+    "spiral:mathtest": "jest __tests__/topology/*.spec.ts",
+    "spiral:govtest": "jest __tests__/governance/*.spec.ts",
+    "explorer:dev": "cd client/spiral-explorer && npm run dev",
+    "explorer:build": "cd client/spiral-explorer && npm run build",
+    "deploy:prod": "docker compose -f docker-compose.spiral-prod.yml up -d --build"
     // ...other scripts
   },
   "dependencies": {
@@ -104,7 +116,20 @@
     "eslint": "^8.57.0",
     "eslint-plugin-complexity": "^0.4.1",
     "eslint-plugin-sonarjs": "^0.21.0",
-    "prettier": "^3.3.1"
+    "prettier": "^3.3.1",
+    "globby": "^13.2.2",
+    "level": "^7.1.2",
+    "ioredis": "^5.3.2",
+    "ts-jest": "^29.1.1",
+    "@types/jest": "^29.5.7",
+    "typescript": "^5.3.3",
+    "pino": "^8.16.0",
+    "prom-client": "^15.0.0",
+    "@types/express": "^4.17.21",
+    "redlock": "^6.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "gl-matrix": "^3.4.3",
+    "fast-check": "^3.17.0"
     // ...other devDependencies
   },
   "optionalDependencies": {

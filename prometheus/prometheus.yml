@@ -1,0 +1,8 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'spiral-app'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['spiral-app:9099']
