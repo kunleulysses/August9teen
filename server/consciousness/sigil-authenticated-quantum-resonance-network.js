@@ -6,6 +6,7 @@
 
 import { SafeEventEmitter } from '../common/safeEventEmitter.js';
 import { getStore } from '../common/storeFactory.js';
+import { saqrnTicks } from '../api/metrics.js';
 
 // Dummy component stubs for isolated test
 class QuantumSigilGenerator {
@@ -60,6 +61,11 @@ export class SigilAuthenticatedQuantumResonanceNetwork extends SafeEventEmitter 
         this.securityEvents = [];
 
         this.logger?.info('🔐🌌🔮 Sigil-Authenticated Quantum Resonance Network initialized');
+        this._monitor = setInterval(() => { saqrnTicks.inc(); }, 100);
+    }
+
+    close() {
+        clearInterval(this._monitor);
     }
 
     async authenticateQuantumNode(nodeCredentials, consciousnessState) {

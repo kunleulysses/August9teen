@@ -5,6 +5,7 @@
 
 import { SafeEventEmitter } from '../../common/safeEventEmitter.js';
 import { getStore } from '../../common/storeFactory.js';
+import { crnTicks } from '../../../api/metrics.js';
 
 export class ConsciousnessResonanceNetworks extends SafeEventEmitter {
     constructor({ logger = console, store = getStore(), ...rest } = {}) {
@@ -25,6 +26,7 @@ export class ConsciousnessResonanceNetworks extends SafeEventEmitter {
             } catch (err) {
                 this.logger?.warn('CRN tick error', err);
             }
+            crnTicks.inc();
         }, 100); // every 100ms (10Hz)
     }
 

@@ -1,4 +1,5 @@
 import 'express-async-errors';
+import '../../common/tracing.js';
 import express from 'express';
 import 'express-async-errors';
 import bodyParser from 'body-parser';
