@@ -20,6 +20,20 @@ spiral_gc_total 10
 ...
 ```
 
+## Cluster Setup (Distributed HA Mode)
+
+If `REDIS_CLUSTER_URL` is set (comma-separated host:port list), the system will:
+
+- Use Redis Cluster for storage and sharded keys based on crc16(%128).
+- Run GC only on leader for each shard (Redlock-based).
+- Each process must set `SHARD_ID` (or default: crc16(hostname)%128).
+- Use `scripts/spiral-launch-cluster.js` to spawn multiple workers, each with a different SHARD_ID.
+
+**Example:**
+```sh
+REDIS_CLUSTER_URL="host1:6379,host2:6379,host3:6379" node scripts/spiral-launch-cluster.js 4
+```
+
 ## Grafana Dashboard
 
 Import `monitoring/grafana/spiral-dashboard.json` into your Grafana instance.

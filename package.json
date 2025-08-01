@@ -14,7 +14,8 @@
     "spiral:bench": "node scripts/bench-spiral.js",
     "spiral:build": "tsc -p tsconfig.override.json",
     "spiral:test": "jest --coverage",
-    "spiral:serve": "node dist-spiral/spiral-metrics-server.js"
+    "spiral:serve": "node dist-spiral/spiral-metrics-server.js",
+    "spiral:cluster": "node scripts/spiral-launch-cluster.js"
     // ...other scripts
   },
   "dependencies": {
@@ -119,7 +120,8 @@
     "typescript": "^5.3.3",
     "pino": "^8.16.0",
     "prom-client": "^15.0.0",
-    "@types/express": "^4.17.21"
+    "@types/express": "^4.17.21",
+    "redlock": "^6.0.0"
     // ...other devDependencies
   },
   "optionalDependencies": {
