@@ -5,6 +5,7 @@ import { sanitizeSlug } from '../utils/path-utils.js';
 import { safeImport } from '../utils/safe-loader.js';
 import TestGenerationService from './TestGenerationService.js';
 import { addEntry } from '../utils/manifest.js';
+import metrics from '../metrics/SelfCodingMetrics.js';
 
 class CodeGenerationService extends EventEmitter {
     constructor(goalSystem) {
@@ -103,6 +104,9 @@ class CodeGenerationService extends EventEmitter {
         console.log(`📝 Handling code generation request: ${request.purpose}`);
         
         try {
+            // Mark generation start for metrics
+            metrics.markGenerationStart();
+
             // Generate the code
             const project = await this.selfCoder.generateCode({
                 purpose: request.purpose,
@@ -136,10 +140,14 @@ class CodeGenerationService extends EventEmitter {
                         code: project.code,
                         purpose: request.purpose
                     });
+                    metrics.markTest(testRes.passed);
+
                     if (!testRes.passed) {
+                        metrics.markError();
                         console.warn(`[CodeGen] Tests failed for ${project.filePath}`);
                         eventBus.emit('module:invalid', { filePath: project.filePath, error: 'tests failed' });
                         // Consider aborting integration
+                        metrics.markGenerationEnd({ complexity: project.metrics || {} });
                         return project; // early return, leave as invalid
                     }
                     eventBus.emit('module:test:passed', { filePath: project.filePath, testFile: testRes.testFile });
@@ -151,6 +159,7 @@ class CodeGenerationService extends EventEmitter {
                         complexity: project.metrics?.complexity || null,
                         coverage: testRes.coverage || null
                     });
+                    metrics.markGenerationEnd({ complexity: project.metrics || {} });
 
                 } catch (err) {
                     console.warn(`[CodeGen] safeImport failed: ${err.message}`);
@@ -171,6 +180,8 @@ class CodeGenerationService extends EventEmitter {
                 error: error.message,
                 request
             });
+            metrics.markError();
+            metrics.markGenerationEnd({ complexity: {} });
             throw error;
         }
     }
