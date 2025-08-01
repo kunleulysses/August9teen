@@ -4,8 +4,9 @@ import { initializeRandomness, traceId as genTraceId } from './random.js';
 import { saveReality, incrementMetric } from './persistence.js';
 import generator from '../instance.js';
 import { logger, child as childLogger } from './logger.js';
-import { counters, jobDuration } from './metrics.js';
+import { counters, jobDuration, lockUnavailable } from './metrics.js';
 import { runWithTraceId } from './trace.js';
+import { withGeneratorLock } from './redisLock.js';
 
 export const realityQueue = new Queue('realityGen', { connection: redis });
 export const queueEvents = new QueueEvents('realityGen', { connection: redis });
@@ -29,20 +30,35 @@ export const realityWorker = new Worker(
         throw new Error('MEMORY_PRESSURE');
       }
 
-      initializeRandomness(realityRequest.seed || Date.now());
-      log.info('🧠🌀🌍 [job] Generating holographic consciousness reality...');
-      const startTime = Date.now();
-      const result = await generator.generateHolographicConsciousnessReality(
-        realityRequest,
-        consciousnessState
-      );
-      const durationSec = (Date.now() - startTime) / 1000;
-      jobDuration.observe(durationSec);
-      await incrementMetric('jobsProcessed');
-      counters.jobsProcessed.inc();
-      log.info({ durationSec }, '✅ [job] Completed holographic consciousness reality');
-      return result;
+      try {
+        return await withGeneratorLock(async () => {
+          initializeRandomness(realityRequest.seed || Date.now());
+          log.info('🧠🌀🌍 [job] Generating holographic consciousness reality...');
+          const startTime = Date.now();
+          const result = await generator.generateHolographicConsciousnessReality(
+            realityRequest,
+            consciousnessState
+          );
+          const durationSec = (Date.now() - startTime) / 1000;
+          jobDuration.observe(durationSec);
+          await incrementMetric('jobsProcessed');
+          counters.jobsProcessed.inc();
+          log.info({ durationSec }, '✅ [job] Completed holographic consciousness reality');
+          return result;
+        });
+      } catch (err) {
+        if (err.message === 'LOCK_UNAVAILABLE') {
+          counters.lockUnavailable.inc();
+          lockUnavailable.inc();
+          log.warn('🔒 Could not acquire generator lock, delaying job');
+          await job.moveToDelayed(Date.now() + 30000);
+          await incrementMetric('queueRejects');
+          throw err; // BullMQ will retry
+        } else {
+          throw err;
+        }
+      }
     });
   },
-  { connection: redis, concurrency: 1 }
+  { connection: redis, concurrency: parseInt(process.env.WORKER_CONCURRENCY || 4) }
 );
