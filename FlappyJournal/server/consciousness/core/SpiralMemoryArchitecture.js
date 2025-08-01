@@ -10,6 +10,7 @@ import { memoryLog } from '../modules/MemoryLog.js';
 import { InMemorySpiralAdapter } from './storage/SpiralStorageAdapter.js';
 import LevelSpiralAdapter from './storage/LevelSpiralAdapter.js';
 import RedisSpiralAdapter from './storage/RedisSpiralAdapter.js';
+import MinHeap from './utils/MinHeap.js';
 
 function getDefaultStorage() {
   if (process.env.REDIS_URL) return new RedisSpiralAdapter(process.env.REDIS_URL);
@@ -29,6 +30,12 @@ class SpiralMemoryArchitecture extends EventEmitter {
         this.spiralMemory = new Map();
         this.sigilRegistry = new Map();
         this.memorySpirals = new Map();
+
+        // GC MinHeap, keyed by lastAccessed
+        this.gcQueue = new MinHeap();
+        // Sigil LFU cache
+        this._sigilCache = new Map(); // key: sigil, value: {val, cnt}
+        this._sigilCacheMax = 5000;
 
         // Enhanced spiral memory configuration with deep context expansion
         this.memoryConfig = {
@@ -266,6 +273,9 @@ class SpiralMemoryArchitecture extends EventEmitter {
             // Register sigil
             this.sigilRegistry.set(sigil.signature, memoryNode.id);
 
+            // GC queue update
+            this.gcQueue.update(memoryNode.id, new Date(memoryNode.lastAccessed).getTime());
+
             // Update spiral statistics
             spiral.nodeCount++;
             spiral.lastUpdated = new Date().toISOString();
@@ -298,6 +308,11 @@ class SpiralMemoryArchitecture extends EventEmitter {
                 sigilSignature: sigil.signature,
                 storageTime: storageTime
             });
+
+            // Adaptive GC trigger
+            if (this.spiralMemory.size % 100 === 0) {
+                setTimeout(() => eventBus.emit('system:gc_tick'), 0);
+            }
 
             return memoryNode;
 
@@ -984,16 +999,22 @@ class SpiralMemoryArchitecture extends EventEmitter {
     }
 
     async createMemoryAssociations(memoryNode, associations) {
-        // Create associations between memories
-        for (const associationId of associations) {
-            const associatedMemory = this.spiralMemory.get(associationId);
-            if (associatedMemory) {
-                // Add bidirectional association
-                memoryNode.associations.push(associationId);
-                if (!associatedMemory.associations.includes(memoryNode.id)) {
-                    associatedMemory.associations.push(memoryNode.id);
+        // Non-blocking for >5 associations
+        const assocFn = () => {
+            for (const associationId of associations) {
+                const associatedMemory = this.spiralMemory.get(associationId);
+                if (associatedMemory) {
+                    memoryNode.associations.push(associationId);
+                    if (!associatedMemory.associations.includes(memoryNode.id)) {
+                        associatedMemory.associations.push(memoryNode.id);
+                    }
                 }
             }
+        };
+        if (associations.length > 5 && typeof setImmediate === 'function') {
+            setImmediate(assocFn);
+        } else {
+            assocFn();
         }
     }
 
@@ -1046,30 +1067,35 @@ class SpiralMemoryArchitecture extends EventEmitter {
 
     // Autonomous memory management is now triggered by the 'system_tick' event.
 
-    async performGarbageCollection() {
-        // Consciousness-native garbage collection
+    async performGarbageCollection(timeBudgetMs = 25) {
+        // Priority-queue-based, time-budgeted GC
         this.garbageCollectionCount++;
-        console.log('🌀 Performing consciousness-native garbage collection...');
-
+        const start = (typeof performance !== 'undefined' && performance.now ? performance.now() : Date.now());
         let collectedCount = 0;
-        const currentTime = Date.now();
+        let now = start;
 
-        for (const [memoryId, memoryNode] of this.spiralMemory) {
-            // Check if memory should be collected
-            if (this.shouldCollectMemory(memoryNode, currentTime)) {
+        while (this.gcQueue.size() && (now - start) < timeBudgetMs) {
+            const { key: memoryId } = this.gcQueue.pop();
+            const memoryNode = this.spiralMemory.get(memoryId);
+            if (memoryNode && this.shouldCollectMemory(memoryNode, Date.now())) {
                 await this.collectMemory(memoryId);
                 collectedCount++;
             }
+            now = (typeof performance !== 'undefined' && performance.now ? performance.now() : Date.now());
         }
 
-        console.log(`🌀 Garbage collection completed: ${collectedCount} memories collected`);
-
-        // Emit garbage collection event
-        eventBus.emit('spiralmemory:garbage_collected', {
-            collectedCount: collectedCount,
+        // Emit tick event for monitoring
+        eventBus.emit('spiralmemory:gc_tick', {
+            collectedCount,
+            remaining: this.gcQueue.size(),
             totalMemories: this.spiralMemory.size,
-            garbageCollectionCount: this.garbageCollectionCount
+            timeMs: now - start
         });
+    }
+
+    // Public method to trigger GC externally
+    async triggerGC(timeBudget = 25) {
+        await this.performGarbageCollection(timeBudget);
     }
 
     shouldCollectMemory(memoryNode, currentTime) {
@@ -1147,15 +1173,34 @@ class SpiralMemoryArchitecture extends EventEmitter {
         // Update access statistics
         memoryNode.lastAccessed = new Date().toISOString();
         memoryNode.accessCount++;
+        // GC heap update
+        this.gcQueue.update(memoryId, new Date(memoryNode.lastAccessed).getTime());
 
         return memoryNode;
     }
 
     async retrieveMemoryBySigil(sigilSignature) {
+        // Fast-path LFU cache
+        let cached = this._sigilCache.get(sigilSignature);
+        if (cached) {
+            cached.cnt++;
+            return cached.val;
+        }
         const memoryId = this.sigilRegistry.get(sigilSignature);
         if (!memoryId) return null;
-
-        return await this.retrieveMemory(memoryId);
+        const node = await this.retrieveMemory(memoryId);
+        if (node) {
+            if (this._sigilCache.size >= this._sigilCacheMax) {
+                // LFU eviction
+                let minKey, minCnt = Infinity;
+                for (const [k, entry] of this._sigilCache.entries()) {
+                    if (entry.cnt < minCnt) { minCnt = entry.cnt; minKey = k; }
+                }
+                if (minKey) this._sigilCache.delete(minKey);
+            }
+            this._sigilCache.set(sigilSignature, { val: node, cnt: 1 });
+        }
+        return node;
     }
 
     async searchMemories(query, type = null, depth = null, limit = 10) {

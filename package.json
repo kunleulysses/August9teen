@@ -10,7 +10,8 @@
     "format:selfcode": "prettier --write server/consciousness/generated/**/*.js",
     "rollback": "node bin/rollback-module.js",
     "spiral:audit": "node audit/spiral-memory-baseline.js",
-    "spiral:migrate": "node scripts/spiral-migrate-local-to-redis.js"
+    "spiral:migrate": "node scripts/spiral-migrate-local-to-redis.js",
+    "spiral:bench": "node scripts/bench-spiral.js"
     // ...other scripts
   },
   "dependencies": {
