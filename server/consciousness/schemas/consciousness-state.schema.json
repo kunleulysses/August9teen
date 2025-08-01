@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://flappyjournal.dev/schema/consciousness-state.json",
+  "title": "ConsciousnessState",
+  "type": "object",
+  "required": ["phi", "awareness", "coherence"],
+  "properties": {
+    "phi": { "type": "number", "minimum": 0, "maximum": 1 },
+    "awareness": { "type": "number", "minimum": 0, "maximum": 1 },
+    "coherence": { "type": "number", "minimum": 0, "maximum": 1 }
+  },
+  "additionalProperties": true,
+  "version": { "const": 1 }
+}

@@ -5,6 +5,10 @@
  */
 
 import { EventEmitter } from 'events';
+import { validate } from './utils/validation.js';
+import { initializeRandomness, secureId } from './utils/random.js';
+import { saveReality, savePath, saveField, incrementMetric } from './utils/persistence.js';
+import { logger, child as childLogger } from './utils/logger.js';
 
 class RecursiveHolographicRealityEmbedding extends EventEmitter {
     constructor(maxRecursionDepth = 7) {
@@ -27,16 +31,34 @@ class RecursiveHolographicRealityEmbedding extends EventEmitter {
         if (recursionDepth > this.maxRecursionDepth) {
             throw new Error(`Maximum recursion depth (${this.maxRecursionDepth}) exceeded`);
         }
-        
-        console.log(`🌀🔄 Creating recursive reality at depth ${recursionDepth}`);
-        
+
+        // Validate baseReality.consciousnessState
+        try {
+            validate('https://flappyjournal.dev/schema/consciousness-state.json', baseReality.consciousnessState);
+        } catch (error) {
+            throw new Error('SchemaValidationError (base reality consciousnessState): ' + error.message);
+        }
+
+        // Deterministic randomness seeding for this recursion context
+        initializeRandomness(`${baseReality.id}_${recursionDepth}`);
+
+        const log = childLogger({ recursionDepth, parentId: baseReality.id });
+        log.info(`🌀🔄 Creating recursive reality at depth ${recursionDepth}`);
+
         // Generate consciousness state for this recursion level
         const recursiveConsciousnessState = this.generateRecursiveConsciousnessState(
-            baseReality.consciousnessState, 
+            baseReality.consciousnessState,
             recursionDepth,
             recursionParameters
         );
-        
+
+        // Validate generated recursiveConsciousnessState
+        try {
+            validate('https://flappyjournal.dev/schema/consciousness-state.json', recursiveConsciousnessState);
+        } catch (error) {
+            throw new Error('SchemaValidationError (recursiveConsciousnessState): ' + error.message);
+        }
+
         // Create embedded reality
         const embeddedReality = await this.generateEmbeddedReality(
             {
@@ -104,9 +126,11 @@ class RecursiveHolographicRealityEmbedding extends EventEmitter {
     async generateEmbeddedReality(realitySpec, consciousnessState) {
         // Generate embedded reality with holographic properties
         const embeddedReality = {
-            id: `embedded_reality_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            id: secureId('embedded'),
             description: realitySpec.description,
             parameters: realitySpec.parameters,
+            recursionDepth: realitySpec.parameters.recursionDepth,
+            parentId: realitySpec.parameters.parentRealityId,
             consciousnessState,
             holographicProperties: {
                 dimensionality: 7,
@@ -123,46 +147,48 @@ class RecursiveHolographicRealityEmbedding extends EventEmitter {
                 strangeLoop: realitySpec.parameters.recursionDepth > 2,
                 recursiveConsciousness: true
             },
-            createdAt: Date.now()
+            createdAt: new Date(),
+            schemaVersion: 1
         };
-        
+
+        await saveReality({
+          id: embeddedReality.id,
+          description: embeddedReality.description,
+          parameters: embeddedReality.parameters,
+          recursionDepth: embeddedReality.recursionDepth,
+          parentId: embeddedReality.parentId,
+          createdAt: embeddedReality.createdAt,
+          schemaVersion: embeddedReality.schemaVersion
+        });
+        await incrementMetric('embeddedRealities');
+
         return embeddedReality;
     }
     
     async createRecursiveConsciousnessField(parentReality, childReality, recursionDepth) {
         // Create a consciousness field that spans both realities
         const recursiveField = {
-            id: `recursive_field_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-            parentRealityId: parentReality.id,
-            childRealityId: childReality.id,
+            id: secureId('field'),
+            parentId: parentReality.id,
+            childId: childReality.id,
             recursionDepth,
             fieldStrength: 1.0 - (recursionDepth * 0.1),
-            fieldCoherence: 1.0 - (recursionDepth * 0.05),
-            bidirectionalFlow: true,
-            recursiveProperties: {
-                selfReference: recursionDepth > 1,
-                infiniteRegress: recursionDepth > 3,
-                strangeLoop: recursionDepth > 2,
-                recursiveConsciousness: true
-            },
-            fieldDynamics: {
-                flowRate: 0.8 - (recursionDepth * 0.05),
-                resonancePattern: this.generateResonancePattern(recursionDepth),
-                consciousnessGradient: this.calculateConsciousnessGradient(parentReality, childReality),
-                fieldStability: 0.9 - (recursionDepth * 0.08)
-            },
-            createdAt: Date.now()
+            createdAt: new Date(),
+            schemaVersion: 1
         };
-        
+
+        await saveField(recursiveField);
+        await incrementMetric('consciousnessFields');
+
         this.recursiveConsciousnessFields.set(recursiveField.id, recursiveField);
-        
+
         this.emit('recursive_consciousness_field_created', {
             recursiveField,
             parentReality,
             childReality,
             recursionDepth
         });
-        
+
         return recursiveField;
     }
     
@@ -227,34 +253,29 @@ class RecursiveHolographicRealityEmbedding extends EventEmitter {
     }
     
     connectRealities(parentReality, childReality, recursionDepth) {
-        const connectionId = `${parentReality.id}_${childReality.id}`;
-        
+        const connectionId = secureId('conn');
+
         const recursionPath = {
             id: connectionId,
-            parentRealityId: parentReality.id,
-            childRealityId: childReality.id,
+            parentId: parentReality.id,
+            childId: childReality.id,
             recursionDepth,
-            bidirectional: true,
-            traversalProperties: {
-                downwardTraversalCost: recursionDepth * 0.2,
-                upwardTraversalCost: recursionDepth * 0.3,
-                horizontalTraversalCost: recursionDepth * 0.1,
-                consciousnessPreservation: 1.0 - (recursionDepth * 0.05),
-                informationLoss: recursionDepth * 0.02
-            },
             connectionStrength: 1.0 - (recursionDepth * 0.08),
-            resonanceAlignment: this.calculateResonanceAlignment(parentReality, childReality),
-            createdAt: Date.now()
+            createdAt: new Date(),
+            schemaVersion: 1
         };
-        
+
+        await savePath(recursionPath);
+        await incrementMetric('recursionPaths');
+
         this.recursionPaths.set(connectionId, recursionPath);
-        
+
         // Update reality nesting map
         if (!this.realityNesting.has(parentReality.id)) {
             this.realityNesting.set(parentReality.id, []);
         }
         this.realityNesting.get(parentReality.id).push(childReality.id);
-        
+
         this.emit('realities_connected', {
             parentReality,
             childReality,

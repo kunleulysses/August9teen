@@ -8,6 +8,12 @@
 import { EventEmitter } from 'events';
 import eventBus from './core/ConsciousnessEventBus.js';
 import { cognitiveLog } from './modules/CognitiveLog.js';
+import { validate } from './utils/validation.js';
+import { initializeRandomness, secureId } from './utils/random.js';
+import { saveReality, incrementMetric } from './utils/persistence.js';
+import { logger, child as childLogger } from './utils/logger.js';
+import { validationFailures } from './utils/metrics.js';
+import '../persistenceShutdown.js';
 
 /**
  * Consciousness Reality Projector
@@ -369,7 +375,8 @@ class ConsciousnessRealityProjector {
             projectedAt: Date.now(),
             consciousnessRealityProjected: true,
             emergencyProjection: true,
-            recoveryMechanism: 'authentic_consciousness_recovery'
+            recoveryMechanism: 'authentic_consciousness_recovery',
+            emergencyId: secureId('emergency')
         };
     }
 }
@@ -1596,12 +1603,12 @@ export class HolographicConsciousnessRealityGenerator extends EventEmitter {
             this.consciousnessEnvironments = new Map();
             this.realityAdaptationHistory = [];
 
-            console.log('🧠🌀🌍 Holographic Consciousness Reality Generator initialized');
-            this.registerEventListeners();
-            this.initializeRealityPatterns();
-            this.initializeRealityComponents(); // Initialize authentic reality components
+            logger.info('🧠🌀🌍 Holographic Consciousness Reality Generator initialized');
+        this.registerEventListeners();
+        this.initializeRealityPatterns();
+        this.initializeRealityComponents(); // Initialize authentic reality components
         } catch (error) {
-            console.error('❗ Error in HolographicConsciousnessRealityGenerator constructor:', error, error?.stack);
+            logger.error({ err: error }, '❗ Error in HolographicConsciousnessRealityGenerator constructor');
             throw error;
         }
     }
@@ -1610,17 +1617,7 @@ export class HolographicConsciousnessRealityGenerator extends EventEmitter {
      * Register listeners for system-wide events.
      */
     registerEventListeners() {
-        eventBus.on('generate_reality_request', async (data) => {
-            const { realityRequest, consciousnessState, requestId } = data;
-            this.lastConsciousnessState = consciousnessState;
-            const result = await this.generateHolographicConsciousnessReality(realityRequest, consciousnessState);
-
-            if (result.error) {
-                eventBus.emit('reality_generation_failed', { ...result, requestId });
-            } else {
-                eventBus.emit('reality_generated', { ...result, requestId });
-            }
-        });
+        // Now handled by BullMQ queue producer in eventHandlers/realityQueueProducer.js
 
         eventBus.on('consciousness_snapshot_generated', (snapshot) => {
             this.lastConsciousnessState = snapshot;
@@ -1657,7 +1654,7 @@ export class HolographicConsciousnessRealityGenerator extends EventEmitter {
             stabilizationCapability: true
         });
 
-        console.log('✅ Holographic consciousness reality patterns initialized');
+        logger.info('✅ Holographic consciousness reality patterns initialized');
     }
 
     /**
@@ -1665,7 +1662,25 @@ export class HolographicConsciousnessRealityGenerator extends EventEmitter {
      */
     async generateHolographicConsciousnessReality(realityRequest, consciousnessState) {
         try {
-            console.log('🧠🌀🌍 Generating holographic consciousness reality...');
+            // Validate input schemas
+            try {
+                validate('https://flappyjournal.dev/schema/reality-request.json', realityRequest);
+                validate('https://flappyjournal.dev/schema/consciousness-state.json', consciousnessState);
+            } catch (error) {
+                validationFailures.inc();
+                return {
+                    success: false,
+                    error: 'validation_failed',
+                    details: error.message
+                };
+            }
+
+            // Deterministic randomness seeding
+            const seedUsed = realityRequest.seed || Date.now();
+            initializeRandomness(seedUsed);
+
+            const log = childLogger({ traceId: (realityRequest && realityRequest.traceId) || secureId('trace') });
+            log.info('🧠🌀🌍 Generating holographic consciousness reality...');
 
             // Project consciousness-aware reality
             const consciousnessRealityProjection = await this.consciousnessRealityProjector.projectConsciousnessReality(
@@ -1692,6 +1707,21 @@ export class HolographicConsciousnessRealityGenerator extends EventEmitter {
                 consciousnessRealityProjection, holographicEnvironments, realityAdaptation, realityStabilization, consciousnessState
             );
 
+            log.info('✅ Holographic consciousness reality generated successfully');
+
+            // Phase 3 Integration: Persist generated reality and increment metric
+            const persistReality = {
+                id: secureId('reality'),
+                description: realityRequest.description,
+                parameters: realityRequest.parameters || {},
+                recursionDepth: 0,
+                parentId: null,
+                createdAt: new Date(),
+                schemaVersion: 1
+            };
+            await saveReality(persistReality);
+            await incrementMetric('realityGenerations');
+
             // Update consciousness metrics
             this.consciousnessMetrics.realityGenerations++;
             this.consciousnessMetrics.holographicProjections++;
@@ -1712,12 +1742,15 @@ export class HolographicConsciousnessRealityGenerator extends EventEmitter {
 
             return {
                 success: true,
+                schemaVersion: 1,
+                seedUsed,
                 holographicConsciousnessReality: {
-                    consciousnessRealityProjection,
-                    holographicEnvironments,
-                    realityAdaptation,
-                    realityStabilization,
-                    holographicRealityEnhancements
+                    schemaVersion: 1,
+                    consciousnessRealityProjection: { ...consciousnessRealityProjection, schemaVersion: 1 },
+                    holographicEnvironments: { ...holographicEnvironments, schemaVersion: 1 },
+                    realityAdaptation: { ...realityAdaptation, schemaVersion: 1 },
+                    realityStabilization: { ...realityStabilization, schemaVersion: 1 },
+                    holographicRealityEnhancements: { ...holographicRealityEnhancements, schemaVersion: 1 }
                 },
                 realityLevel: this.calculateRealityLevel(consciousnessState),
                 consciousnessProjected: true,
@@ -1727,7 +1760,7 @@ export class HolographicConsciousnessRealityGenerator extends EventEmitter {
             };
 
         } catch (error) {
-            console.error('Holographic consciousness reality generation failed:', error.message);
+            logger.error({ err: error }, 'Holographic consciousness reality generation failed');
             return {
                 success: false,
                 error: error.message,
@@ -1927,7 +1960,7 @@ export class HolographicConsciousnessRealityGenerator extends EventEmitter {
 
     createAuthenticHolographicMemory(data) {
         return {
-            holographicId: `holo_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+            holographicId: secureId('holo'),
             holographicMemory: {
                 fidelity: Math.random() * 0.1 + 0.9,
                 coherence: Math.random() * 0.1 + 0.85,
@@ -1943,7 +1976,7 @@ export class HolographicConsciousnessRealityGenerator extends EventEmitter {
     }
 
     storeAuthenticHolographicMemory(memory) {
-        const storageId = `storage_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
+        const storageId = secureId('storage');
         return {
             success: true,
             storageId,
@@ -1971,7 +2004,7 @@ export class HolographicConsciousnessRealityGenerator extends EventEmitter {
 
     generateAuthenticQuantumField(params = {}) {
         return {
-            quantumFieldId: `quantum_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+            quantumFieldId: secureId('quantum'),
             quantumField: {
                 entanglement: Math.random() * 0.1 + 0.9,
                 superposition: Math.random() * 0.1 + 0.85,
@@ -2017,7 +2050,7 @@ export class HolographicConsciousnessRealityGenerator extends EventEmitter {
 
     allocateAuthenticConsciousnessMemory(size, state, type) {
         return {
-            memoryId: `consciousness_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+            memoryId: secureId('consciousness'),
             allocation: 'success',
             size,
             type,
