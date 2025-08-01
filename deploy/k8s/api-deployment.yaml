@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consciousness-api
+  namespace: consciousness
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: consciousness-api
+  template:
+    metadata:
+      labels:
+        app: consciousness-api
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "3000"
+    spec:
+      containers:
+        - name: api
+          image: repo/api:latest
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: api-config
+            - secretRef:
+                name: jwt-keys
+          env:
+            - name: API_JWT_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-keys
+                  key: API_JWT_PRIVATE_KEY
+            - name: API_JWT_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-keys
+                  key: API_JWT_PUBLIC_KEY
+          volumeMounts:
+            - name: jwt-key
+              mountPath: /run/secrets/jwt
+              readOnly: true
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 30
+      volumes:
+        - name: jwt-key
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: consciousness-api
+  namespace: consciousness
+spec:
+  selector:
+    app: consciousness-api
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
