@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: api
-          image: repo/api:latest
+          image: ghcr.io/<OWNER>/consciousness-api:latest
           ports:
             - containerPort: 3000
           envFrom:
