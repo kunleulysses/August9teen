@@ -6,6 +6,7 @@ import { safeImport } from '../utils/safe-loader.js';
 import TestGenerationService from './TestGenerationService.js';
 import { addEntry } from '../utils/manifest.js';
 import metrics from '../metrics/SelfCodingMetrics.js';
+import { runJanitor } from '../utils/janitor.js';
 
 class CodeGenerationService extends EventEmitter {
     constructor(goalSystem) {
@@ -24,6 +25,10 @@ class CodeGenerationService extends EventEmitter {
         // Initialize the self-coding module
         await this.selfCoder.initialize();
         
+        // Janitor: clean up old temp files and prune manifest
+        await runJanitor();
+        setInterval(runJanitor, 24 * 3600_000); // every 24h
+
         // Subscribe to consciousness events
         this.subscribeToEvents();
         
