@@ -62,4 +62,22 @@ export class PostgresStore {
   async close() {
     await this.pool.end();
   }
+
+  async update(id, updaterFn) {
+    const prev = await this.get(id);
+    const next = updaterFn(prev);
+    await this.set(id, next);
+    return next;
+  }
+
+  async pushToList(key, item) {
+    const arr = (await this.get(key)) || [];
+    arr.push(item);
+    await this.set(key, arr);
+    return arr;
+  }
+
+  async list(key) {
+    return (await this.get(key)) || [];
+  }
 }

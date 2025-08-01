@@ -20,4 +20,22 @@ export class InMemoryStore {
   async has(id) { return this.map.has(id); }
   async all() { return Array.from(this.map.values()); }
   async close() {} // no-op for in-memory
+
+  async update(id, updaterFn) {
+    const prev = this.map.get(id);
+    const next = updaterFn(prev);
+    this.map.set(id, next);
+    return next;
+  }
+
+  async pushToList(key, item) {
+    const arr = this.map.get(key) || [];
+    arr.push(item);
+    this.map.set(key, arr);
+    return arr;
+  }
+
+  async list(key) {
+    return this.map.get(key) || [];
+  }
 }
