@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "FlappyJournal/server/consciousness/core/**/*",
+    "FlappyJournal/server/consciousness/core/storage/**/*",
+    "FlappyJournal/server/consciousness/core/utils/**/*"
+  ],
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "exactOptionalPropertyTypes": true,
+    "declaration": false,
+    "esModuleInterop": true,
+    "outDir": "dist-spiral"
+  }
+}

@@ -11,7 +11,9 @@
     "rollback": "node bin/rollback-module.js",
     "spiral:audit": "node audit/spiral-memory-baseline.js",
     "spiral:migrate": "node scripts/spiral-migrate-local-to-redis.js",
-    "spiral:bench": "node scripts/bench-spiral.js"
+    "spiral:bench": "node scripts/bench-spiral.js",
+    "spiral:build": "tsc -p tsconfig.override.json",
+    "spiral:test": "jest --coverage"
     // ...other scripts
   },
   "dependencies": {
@@ -110,7 +112,10 @@
     "prettier": "^3.3.1",
     "globby": "^13.2.2",
     "level": "^7.1.2",
-    "ioredis": "^5.3.2"
+    "ioredis": "^5.3.2",
+    "ts-jest": "^29.1.1",
+    "@types/jest": "^29.5.7",
+    "typescript": "^5.3.3"
     // ...other devDependencies
   },
   "optionalDependencies": {
