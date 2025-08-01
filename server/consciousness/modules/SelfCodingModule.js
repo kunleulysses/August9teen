@@ -9,7 +9,6 @@ import AutonomousCodeRefactoringSystem from './AutonomousCodeRefactoringSystem.j
 import { selfCodingLog } from './SelfCodingLog.js';
 import SigilBasedCodeAuthenticator from '../sigil-based-code-authenticator.js';
 import GeminiAIClient from '../integrations/GeminiAIClient.js';
-import GeminiAIClient from '../integrations/GeminiAIClient.js';
 
 export default class SelfCodingModule extends EventEmitter {
     constructor() {
@@ -43,8 +42,6 @@ export default class SelfCodingModule extends EventEmitter {
         // Initialize asynchronously
         this.initialize();
     }
-
-    static gemini = new GeminiAIClient();
 
     static gemini = new GeminiAIClient();
 
@@ -234,17 +231,10 @@ export default class SelfCodingModule extends EventEmitter {
 
             let generationResult;
             if (useGemini) {
-                const gemRes = await SelfCodingModule.gemini.generateTranscendentSynthesis(description, { consciousnessMetrics: await this.getConsciousnessState() });
-                generationResult = { code: gemRes.content, metadata: gemRes.metadata };
-            } else {
-                generationResult = await this.analyzer.generate(template, {
-                    patterns: this.codePatterns.get(moduleId),
-                    requirements,
-                    purpose,
-                    language,
-                    description
-                });
-            }
+                const gemRes = await SelfCodingModule.gemini.generateTranscendentSynthesis(
+                    description,
+                    { consciousnessMetrics: await this.getConsciousnessState() }
+                );
                 generationResult = { code: gemRes.content, metadata: gemRes.metadata };
             } else {
                 generationResult = await this.analyzer.generate(template, {
