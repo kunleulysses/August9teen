@@ -14,6 +14,29 @@ const { spawnSync } = require("child_process");
 async function runtimeSnapshot() {
   const spiralMetrics = {};
 
+  // Launch metrics server in background
+  const { spawn } = require('child_process');
+  const metricsProc = spawn('node', ['dist-spiral/spiral-metrics-server.js'], {
+    env: { ...process.env, PORT: 9099 },
+    detached: true,
+    stdio: 'ignore'
+  });
+  metricsProc.unref();
+
+  // Wait for server to be up
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  try {
+    const http = require('http');
+    await new Promise((resolve, reject) => {
+      http.get('http://localhost:9099/metrics', res => {
+        if (res.statusCode === 200) resolve(true);
+        else reject(new Error('Metrics endpoint returned ' + res.statusCode));
+      }).on('error', reject => reject);
+    });
+  } catch (e) {
+    spiralMetrics.metricsEndpoint = 'FAIL: /metrics not reachable';
+  }
+
   // Delete LevelDB before each run for clean audit
   const DB_PATH = process.env.SPIRAL_DB_PATH || './spiraldb';
   try {

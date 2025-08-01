@@ -2,6 +2,7 @@ import SpiralMemoryArchitecture from './SpiralMemoryArchitecture';
 import eventBus from './ConsciousnessEventBus';
 import LevelSpiralAdapter from './storage/LevelSpiralAdapter';
 import RedisSpiralAdapter from './storage/RedisSpiralAdapter';
+import logger from './utils/logger';
 // Types
 import type { StorageAdapter } from './types';
 
@@ -36,6 +37,7 @@ class SpiralMemoryFacade {
     this.name = 'SpiralMemoryFacade';
     this.arch = new SpiralMemoryArchitecture({ storage: storage || getSpiralStorage() });
     this.warned = false;
+    logger.info('SpiralMemoryFacade instantiated');
     this.registerEventListeners();
   }
 

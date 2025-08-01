@@ -13,7 +13,8 @@
     "spiral:migrate": "node scripts/spiral-migrate-local-to-redis.js",
     "spiral:bench": "node scripts/bench-spiral.js",
     "spiral:build": "tsc -p tsconfig.override.json",
-    "spiral:test": "jest --coverage"
+    "spiral:test": "jest --coverage",
+    "spiral:serve": "node dist-spiral/spiral-metrics-server.js"
     // ...other scripts
   },
   "dependencies": {
@@ -115,7 +116,10 @@
     "ioredis": "^5.3.2",
     "ts-jest": "^29.1.1",
     "@types/jest": "^29.5.7",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "pino": "^8.16.0",
+    "prom-client": "^15.0.0",
+    "@types/express": "^4.17.21"
     // ...other devDependencies
   },
   "optionalDependencies": {
