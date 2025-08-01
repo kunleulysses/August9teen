@@ -5,6 +5,7 @@
  *   async delete(id)
  *   async has(id)
  *   async all()
+ *   async close()
  * 
  * This is a stub implementation using a local Map. 
  * Replace with Postgres/other backend by following the same shape.
@@ -18,4 +19,5 @@ export class InMemoryStore {
   async delete(id) { this.map.delete(id); }
   async has(id) { return this.map.has(id); }
   async all() { return Array.from(this.map.values()); }
+  async close() {} // no-op for in-memory
 }

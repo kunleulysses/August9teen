@@ -10,7 +10,7 @@ import routes from './routes/index.js';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import { authMiddleware, loginRoute } from './auth.js';
-import { storeFactory } from '../common/storeFactory.js';
+import { getStore, closeStore } from '../common/storeFactory.js';
 
 const app = express();
 let httpServer = null;

@@ -5,7 +5,7 @@ import { PostgresStore } from '../consciousness/persistence/PostgresStore.js';
 
 let singleton = null;
 
-export function storeFactory() {
+export function getStore() {
   if (singleton) return singleton;
   if (config.STORE_BACKEND === 'postgres') {
     if (config.DATABASE_URL) {
@@ -19,4 +19,14 @@ export function storeFactory() {
   singleton = new InMemoryStore();
   logger.info('Using InMemoryStore for persistence');
   return singleton;
+}
+
+// Alias for backward compatibility
+export const storeFactory = getStore;
+
+// Graceful close
+export async function closeStore() {
+  if (singleton && typeof singleton.close === 'function') {
+    await singleton.close();
+  }
 }

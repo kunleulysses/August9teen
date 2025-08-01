@@ -58,4 +58,8 @@ export class PostgresStore {
     const { rows } = await this.pool.query('SELECT value FROM consciousness_kv');
     return rows.map(r => r.value);
   }
+
+  async close() {
+    await this.pool.end();
+  }
 }
