@@ -16,6 +16,7 @@ import { ConsciousnessJournalAPI } from './consciousness-journal-api.js';
 import { WebSocketServer } from 'ws';
 import { createEnhancedDualConsciousnessWS } from "./enhanced-dual-consciousness-ws.js";
 import architect40 from './architect-4.0-orchestrator.js';
+import metricsRoute from './routes/metricsRoute.js';
 
 const app = express();
 const server = createServer(app);
@@ -50,6 +51,9 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/memory', memoryRoutes);
 app.use('/api/datasources', dataSourcesRoutes);
 app.use('/api/journal', journalAPI.getRouter());
+
+// Self-coding metrics route
+app.use(metricsRoute);
 
 // Architect 4.0 API Endpoints
 // Activate Architect 4.0 system on startup

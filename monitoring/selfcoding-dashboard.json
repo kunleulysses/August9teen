@@ -1,0 +1,15 @@
+{
+  "title": "SelfCoding",
+  "panels": [
+    {
+      "type": "graph",
+      "title": "Active Generations",
+      "targets": [{ "expr": "selfcoding_active_generations" }]
+    },
+    {
+      "type": "graph",
+      "title": "Test Pass Rate",
+      "targets": [{ "expr": "selfcoding_test_pass_rate" }]
+    }
+  ]
+}
