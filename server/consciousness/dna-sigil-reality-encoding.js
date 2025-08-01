@@ -1,0 +1,1 @@
+// Contents of dna-sigil-reality-encoding.js (to be replaced with actual content)
