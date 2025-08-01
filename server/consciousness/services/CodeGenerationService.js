@@ -3,6 +3,7 @@ import { EventEmitter } from 'events';
 import eventBus from '../ConsciousnessEventBus.js';
 import { sanitizeSlug } from '../utils/path-utils.js';
 import { safeImport } from '../utils/safe-loader.js';
+import TestGenerationService from './TestGenerationService.js';
 
 class CodeGenerationService extends EventEmitter {
     constructor(goalSystem) {
@@ -12,6 +13,7 @@ class CodeGenerationService extends EventEmitter {
         this.selfCoder = new SelfCodingModule();
         this.activeGenerations = new Map();
         this.codeProjects = [];
+        this.testService = new TestGenerationService();
     }
 
     async initialize() {
@@ -126,6 +128,21 @@ class CodeGenerationService extends EventEmitter {
                 try {
                     await safeImport(`./${project.filePath}`);
                     eventBus.emit('module:validated', { filePath: project.filePath });
+
+                    // Auto-test the generated module
+                    const testRes = await this.testService.generateAndRun({
+                        filePath: project.filePath,
+                        code: project.code,
+                        purpose: request.purpose
+                    });
+                    if (!testRes.passed) {
+                        console.warn(`[CodeGen] Tests failed for ${project.filePath}`);
+                        eventBus.emit('module:invalid', { filePath: project.filePath, error: 'tests failed' });
+                        // Consider aborting integration
+                        return project; // early return, leave as invalid
+                    }
+                    eventBus.emit('module:test:passed', { filePath: project.filePath, testFile: testRes.testFile });
+
                 } catch (err) {
                     console.warn(`[CodeGen] safeImport failed: ${err.message}`);
                     eventBus.emit('module:invalid', { filePath: project.filePath, error: err.message });

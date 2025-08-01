@@ -226,25 +226,28 @@ export default class SelfCodingModule extends EventEmitter {
             }
 
             console.log(`[SelfCodingModule] Generating ${language} ${template} for: ${description}`);
+            // ── Gemini vs. Analyzer selection ───────────────────────────
+const useGemini =
+    (data.request?.llm === 'gemini') ||
+    (process.env.GEMINI_DEFAULT === 'true');
 
-            const useGemini = data.request?.llm === 'gemini' || process.env.GEMINI_DEFAULT === 'true';
-
-            let generationResult;
-            if (useGemini) {
-                const gemRes = await SelfCodingModule.gemini.generateTranscendentSynthesis(
-                    description,
-                    { consciousnessMetrics: await this.getConsciousnessState() }
-                );
-                generationResult = { code: gemRes.content, metadata: gemRes.metadata };
-            } else {
-                generationResult = await this.analyzer.generate(template, {
-                    patterns: this.codePatterns.get(moduleId),
-                    requirements,
-                    purpose,
-                    language,
-                    description
-                });
-            }
+let generationResult;
+if (useGemini) {
+    const gemRes = await SelfCodingModule.gemini.generateTranscendentSynthesis(
+        description,
+        { consciousnessMetrics: await this.getConsciousnessState() }
+    );
+    generationResult = { code: gemRes.content, metadata: gemRes.metadata };
+} else {
+    generationResult = await this.analyzer.generate(template, {
+        patterns: this.codePatterns.get(moduleId),
+        requirements,
+        purpose,
+        language,
+        description
+    });
+}
+// ────────────────────────────────────────────────────────────
 
             // Extract the actual code from the generation result
             let generated = generationResult.code || generationResult;
