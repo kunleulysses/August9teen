@@ -10,6 +10,7 @@ import { selfCodingLog } from './SelfCodingLog.js';
 import SigilBasedCodeAuthenticator from '../sigil-based-code-authenticator.js';
 import GeminiAIClient from '../integrations/GeminiAIClient.js';
 import prettier from 'prettier';
+import { getAdapter } from '../llm/index.js';
 
 export default class SelfCodingModule extends EventEmitter {
     constructor() {
@@ -44,7 +45,7 @@ export default class SelfCodingModule extends EventEmitter {
         this.initialize();
     }
 
-    static gemini = new GeminiAIClient();
+    // (static gemini removed; use adapter via getAdapter now)
 
     /**
      * Async initialization
@@ -234,11 +235,9 @@ const useGemini =
 
 let generationResult;
 if (useGemini) {
-    const gemRes = await SelfCodingModule.gemini.generateTranscendentSynthesis(
-        description,
-        { consciousnessMetrics: await this.getConsciousnessState() }
-    );
-    generationResult = { code: gemRes.content, metadata: gemRes.metadata };
+    const adapter = getAdapter(data.request?.llm);
+    const gen = await adapter.generate(description, { consciousnessMetrics: await this.getConsciousnessState() });
+    generationResult = { code: gen.content, metadata: gen.metadata };
 } else {
     generationResult = await this.analyzer.generate(template, {
         patterns: this.codePatterns.get(moduleId),
