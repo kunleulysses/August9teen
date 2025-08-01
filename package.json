@@ -17,6 +17,7 @@
     "spiral:serve": "node dist-spiral/spiral-metrics-server.js",
     "spiral:cluster": "node scripts/spiral-launch-cluster.js",
     "spiral:mathtest": "jest __tests__/topology/*.spec.ts",
+    "spiral:govtest": "jest __tests__/governance/*.spec.ts",
     "explorer:dev": "cd client/spiral-explorer && npm run dev",
     "explorer:build": "cd client/spiral-explorer && npm run build"
     // ...other scripts
