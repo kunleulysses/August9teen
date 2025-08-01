@@ -17,14 +17,24 @@ This will create the namespace, secrets, ConfigMap, Postgres, and API Deployment
 
 ## Notes
 
-- The API expects JWT private/public keys provided in the secret. You can generate with:
+- The API expects JWT private/public keys provided as Kubernetes secrets via [ExternalSecrets](https://external-secrets.io/).  
+  You must deploy the [external-secrets operator](https://external-secrets.io/docs/introduction/getting-started/) in your cluster and create the actual JWT and Postgres secrets in the referenced backend namespace.
 
+  ```
+  # Example: create raw secrets in 'secret-backend' namespace
+  kubectl -n secret-backend create secret generic jwt-keys \
+    --from-file=jwtRS256.key --from-file=jwtRS256.key.pub
+  kubectl -n secret-backend create secret generic postgres-secret \
+    --from-literal=POSTGRES_PASSWORD=postgres
+  ```
+
+  You can generate the keys locally with:
   ```
   openssl genrsa -out jwtRS256.key 2048
   openssl rsa -in jwtRS256.key -pubout -out jwtRS256.key.pub
   ```
 
-  Then base64 encode each for the k8s Secret.
+  See deploy/k8s/secret-store.yaml and externalsecret-jwt.yaml for the reference setup.
 
 - The API container image should be built and pushed to your registry:
 

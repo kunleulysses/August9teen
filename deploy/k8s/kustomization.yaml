@@ -5,8 +5,9 @@ namespace: consciousness
 
 resources:
   - namespace.yaml
-  - secret-jwt.yaml
-  - secret-postgres.yaml
+  - secret-store.yaml
+  - externalsecret-jwt.yaml
+  - externalsecret-postgres.yaml
   - configmap-api.yaml
   - postgres-statefulset.yaml
   - postgres-service.yaml
