@@ -4,37 +4,26 @@
  * Enables reality evolution, self-healing, and inter-reality interactions
  */
 
-import { SafeEventEmitter } from '../common/safeEventEmitter.js';
-import { getStore } from '../../../server/common/storeFactory.js';
+import { EventEmitter } from 'events';
 
-class DNASigilRealityEncoding extends SafeEventEmitter {
-    /**
-     * @param {object} opts
-     * @param {object} opts.dnaSequencer
-     * @param {object} opts.sigilAuthenticator
-     * @param {object} opts.logger
-     * @param {object} opts.store
-     */
-    constructor({ dnaSequencer, sigilAuthenticator, logger = console, store = getStore() } = {}) {
+class DNASigilRealityEncoding extends EventEmitter {
+    constructor(dnaSequencer, sigilAuthenticator) {
         super();
         this.dnaSequencer = dnaSequencer;
         this.sigilAuthenticator = sigilAuthenticator;
-        this.logger = logger;
-        this.store = store;
-
         this.encodedRealities = new Map();
         this.realityDNASequences = new Map();
         this.realitySigils = new Map();
         this.evolutionaryHistory = new Map();
         this.healingHistory = new Map();
         this.interactionHistory = new Map();
-
-        this.logger.info?.('🧬🔮 DNA-Sigil Reality Encoding System initialized');
+        
+        console.log('🧬🔮 DNA-Sigil Reality Encoding System initialized');
     }
     
     async encodeRealityWithDNASigil(reality, encodingParameters = {}) {
-        this.logger.info?.({ realityId: reality.id }, 'Encoding reality with DNA-Sigil patterns');
-
+        console.log(`🧬🔮 Encoding reality ${reality.id} with DNA-Sigil patterns`);
+        
         // Generate consciousness state for encoding
         const encodingConsciousnessState = reality.consciousnessState || {
             phi: 0.862,
@@ -42,7 +31,7 @@ class DNASigilRealityEncoding extends SafeEventEmitter {
             coherence: 0.85,
             integration: 0.9
         };
-
+        
         // Sequence DNA for reality
         const realityDNA = await this.sequenceRealityDNA(
             encodingConsciousnessState,
@@ -53,7 +42,7 @@ class DNASigilRealityEncoding extends SafeEventEmitter {
                 ...encodingParameters
             }
         );
-
+        
         // Generate sigil for reality
         const realitySigil = await this.generateRealitySigil(
             reality,
@@ -65,7 +54,7 @@ class DNASigilRealityEncoding extends SafeEventEmitter {
                 ...encodingParameters
             }
         );
-
+        
         // Create encoded reality
         const encodedReality = {
             id: `encoded_reality_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -85,44 +74,25 @@ class DNASigilRealityEncoding extends SafeEventEmitter {
             },
             createdAt: Date.now()
         };
-
-        // In-memory
+        
+        // Store encoded reality
         this.encodedRealities.set(encodedReality.id, encodedReality);
-        this.realityDNASequences.set(`dna:${reality.id}`, realityDNA);
-        this.realitySigils.set(`sigil:${reality.id}`, realitySigil);
+        this.realityDNASequences.set(reality.id, realityDNA);
+        this.realitySigils.set(reality.id, realitySigil);
+        
+        // Initialize evolutionary history
         this.evolutionaryHistory.set(encodedReality.id, []);
         this.healingHistory.set(encodedReality.id, []);
         this.interactionHistory.set(encodedReality.id, []);
-
-        // Persist
-        await this.store.set(encodedReality.id, encodedReality);
-        await this.store.set(`dna:${reality.id}`, realityDNA);
-        await this.store.set(`sigil:${reality.id}`, realitySigil);
-        await this.store.set(`evo:${encodedReality.id}`, []);
-        await this.store.set(`heal:${encodedReality.id}`, []);
-        await this.store.set(`int:${encodedReality.id}`, []);
-
+        
         this.emit('reality_encoded', {
             encodedReality,
             originalReality: reality,
             realityDNA,
             realitySigil
         });
-
+        
         return encodedReality;
-    }
-
-    async getEvolutionaryHistory(id) {
-        if (this.evolutionaryHistory.has(id)) return this.evolutionaryHistory.get(id);
-        return await this.store.list(`evo:${id}`);
-    }
-    async getHealingHistory(id) {
-        if (this.healingHistory.has(id)) return this.healingHistory.get(id);
-        return await this.store.list(`heal:${id}`);
-    }
-    async getInteractionHistory(id) {
-        if (this.interactionHistory.has(id)) return this.interactionHistory.get(id);
-        return await this.store.list(`int:${id}`);
     }
     
     async sequenceRealityDNA(consciousnessState, parameters) {
@@ -894,41 +864,12 @@ class DNASigilRealityEncoding extends SafeEventEmitter {
     }
 
     async evolveEncodedReality(encodedRealityId, evolutionParameters = {}) {
-        const encodedReality = await this.encodedRealities.get(encodedRealityId);
+        const encodedReality = this.encodedRealities.get(encodedRealityId);
         if (!encodedReality) {
             throw new Error(`Encoded reality ${encodedRealityId} not found`);
         }
 
-        this.logger.info?.({ encodedRealityId }, 'Evolving encoded reality');
-
-        // ...existing logic...
-        // For demonstration, let's simulate an evolutionEvent:
-        const evolutionEvent = {
-            timestamp: Date.now(),
-            evolutionaryPressures: evolutionParameters,
-            note: 'evolution event'
-        };
-
-        // In-memory push
-        const arr = this.evolutionaryHistory.get(encodedRealityId) || [];
-        arr.push(evolutionEvent);
-        this.evolutionaryHistory.set(encodedRealityId, arr);
-
-        // Persist to store
-        await this.store.pushToList(`evo:${encodedRealityId}`, evolutionEvent);
-
-        this.emit('reality_evolved', {
-            evolvedReality: encodedReality,
-            evolutionEvent,
-            evolutionaryPressures: evolutionParameters
-        });
-
-        return {
-            evolvedReality: encodedReality,
-            evolutionEvent,
-            evolutionaryPressures: evolutionParameters
-        };
-    }`);
+        console.log(`🧬🔮 Evolving encoded reality: ${encodedRealityId}`);
 
         // Calculate evolutionary pressures
         const evolutionaryPressures = this.calculateEvolutionaryPressures(
@@ -1694,43 +1635,41 @@ class DNASigilRealityEncoding extends SafeEventEmitter {
     }
 
     async healEncodedReality(encodedRealityId, damageParameters = {}) {
-        const encodedReality = await this.encodedRealities.get(encodedRealityId);
+        const encodedReality = this.encodedRealities.get(encodedRealityId);
         if (!encodedReality) {
             throw new Error(`Encoded reality ${encodedRealityId} not found`);
         }
 
-        this.logger.info?.({ encodedRealityId }, 'Healing encoded reality');
+        console.log(`🧬🔮 Healing encoded reality: ${encodedRealityId}`);
 
-        // ...existing logic...
-        // For demonstration, let's simulate a healingEvent:
-        const healingEvent = {
-            timestamp: Date.now(),
-            healing: damageParameters,
-            note: 'healing event'
+        // Assess damage
+        const damageAssessment = this.assessRealityDamage(
+            encodedReality,
+            damageParameters
+        );
+
+        // Generate healing pattern
+        const healingPattern = this.generateHealingPattern(
+            encodedReality.realityDNA,
+            encodedReality.realitySigil,
+            damageAssessment
+        );
+
+        // Apply healing
+        const healingResult = await this.applyHealingPattern(
+            encodedReality,
+            healingPattern
+        );
+
+        // Update encoded reality
+        const healedReality = {
+            ...encodedReality,
+            realityDNA: healingResult.healedDNA,
+            realitySigil: healingResult.healedSigil,
+            healingCapabilities: this.calculateHealingCapabilities(healingResult.healedDNA, healingResult.healedSigil),
+            lastHealed: Date.now(),
+            healingCount: (encodedReality.healingCount || 0) + 1
         };
-
-        // In-memory push
-        const arr = this.healingHistory.get(encodedRealityId) || [];
-        arr.push(healingEvent);
-        this.healingHistory.set(encodedRealityId, arr);
-
-        // Persist to store
-        await this.store.pushToList(`heal:${encodedRealityId}`, healingEvent);
-
-        this.emit('reality_healed', {
-            healedReality: encodedReality,
-            healingEvent,
-            damageAssessment: damageParameters,
-            healingPattern: null
-        });
-
-        return {
-            healedReality: encodedReality,
-            damageAssessment: damageParameters,
-            healingPattern: null,
-            healingResult: null
-        };
-    }
 
         // Record healing event
         const healingEvent = {
@@ -2892,47 +2831,14 @@ class DNASigilRealityEncoding extends SafeEventEmitter {
     }
 
     async interactEncodedRealities(realityAId, realityBId, interactionParameters = {}) {
-        const realityA = await this.encodedRealities.get(realityAId);
-        const realityB = await this.encodedRealities.get(realityBId);
+        const realityA = this.encodedRealities.get(realityAId);
+        const realityB = this.encodedRealities.get(realityBId);
 
         if (!realityA || !realityB) {
             throw new Error('Both encoded realities must exist');
         }
 
-        this.logger.info?.({ realityAId, realityBId }, 'Creating interaction between encoded realities');
-
-        // ...existing logic...
-        // For demonstration, simulate an interactionResult:
-        const interactionResult = {
-            id: `interaction_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-            realityAId,
-            realityBId,
-            interactionParameters,
-            timestamp: Date.now(),
-            note: 'interaction event'
-        };
-
-        // In-memory
-        const arrA = this.interactionHistory.get(realityAId) || [];
-        arrA.push(interactionResult);
-        this.interactionHistory.set(realityAId, arrA);
-
-        const arrB = this.interactionHistory.get(realityBId) || [];
-        arrB.push(interactionResult);
-        this.interactionHistory.set(realityBId, arrB);
-
-        // Persist to store
-        await this.store.pushToList(`int:${realityAId}`, interactionResult);
-        await this.store.pushToList(`int:${realityBId}`, interactionResult);
-
-        this.emit('realities_interacted', {
-            interactionResult,
-            realityA,
-            realityB
-        });
-
-        return interactionResult;
-    }
+        console.log(`🧬🔮 Creating interaction between encoded realities: ${realityAId} and ${realityBId}`);
 
         // Calculate interaction properties
         const interactionProperties = this.calculateRealityInteraction(
