@@ -12,6 +12,7 @@ import { validate } from './utils/validation.js';
 import { initializeRandomness, secureId } from './utils/random.js';
 import { saveReality, incrementMetric } from './utils/persistence.js';
 import { logger, child as childLogger } from './utils/logger.js';
+import { validationFailures } from './utils/metrics.js';
 import '../persistenceShutdown.js';
 
 /**
@@ -1666,6 +1667,7 @@ export class HolographicConsciousnessRealityGenerator extends EventEmitter {
                 validate('https://flappyjournal.dev/schema/reality-request.json', realityRequest);
                 validate('https://flappyjournal.dev/schema/consciousness-state.json', consciousnessState);
             } catch (error) {
+                validationFailures.inc();
                 return {
                     success: false,
                     error: 'validation_failed',

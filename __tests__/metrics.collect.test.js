@@ -1,4 +1,4 @@
-const { counters } = require('../server/consciousness/utils/metrics.js');
+const { counters, validationFailures } = require('../server/consciousness/utils/metrics.js');
 const client = require('prom-client');
 
 describe('Metrics collection', () => {
@@ -6,5 +6,10 @@ describe('Metrics collection', () => {
     counters.jobsProcessed.inc();
     const metrics = await client.register.metrics();
     expect(metrics).toContain('jobs_processed_total');
+  });
+  test('validation failures counter is counted', async () => {
+    validationFailures.inc();
+    const metrics = await client.register.metrics();
+    expect(metrics).toContain('validation_failures_total');
   });
 });

@@ -44,5 +44,10 @@ describe('BullMQ queue serial processing', () => {
     expect(finished1.success).toBe(true);
     expect(finished2.success).toBe(true);
     expect(mid - start).toBeLessThan(end - mid); // job2 finishes after job1
+
+    // Check job_duration_seconds in metrics
+    const client = require('prom-client');
+    const metrics = await client.register.metrics();
+    expect(metrics).toContain('job_duration_seconds');
   });
 });
