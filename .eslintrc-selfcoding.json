@@ -1,0 +1,9 @@
+{
+  "root": false,
+  "parserOptions": { "ecmaVersion": 2022, "sourceType": "module" },
+  "plugins": ["complexity", "sonarjs"],
+  "rules": {
+    "complexity": ["warn", 10],
+    "sonarjs/cognitive-complexity": ["warn", 15]
+  }
+}
