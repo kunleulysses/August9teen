@@ -1,12 +1,26 @@
 import 'express-async-errors';
 import express from 'express';
+import 'express-async-errors';
 import bodyParser from 'body-parser';
+import rateLimit from 'express-rate-limit';
 import logger from '../common/logger.js';
 import config from '../common/config.js';
 import { generateId } from '../common/id.js';
 import routes from './routes/index.js';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs';
 
 const app = express();
+
+app.use(
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: 'Too many requests, rate limit exceeded' },
+  })
+);
 
 app.use((req, res, next) => {
   req.id = generateId();
@@ -19,6 +33,10 @@ app.use((req, res, next) => {
 });
 
 app.use(bodyParser.json());
+
+const openApiDocument = YAML.load(new URL('./openapi.yaml', import.meta.url).pathname);
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
+
 app.use(routes);
 
 app.get('/health', (req, res) => {
@@ -30,7 +48,11 @@ app.get('/health', (req, res) => {
 
 app.use((err, req, res, next) => {
   logger.error({ reqId: req.id, err }, 'Unhandled error');
-  res.status(500).json({ error: 'Internal Server Error' });
+  if (err && err.validation) {
+    res.status(400).json({ error: 'validation', details: err.details });
+  } else {
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
 if (process.env.NODE_ENV !== 'test') {

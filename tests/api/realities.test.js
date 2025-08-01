@@ -12,6 +12,13 @@ describe('Realities API', () => {
     createdId = res.body.id;
   });
 
+  it('POST /realities 400 on missing id', async () => {
+    const res = await request(app).post('/realities').send({ data: { foo: 'bar' } });
+    expect(res.status).toBe(400);
+    expect(res.body).toHaveProperty('error', 'validation');
+    expect(Array.isArray(res.body.details)).toBe(true);
+  });
+
   it('GET /realities/:id returns encoded reality', async () => {
     const res = await request(app).get(`/realities/${createdId}`);
     expect(res.status).toBe(200);
