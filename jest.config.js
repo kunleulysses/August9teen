@@ -1,4 +1,6 @@
 module.exports = {
   testEnvironment: 'node',
-  collectCoverage: process.env.CI === 'true'
+  // Ignore pino-pretty noise in tests
+  silent: true,
+  // Add custom Jest config as needed
 };
