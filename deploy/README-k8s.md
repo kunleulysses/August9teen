@@ -15,6 +15,33 @@ kubectl apply -k deploy/k8s
 
 This will create the namespace, secrets, ConfigMap, Postgres, and API Deployment+Service.
 
+## Load Testing
+
+You can run a basic HTTP load test (requires [k6](https://k6.io/)):
+
+```bash
+npm run load:test
+# or
+k6 run scripts/k6-load.js
+```
+
+Set BASE_URL and JWT env vars to target cluster endpoint and use a valid token.
+
+---
+
+## Chaos Testing
+
+If using [Chaos Mesh](https://chaos-mesh.org/), the included `chaos/kill-postgres.yaml`
+will kill a random Postgres pod every hour for 30s. Enable with:
+
+```bash
+kubectl apply -f deploy/k8s/chaos/kill-postgres.yaml
+```
+
+This tests API resilience to DB outages. Remove or comment out in kustomization.yaml to disable.
+
+---
+
 ## Notes
 
 - The API expects JWT private/public keys provided as Kubernetes secrets via [ExternalSecrets](https://external-secrets.io/).  

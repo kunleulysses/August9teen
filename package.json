@@ -41,7 +41,8 @@
     "db:push": "prisma db push",
     "postinstall": "prisma db push",
     "dev:redis": "docker run -d -p 6379:6379 redis:7-alpine",
-    "dev:metrics": "node server/consciousness/metricsServer.js"
+    "dev:metrics": "node server/consciousness/metricsServer.js",
+    "load:test": "k6 run scripts/k6-load.js"
   },
   "devDependencies": {
     "jest": "^29.7.0",

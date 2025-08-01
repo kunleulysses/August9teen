@@ -15,3 +15,5 @@ resources:
   - grafana-dashboards.yaml
   - prometheus-rules.yaml
   - podmonitor-api.yaml
+# optional chaos:
+  - chaos/kill-postgres.yaml
