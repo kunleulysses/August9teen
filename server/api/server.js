@@ -4,6 +4,7 @@ import express from 'express';
 import 'express-async-errors';
 import bodyParser from 'body-parser';
 import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
 import logger from '../common/logger.js';
 import config from '../common/config.js';
 import { generateId } from '../common/id.js';
@@ -12,11 +13,19 @@ import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import { authMiddleware, loginRoute } from './auth.js';
 import { getStore, closeStore } from '../common/storeFactory.js';
-import { register as metricsRegister } from './metrics.js';
 
 const app = express();
 let httpServer = null;
 
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"]
+    }
+  }
+}));
+
+// global rate limiter (for all routes)
 app.use(
   rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -26,6 +35,26 @@ app.use(
     message: { error: 'Too many requests, rate limit exceeded' },
   })
 );
+
+// Per-route rate limiters
+const loginLimiter = rateLimit({ windowMs: 15*60*1000, max:10, message:{error:'Too many logins'} });
+const createLimiter = rateLimit({ windowMs: 15*60*1000, max:30, message:{error:'Rate limit'} });
+
+app.use(bodyParser.json());
+
+const openApiDocument = YAML.load(new URL('./openapi.yaml', import.meta.url).pathname);
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
+
+// Auth routes and middleware
+app.post('/login', loginLimiter, loginRoute);
+app.use(authMiddleware);
+
+// Apply createLimiter specifically to /realities
+import routesRealities from './routes/realities.js';
+app.use('/realities', createLimiter, routesRealities);
+
+// Mount all other routes
+app.use(routes);
 
 app.use((req, res, next) => {
   req.id = generateId();

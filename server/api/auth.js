@@ -3,7 +3,23 @@ import config from '../common/config.js';
 import logger from '../common/logger.js';
 import { authErrors } from './metrics.js';
 
-const JWT_SECRET = process.env.API_JWT_SECRET || 'changeme';
+import fs from 'fs';
+const { generateKeyPairSync } = await import('crypto');
+
+const privateEnv = process.env.API_JWT_PRIVATE_KEY;
+const publicEnv  = process.env.API_JWT_PUBLIC_KEY;
+let PRIVATE_KEY = privateEnv;
+let PUBLIC_KEY  = publicEnv;
+if (!PRIVATE_KEY || !PUBLIC_KEY) {
+  try {
+    PRIVATE_KEY = fs.readFileSync('./keys/jwtRS256.key','utf8');
+    PUBLIC_KEY  = fs.readFileSync('./keys/jwtRS256.key.pub','utf8');
+  } catch (_) {
+    const { privateKey, publicKey } = generateKeyPairSync('rsa', { modulusLength: 2048 });
+    PRIVATE_KEY = privateKey.export({ type:'pkcs1', format:'pem' });
+    PUBLIC_KEY  = publicKey.export({ type:'pkcs1', format:'pem' });
+  }
+}
 
 export function authMiddleware(req, res, next) {
   if (
@@ -19,7 +35,7 @@ export function authMiddleware(req, res, next) {
   }
   const token = auth.slice('Bearer '.length);
   try {
-    req.user = jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] });
+    req.user = jwt.verify(token, PUBLIC_KEY, { algorithms: ['RS256'] });
     next();
   } catch (err) {
     logger.warn({ err }, 'JWT error');
@@ -33,6 +49,6 @@ export function loginRoute(req, res) {
   if (!user || typeof user !== 'string') {
     return res.status(400).json({ error: 'Missing user' });
   }
-  const token = jwt.sign({ user }, JWT_SECRET, { expiresIn: '1h', algorithm: 'HS256' });
+  const token = jwt.sign({ user }, PRIVATE_KEY, { expiresIn: '1h', algorithm: 'RS256' });
   res.json({ token });
 }
