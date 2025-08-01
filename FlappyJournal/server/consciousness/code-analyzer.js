@@ -3,11 +3,19 @@
  * Provides code analysis, optimization and generation capabilities
  */
 
+import path from 'path';
+import { ESLint } from 'eslint';
+
 export class CodeAnalyzer {
     constructor() {
         this.patterns = new Map();
         this.optimizations = new Map();
         this.templates = new Map();
+        
+        this.eslint = new ESLint({
+            useEslintrc: false,
+            overrideConfigFile: path.resolve(process.cwd(), '.eslintrc-selfcoding.json')
+        });
     }
 
     /**
@@ -28,24 +36,34 @@ export class CodeAnalyzer {
      * Detect code patterns
      */
     async detectPatterns(code) {
-        // This would implement actual pattern detection
+        const complexity = await this.calculateComplexity(code);
         return {
-            complexity: this.calculateComplexity(code),
+            complexity,
             structure: this.analyzeStructure(code),
             patterns: this.findCommonPatterns(code)
         };
     }
 
     /**
-     * Calculate code complexity
+     * Calculate code complexity using ESLint
      */
-    calculateComplexity(code) {
-        // Simplified complexity calculation
-        return {
-            cognitive: 0.5,
-            cyclometric: 0.3,
-            maintainability: 0.8
-        };
+    async calculateComplexity(code) {
+        try {
+            const results = await this.eslint.lintText(code, { filePath: 'generated-temp.js' });
+            let cyclomatic = 0, cognitive = 0;
+            results[0].messages.forEach(m => {
+                if (m.ruleId === 'complexity') {
+                    cyclomatic = Math.max(cyclomatic, parseInt(m.message.match(/\d+/)?.[0] || '0', 10));
+                }
+                if (m.ruleId === 'sonarjs/cognitive-complexity') {
+                    cognitive = Math.max(cognitive, parseInt(m.message.match(/\d+/)?.[0] || '0', 10));
+                }
+            });
+            return { cyclomatic, cognitive };
+        } catch (e) {
+            console.warn('[CodeAnalyzer] ESLint complexity failed:', e.message);
+            return { cyclomatic: 0, cognitive: 0 };
+        }
     }
 
     /**
@@ -78,20 +96,21 @@ export class CodeAnalyzer {
     async gatherStats(code) {
         return {
             loc: code.split('\n').length,
-            complexity: this.calculateComplexity(code),
-            quality: this.assessQuality(code)
+            complexity: await this.calculateComplexity(code),
+            quality: await this.assessQuality(code)
         };
     }
 
     /**
-     * Assess code quality
+     * Assess code quality based on complexity metrics
      */
-    assessQuality(code) {
-        // Quality assessment simulation
-        return {
-            maintainability: 0.8,
-            reliability: 0.7,
-            testability: 0.6
+    async assessQuality(code) {
+        const { cyclomatic, cognitive } = await this.calculateComplexity(code);
+        const maintainability = Math.max(0, 1 - Math.max(cyclomatic, cognitive) / 20);
+        return { 
+            maintainability: +maintainability.toFixed(2), 
+            cyclomatic, 
+            cognitive 
         };
     }
 
