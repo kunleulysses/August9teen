@@ -10,8 +10,11 @@ WORKDIR /opt/consciousness
 COPY package*.json ./
 COPY tsconfig.json ./
 
-# Install dependencies (production only)
-RUN npm ci --only=production && npm cache clean --force
+# Install all dependencies, run build, then prune dev dependencies
+RUN npm ci \
+    && npm run build \
+    && npm prune --production \
+    && npm cache clean --force
 
 # Copy application code
 COPY server ./server/
@@ -31,9 +34,6 @@ EXPOSE 50051 4003 3002 5005
 # Environment variables
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max_old_space_size=4096"
-
-# Build step (generate dist bundle)
-RUN npm run build
 
 # Change working directory to server before start
 WORKDIR /opt/consciousness/server

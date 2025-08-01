@@ -18,8 +18,11 @@ WORKDIR /opt/consciousness
 COPY FlappyJournal/package*.json ./
 COPY FlappyJournal/tsconfig.json ./
 
-# Install dependencies
-RUN npm ci --only=production && npm cache clean --force
+# Install all dependencies, run build, then prune dev dependencies
+RUN npm ci \
+    && npm run build \
+    && npm prune --production \
+    && npm cache clean --force
 
 # Copy application code
 COPY FlappyJournal/server ./server/

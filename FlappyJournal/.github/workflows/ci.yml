@@ -28,3 +28,9 @@ jobs:
 
       - name: Run CI pipeline
         run: npm run ci
+
+      - name: Build Docker image
+        env:
+          DOCKER_BUILDKIT: 1
+        run: |
+          docker build -t flappyjournal-backend:ci -f ../../Dockerfile ../../
