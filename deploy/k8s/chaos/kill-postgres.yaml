@@ -1,0 +1,16 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: kill-postgres
+  namespace: consciousness
+spec:
+  action: pod-kill
+  mode: one
+  selector:
+    namespaces:
+      - consciousness
+    labelSelectors:
+      app: postgres
+  duration: '30s'
+  scheduler:
+    cron: '@hourly'

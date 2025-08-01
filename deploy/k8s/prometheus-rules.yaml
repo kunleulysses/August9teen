@@ -1,0 +1,25 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: consciousness-rules
+  namespace: consciousness
+spec:
+  groups:
+    - name: api.rules
+      rules:
+        - alert: HighErrorRate
+          expr: sum(rate(jwt_unauthorized_total[5m])) > 5
+          for: 2m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High JWT unauthorized error rate"
+            description: "API unauthorized rate > 5/min"
+        - alert: CRNStall
+          expr: increase(crn_ticks_total[1m]) == 0
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "CRN tick stalled"
+            description: "No CRN ticks in last 1m"
