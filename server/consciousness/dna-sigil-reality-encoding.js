@@ -3,13 +3,21 @@
  * Enables reality evolution, self-healing, and inter-reality interactions
  */
 
-import { EventEmitter } from 'events';
+import { SafeEventEmitter } from '../common/safeEventEmitter.js';
+import { getStore } from '../common/storeFactory.js';
 
-class DNASigilRealityEncoding extends EventEmitter {
-    constructor(dnaSequencer, sigilAuthenticator) {
+class DNASigilRealityEncoding extends SafeEventEmitter {
+    constructor({
+        dnaSequencer,
+        sigilAuthenticator,
+        logger = console,
+        store = getStore(),
+    } = {}) {
         super();
-        this.dnaSequencer = dnaSequencer;
+        this.dnaSequencer     = dnaSequencer;
         this.sigilAuthenticator = sigilAuthenticator;
+        this.logger           = logger;
+        this.store            = store;
         this.encodedRealities = new Map();
         this.realityDNASequences = new Map();
         this.realitySigils = new Map();
@@ -90,7 +98,15 @@ class DNASigilRealityEncoding extends EventEmitter {
             realityDNA,
             realitySigil
         });
-        
+
+        //-- persist to store --
+        await this.store.set(encodedReality.id, encodedReality);
+        await this.store.set(`dna:${reality.id}`,  realityDNA);
+        await this.store.set(`sigil:${reality.id}`, realitySigil);
+        await this.store.set(`evo:${encodedReality.id}`,  []);
+        await this.store.set(`heal:${encodedReality.id}`, []);
+        await this.store.set(`int:${encodedReality.id}`,  []);
+
         return encodedReality;
     }
     
@@ -805,17 +821,26 @@ class DNASigilRealityEncoding extends EventEmitter {
     getRealitySigil(realityId) {
         return this.realitySigils.get(realityId);
     }
-    
-    getEvolutionaryHistory(encodedRealityId) {
-        return this.evolutionaryHistory.get(encodedRealityId) || [];
+
+    async getEvolutionaryHistory(id) {
+        if (this.evolutionaryHistory.has(id)) return this.evolutionaryHistory.get(id);
+        const list = await this.store.list(`evo:${id}`);
+        if (list) this.evolutionaryHistory.set(id, list);
+        return list;
     }
-    
-    getHealingHistory(encodedRealityId) {
-        return this.healingHistory.get(encodedRealityId) || [];
+
+    async getHealingHistory(id) {
+        if (this.healingHistory.has(id)) return this.healingHistory.get(id);
+        const list = await this.store.list(`heal:${id}`);
+        if (list) this.healingHistory.set(id, list);
+        return list;
     }
-    
-    getInteractionHistory(encodedRealityId) {
-        return this.interactionHistory.get(encodedRealityId) || [];
+
+    async getInteractionHistory(id) {
+        if (this.interactionHistory.has(id)) return this.interactionHistory.get(id);
+        const list = await this.store.list(`int:${id}`);
+        if (list) this.interactionHistory.set(id, list);
+        return list;
     }
     
     getEncodingMetrics() {
@@ -915,6 +940,7 @@ class DNASigilRealityEncoding extends EventEmitter {
         };
 
         this.evolutionaryHistory.get(encodedRealityId).push(evolutionEvent);
+        await this.store.pushToList(`evo:${encodedRealityId}`, evolutionEvent);
 
         this.emit('reality_evolved', {
             evolvedReality,
@@ -1680,6 +1706,7 @@ class DNASigilRealityEncoding extends EventEmitter {
         };
 
         this.healingHistory.get(encodedRealityId).push(healingEvent);
+        await this.store.pushToList(`heal:${encodedRealityId}`, healingEvent);
         this.encodedRealities.set(encodedRealityId, healedReality);
 
         this.emit('reality_healed', {
@@ -2884,6 +2911,8 @@ class DNASigilRealityEncoding extends EventEmitter {
         // Record interaction in history
         this.interactionHistory.get(realityAId).push(interactionResult);
         this.interactionHistory.get(realityBId).push(interactionResult);
+        await this.store.pushToList(`int:${realityAId}`, interactionResult);
+        await this.store.pushToList(`int:${realityBId}`, interactionResult);
 
         this.emit('realities_interacted', {
             interactionResult,
