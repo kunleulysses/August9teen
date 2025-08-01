@@ -19,3 +19,7 @@ export function secureUUID() {
 export function secureId(prefix = 'id') {
   return `${prefix}_${secureUUID()}`;
 }
+
+export function traceId() {
+  return secureUUID();
+}

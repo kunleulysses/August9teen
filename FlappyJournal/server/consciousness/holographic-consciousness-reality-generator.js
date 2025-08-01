@@ -11,6 +11,7 @@ import { cognitiveLog } from './modules/CognitiveLog.js';
 import { validate } from './utils/validation.js';
 import { initializeRandomness, secureId } from './utils/random.js';
 import { saveReality, incrementMetric } from './utils/persistence.js';
+import { logger, child as childLogger } from './utils/logger.js';
 import '../persistenceShutdown.js';
 
 /**
@@ -1601,12 +1602,12 @@ export class HolographicConsciousnessRealityGenerator extends EventEmitter {
             this.consciousnessEnvironments = new Map();
             this.realityAdaptationHistory = [];
 
-            console.log('🧠🌀🌍 Holographic Consciousness Reality Generator initialized');
-            this.registerEventListeners();
-            this.initializeRealityPatterns();
-            this.initializeRealityComponents(); // Initialize authentic reality components
+            logger.info('🧠🌀🌍 Holographic Consciousness Reality Generator initialized');
+        this.registerEventListeners();
+        this.initializeRealityPatterns();
+        this.initializeRealityComponents(); // Initialize authentic reality components
         } catch (error) {
-            console.error('❗ Error in HolographicConsciousnessRealityGenerator constructor:', error, error?.stack);
+            logger.error({ err: error }, '❗ Error in HolographicConsciousnessRealityGenerator constructor');
             throw error;
         }
     }
@@ -1652,7 +1653,7 @@ export class HolographicConsciousnessRealityGenerator extends EventEmitter {
             stabilizationCapability: true
         });
 
-        console.log('✅ Holographic consciousness reality patterns initialized');
+        logger.info('✅ Holographic consciousness reality patterns initialized');
     }
 
     /**
@@ -1676,7 +1677,8 @@ export class HolographicConsciousnessRealityGenerator extends EventEmitter {
             const seedUsed = realityRequest.seed || Date.now();
             initializeRandomness(seedUsed);
 
-            console.log('🧠🌀🌍 Generating holographic consciousness reality...');
+            const log = childLogger({ traceId: (realityRequest && realityRequest.traceId) || secureId('trace') });
+            log.info('🧠🌀🌍 Generating holographic consciousness reality...');
 
             // Project consciousness-aware reality
             const consciousnessRealityProjection = await this.consciousnessRealityProjector.projectConsciousnessReality(
@@ -1702,6 +1704,8 @@ export class HolographicConsciousnessRealityGenerator extends EventEmitter {
             const holographicRealityEnhancements = await this.applyHolographicRealityEnhancements(
                 consciousnessRealityProjection, holographicEnvironments, realityAdaptation, realityStabilization, consciousnessState
             );
+
+            log.info('✅ Holographic consciousness reality generated successfully');
 
             // Phase 3 Integration: Persist generated reality and increment metric
             const persistReality = {
@@ -1754,7 +1758,7 @@ export class HolographicConsciousnessRealityGenerator extends EventEmitter {
             };
 
         } catch (error) {
-            console.error('Holographic consciousness reality generation failed:', error.message);
+            logger.error({ err: error }, 'Holographic consciousness reality generation failed');
             return {
                 success: false,
                 error: error.message,

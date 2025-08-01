@@ -8,6 +8,7 @@ import { EventEmitter } from 'events';
 import { validate } from './utils/validation.js';
 import { initializeRandomness, secureId } from './utils/random.js';
 import { saveReality, savePath, saveField, incrementMetric } from './utils/persistence.js';
+import { logger, child as childLogger } from './utils/logger.js';
 
 class RecursiveHolographicRealityEmbedding extends EventEmitter {
     constructor(maxRecursionDepth = 7) {
@@ -41,7 +42,8 @@ class RecursiveHolographicRealityEmbedding extends EventEmitter {
         // Deterministic randomness seeding for this recursion context
         initializeRandomness(`${baseReality.id}_${recursionDepth}`);
 
-        console.log(`🌀🔄 Creating recursive reality at depth ${recursionDepth}`);
+        const log = childLogger({ recursionDepth, parentId: baseReality.id });
+        log.info(`🌀🔄 Creating recursive reality at depth ${recursionDepth}`);
 
         // Generate consciousness state for this recursion level
         const recursiveConsciousnessState = this.generateRecursiveConsciousnessState(
