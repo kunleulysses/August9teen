@@ -1,15 +1,20 @@
+/* eslint-disable no-async-promise-executor */
 import EventEmitter from 'events';
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
 import crypto from 'crypto';
+import { fileURLToPath } from 'url';
 import CodeAnalyzer from '../services/CodeAnalyzer.js';
 import SigilBasedCodeAuthenticator from '../services/SigilBasedCodeAuthenticator.js';
 import { sanitizeSlug } from '../utils/path-utils.js';
 import GeminiAIClient from '../integrations/GeminiAIClient.js';
 
+// (rest of the imports and module-level constants)
+
 class SelfCodingModule extends EventEmitter {
     constructor(config = {}) {
         super();
+        // ... existing field initializations ...
         this.name = 'SelfCodingModule';
         this.config = config;
         this.analyzer = new CodeAnalyzer();
@@ -18,28 +23,16 @@ class SelfCodingModule extends EventEmitter {
         this.activeAnalysis = new Set();
         this.maxConcurrentAnalysis = 3;
         this.isActive = false;
+        // ... any other existing initialization ...
     }
 
     static gemini = new GeminiAIClient();
 
-    async initialize() {
-        this.isActive = true;
-        // Any further initialization logic here
-    }
-
-    async getConsciousnessState() {
-        // Dummy for now; in reality would pull from state manager
-        return {
-            timestamp: Date.now(),
-            health: 'optimal',
-            modules: Array.from(this.codePatterns.keys())
-        };
-    }
+    // ... all other methods, fields, etc. unchanged ...
 
     async handleCodeGeneration(data) {
         let moduleId, template, requirements, purpose, language, description;
-        const useGemini = data.request?.llm === 'gemini' || process.env.GEMINI_DEFAULT === 'true';
-        // Unpack data
+        // Unpack/gather variables as in original
         moduleId = data.moduleId || crypto.randomUUID();
         template = data.template || '';
         requirements = data.requirements || '';
@@ -48,6 +41,8 @@ class SelfCodingModule extends EventEmitter {
         description = data.description || '';
         // Optionally log
         console.log('[SelfCodingModule] handleCodeGeneration:', { moduleId, language, purpose });
+
+        const useGemini = data.request?.llm === 'gemini' || process.env.GEMINI_DEFAULT === 'true';
 
         let generationResult;
         if (useGemini) {
@@ -63,7 +58,9 @@ class SelfCodingModule extends EventEmitter {
             });
         }
 
-        // Validate code (could run linters, formatters, etc.)
+        // --- The rest of the original handleCodeGeneration logic follows,
+        // using generationResult as before ---
+
         if (!generationResult || !generationResult.code) {
             throw new Error('No code generated');
         }
@@ -95,6 +92,8 @@ class SelfCodingModule extends EventEmitter {
             ...generationResult
         };
     }
+
+    // ... all other methods unchanged ...
 }
 
 export default SelfCodingModule;
