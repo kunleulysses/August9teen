@@ -10,6 +10,8 @@ import eventBus from './core/ConsciousnessEventBus.js';
 import { cognitiveLog } from './modules/CognitiveLog.js';
 import { validate } from './utils/validation.js';
 import { initializeRandomness, secureId } from './utils/random.js';
+import { saveReality, incrementMetric } from './utils/persistence.js';
+import '../persistenceShutdown.js';
 
 /**
  * Consciousness Reality Projector
@@ -1710,6 +1712,19 @@ export class HolographicConsciousnessRealityGenerator extends EventEmitter {
             const holographicRealityEnhancements = await this.applyHolographicRealityEnhancements(
                 consciousnessRealityProjection, holographicEnvironments, realityAdaptation, realityStabilization, consciousnessState
             );
+
+            // Phase 3 Integration: Persist generated reality and increment metric
+            const persistReality = {
+                id: secureId('reality'),
+                description: realityRequest.description,
+                parameters: realityRequest.parameters || {},
+                recursionDepth: 0,
+                parentId: null,
+                createdAt: new Date(),
+                schemaVersion: 1
+            };
+            await saveReality(persistReality);
+            await incrementMetric('realityGenerations');
 
             // Update consciousness metrics
             this.consciousnessMetrics.realityGenerations++;

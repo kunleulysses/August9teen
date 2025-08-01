@@ -1,0 +1,43 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./consciousness.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Reality {
+  id            String   @id
+  description   String
+  parameters    Json?
+  recursionDepth Int?
+  parentId      String?
+  createdAt     DateTime @default(now())
+  schemaVersion Int      @default(1)
+}
+
+model RecursionPath {
+  id             String   @id
+  parentId       String
+  childId        String
+  recursionDepth Int
+  connectionStrength Float?
+  createdAt      DateTime @default(now())
+  schemaVersion  Int      @default(1)
+}
+
+model ConsciousnessField {
+  id             String @id
+  parentId       String
+  childId        String
+  recursionDepth Int
+  fieldStrength  Float?
+  createdAt      DateTime @default(now())
+  schemaVersion  Int      @default(1)
+}
+
+model Metric {
+  key   String @id
+  value Float
+}
