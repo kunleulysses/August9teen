@@ -5,6 +5,9 @@
 
 import SpiralMemoryArchitecture from './SpiralMemoryArchitecture.js';
 import eventBus from './ConsciousnessEventBus.js';
+import { InMemorySpiralAdapter } from './storage/SpiralStorageAdapter.js';
+import LevelSpiralAdapter from './storage/LevelSpiralAdapter.js';
+import RedisSpiralAdapter from './storage/RedisSpiralAdapter.js';
 
 const legacyEvents = {
   storeReq: 'store_memory_request',
@@ -24,10 +27,15 @@ const newEvents = {
   retrieveFail: 'spiral.memory.retrieve.fail'
 };
 
+function getSpiralStorage() {
+  if (process.env.REDIS_URL) return new RedisSpiralAdapter(process.env.REDIS_URL);
+  return new LevelSpiralAdapter(process.env.SPIRAL_DB_PATH || './spiraldb');
+}
+
 class SpiralMemoryFacade {
-  constructor() {
+  constructor(storage) {
     this.name = 'SpiralMemoryFacade';
-    this.arch = new SpiralMemoryArchitecture();
+    this.arch = new SpiralMemoryArchitecture({ storage: storage || getSpiralStorage() });
     this.warned = false;
     this.registerEventListeners();
   }

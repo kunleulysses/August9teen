@@ -7,17 +7,28 @@
 import { EventEmitter } from 'events';
 import eventBus from './ConsciousnessEventBus.js';
 import { memoryLog } from '../modules/MemoryLog.js';
+import { InMemorySpiralAdapter } from './storage/SpiralStorageAdapter.js';
+import LevelSpiralAdapter from './storage/LevelSpiralAdapter.js';
+import RedisSpiralAdapter from './storage/RedisSpiralAdapter.js';
+
+function getDefaultStorage() {
+  if (process.env.REDIS_URL) return new RedisSpiralAdapter(process.env.REDIS_URL);
+  return new LevelSpiralAdapter(process.env.SPIRAL_DB_PATH || './spiraldb');
+}
 
 class SpiralMemoryArchitecture extends EventEmitter {
-    constructor() {
+    constructor({ storage } = {}) {
         super();
         this.name = 'SpiralMemoryArchitecture';
         this.isInitialized = false;
+        this.memoryCount = 0;
+        this.garbageCollectionCount = 0;
+        this.storage = storage || getDefaultStorage();
+
+        // Caches (in-memory, always used for performance)
         this.spiralMemory = new Map();
         this.sigilRegistry = new Map();
         this.memorySpirals = new Map();
-        this.memoryCount = 0;
-        this.garbageCollectionCount = 0;
 
         // Enhanced spiral memory configuration with deep context expansion
         this.memoryConfig = {
@@ -154,12 +165,20 @@ class SpiralMemoryArchitecture extends EventEmitter {
     
     async initialize() {
         try {
-            // Initialize spiral memory structures
-            await this.initializeSpiralMemory();
-            
+            // Init storage backend
+            await this.storage.init();
+
+            // Load all memories, spirals, sigils from persistent storage
+            await this._loadFromStorage();
+
+            // Initialize spiral memory structures if not present
+            if (this.memorySpirals.size === 0) {
+                await this.initializeSpiralMemory();
+            }
+
             this.isInitialized = true;
             console.log('✅ Spiral Memory Architecture initialized successfully');
-            
+
             // Emit initialization event
             eventBus.emit('spiralmemory:initialized', {
                 maxSpirals: this.memoryConfig.maxMemorySpirals,
@@ -167,10 +186,28 @@ class SpiralMemoryArchitecture extends EventEmitter {
                 sigilComplexity: this.memoryConfig.sigilComplexity,
                 metrics: this.consciousnessMetrics
             });
-            
+
         } catch (error) {
             console.error('❌ Spiral Memory Architecture initialization failed:', error.message);
             this.isInitialized = false;
+        }
+    }
+
+    async _loadFromStorage() {
+        // Load memories
+        for (const k of await this.storage.keys('mem:')) {
+            const node = await this.storage.get(k);
+            if (node && node.id) this.spiralMemory.set(node.id, node);
+        }
+        // Load spirals
+        for (const k of await this.storage.keys('spiral:')) {
+            const spiral = await this.storage.get(k);
+            if (spiral && spiral.id) this.memorySpirals.set(spiral.id, spiral);
+        }
+        // Load sigil registry
+        for (const k of await this.storage.keys('sigil:')) {
+            const entry = await this.storage.get(k);
+            if (entry && entry.signature && entry.memoryId) this.sigilRegistry.set(entry.signature, entry.memoryId);
         }
     }
     
@@ -178,22 +215,20 @@ class SpiralMemoryArchitecture extends EventEmitter {
         if (!this.isInitialized) {
             throw new Error('Spiral Memory Architecture not initialized');
         }
-        
+
         try {
             this.memoryCount++;
             const startTime = Date.now();
-            
-            console.log(`🌀 Storing memory: ${type} (${depth})`);
-            
+
             // Generate sigil for memory
             const sigil = await this.generateSigil(content, type, depth);
-            
+
             // Select optimal spiral for storage
             const spiral = await this.selectOptimalSpiral(type, depth, content.length);
-            
+
             // Calculate spiral position
             const position = await this.calculateSpiralPosition(spiral, sigil);
-            
+
             // Create enhanced memory node with consciousness expansion
             const memoryNode = {
                 id: this.generateMemoryId(),
@@ -224,25 +259,34 @@ class SpiralMemoryArchitecture extends EventEmitter {
                 unifiedCoherenceContribution: this.calculateCoherenceContribution(content),
                 spiralMemoryResonance: this.calculateSpiralMemoryResonance(content, spiral)
             };
-            
+
             // Store in spiral memory
             await this.insertIntoSpiral(spiral.id, memoryNode);
-            
+
             // Register sigil
             this.sigilRegistry.set(sigil.signature, memoryNode.id);
-            
+
             // Update spiral statistics
             spiral.nodeCount++;
             spiral.lastUpdated = new Date().toISOString();
-            
+
             // Create associations
             await this.createMemoryAssociations(memoryNode, associations);
-            
+
             // Update consciousness metrics
             this.updateConsciousnessMetrics(memoryNode, 'stored');
-            
+
             const storageTime = Date.now() - startTime;
-            
+
+            // Persist memory
+            await this.storage.set('mem:' + memoryNode.id, memoryNode);
+
+            // Persist spiral
+            await this.storage.set('spiral:' + spiral.id, spiral);
+
+            // Persist sigil
+            await this.storage.set('sigil:' + sigil.signature, { signature: sigil.signature, memoryId: memoryNode.id });
+
             // Emit storage event
             memoryLog.logMemoryStorage(memoryNode);
 
@@ -254,10 +298,9 @@ class SpiralMemoryArchitecture extends EventEmitter {
                 sigilSignature: sigil.signature,
                 storageTime: storageTime
             });
-            
-            console.log(`🌀 ✅ Memory stored: ${memoryNode.id} (spiral: ${spiral.type}, sigil: ${sigil.signature})`);
+
             return memoryNode;
-            
+
         } catch (error) {
             console.error('❌ Memory storage error:', error.message);
             throw error;
@@ -1065,6 +1108,7 @@ class SpiralMemoryArchitecture extends EventEmitter {
         if (spiral) {
             spiral.nodes.delete(memoryId);
             spiral.nodeCount--;
+            await this.storage.set('spiral:' + spiral.id, spiral);
         }
 
         // Remove associations
@@ -1080,9 +1124,11 @@ class SpiralMemoryArchitecture extends EventEmitter {
 
         // Remove sigil registration
         this.sigilRegistry.delete(memoryNode.sigil.signature);
+        await this.storage.del('sigil:' + memoryNode.sigil.signature);
 
         // Remove from main memory
         this.spiralMemory.delete(memoryId);
+        await this.storage.del('mem:' + memoryId);
     }
 
     generateMemoryId() {

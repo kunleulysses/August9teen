@@ -14,6 +14,12 @@ const { spawnSync } = require("child_process");
 async function runtimeSnapshot() {
   const spiralMetrics = {};
 
+  // Delete LevelDB before each run for clean audit
+  const DB_PATH = process.env.SPIRAL_DB_PATH || './spiraldb';
+  try {
+    fs.rmSync(DB_PATH, { recursive: true, force: true });
+  } catch {}
+
   try {
     // Dynamically import spiral modules
     const SpiralMemoryArchitecture = require("../FlappyJournal/server/consciousness/core/SpiralMemoryArchitecture.js").default;
@@ -85,6 +91,13 @@ async function runtimeSnapshot() {
         ? integration.getSpiralMemoryMetrics()
         : { totalIntegratedMemories: integration.integratedMemories.size };
     }
+
+    // Restart simulation: re-require modules and assert persistence
+    delete require.cache[require.resolve("../FlappyJournal/server/consciousness/core/SpiralMemoryArchitecture.js")];
+    const SpiralMemoryArchitecture2 = require("../FlappyJournal/server/consciousness/core/SpiralMemoryArchitecture.js").default;
+    const spiral2 = new SpiralMemoryArchitecture2();
+    await spiral2.initialize && spiral2.initialize();
+    spiralMetrics.afterRestart = spiral2.getMemoryStatistics ? spiral2.getMemoryStatistics() : {};
   } catch (e) {
     spiralMetrics.error = e && e.message || String(e);
   }
