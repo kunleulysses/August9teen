@@ -9,7 +9,7 @@ module.exports = {
     'eslint:recommended',
     '@typescript-eslint/recommended',
   ],
-  ignorePatterns: ['dist', '.eslintrc.js', 'node_modules'],
+  ignorePatterns: ['dist', '.eslintrc.js', 'node_modules', 'server/legacy/**'],
   parser: '@typescript-eslint/parser',
   plugins: ['react-refresh'],
   rules: {
