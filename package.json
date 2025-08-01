@@ -19,7 +19,8 @@
     "spiral:mathtest": "jest __tests__/topology/*.spec.ts",
     "spiral:govtest": "jest __tests__/governance/*.spec.ts",
     "explorer:dev": "cd client/spiral-explorer && npm run dev",
-    "explorer:build": "cd client/spiral-explorer && npm run build"
+    "explorer:build": "cd client/spiral-explorer && npm run build",
+    "deploy:prod": "docker compose -f docker-compose.spiral-prod.yml up -d --build"
     // ...other scripts
   },
   "dependencies": {
