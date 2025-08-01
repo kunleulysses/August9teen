@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards
+  namespace: consciousness
+  labels:
+    grafana_dashboard: "1"
+data:
+  api-overview.json: |
+    {
+      "title": "API Overview",
+      "panels": [
+        {
+          "type": "graph",
+          "title": "Request Duration (s)",
+          "targets": [{ "expr": "histogram_quantile(0.99, sum(rate(request_duration_seconds_bucket[5m])) by (le))" }]
+        },
+        {
+          "type": "stat",
+          "title": "JWT Unauthorized",
+          "targets": [{ "expr": "sum(rate(jwt_unauthorized_total[5m]))" }]
+        },
+        {
+          "type": "stat",
+          "title": "Realities Created",
+          "targets": [{ "expr": "sum(rate(realities_created_total[5m]))" }]
+        }
+      ],
+      "schemaVersion": 36,
+      "version": 1,
+      "description": "API Prometheus overview"
+    }
+  crn-overview.json: |
+    {
+      "title": "CRN/SAQRN Overview",
+      "panels": [
+        {
+          "type": "stat",
+          "title": "CRN Ticks/sec",
+          "targets": [{ "expr": "rate(crn_ticks_total[1m])" }]
+        },
+        {
+          "type": "stat",
+          "title": "SAQRN Ticks/sec",
+          "targets": [{ "expr": "rate(saqrn_ticks_total[1m])" }]
+        }
+      ],
+      "schemaVersion": 36,
+      "version": 1,
+      "description": "Consciousness/Quantum Network tick rates"
+    }

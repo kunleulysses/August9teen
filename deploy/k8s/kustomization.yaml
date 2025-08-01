@@ -11,3 +11,6 @@ resources:
   - postgres-statefulset.yaml
   - postgres-service.yaml
   - api-deployment.yaml
+  - grafana-dashboards.yaml
+  - prometheus-rules.yaml
+  - podmonitor-api.yaml
