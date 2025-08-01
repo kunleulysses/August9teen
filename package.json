@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "test": "jest",
+    "test:ci": "jest --coverage --runInBand",
     "lint": "eslint .",
     "type-check": "tsc -p tsconfig.json --noEmit",
     "ci": "npm run lint && npm run type-check && npm run test && npm audit --audit-level=moderate",
