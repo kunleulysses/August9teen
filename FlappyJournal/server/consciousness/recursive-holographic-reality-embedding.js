@@ -5,6 +5,7 @@
  */
 
 import { EventEmitter } from 'events';
+import { validate } from './utils/validation.js';
 
 class RecursiveHolographicRealityEmbedding extends EventEmitter {
     constructor(maxRecursionDepth = 7) {
@@ -27,16 +28,30 @@ class RecursiveHolographicRealityEmbedding extends EventEmitter {
         if (recursionDepth > this.maxRecursionDepth) {
             throw new Error(`Maximum recursion depth (${this.maxRecursionDepth}) exceeded`);
         }
-        
+
+        // Validate baseReality.consciousnessState
+        try {
+            validate('https://flappyjournal.dev/schema/consciousness-state.json', baseReality.consciousnessState);
+        } catch (error) {
+            throw new Error('SchemaValidationError (base reality consciousnessState): ' + error.message);
+        }
+
         console.log(`🌀🔄 Creating recursive reality at depth ${recursionDepth}`);
-        
+
         // Generate consciousness state for this recursion level
         const recursiveConsciousnessState = this.generateRecursiveConsciousnessState(
-            baseReality.consciousnessState, 
+            baseReality.consciousnessState,
             recursionDepth,
             recursionParameters
         );
-        
+
+        // Validate generated recursiveConsciousnessState
+        try {
+            validate('https://flappyjournal.dev/schema/consciousness-state.json', recursiveConsciousnessState);
+        } catch (error) {
+            throw new Error('SchemaValidationError (recursiveConsciousnessState): ' + error.message);
+        }
+
         // Create embedded reality
         const embeddedReality = await this.generateEmbeddedReality(
             {

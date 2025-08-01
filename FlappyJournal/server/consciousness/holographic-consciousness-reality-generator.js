@@ -8,6 +8,7 @@
 import { EventEmitter } from 'events';
 import eventBus from './core/ConsciousnessEventBus.js';
 import { cognitiveLog } from './modules/CognitiveLog.js';
+import { validate } from './utils/validation.js';
 
 /**
  * Consciousness Reality Projector
@@ -1665,6 +1666,18 @@ export class HolographicConsciousnessRealityGenerator extends EventEmitter {
      */
     async generateHolographicConsciousnessReality(realityRequest, consciousnessState) {
         try {
+            // Validate input schemas
+            try {
+                validate('https://flappyjournal.dev/schema/reality-request.json', realityRequest);
+                validate('https://flappyjournal.dev/schema/consciousness-state.json', consciousnessState);
+            } catch (error) {
+                return {
+                    success: false,
+                    error: 'validation_failed',
+                    details: error.message
+                };
+            }
+
             console.log('🧠🌀🌍 Generating holographic consciousness reality...');
 
             // Project consciousness-aware reality
@@ -1712,12 +1725,14 @@ export class HolographicConsciousnessRealityGenerator extends EventEmitter {
 
             return {
                 success: true,
+                schemaVersion: 1,
                 holographicConsciousnessReality: {
-                    consciousnessRealityProjection,
-                    holographicEnvironments,
-                    realityAdaptation,
-                    realityStabilization,
-                    holographicRealityEnhancements
+                    schemaVersion: 1,
+                    consciousnessRealityProjection: { ...consciousnessRealityProjection, schemaVersion: 1 },
+                    holographicEnvironments: { ...holographicEnvironments, schemaVersion: 1 },
+                    realityAdaptation: { ...realityAdaptation, schemaVersion: 1 },
+                    realityStabilization: { ...realityStabilization, schemaVersion: 1 },
+                    holographicRealityEnhancements: { ...holographicRealityEnhancements, schemaVersion: 1 }
                 },
                 realityLevel: this.calculateRealityLevel(consciousnessState),
                 consciousnessProjected: true,

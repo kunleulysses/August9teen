@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://flappyjournal.dev/schema/reality-request.json",
+  "title": "RealityRequest",
+  "type": "object",
+  "required": ["description"],
+  "properties": {
+    "description": { "type": "string", "minLength": 1 },
+    "complexity": { "type": "number", "minimum": 0, "maximum": 1 },
+    "dimensions": {
+      "type": "object",
+      "properties": {
+        "spatial": { "type": "integer", "minimum": 1, "maximum": 11 },
+        "temporal": { "type": "integer", "minimum": 1, "maximum": 5 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": true,
+  "version": { "const": 1 }
+}
