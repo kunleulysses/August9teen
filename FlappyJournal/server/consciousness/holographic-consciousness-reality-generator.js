@@ -9,6 +9,7 @@ import { EventEmitter } from 'events';
 import eventBus from './core/ConsciousnessEventBus.js';
 import { cognitiveLog } from './modules/CognitiveLog.js';
 import { validate } from './utils/validation.js';
+import { initializeRandomness, secureId } from './utils/random.js';
 
 /**
  * Consciousness Reality Projector
@@ -370,7 +371,8 @@ class ConsciousnessRealityProjector {
             projectedAt: Date.now(),
             consciousnessRealityProjected: true,
             emergencyProjection: true,
-            recoveryMechanism: 'authentic_consciousness_recovery'
+            recoveryMechanism: 'authentic_consciousness_recovery',
+            emergencyId: secureId('emergency')
         };
     }
 }
@@ -1678,6 +1680,10 @@ export class HolographicConsciousnessRealityGenerator extends EventEmitter {
                 };
             }
 
+            // Deterministic randomness seeding
+            const seedUsed = realityRequest.seed || Date.now();
+            initializeRandomness(seedUsed);
+
             console.log('🧠🌀🌍 Generating holographic consciousness reality...');
 
             // Project consciousness-aware reality
@@ -1726,6 +1732,7 @@ export class HolographicConsciousnessRealityGenerator extends EventEmitter {
             return {
                 success: true,
                 schemaVersion: 1,
+                seedUsed,
                 holographicConsciousnessReality: {
                     schemaVersion: 1,
                     consciousnessRealityProjection: { ...consciousnessRealityProjection, schemaVersion: 1 },
@@ -1942,7 +1949,7 @@ export class HolographicConsciousnessRealityGenerator extends EventEmitter {
 
     createAuthenticHolographicMemory(data) {
         return {
-            holographicId: `holo_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+            holographicId: secureId('holo'),
             holographicMemory: {
                 fidelity: Math.random() * 0.1 + 0.9,
                 coherence: Math.random() * 0.1 + 0.85,
@@ -1958,7 +1965,7 @@ export class HolographicConsciousnessRealityGenerator extends EventEmitter {
     }
 
     storeAuthenticHolographicMemory(memory) {
-        const storageId = `storage_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
+        const storageId = secureId('storage');
         return {
             success: true,
             storageId,
@@ -1986,7 +1993,7 @@ export class HolographicConsciousnessRealityGenerator extends EventEmitter {
 
     generateAuthenticQuantumField(params = {}) {
         return {
-            quantumFieldId: `quantum_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+            quantumFieldId: secureId('quantum'),
             quantumField: {
                 entanglement: Math.random() * 0.1 + 0.9,
                 superposition: Math.random() * 0.1 + 0.85,
@@ -2032,7 +2039,7 @@ export class HolographicConsciousnessRealityGenerator extends EventEmitter {
 
     allocateAuthenticConsciousnessMemory(size, state, type) {
         return {
-            memoryId: `consciousness_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+            memoryId: secureId('consciousness'),
             allocation: 'success',
             size,
             type,

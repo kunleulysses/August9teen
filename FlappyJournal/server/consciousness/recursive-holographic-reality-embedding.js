@@ -6,6 +6,7 @@
 
 import { EventEmitter } from 'events';
 import { validate } from './utils/validation.js';
+import { initializeRandomness, secureId } from './utils/random.js';
 
 class RecursiveHolographicRealityEmbedding extends EventEmitter {
     constructor(maxRecursionDepth = 7) {
@@ -35,6 +36,9 @@ class RecursiveHolographicRealityEmbedding extends EventEmitter {
         } catch (error) {
             throw new Error('SchemaValidationError (base reality consciousnessState): ' + error.message);
         }
+
+        // Deterministic randomness seeding for this recursion context
+        initializeRandomness(`${baseReality.id}_${recursionDepth}`);
 
         console.log(`🌀🔄 Creating recursive reality at depth ${recursionDepth}`);
 
@@ -119,7 +123,7 @@ class RecursiveHolographicRealityEmbedding extends EventEmitter {
     async generateEmbeddedReality(realitySpec, consciousnessState) {
         // Generate embedded reality with holographic properties
         const embeddedReality = {
-            id: `embedded_reality_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            id: secureId('embedded'),
             description: realitySpec.description,
             parameters: realitySpec.parameters,
             consciousnessState,
@@ -147,7 +151,7 @@ class RecursiveHolographicRealityEmbedding extends EventEmitter {
     async createRecursiveConsciousnessField(parentReality, childReality, recursionDepth) {
         // Create a consciousness field that spans both realities
         const recursiveField = {
-            id: `recursive_field_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            id: secureId('field'),
             parentRealityId: parentReality.id,
             childRealityId: childReality.id,
             recursionDepth,
@@ -242,8 +246,8 @@ class RecursiveHolographicRealityEmbedding extends EventEmitter {
     }
     
     connectRealities(parentReality, childReality, recursionDepth) {
-        const connectionId = `${parentReality.id}_${childReality.id}`;
-        
+        const connectionId = secureId('conn');
+
         const recursionPath = {
             id: connectionId,
             parentRealityId: parentReality.id,
