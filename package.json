@@ -6,7 +6,9 @@
   "scripts": {
     "archive:generated": "node scripts/archive-old-generated.js",
     "test:single": "jest --runInBand",
-    "lint:selfcode": "eslint --config .eslintrc-selfcoding.json"
+    "lint:selfcode": "eslint --config .eslintrc-selfcoding.json",
+    "format:selfcode": "prettier --write server/consciousness/generated/**/*.js",
+    "rollback": "node bin/rollback-module.js"
     // ...other scripts
   },
   "dependencies": {
@@ -101,7 +103,8 @@
     "jest": "^29.7.0",
     "eslint": "^8.57.0",
     "eslint-plugin-complexity": "^0.4.1",
-    "eslint-plugin-sonarjs": "^0.21.0"
+    "eslint-plugin-sonarjs": "^0.21.0",
+    "prettier": "^3.3.1"
     // ...other devDependencies
   },
   "optionalDependencies": {

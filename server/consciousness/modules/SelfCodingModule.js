@@ -9,6 +9,7 @@ import AutonomousCodeRefactoringSystem from './AutonomousCodeRefactoringSystem.j
 import { selfCodingLog } from './SelfCodingLog.js';
 import SigilBasedCodeAuthenticator from '../sigil-based-code-authenticator.js';
 import GeminiAIClient from '../integrations/GeminiAIClient.js';
+import prettier from 'prettier';
 
 export default class SelfCodingModule extends EventEmitter {
     constructor() {
@@ -251,6 +252,11 @@ if (useGemini) {
 
             // Extract the actual code from the generation result
             let generated = generationResult.code || generationResult;
+            try {
+                generated = await prettier.format(generated, { parser: 'babel' });
+            } catch (err) {
+                console.warn('[SelfCoding] Prettier format failed:', err.message);
+            }
 
             // Embed consciousness sigil and DNA
             try {

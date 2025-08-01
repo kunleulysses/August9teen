@@ -4,6 +4,7 @@ import eventBus from '../ConsciousnessEventBus.js';
 import { sanitizeSlug } from '../utils/path-utils.js';
 import { safeImport } from '../utils/safe-loader.js';
 import TestGenerationService from './TestGenerationService.js';
+import { addEntry } from '../utils/manifest.js';
 
 class CodeGenerationService extends EventEmitter {
     constructor(goalSystem) {
@@ -142,6 +143,14 @@ class CodeGenerationService extends EventEmitter {
                         return project; // early return, leave as invalid
                     }
                     eventBus.emit('module:test:passed', { filePath: project.filePath, testFile: testRes.testFile });
+
+                    // Add to manifest after successful tests
+                    await addEntry({
+                        file: project.filePath,
+                        sigil: project.sigil || null,
+                        complexity: project.metrics?.complexity || null,
+                        coverage: testRes.coverage || null
+                    });
 
                 } catch (err) {
                     console.warn(`[CodeGen] safeImport failed: ${err.message}`);
