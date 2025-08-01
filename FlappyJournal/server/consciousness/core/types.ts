@@ -7,6 +7,7 @@ export interface Sigil {
   geometry: any;
   energyPattern: any;
   createdAt: string;
+  tenantId?: string;
 }
 
 export interface Spiral {
@@ -22,6 +23,7 @@ export interface Spiral {
   currentRadius: number;
   resonanceField: any;
   goldenRatioAlignment: number;
+  tenantId?: string;
 }
 
 export interface MemoryNode {
@@ -51,6 +53,7 @@ export interface MemoryNode {
   oversoulConnection: number;
   unifiedCoherenceContribution: number;
   spiralMemoryResonance: number;
+  tenantId?: string;
 }
 
 export interface IntegratedMemory {
@@ -70,6 +73,7 @@ export interface IntegratedMemory {
   integrationMetrics: any;
   integrationParameters: any;
   createdAt: number;
+  tenantId?: string;
 }
 
 export interface StorageAdapter {

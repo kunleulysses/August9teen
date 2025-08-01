@@ -1,6 +1,8 @@
 import { SpiralStorageAdapter } from './SpiralStorageAdapter';
 import level from 'level';
 
+import { encrypt, decrypt } from '../security/crypto';
+
 class LevelSpiralAdapter extends SpiralStorageAdapter {
   private dbPath: string;
   private db: any;
@@ -14,14 +16,23 @@ class LevelSpiralAdapter extends SpiralStorageAdapter {
   }
   async get(key: string): Promise<any> {
     try {
-      return await this.db.get(key);
+      let val = await this.db.get(key);
+      if (this.encryptionKey && val && val.__enc) {
+        val = JSON.parse(decrypt(val.__enc, this.encryptionKey).toString());
+      }
+      return val;
     } catch (e: any) {
       if (e.notFound) return undefined;
       throw e;
     }
   }
   async set(key: string, value: any): Promise<void> {
-    await this.db.put(key, value);
+    if (this.encryptionKey) {
+      const enc = encrypt(JSON.stringify(value), this.encryptionKey);
+      await this.db.put(key, { __enc: enc });
+    } else {
+      await this.db.put(key, value);
+    }
   }
   async del(key: string): Promise<void> {
     await this.db.del(key);
