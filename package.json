@@ -15,7 +15,10 @@
     "spiral:build": "tsc -p tsconfig.override.json",
     "spiral:test": "jest --coverage",
     "spiral:serve": "node dist-spiral/spiral-metrics-server.js",
-    "spiral:cluster": "node scripts/spiral-launch-cluster.js"
+    "spiral:cluster": "node scripts/spiral-launch-cluster.js",
+    "spiral:mathtest": "jest __tests__/topology/*.spec.ts",
+    "explorer:dev": "cd client/spiral-explorer && npm run dev",
+    "explorer:build": "cd client/spiral-explorer && npm run build"
     // ...other scripts
   },
   "dependencies": {
@@ -122,7 +125,9 @@
     "prom-client": "^15.0.0",
     "@types/express": "^4.17.21",
     "redlock": "^6.0.0",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "gl-matrix": "^3.4.3",
+    "fast-check": "^3.17.0"
     // ...other devDependencies
   },
   "optionalDependencies": {

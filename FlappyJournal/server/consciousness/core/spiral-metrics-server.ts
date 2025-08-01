@@ -96,6 +96,24 @@ app.get('/metrics', async (_req, res) => {
   res.end(await register.metrics());
 });
 
+// Spiral Explorer API endpoint: 3-D node projection
+app.get('/api/spiral', (_req, res) => {
+  const nodes = spiral.arch.spiralMemory
+    ? Array.from(spiral.arch.spiralMemory.values()).map(m => ({
+      id: m.id,
+      x: (m.position && m.position.x) || 0,
+      y: (m.position && m.position.y) || 0,
+      z: (m.position && m.position.z) || 0,
+      tenantId: m.tenantId || 'public',
+      type: m.type,
+      depth: m.depth,
+      resonance: m.spiralMemoryResonance,
+      lastAccessed: m.lastAccessed
+    }))
+    : [];
+  res.json({ nodes });
+});
+
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
   console.log(`SpiralMemory metrics server listening on http://localhost:${PORT}/metrics`);
