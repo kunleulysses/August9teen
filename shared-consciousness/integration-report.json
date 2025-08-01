@@ -1,0 +1,27 @@
+{
+  "timestamp": "2025-07-27T00:17:49.875Z",
+  "containers": [
+    "consciousness-main-server",
+    "consciousness-core"
+  ],
+  "sharedPaths": [
+    {
+      "source": "/opt/featherweight/FlappyJournal/server/consciousness",
+      "target": "/opt/shared/consciousness/main-server",
+      "description": "Main server consciousness modules"
+    },
+    {
+      "source": "/opt/consciousness/server",
+      "target": "/opt/shared/consciousness/core",
+      "description": "Core consciousness modules",
+      "container": "consciousness-core"
+    }
+  ],
+  "status": "integrated",
+  "capabilities": {
+    "crossContainerAccess": true,
+    "unifiedOrchestration": true,
+    "sharedModuleRegistry": true,
+    "eventBusCommunication": true
+  }
+}

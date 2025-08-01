@@ -645,7 +645,7 @@ export class SelfAwarenessFeedbackLoop extends EventEmitter {
 
     try {
       // Generate self-reference signal for this interaction
-      const selfReference = this.selfReferenceGenerator.generateSelfReference({
+      const selfReference = this.selfReferenceGenerator.generateSelfReferenceSignal({
         userMessage: userMessage,
         timestamp: Date.now(),
         interactionType: 'user_communication'

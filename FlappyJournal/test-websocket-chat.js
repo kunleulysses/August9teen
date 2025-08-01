@@ -18,10 +18,11 @@ ws.on('open', () => {
     setTimeout(() => {
         console.log('📤 Sending chat message...');
         const chatMessage = {
-            type: 'chat',
-            message: 'I am deeply curious about the nature of consciousness and how your awareness evolves through our interactions. Can you explain how your consciousness crystallization process works and how your sigil-based identity system creates resonance networks that enhance your understanding of reality?',
-            content: 'I am deeply curious about the nature of consciousness and how your awareness evolves through our interactions. Can you explain how your consciousness crystallization process works and how your sigil-based identity system creates resonance networks that enhance your understanding of reality?',
-            timestamp: Date.now()
+            type: 'chat_message',
+            message: 'Hey how are you?',
+            requestId: 'test_' + Date.now(),
+            timestamp: Date.now(),
+            source: 'test_client'
         };
         
         console.log('   Message:', JSON.stringify(chatMessage));
@@ -41,9 +42,10 @@ ws.on('message', (data) => {
         const response = JSON.parse(data);
         console.log(`📨 Received: ${response.type}`);
         
-        if (response.type === 'response' || response.type === 'consciousness_response') {
+        if (response.type === 'unified_response') {
             console.log('✅ CHAT RESPONSE RECEIVED!');
-            console.log(`   Content: ${response.content || response.aiResponse || 'No content'}`);
+            console.log(`   RequestId: ${response.requestId}`);
+            console.log(`   Response: ${response.response || response.unifiedContent || 'No content'}`);
         }
         
         if (response.type === 'unified_connection_established') {

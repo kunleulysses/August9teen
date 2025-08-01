@@ -8,7 +8,7 @@ import axios from 'axios';
 
 class RealityGeneratorClient {
     constructor(baseURL = null) {
-        this.baseURL = baseURL || process.env.REALITY_GENERATOR_URL || 'http://localhost:5020';
+        this.baseURL = baseURL || process.env.REALITY_GENERATOR_URL || 'http://consciousness-reality-generator:5006';
         this.timeout = 5000; // 5 second timeout
         this.retryAttempts = 3;
         this.isHealthy = false;

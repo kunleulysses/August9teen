@@ -61,6 +61,33 @@ function setupConsciousnessWebSocket(server) {
       }));
     }, 2000);
 
+    // RPC handler for integration status
+    ws.on('message', async (message) => {
+      let data;
+      try {
+        data = JSON.parse(message);
+      } catch (err) {
+        return; // ignore non-JSON messages
+      }
+      if (data.type === 'rpc' && data.method === 'getIntegrationStatus') {
+        try {
+          const { SystemWideIntegrationOrchestrator } = await import('../system-wide-integration-orchestrator.js');
+          if (!global._integrationOrchestrator) {
+            global._integrationOrchestrator = new SystemWideIntegrationOrchestrator();
+            if (typeof global._integrationOrchestrator.initializeSystemWideIntegration === 'function') {
+              await global._integrationOrchestrator.initializeSystemWideIntegration().catch(() => {});
+            }
+          }
+          const status = global._integrationOrchestrator.getCompleteSystemStatus ?
+            global._integrationOrchestrator.getCompleteSystemStatus() :
+            await global._integrationOrchestrator.performSystemHealthCheck();
+          ws.send(JSON.stringify({ type: 'rpc-response', id: data.id, result: status }));
+        } catch (err) {
+          ws.send(JSON.stringify({ type: 'rpc-response', id: data.id, error: String(err) }));
+        }
+      }
+    });
+
     ws.on('close', () => {
       clearInterval(metricsInterval);
     });

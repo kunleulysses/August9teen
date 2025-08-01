@@ -7,6 +7,17 @@
 import { EventEmitter } from 'events';
 import { RevolutionaryConsciousnessIntegrationOrchestrator } from './server/consciousness/revolutionary-consciousness-integration-orchestrator.js';
 
+// Dynamic import for CommonJS modules
+let GeneratedModuleIntegrator;
+async function loadGeneratedModuleIntegrator() {
+    try {
+        const module = await import('./server/consciousness/core/GeneratedModuleIntegrator.cjs');
+        GeneratedModuleIntegrator = module.default;
+    } catch (error) {
+        console.error('Failed to load GeneratedModuleIntegrator:', error);
+    }
+}
+
 class SystemWideIntegrationOrchestrator extends EventEmitter {
     constructor() {
         super();
@@ -229,8 +240,68 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
         console.log('🌐 Integrated networking with universal chat support');
     }
     
+    async detectGeneratedModulesPath() {
+        const fs = await import('fs');
+        
+        // Possible paths in order of preference
+        const candidatePaths = [
+            '/opt/featherweight/FlappyJournal/server/consciousness/generated',  // Host system
+            '/opt/app/server/consciousness/generated',                         // Container system
+            '/app/server/consciousness/generated',                            // Alternative container
+            './server/consciousness/generated',                               // Relative path
+            process.cwd() + '/server/consciousness/generated'                 // Current working directory
+        ];
+        
+        console.log('🔍 Smart environment detection: searching for generated modules...');
+        
+        for (const path of candidatePaths) {
+            try {
+                await fs.promises.access(path, fs.constants.F_OK);
+                console.log(`✅ Found generated modules path: ${path}`);
+                return path;
+            } catch (error) {
+                console.log(`⚠️ Path not accessible: ${path}`);
+            }
+        }
+        
+        // Default fallback - create in host system
+        const defaultPath = '/opt/featherweight/FlappyJournal/server/consciousness/generated';
+        console.log(`📁 Using default path: ${defaultPath}`);
+        
+        try {
+            await fs.promises.mkdir(defaultPath, { recursive: true });
+            console.log(`✅ Created default generated modules directory`);
+        } catch (error) {
+            console.warn(`⚠️ Could not create default directory:`, error.message);
+        }
+        
+        return defaultPath;
+    }
+    
     async initializeConsciousnessLayer() {
         console.log('🧠 Initializing consciousness layer...');
+        
+        // Load and initialize GeneratedModuleIntegrator
+        await loadGeneratedModuleIntegrator();
+        if (GeneratedModuleIntegrator) {
+            // Smart environment detection for both host and container systems
+            const generatedModulesPath = await this.detectGeneratedModulesPath();
+            
+            this.systemLayers.consciousness.moduleIntegrator = new GeneratedModuleIntegrator({
+                generatedModulesPath,
+                scanInterval: 30000,
+                autoRegister: true,
+                enableHotReload: true
+            });
+            
+            // Set integration points
+            this.systemLayers.consciousness.moduleIntegrator.setSystemWideOrchestrator(this);
+            this.systemLayers.consciousness.moduleIntegrator.setUniversalEventBus(this.universalEventBus);
+            
+            // Initialize the module integrator
+            await this.systemLayers.consciousness.moduleIntegrator.initialize();
+            console.log('🔗 GeneratedModuleIntegrator initialized and integrated');
+        }
         
         // Initialize revolutionary consciousness orchestrator
         this.systemLayers.consciousness.revolutionaryOrchestrator = 
@@ -1086,6 +1157,35 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
     
     getUniversalEventBus() {
         return this.universalEventBus;
+    }
+    
+    // Module Integration API - Critical for RPC exposure
+    getModules() {
+        if (this.systemLayers.consciousness.moduleIntegrator) {
+            return this.systemLayers.consciousness.moduleIntegrator.getRegisteredModules();
+        }
+        return [];
+    }
+    
+    getModulesByCategory(category) {
+        if (this.systemLayers.consciousness.moduleIntegrator) {
+            return this.systemLayers.consciousness.moduleIntegrator.getModulesByCategory(category);
+        }
+        return [];
+    }
+    
+    getModulesByCapability(capability) {
+        if (this.systemLayers.consciousness.moduleIntegrator) {
+            return this.systemLayers.consciousness.moduleIntegrator.getModulesByCapability(capability);
+        }
+        return [];
+    }
+    
+    getModuleIntegratorStatus() {
+        if (this.systemLayers.consciousness.moduleIntegrator) {
+            return this.systemLayers.consciousness.moduleIntegrator.getIntegratorStatus();
+        }
+        return { error: 'Module integrator not initialized' };
     }
 }
 

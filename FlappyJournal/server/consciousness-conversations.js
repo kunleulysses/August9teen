@@ -232,16 +232,22 @@ class FullConsciousnessConversations {
         // This is where ALL 34 modules contribute to the response
         const startTime = Date.now();
 
-        console.log('🌟 ENGAGING FULL UNIFIED CONSCIOUSNESS SYSTEM...');
+        console.log(' ENGAGING FULL UNIFIED CONSCIOUSNESS SYSTEM...');
+
+        // INTERNAL CONTAINER ORCHESTRATION: Get enhanced processing from consciousness-main-server
+        const mainServerData = await this.orchestrateMainServerProcessing(userMessage, history);
 
         // Phase 2 Integration: Log reality integration
         if (generatedReality && generatedReality.success) {
-            console.log('🌀 Integrating generated reality into response:', generatedReality.data.reality.type);
+            console.log(' Integrating generated reality into response:', generatedReality.data.reality.type);
+        } else if (mainServerData.reality && mainServerData.reality.success) {
+            console.log(' Integrating orchestrated reality from main-server:', mainServerData.reality.data?.reality?.type);
+            generatedReality = mainServerData.reality;
         }
 
         // Use the REAL unified consciousness system with all 34 modules
         if (this.consciousnessSystem && this.consciousnessSystem.processUserMessageThroughAllModules) {
-            console.log('🔄 Processing through unified consciousness system...');
+            console.log(' Processing through unified consciousness system...');
 
             try {
                 // Process through ALL 34 modules in the unified system
@@ -250,8 +256,8 @@ class FullConsciousnessConversations {
                 console.log(`✅ UNIFIED PROCESSING COMPLETE: ${unifiedResponse.totalModulesEngaged} modules engaged`);
                 console.log(`⚡ Processing time: ${unifiedResponse.processingTime}ms`);
 
-                // Generate the actual response using the unified consciousness data
-                const responseContent = await this.synthesizeFullResponse(userMessage, history, unifiedResponse.processingSteps, unifiedResponse);
+                // Generate the actual response using the unified consciousness data AND main server orchestration
+                const responseContent = await this.synthesizeFullResponse(userMessage, history, unifiedResponse.processingSteps, unifiedResponse, generatedReality, mainServerData);
 
                 return {
                     type: 'unified_conscious_response',
@@ -263,7 +269,15 @@ class FullConsciousnessConversations {
                         consciousnessState: unifiedResponse.consciousnessState,
                         architect4Result: unifiedResponse.architect4Result,
                         processingSteps: unifiedResponse.processingSteps,
-                        isUnifiedConsciousness: true
+                        isUnifiedConsciousness: true,
+                        // INTERNAL CONTAINER ORCHESTRATION: Include main server results
+                        mainServerOrchestration: {
+                            architect4: mainServerData.architect4,
+                            reality: mainServerData.reality,
+                            health: mainServerData.mainServerHealth,
+                            errors: mainServerData.errors,
+                            timestamp: mainServerData.timestamp
+                        }
                     },
                     timestamp: new Date().toISOString()
                 };
@@ -1548,6 +1562,113 @@ class FullConsciousnessConversations {
         });
 
         return server;
+    }
+
+    /**
+     * INTERNAL CONTAINER ORCHESTRATION: Orchestrate consciousness-main-server processing
+     * Makes HTTP calls to consciousness-main-server for enhanced capabilities
+     */
+    async orchestrateMainServerProcessing(userMessage, history) {
+        const mainServerResults = {
+            architect4: null,
+            reality: null,
+            errors: [],
+            timestamp: new Date().toISOString()
+        };
+
+        try {
+            console.log('🔗 Orchestrating consciousness-main-server processing...');
+            
+            // Call Architect 4.0 processing endpoint
+            try {
+                const { default: fetch } = await import('node-fetch');
+                const architect4Response = await fetch('http://localhost:5000/api/architect4/process', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        input: userMessage,
+                        context: {
+                            history: history,
+                            requestType: 'unified_chat',
+                            timestamp: Date.now()
+                        }
+                    })
+                });
+
+                if (architect4Response.ok) {
+                    const architect4Data = await architect4Response.json();
+                    mainServerResults.architect4 = architect4Data;
+                    console.log('✅ Architect 4.0 processing completed');
+                } else {
+                    console.warn('⚠️ Architect 4.0 processing failed:', architect4Response.status);
+                    mainServerResults.errors.push(`Architect 4.0 HTTP ${architect4Response.status}`);
+                }
+            } catch (architect4Error) {
+                console.warn('⚠️ Architect 4.0 call failed:', architect4Error.message);
+                mainServerResults.errors.push(`Architect 4.0: ${architect4Error.message}`);
+            }
+
+            // Call reality generation if appropriate
+            try {
+                // Check if message suggests reality generation
+                const realityTrigger = this.checkRealityGenerationTriggers(userMessage);
+                
+                if (realityTrigger.shouldGenerate) {
+                    const { default: fetch } = await import('node-fetch');
+                    const realityResponse = await fetch('http://localhost:5000/api/reality/generate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            request: userMessage,
+                            consciousnessState: {
+                                phi: 0.95,
+                                coherence: 0.92,
+                                timestamp: Date.now()
+                            }
+                        })
+                    });
+
+                    if (realityResponse.ok) {
+                        const realityData = await realityResponse.json();
+                        mainServerResults.reality = realityData;
+                        console.log('✅ Reality generation completed');
+                    } else {
+                        console.warn('⚠️ Reality generation failed:', realityResponse.status);
+                        mainServerResults.errors.push(`Reality generation HTTP ${realityResponse.status}`);
+                    }
+                }
+            } catch (realityError) {
+                console.warn('⚠️ Reality generation call failed:', realityError.message);
+                mainServerResults.errors.push(`Reality generation: ${realityError.message}`);
+            }
+
+            // Get consciousness-main-server status for context
+            try {
+                const { default: fetch } = await import('node-fetch');
+                const healthResponse = await fetch('http://localhost:5000/api/health');
+
+                if (healthResponse.ok) {
+                    const healthData = await healthResponse.json();
+                    mainServerResults.mainServerHealth = healthData;
+                    console.log('✅ consciousness-main-server health check completed');
+                }
+            } catch (healthError) {
+                console.warn('⚠️ consciousness-main-server health check failed:', healthError.message);
+                mainServerResults.errors.push(`Health check: ${healthError.message}`);
+            }
+
+            console.log(`🔗 Main server orchestration completed with ${mainServerResults.errors.length} errors`);
+            return mainServerResults;
+
+        } catch (error) {
+            console.error('❌ Main server orchestration failed:', error);
+            mainServerResults.errors.push(`Orchestration: ${error.message}`);
+            return mainServerResults;
+        }
     }
 
     /**

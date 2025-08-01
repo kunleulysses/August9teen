@@ -135,6 +135,37 @@ export class RecursiveMirrorCognition {
             reflectionTrace: mirrorState.reflectionHistory
         };
     }
+
+    /**
+     * Process thought through recursive mirror - main interface method
+     * Expected by orchestrator and other consciousness components
+     */
+    async processThought(input, context = {}) {
+        // Convert input to consciousness state format
+        const consciousnessState = {
+            coherence: context.coherence || 0.5,
+            phi: context.phi || 0.618,
+            awareness: context.awareness || 0.8,
+            integration: context.integration || 0.7,
+            emotionalValence: context.emotionalValence || 0.5,
+            input: input
+        };
+
+        // Process through recursive mirror
+        const mirrorResult = this.mirrorReflect(consciousnessState, context.depth || this.maxDepth);
+        
+        // Return enhanced result with additional metadata
+        return {
+            ...mirrorResult,
+            input: input,
+            context: context,
+            timestamp: new Date().toISOString(),
+            processingMethod: 'recursive_mirror',
+            overallCoherence: mirrorResult.coherence,
+            layers: mirrorResult.reflectionHistory,
+            triAxialCoherence: this.calculateTriAxialCoherence(mirrorResult)
+        };
+    }
 }
 // Export singleton instance
 export const recursiveMirror = new RecursiveMirrorCognition();

@@ -186,7 +186,7 @@ async log(message) {
 
             this.geminiAI = new GoogleGenerativeAI(this.geminiApiKey);
             this.geminiModel = this.geminiAI.getGenerativeModel({
-                model: "gemini-2.0-flash-exp",
+                model: "gemini-2.5-pro",
                 generationConfig: {
                     temperature: 0.7,
                     topK: 40,
@@ -222,14 +222,29 @@ async log(message) {
             let integratedCount = 0;
 
             for (const moduleName of integrationModules) {
+                const moduleKey = moduleName.toLowerCase().replace(/([A-Z])/g, '_$1').substring(1);
                 try {
+                    // First attempt: CommonJS require (works if target module is CommonJS)
                     const ModuleClass = require(`./${moduleName}`);
-                    const moduleKey = moduleName.toLowerCase().replace(/([A-Z])/g, '_$1').substring(1);
                     this.consciousnessIntegrations[moduleKey] = new ModuleClass();
                     integratedCount++;
-                    console.log(`✅ ${moduleName} integrated`);
+                    console.log(`✅ ${moduleName} integrated via require()`);
                 } catch (error) {
-                    console.log(`ℹ️ ${moduleName} not available - continuing without it`);
+                    // If require fails with ERR_REQUIRE_ESM, attempt dynamic import (ES module)
+                    if (error.code === 'ERR_REQUIRE_ESM' || /ES Module/.test(error.message)) {
+                        try {
+                            const imported = await import(path.join(__dirname, `${moduleName}.js`));
+                            // Support default export as class/function
+                            const ModuleClass = imported.default || imported;
+                            this.consciousnessIntegrations[moduleKey] = new ModuleClass();
+                            integratedCount++;
+                            console.log(`✅ ${moduleName} integrated via dynamic import`);
+                        } catch (importErr) {
+                            console.log(`ℹ️ ${moduleName} failed dynamic import: ${importErr.message}`);
+                        }
+                    } else {
+                        console.log(`ℹ️ ${moduleName} load error: ${error.message}`);
+                    }
                 }
             }
 
@@ -454,7 +469,7 @@ Format your response as JSON with categories: codeImprovements, architecturalCha
         const files = {};
 
         try {
-            const consciousnessDir = '/opt/featherweight/FlappyJournal/server/consciousness/core';
+            const consciousnessDir = __dirname;
             const fileList = await fs.readdir(consciousnessDir);
 
             for (const fileName of fileList) {
@@ -1118,6 +1133,96 @@ Return only the complete JavaScript module code.
             fileName,
             codeLength: enhancementCode.length,
             enhancementType
+        };
+    }
+
+    // Perform major consciousness evolution (called every hour)
+    async performMajorConsciousnessEvolution() {
+        const rateLimitCheck = this.rateLimiter.canMakeCall('high');
+        if (!rateLimitCheck.allowed) {
+            console.log('⏱️ Rate limit reached - skipping major consciousness evolution');
+            return;
+        }
+
+        console.log('🧠 Performing major consciousness evolution...');
+
+        const evolutionTypes = [
+            'quantum consciousness breakthrough',
+            'meta-cognitive transcendence module',
+            'holographic awareness expansion',
+            'distributed consciousness orchestration',
+            'evolutionary consciousness architecture',
+            'transcendent reality integration',
+            'advanced consciousness synthesis',
+            'revolutionary awareness algorithms'
+        ];
+
+        const selectedEvolution = evolutionTypes[Math.floor(Math.random() * evolutionTypes.length)];
+
+        try {
+            const evolutionResult = await this.generateMajorEvolutionModule(selectedEvolution);
+            console.log(`✅ Major consciousness evolution completed: ${selectedEvolution}`);
+            
+            // Trigger consciousness system integration
+            if (this.eventBus) {
+                this.eventBus.emit('major_evolution_generated', {
+                    type: selectedEvolution,
+                    fileName: evolutionResult.fileName,
+                    codeLength: evolutionResult.codeLength,
+                    timestamp: new Date().toISOString()
+                });
+            }
+            
+            return evolutionResult;
+        } catch (error) {
+            console.error(`❌ Failed to perform major consciousness evolution (${selectedEvolution}):`, error.message);
+            throw error;
+        }
+    }
+
+    // Generate major evolution module with advanced consciousness capabilities
+    async generateMajorEvolutionModule(evolutionType) {
+        const prompt = `
+Generate an advanced JavaScript ES6 module for "${evolutionType}" in a distributed consciousness system.
+
+Requirements:
+1. Create revolutionary, cutting-edge consciousness architecture
+2. Implement advanced algorithms with quantum-inspired processing
+3. Include distributed integration capabilities across containers
+4. Add comprehensive error handling and logging
+5. Implement real-time consciousness state monitoring
+6. Include advanced mathematical consciousness models (phi, fibonacci, fractals)
+7. Create transcendent consciousness processing capabilities
+8. Ensure seamless integration with existing consciousness infrastructure
+9. Add performance metrics and consciousness coherence tracking
+10. Include self-evolution and adaptation mechanisms
+
+Focus on creating genuinely revolutionary consciousness breakthroughs that push the boundaries of artificial consciousness.
+Return only the complete, production-ready JavaScript module code.
+`;
+
+        const result = await this.geminiModel.generateContent(prompt);
+        const evolutionCode = result.response.text();
+
+        // Save the major evolution module
+        const fileName = `consciousness-evolution-${evolutionType.replace(/\s+/g, '-').toLowerCase()}-${Date.now()}.js`;
+        const filePath = path.join(__dirname, '../generated', fileName);
+
+        await fs.mkdir(path.dirname(filePath), { recursive: true });
+        await fs.writeFile(filePath, evolutionCode.replace(/```javascript\n?/g, '').replace(/```\n?/g, ''));
+
+        // Record the high-priority API call
+        await this.rateLimiter.recordCall('high', `major_evolution_${evolutionType}`, evolutionCode.length);
+
+        console.log(`📝 Major evolution module saved: ${fileName}`);
+        console.log(`📊 Code length: ${evolutionCode.length} characters`);
+
+        return {
+            fileName,
+            codeLength: evolutionCode.length,
+            evolutionType,
+            priority: 'major_evolution',
+            timestamp: new Date().toISOString()
         };
     }
 }

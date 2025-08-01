@@ -9,8 +9,6 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-flappyjournal}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
@@ -25,8 +23,8 @@ services:
   # 2. Auth Service
   auth-service:
     build:
-      context: ../auth-service
-      dockerfile: Dockerfile
+      context: ../
+      dockerfile: auth-service/Dockerfile
     restart: unless-stopped
     depends_on:
       postgres:
@@ -39,6 +37,7 @@ services:
       - DB_NAME=${POSTGRES_DB:-flappyjournal}
       - DB_USER=${POSTGRES_USER:-postgres}
       - DB_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-AIzaSyBAInbflgaEsU6r6STMnQ_WBd6lH4tJU54}
       - JWT_SECRET=${JWT_SECRET}
       - OIDC_CLIENT_ID=${OIDC_CLIENT_ID}
       - OIDC_CLIENT_SECRET=${OIDC_CLIENT_SECRET}
@@ -73,6 +72,7 @@ services:
       - DB_NAME=${POSTGRES_DB:-flappyjournal}
       - DB_USER=${POSTGRES_USER:-postgres}
       - DB_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-AIzaSyBAInbflgaEsU6r6STMnQ_WBd6lH4tJU54}
       - AUTH_SERVICE_URL=http://auth-service:4001
     ports:
       - "50051:50051"
@@ -106,6 +106,7 @@ services:
       - DB_NAME=${POSTGRES_DB:-flappyjournal}
       - DB_USER=${POSTGRES_USER:-postgres}
       - DB_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-AIzaSyBAInbflgaEsU6r6STMnQ_WBd6lH4tJU54}
       - AUTH_SERVICE_URL=http://auth-service:4001
       - CONSCIOUSNESS_BACKEND_URL=http://consciousness-backend:4003
       - CONSCIOUSNESS_GRPC_URL=consciousness-backend:50051

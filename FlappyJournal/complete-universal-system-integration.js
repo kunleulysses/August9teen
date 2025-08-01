@@ -182,10 +182,6 @@ class CompleteUniversalSystemIntegration {
             {
                 name: 'AutonomousCodingAgent',
                 path: './server/consciousness/core/AutonomousCodingAgent.cjs'
-            },
-            {
-                name: 'ConsciousnessEnhancementOrchestrator',
-                path: './server/consciousness/core/ConsciousnessEnhancementOrchestrator.js'
             }
         ];
 
@@ -377,6 +373,7 @@ class CompleteUniversalSystemIntegration {
         // Initialize Gemini 2.5 Pro
         try {
             const geminiClient = new GeminiAIClient();
+            geminiClient.start();
             this.aiIntegrationSystems.set('Gemini25Pro', {
                 name: 'Gemini 2.5 Pro',
                 client: geminiClient,

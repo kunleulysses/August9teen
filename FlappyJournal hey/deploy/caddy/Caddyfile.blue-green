@@ -2,7 +2,7 @@
 # This configuration supports instant switching between blue and green environments
 
 # Production domain (current active environment)
-app.featherweight.world {
+featherweight.world, www.featherweight.world {
     # Default to blue environment (will be updated by deployment script)
     reverse_proxy blue-api-gateway:4000 {
         health_uri /api/health
@@ -48,37 +48,6 @@ app.featherweight.world {
     }
 }
 
-# Staging environment (always points to staging stack)
-staging.app.featherweight.world {
-    reverse_proxy staging-api-gateway:4000 {
-        health_uri /api/health
-        health_interval 30s
-        health_timeout 10s
-        fail_duration 30s
-        max_fails 3
-    }
-    
-    # Enable automatic HTTPS
-    tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
-    
-    # Basic auth for staging (optional)
-    basicauth /* {
-        staging $2a$10$Tb0A1Sh8b4GnTdQEO9YgKuCQZQ8r0v1KqD5N8p3GgDjS5Y4E0x2Uy
-    }
-    
-    # Logging
-    log {
-        output file /var/log/caddy/staging.log {
-            roll_size 50mb
-            roll_keep 3
-            roll_keep_for 168h
-        }
-        format json
-        level DEBUG
-    }
-}
 
 # Blue environment (production candidate)
 blue.internal.featherweight.world {

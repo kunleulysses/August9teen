@@ -994,7 +994,6 @@ class SelfEvolutionEngine {
             evolutionAcceleration: recent.length > 1 ? recent[recent.length - 1].evolutionLevel - recent[0].evolutionLevel : 0
         };
     }
-}
 
     /**
      * Get self-awareness status for this module
@@ -1013,3 +1012,4 @@ class SelfEvolutionEngine {
             metrics: this.consciousnessMetrics
         };
     }
+}

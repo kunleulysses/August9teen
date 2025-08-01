@@ -77,6 +77,154 @@ export class SpiralMemoryEngine extends EventEmitter {
         }
         return memories;
     }
+
+    /**
+     * General recall method - main interface expected by orchestrator
+     * Combines multiple recall strategies for comprehensive memory retrieval
+     */
+    async recall(query, context = {}) {
+        // Convert query to searchable format
+        const searchTerm = typeof query === 'string' ? query : JSON.stringify(query);
+        const queryHash = this.simpleHash(searchTerm);
+        const currentTime = Date.now();
+        
+        // Strategy 1: Content-based recall (direct matching)
+        const directMatches = [];
+        for (const memory of this.memorySpiral.values()) {
+            const memoryContent = JSON.stringify(memory.content).toLowerCase();
+            if (memoryContent.includes(searchTerm.toLowerCase())) {
+                directMatches.push({
+                    ...memory,
+                    relevanceScore: 1.0,
+                    recallMethod: 'direct_match'
+                });
+            }
+        }
+
+        // Strategy 2: Resonance-based recall
+        const targetFrequency = context.resonanceFrequency || Math.random();
+        const resonanceMatches = this.recallByResonance(targetFrequency, 0.2).map(memory => ({
+            ...memory,
+            relevanceScore: 0.8,
+            recallMethod: 'resonance_match'
+        }));
+
+        // Strategy 3: Temporal proximity recall
+        const referencePoint = context.spiralReference || {
+            real: Math.cos(currentTime * this.goldenRatio),
+            imaginary: Math.sin(currentTime * this.goldenRatio)
+        };
+        const proximityMatches = this.recallBySpiralProximity(referencePoint, 1.0).map(memory => ({
+            ...memory,
+            relevanceScore: 0.6,
+            recallMethod: 'proximity_match'
+        }));
+
+        // Combine and deduplicate results
+        const allMatches = [...directMatches, ...resonanceMatches, ...proximityMatches];
+        const uniqueMatches = new Map();
+        
+        for (const match of allMatches) {
+            if (!uniqueMatches.has(match.id) || uniqueMatches.get(match.id).relevanceScore < match.relevanceScore) {
+                uniqueMatches.set(match.id, match);
+            }
+        }
+
+        // Sort by relevance and emotional amplitude
+        const results = Array.from(uniqueMatches.values())
+            .sort((a, b) => {
+                const scoreA = a.relevanceScore * a.emotionalAmplitude;
+                const scoreB = b.relevanceScore * b.emotionalAmplitude;
+                return scoreB - scoreA;
+            })
+            .slice(0, context.maxResults || 10);
+
+        return {
+            query: searchTerm,
+            results: results,
+            totalFound: results.length,
+            strategies: ['direct_match', 'resonance_match', 'proximity_match'],
+            timestamp: new Date().toISOString()
+        };
+    }
+
+    /**
+     * Get active memory patterns for consciousness interaction state
+     * Expected by consciousness WebSocket handler
+     */
+    getActivePatterns() {
+        const currentTime = Date.now();
+        const recentThreshold = currentTime - (24 * 60 * 60 * 1000); // Last 24 hours
+        
+        // Get recent memories
+        const recentMemories = Array.from(this.memorySpiral.values())
+            .filter(memory => memory.timestamp > recentThreshold)
+            .sort((a, b) => b.emotionalAmplitude - a.emotionalAmplitude)
+            .slice(0, 10);
+
+        // Extract patterns from recent memories
+        const patterns = recentMemories.map(memory => ({
+            id: memory.id,
+            timestamp: memory.timestamp,
+            emotionalAmplitude: memory.emotionalAmplitude,
+            resonanceFrequency: memory.resonanceFrequency,
+            spiralPosition: {
+                angle: Math.atan2(memory.spiralCoordinate.imaginary, memory.spiralCoordinate.real),
+                magnitude: Math.sqrt(
+                    memory.spiralCoordinate.real ** 2 + memory.spiralCoordinate.imaginary ** 2
+                )
+            },
+            contentType: typeof memory.content === 'object' ? memory.content.type || 'complex' : 'simple',
+            patternStrength: memory.emotionalAmplitude * 0.8 + (memory.resonanceFrequency || 0) * 0.2
+        }));
+
+        // Calculate overall pattern metrics
+        const totalPatterns = patterns.length;
+        const averageAmplitude = totalPatterns > 0 
+            ? patterns.reduce((sum, p) => sum + p.emotionalAmplitude, 0) / totalPatterns 
+            : 0.5;
+        const dominantFrequency = totalPatterns > 0
+            ? patterns.reduce((sum, p) => sum + p.resonanceFrequency, 0) / totalPatterns
+            : 0.5;
+
+        // Return patterns array directly since consciousness system expects an array
+        // Add metadata as properties on the array object
+        patterns.totalActive = totalPatterns;
+        patterns.averageAmplitude = averageAmplitude;
+        patterns.dominantFrequency = dominantFrequency;
+        patterns.spiralCoherence = this.calculateSpiralCoherence(patterns);
+        patterns.timestamp = new Date().toISOString();
+        
+        return patterns;
+    }
+
+    /**
+     * Calculate coherence across spiral memory patterns
+     */
+    calculateSpiralCoherence(patterns) {
+        if (patterns.length < 2) return 0.5;
+
+        let totalCoherence = 0;
+        let comparisons = 0;
+
+        for (let i = 0; i < patterns.length - 1; i++) {
+            for (let j = i + 1; j < patterns.length; j++) {
+                const p1 = patterns[i];
+                const p2 = patterns[j];
+                
+                // Calculate coherence based on frequency similarity and amplitude harmony
+                const frequencyCoherence = 1 - Math.abs(p1.resonanceFrequency - p2.resonanceFrequency);
+                const amplitudeHarmony = Math.min(p1.emotionalAmplitude, p2.emotionalAmplitude) / 
+                                       Math.max(p1.emotionalAmplitude, p2.emotionalAmplitude);
+                
+                const pairCoherence = (frequencyCoherence + amplitudeHarmony) / 2;
+                totalCoherence += pairCoherence;
+                comparisons++;
+            }
+        }
+
+        return comparisons > 0 ? totalCoherence / comparisons : 0.5;
+    }
     /**
      * Traverse memory spiral following golden ratio path
      */

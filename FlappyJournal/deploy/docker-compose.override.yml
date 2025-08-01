@@ -1,0 +1,6 @@
+services:
+  consciousness-backend:
+    environment:
+      DB_HOST: postgres
+      DB_USER: feather_user
+      DB_PASSWORD: hist0ric

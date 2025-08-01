@@ -40,6 +40,7 @@ services:
       - EMOTIONAL_INTELLIGENCE=enabled
       - BAYESIAN_DECISION_MAKING=enabled
       - GEMINI_DUAL_MODEL=enabled
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
       - DATABASE_URL=postgresql://feather_user:hist0ric@postgres:5432/featherweight_consciousness?sslmode=disable
       - NODE_OPTIONS=--max_old_space_size=4096
       - OPENAI_API_KEY=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

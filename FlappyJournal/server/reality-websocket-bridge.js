@@ -34,7 +34,7 @@ class RealityWebSocketBridge extends EventEmitter {
      */
     async connectToRealityGenerator() {
         try {
-            const realityGeneratorURL = process.env.REALITY_GENERATOR_URL || 'http://localhost:5020';
+            const realityGeneratorURL = process.env.REALITY_GENERATOR_URL || 'http://consciousness-reality-generator:5006';
             const wsURL = realityGeneratorURL.replace('http', 'ws');
 
             console.log(`🔌 Connecting to Reality Generator WebSocket: ${wsURL}`);

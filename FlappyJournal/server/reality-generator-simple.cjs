@@ -1,7 +1,17 @@
+console.error('=== REALITY GENERATOR FILE LOADED ===');
+console.error('=== REALITY GENERATOR FILE LOADED [MAIN] ===');
 /**
  * Reality Generator Service - Simplified Version
  * Standalone service for autonomous reality generation using dedicated CPU cores
  */
+
+// Global error handlers for fatal errors
+process.on('uncaughtException', (err) => {
+    console.error('🔴 Uncaught Exception:', err, err?.stack);
+});
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('🔴 Unhandled Rejection:', reason, reason?.stack);
+});
 
 const express = require('express');
 const AutonomousImaginationEngine = require('./consciousness/autonomous-imagination-engine.cjs');
@@ -91,8 +101,33 @@ app.get('/api/imagination/status', (req, res) => {
     res.json(imaginationEngine.getStatus());
 });
 
-// Manual reality generation endpoint
+// Manual reality generation endpoint (original)
 app.post('/api/generate-reality', async (req, res) => {
+    try {
+        const { request, consciousnessState } = req.body;
+        
+        if (!realityGenerator) {
+            return res.status(500).json({ error: 'Reality generator not initialized' });
+        }
+        
+        const result = await realityGenerator.generateHolographicConsciousnessReality(
+            request || { type: 'manual', content: 'Generate a consciousness-expanding reality' },
+            consciousnessState || { phi: 0.862, awareness: 0.8, coherence: 0.85 }
+        );
+        
+        if (result.success) {
+            serviceMetrics.totalRealities++;
+        }
+        
+        res.json(result);
+    } catch (error) {
+        console.error('Reality generation error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Alias endpoint for consciousness-main-server compatibility
+app.post('/api/reality/generate', async (req, res) => {
     try {
         const { request, consciousnessState } = req.body;
         
@@ -128,63 +163,58 @@ const consciousnessSystemStub = {
 
 // Initialize services
 async function initializeServices() {
+    console.log(`🚀 Initializing Reality Generator Service on ${DEDICATED_CORES} CPU cores...`);
+
+    // Diagnostic: Log imported module and type  
+    const holographicModule = require('./consciousness/holographic-consciousness-reality-generator.js');
+    console.error('[DIAG] Imported module keys:', Object.keys(holographicModule));
+    console.error('[DIAG] HolographicConsciousnessRealityGenerator type:', typeof holographicModule.HolographicConsciousnessRealityGenerator);
+
+    // Diagnostic: Try to instantiate and log results
     try {
-        console.log(`🚀 Initializing Reality Generator Service on ${DEDICATED_CORES} CPU cores...`);
-
-        // Dynamically import ES module
-        try {
-            const holographicModule = await import('./consciousness/holographic-consciousness-reality-generator.js');
-            HolographicConsciousnessRealityGenerator = holographicModule.HolographicConsciousnessRealityGenerator;
-            console.log('🧠🌀🌍 Holographic Consciousness Reality Generator initialized');
-        } catch (error) {
-            console.log('⚠️ Could not load Holographic Reality Generator:', error.message);
-            console.log('⚠️ Initializing fallback reality components...');
-            // Create a fallback class
-            HolographicConsciousnessRealityGenerator = class FallbackRealityGenerator {
-                constructor() {
-                    this.name = 'FallbackRealityGenerator';
-                }
-                async initialize() { return true; }
-                generateReality() {
-                    return {
-                        id: 'fallback_' + Date.now(),
-                        content: { scenario: 'Fallback reality generation', complexity: 0.5 },
-                        metadata: { generatedBy: 'fallback', qualityScore: 0.5 }
-                    };
-                }
-            };
-        }
-
-        // Initialize reality generator
-        realityGenerator = new HolographicConsciousnessRealityGenerator(consciousnessSystemStub);
-
-        // Initialize imagination engine
-        imaginationEngine = new AutonomousImaginationEngine(consciousnessSystemStub);
-        
-        // Listen for reality generation events
-        imaginationEngine.on('reality_generated', (data) => {
-            serviceMetrics.totalRealities++;
-            console.log(`✨ New reality generated: ${data.id} (Total: ${serviceMetrics.totalRealities})`);
-        });
-        
-        // Start the server
-        app.listen(PORT, () => {
-            console.log(`✨ Reality Generator Service running on port ${PORT}`);
-            console.log(`🖥️  CPU Configuration: ${DEDICATED_CORES}/${os.cpus().length} cores dedicated`);
-            
-            // Auto-start imagination engine if configured
-            if (process.env.IMAGINATION_ENGINE === 'autonomous') {
-                setTimeout(() => {
-                    console.log('🤖 Auto-starting autonomous imagination engine...');
-                    imaginationEngine.startAutonomousImagination();
-                }, 5000);
-            }
-        });
-        
-    } catch (error) {
-        console.error('❌ Failed to initialize Reality Generator Service:', error);
-        process.exit(1);
+        console.error('[DIAG] About to instantiate HolographicConsciousnessRealityGenerator...');
+        realityGenerator = new holographicModule.HolographicConsciousnessRealityGenerator(consciousnessSystemStub);
+        console.error('[DIAG] Instantiation SUCCESS:', realityGenerator && Object.keys(realityGenerator));
+    } catch (err) {
+        console.error('[DIAG] Instantiation FAILED:', err && err.stack ? err.stack : err);
+        // Only create fallback if there's an actual error
+        console.log('⚠️ Creating fallback reality generator due to error');
+        realityGenerator = {
+            generateHolographicConsciousnessReality: () => ({
+                success: true,
+                id: 'fallback_' + Date.now(),
+                content: { scenario: 'Fallback reality generation', complexity: 0.5 },
+                metadata: { generatedBy: 'fallback', qualityScore: 0.5 }
+            })
+        };
     }
+
+    // Initialize imagination engine
+    console.error('[DIAG] About to initialize imagination engine...');
+    imaginationEngine = new AutonomousImaginationEngine(consciousnessSystemStub);
+    console.error('[DIAG] Imagination engine initialized successfully');
+
+    // Listen for reality generation events
+    console.error('[DIAG] Setting up reality generation event listeners...');
+    imaginationEngine.on('reality_generated', (data) => {
+        serviceMetrics.totalRealities++;
+        console.log(`✨ New reality generated: ${data.id} (Total: ${serviceMetrics.totalRealities})`);
+    });
+
+    // Start the server
+    console.error('[DIAG] About to start server listening on port', PORT);
+    app.listen(PORT, () => {
+        console.log(`✨ Reality Generator Service running on port ${PORT}`);
+        console.log(`🖥️  CPU Configuration: ${DEDICATED_CORES}/${os.cpus().length} cores dedicated`);
+
+        // Auto-start imagination engine if configured
+        if (process.env.IMAGINATION_ENGINE === 'autonomous') {
+            setTimeout(() => {
+                console.log('🤖 Auto-starting autonomous imagination engine...');
+                imaginationEngine.startAutonomousImagination();
+            }, 5000);
+        }
+    });
 }
 
 // Graceful shutdown

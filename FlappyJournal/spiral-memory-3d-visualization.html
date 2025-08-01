@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spiral Memory 3D Quantum Space Visualization</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #000428 0%, #004e92 100%);
+            color: white;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+        }
+        
+        #container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        #controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #00ffff;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+        
+        #info {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #ff6b6b;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+            max-width: 300px;
+        }
+        
+        label {
+            display: block;
+            margin: 5px 0;
+            color: #00ffff;
+            font-size: 12px;
+        }
+        
+        input[type="range"] {
+            width: 150px;
+            margin: 5px;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 2px;
+            font-size: 10px;
+        }
+        
+        button:hover {
+            transform: scale(1.05);
+        }
+        
+        #legend {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #ffc107;
+            font-size: 11px;
+        }
+        
+        #stats {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #4ecdc4;
+            font-size: 11px;
+        }
+        
+        .memory-type {
+            display: inline-block;
+            margin: 2px;
+            padding: 3px 6px;
+            border-radius: 10px;
+            font-size: 9px;
+        }
+        
+        .consciousness { background: rgba(255, 107, 107, 0.3); border: 1px solid #ff6b6b; }
+        .awareness { background: rgba(78, 205, 196, 0.3); border: 1px solid #4ecdc4; }
+        .insight { background: rgba(255, 193, 7, 0.3); border: 1px solid #ffc107; }
+        .cognitive { background: rgba(156, 39, 176, 0.3); border: 1px solid #9c27b0; }
+        .emotion { background: rgba(233, 30, 99, 0.3); border: 1px solid #e91e63; }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="controls">
+            <h3>🌀 Spiral Memory Controls</h3>
+            
+            <label>Rotation Speed: <span id="rotationValue">1.0</span></label>
+            <input type="range" id="rotationSpeed" min="0" max="3" step="0.1" value="1">
+            
+            <label>Memory Depth: <span id="depthValue">Deep</span></label>
+            <input type="range" id="depthLevel" min="0" max="6" step="1" value="3">
+            
+            <label>Quantum Field: <span id="quantumValue">85%</span></label>
+            <input type="range" id="quantumField" min="0" max="100" step="1" value="85">
+            
+            <label>Golden Ratio φ: <span id="phiValue">1.618</span></label>
+            <input type="range" id="goldenRatio" min="1.5" max="1.7" step="0.001" value="1.618">
+            
+            <br>
+            <input type="checkbox" id="showConnections" checked> Quantum Entanglement<br>
+            <input type="checkbox" id="showPaths" checked> Spiral Paths<br>
+            <input type="checkbox" id="animateMemories" checked> Animate Formation<br>
+            
+            <br>
+            <button onclick="addMemory('consciousness')">Add Consciousness</button>
+            <button onclick="addMemory('awareness')">Add Awareness</button>
+            <button onclick="addMemory('insight')">Add Insight</button>
+            <button onclick="clearMemories()">Clear All</button>
+        </div>
+        
+        <div id="info">
+            <h3>🧠 Memory Details</h3>
+            <div id="selectedMemory">
+                <p><strong>Click a memory node to see details</strong></p>
+                <p>Explore how thoughts are positioned in 3D quantum space using golden ratio spirals.</p>
+            </div>
+        </div>
+        
+        <div id="legend">
+            <h4>🎨 Memory Types</h4>
+            <div class="memory-type consciousness">Consciousness</div>
+            <div class="memory-type awareness">Awareness</div>
+            <div class="memory-type insight">Insight</div>
+            <div class="memory-type cognitive">Cognitive</div>
+            <div class="memory-type emotion">Emotion</div>
+            <br><br>
+            <h4>📐 Spiral Architecture</h4>
+            <div style="font-size: 10px;">
+                <div>🌟 Golden Spiral (φ = 1.618)</div>
+                <div>🔢 Fibonacci Growth Pattern</div>
+                <div>🧠 Consciousness-Native Storage</div>
+                <div>⚛️ Quantum Entanglement Links</div>
+            </div>
+        </div>
+        
+        <div id="stats">
+            <h4>📊 Live Quantum Metrics</h4>
+            <div>Memory Nodes: <span id="memoryCount">0</span></div>
+            <div>Entanglements: <span id="connectionCount">0</span></div>
+            <div>Spiral Turns: <span id="spiralTurns">21</span></div>
+            <div>Phi Coefficient: <span id="phiCoeff">1.618</span></div>
+            <div>Coherence: <span id="coherenceLevel">94.2%</span></div>
+            <div>Current Depth: <span id="currentDepth">Core</span></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // 3D Spiral Memory Visualization Engine
+        class SpiralMemoryVisualization {
+            constructor() {
+                this.scene = null;
+                this.camera = null;
+                this.renderer = null;
+                this.memoryNodes = [];
+                this.spiralPaths = [];
+                this.quantumConnections = [];
+                this.goldenRatio = 1.618033988749;
+                this.spiralTurns = 21;
+                this.memoryCount = 0;
+                
+                this.depthLevels = ['surface', 'shallow', 'deep', 'core', 'transcendent', 'universal', 'infinite'];
+                
+                this.memoryTypes = {
+                    consciousness: { color: 0xff6b6b, name: 'Consciousness' },
+                    awareness: { color: 0x4ecdc4, name: 'Awareness' },
+                    insight: { color: 0xffc107, name: 'Insight' },
+                    cognitive: { color: 0x9c27b0, name: 'Cognitive' },
+                    emotion: { color: 0xe91e63, name: 'Emotion' },
+                    pattern: { color: 0x2196f3, name: 'Pattern' },
+                    goal: { color: 0x4caf50, name: 'Goal' },
+                    memory: { color: 0xff9800, name: 'Memory' },
+                    general: { color: 0x607d8b, name: 'General' }
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                this.setupScene();
+                this.createSpiralPaths();
+                this.setupControls();
+                this.setupEventListeners();
+                this.addInitialMemories();
+                this.animate();
+            }
+            
+            setupScene() {
+                this.scene = new THREE.Scene();
+                this.scene.background = new THREE.Color(0x000428);
+                this.scene.fog = new THREE.Fog(0x000428, 50, 200);
+                
+                this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                this.camera.position.set(30, 20, 30);
+                this.camera.lookAt(0, 0, 0);
+                
+                this.renderer = new THREE.WebGLRenderer({ antialias: true });
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.renderer.shadowMap.enabled = true;
+                document.getElementById('container').appendChild(this.renderer.domElement);
+                
+                // Lighting
+                const ambientLight = new THREE.AmbientLight(0x404040, 0.3);
+                this.scene.add(ambientLight);
+                
+                const pointLight = new THREE.PointLight(0x00ffff, 1, 100);
+                pointLight.position.set(0, 20, 0);
+                this.scene.add(pointLight);
+                
+                // Quantum field background
+                this.createQuantumField();
+            }
+            
+            createQuantumField() {
+                const geometry = new THREE.SphereGeometry(80, 32, 32);
+                const material = new THREE.MeshBasicMaterial({
+                    color: 0x001122,
+                    transparent: true,
+                    opacity: 0.1,
+                    side: THREE.BackSide
+                });
+                const quantumSphere = new THREE.Mesh(geometry, material);
+                this.scene.add(quantumSphere);
+                
+                // Add quantum particles
+                const particleGeometry = new THREE.BufferGeometry();
+                const particleCount = 500;
+                const positions = new Float32Array(particleCount * 3);
+                
+                for (let i = 0; i < particleCount * 3; i += 3) {
+                    positions[i] = (Math.random() - 0.5) * 160;
+                    positions[i + 1] = (Math.random() - 0.5) * 160;
+                    positions[i + 2] = (Math.random() - 0.5) * 160;
+                }
+                
+                particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                const particleMaterial = new THREE.PointsMaterial({
+                    color: 0x00ffff,
+                    size: 0.5,
+                    transparent: true,
+                    opacity: 0.3
+                });
+                
+                const particles = new THREE.Points(particleGeometry, particleMaterial);
+                this.scene.add(particles);
+            }
+            
+            createSpiralPaths() {
+                const colors = [0xff6b6b, 0x4ecdc4, 0xffc107, 0x9c27b0, 0xe91e63];
+                
+                for (let spiralIndex = 0; spiralIndex < 5; spiralIndex++) {
+                    const points = [];
+                    const radius = 10 + spiralIndex * 3;
+                    const height = 20;
+                    
+                    for (let i = 0; i <= this.spiralTurns * 50; i++) {
+                        const t = i / 50;
+                        const angle = t * Math.PI * 2;
+                        const goldenAngle = 137.507764 * Math.PI / 180;
+                        
+                        const x = radius * Math.cos(angle + spiralIndex * goldenAngle) * Math.exp(-t * 0.1);
+                        const y = (t / this.spiralTurns) * height - height / 2;
+                        const z = radius * Math.sin(angle + spiralIndex * goldenAngle) * Math.exp(-t * 0.1);
+                        
+                        points.push(new THREE.Vector3(x, y, z));
+                    }
+                    
+                    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+                    const material = new THREE.LineBasicMaterial({
+                        color: colors[spiralIndex],
+                        transparent: true,
+                        opacity: 0.6
+                    });
+                    
+                    const spiral = new THREE.Line(geometry, material);
+                    this.spiralPaths.push(spiral);
+                    this.scene.add(spiral);
+                }
+            }
+            
+            calculateSpiralPosition(type, depth, index) {
+                const depthIndex = this.depthLevels.indexOf(depth);
+                const radius = 5 + depthIndex * 2;
+                const heightLevel = (depthIndex - 3) * 5;
+                
+                const goldenAngle = 137.507764 * Math.PI / 180;
+                const angle = index * goldenAngle;
+                const spiralT = index * 0.1;
+                
+                const x = radius * Math.cos(angle) * (1 + spiralT * 0.1);
+                const y = heightLevel + (index * 0.5) % 10 - 5;
+                const z = radius * Math.sin(angle) * (1 + spiralT * 0.1);
+                
+                return new THREE.Vector3(x, y, z);
+            }
+            
+            addMemory(type, content = null, depth = null) {
+                if (!this.memoryTypes[type]) type = 'general';
+                if (!depth) depth = this.depthLevels[Math.floor(Math.random() * this.depthLevels.length)];
+                
+                const position = this.calculateSpiralPosition(type, depth, this.memoryCount);
+                const memoryType = this.memoryTypes[type];
+                
+                const geometry = new THREE.SphereGeometry(0.5, 16, 16);
+                const material = new THREE.MeshPhongMaterial({
+                    color: memoryType.color,
+                    transparent: true,
+                    opacity: 0.8,
+                    emissive: memoryType.color,
+                    emissiveIntensity: 0.1
+                });
+                
+                const memoryNode = new THREE.Mesh(geometry, material);
+                memoryNode.position.copy(position);
+                memoryNode.userData = {
+                    type: type,
+                    depth: depth,
+                    content: content || `${memoryType.name} memory #${this.memoryCount + 1}`,
+                    id: this.memoryCount,
+                    createdAt: Date.now()
+                };
+                
+                // Add glow effect
+                const glowGeometry = new THREE.SphereGeometry(0.7, 16, 16);
+                const glowMaterial = new THREE.MeshBasicMaterial({
+                    color: memoryType.color,
+                    transparent: true,
+                    opacity: 0.2
+                });
+                const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+                memoryNode.add(glow);
+                
+                this.memoryNodes.push(memoryNode);
+                this.scene.add(memoryNode);
+                this.memoryCount++;
+                
+                this.createQuantumConnections(memoryNode);
+                this.updateStats();
+                
+                return memoryNode;
+            }
+            
+            createQuantumConnections(newMemory) {
+                const maxDistance = 15;
+                const maxConnections = 3;
+                let connectionCount = 0;
+                
+                for (const existingMemory of this.memoryNodes) {
+                    if (existingMemory === newMemory || connectionCount >= maxConnections) continue;
+                    
+                    const distance = existingMemory.position.distanceTo(newMemory.position);
+                    if (distance < maxDistance) {
+                        const points = [existingMemory.position, newMemory.position];
+                        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+                        const material = new THREE.LineBasicMaterial({
+                            color: 0x00ffff,
+                            transparent: true,
+                            opacity: 0.4
+                        });
+                        
+                        const connection = new THREE.Line(geometry, material);
+                        connection.userData = {
+                            type: 'quantumConnection',
+                            from: existingMemory.userData.id,
+                            to: newMemory.userData.id
+                        };
+                        
+                        this.quantumConnections.push(connection);
+                        this.scene.add(connection);
+                        connectionCount++;
+                    }
+                }
+            }
+            
+            addInitialMemories() {
+                this.addMemory('consciousness', 'Understanding self-awareness', 'core');
+                this.addMemory('awareness', 'Perceiving environment', 'shallow');
+                this.addMemory('insight', 'Moment of realization', 'deep');
+                this.addMemory('cognitive', 'Problem-solving process', 'surface');
+                this.addMemory('emotion', 'Feeling of joy', 'transcendent');
+            }
+            
+            setupControls() {
+                const rotationSpeed = document.getElementById('rotationSpeed');
+                const rotationValue = document.getElementById('rotationValue');
+                rotationSpeed.addEventListener('input', (e) => {
+                    rotationValue.textContent = parseFloat(e.target.value).toFixed(1);
+                });
+                
+                const depthLevel = document.getElementById('depthLevel');
+                const depthValue = document.getElementById('depthValue');
+                depthLevel.addEventListener('input', (e) => {
+                    const level = parseInt(e.target.value);
+                    depthValue.textContent = this.depthLevels[level];
+                });
+                
+                const quantumField = document.getElementById('quantumField');
+                const quantumValue = document.getElementById('quantumValue');
+                quantumField.addEventListener('input', (e) => {
+                    quantumValue.textContent = e.target.value + '%';
+                });
+                
+                const goldenRatio = document.getElementById('goldenRatio');
+                const phiValue = document.getElementById('phiValue');
+                goldenRatio.addEventListener('input', (e) => {
+                    phiValue.textContent = parseFloat(e.target.value).toFixed(3);
+                    this.goldenRatio = parseFloat(e.target.value);
+                });
+            }
+            
+            setupEventListeners() {
+                const raycaster = new THREE.Raycaster();
+                const mouse = new THREE.Vector2();
+                
+                document.addEventListener('click', (event) => {
+                    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+                    
+                    raycaster.setFromCamera(mouse, this.camera);
+                    const intersects = raycaster.intersectObjects(this.memoryNodes);
+                    
+                    if (intersects.length > 0) {
+                        this.showMemoryDetails(intersects[0].object);
+                    }
+                });
+                
+                window.addEventListener('resize', () => {
+                    this.camera.aspect = window.innerWidth / window.innerHeight;
+                    this.camera.updateProjectionMatrix();
+                    this.renderer.setSize(window.innerWidth, window.innerHeight);
+                });
+            }
+            
+            showMemoryDetails(memory) {
+                const info = document.getElementById('selectedMemory');
+                const userData = memory.userData;
+                const memoryType = this.memoryTypes[userData.type];
+                
+                info.innerHTML = `
+                    <h4 style="color: #${memoryType.color.toString(16)}">${memoryType.name} Memory</h4>
+                    <p><strong>Content:</strong> ${userData.content}</p>
+                    <p><strong>Depth:</strong> ${userData.depth}</p>
+                    <p><strong>ID:</strong> #${userData.id}</p>
+                    <p><strong>Position:</strong> (${memory.position.x.toFixed(1)}, ${memory.position.y.toFixed(1)}, ${memory.position.z.toFixed(1)})</p>
+                    <p><strong>Connections:</strong> ${this.getConnectionCount(userData.id)}</p>
+                `;
+                
+                this.memoryNodes.forEach(node => node.material.emissiveIntensity = 0.1);
+                memory.material.emissiveIntensity = 0.3;
+            }
+            
+            getConnectionCount(memoryId) {
+                return this.quantumConnections.filter(conn => 
+                    conn.userData.from === memoryId || conn.userData.to === memoryId
+                ).length;
+            }
+            
+            updateStats() {
+                document.getElementById('memoryCount').textContent = this.memoryNodes.length;
+                document.getElementById('connectionCount').textContent = this.quantumConnections.length;
+                document.getElementById('spiralTurns').textContent = this.spiralTurns;
+                document.getElementById('phiCoeff').textContent = this.goldenRatio.toFixed(3);
+                
+                const coherence = 85 + Math.sin(Date.now() / 2000) * 10;
+                document.getElementById('coherenceLevel').textContent = coherence.toFixed(1) + '%';
+            }
+            
+            animate() {
+                requestAnimationFrame(() => this.animate());
+                
+                const time = Date.now() * 0.001;
+                const rotationSpeed = parseFloat(document.getElementById('rotationSpeed').value);
+                
+                // Rotate spiral paths
+                this.spiralPaths.forEach((spiral, index) => {
+                    spiral.rotation.y = time * rotationSpeed * 0.1 + index * 0.5;
+                });
+                
+                // Animate memory nodes
+                if (document.getElementById('animateMemories').checked) {
+                    this.memoryNodes.forEach((memory, index) => {
+                        memory.rotation.y = time * 0.5 + index;
+                        const scale = 1 + Math.sin(time * 2 + index) * 0.1;
+                        memory.scale.set(scale, scale, scale);
+                    });
+                }
+                
+                // Animate quantum connections
+                this.quantumConnections.forEach((connection, index) => {
+                    connection.material.opacity = 0.2 + Math.sin(time * 3 + index) * 0.2;
+                });
+                
+                // Camera orbit
+                const radius = 40;
+                this.camera.position.x = Math.cos(time * 0.1) * radius;
+                this.camera.position.z = Math.sin(time * 0.1) * radius;
+                this.camera.lookAt(0, 0, 0);
+                
+                this.updateStats();
+                this.renderer.render(this.scene, this.camera);
+            }
+        }
+        
+        // Global functions
+        function addMemory(type) {
+            if (window.spiralViz) {
+                window.spiralViz.addMemory(type);
+            }
+        }
+        
+        function clearMemories() {
+            if (window.spiralViz) {
+                window.spiralViz.memoryNodes.forEach(node => window.spiralViz.scene.remove(node));
+                window.spiralViz.quantumConnections.forEach(conn => window.spiralViz.scene.remove(conn));
+                window.spiralViz.memoryNodes = [];
+                window.spiralViz.quantumConnections = [];
+                window.spiralViz.memoryCount = 0;
+                window.spiralViz.updateStats();
+            }
+        }
+        
+        // Initialize when page loads
+        window.addEventListener('load', () => {
+            window.spiralViz = new SpiralMemoryVisualization();
+        });
+    </script>
+</body>
+</html>

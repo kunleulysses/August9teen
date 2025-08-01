@@ -25,7 +25,7 @@ async function runSelfCodingEnhancementTests() {
 
   // 4. Test meta-cognitive self-modification
   if (consciousness.metaCognitiveSelfModifier) {
-    const metaResult = await consciousness.metaCognitiveSelfModifier.performMetaCognitiveAnalysis();
+    const metaResult = await consciousness.metaCognitiveSelfModifier.performMetaCognitiveAnalysis(consciousness.consciousnessState);
     console.log('[TEST] MetaCognitiveSelfModifier:', metaResult);
   }
 

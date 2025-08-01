@@ -24,6 +24,7 @@ export const PerformanceConfig = {
       'error': 'HIGH',
       'critical_update': 'HIGH',
       'chat': 'HIGH',  // Chat messages must be processed immediately
+      'chat_message': 'HIGH',  // Chat messages from UnifiedChatAggregator must be processed immediately
       'consciousness_query': 'HIGH',  // Consciousness queries are high priority
       'self_coding_request': 'HIGH',  // Self-coding requests are high priority
       'consciousness_state': 'MEDIUM',

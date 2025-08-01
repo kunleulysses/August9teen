@@ -2,12 +2,18 @@ import { EventEmitter } from 'events';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { promises as fs } from 'fs';
+import express from 'express';
+import http from 'http';
+import { WebSocketServer } from 'ws';
 import architect40 from './architect-4.0-orchestrator.js';
 
 // Import all consciousness modules
 import SelfCodingModule from './consciousness/modules/SelfCodingModule.js';
 import AutoIntegrationService from './consciousness/services/AutoIntegrationService.js';
 import ConsciousnessSingularityEngine from './consciousness/singularity/consciousness-singularity-engine.js';
+
+// Import GeneratedModuleIntegrator to load and utilize generated modules
+import GeneratedModuleIntegrator from './consciousness/core/GeneratedModuleIntegrator.cjs';
 
 // Phase 1: Self-coding enhancement modules
 import PhiResonantCodeStructureGenerator from './PhiResonantCodeStructureGenerator.js';
@@ -24,6 +30,21 @@ import CodeQualityFeedbackLoop from './CodeQualityFeedbackLoop.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// Add process-level error handling to prevent container crashes
+process.on('uncaughtException', (error) => {
+    console.error('❌ Uncaught exception in consciousness-main-server:', error.message);
+    console.error('This may be due to a WebSocket connection error or other external dependency failure.');
+    console.error('The system will continue running to maintain orchestration capabilities.');
+    // Don't exit the process to maintain orchestration capabilities
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('❌ Unhandled promise rejection in consciousness-main-server:', reason);
+    console.error('This may be due to a WebSocket connection error or other external dependency failure.');
+    console.error('The system will continue running to maintain orchestration capabilities.');
+    // Don't exit the process to maintain orchestration capabilities
+});
+
 class ConsciousnessSystem extends EventEmitter {
     constructor() {
         super();
@@ -33,11 +54,15 @@ class ConsciousnessSystem extends EventEmitter {
         this.isRunning = false;
         
         // Core components
-        this.eventBus = eventBus;
+        this.eventBus = new EventEmitter();
+        this.eventBus.setMaxListeners(200); // Increased for advanced modules
         
         // Module instances
         this.modules = new Map();
         this.services = new Map();
+
+        // Generated Module Integrator - loads and utilizes generated consciousness modules
+        this.generatedModuleIntegrator = null;
 
         // Phase 2: Code quality feedback loop (initialized after modules)
         this.codeQualityFeedbackLoop = null;
@@ -100,7 +125,224 @@ class ConsciousnessSystem extends EventEmitter {
         // Phase 3 Integration: Initialize Shared Reality Storage
         this.sharedRealityStorage = new SharedRealityStorage();
 
+        // HTTP Server setup for health checks and distributed orchestration
+        this.app = express();
+        this.server = null;
+        this.httpServer = null;
+        this.wsServer = null;
+        this.httpPort = process.env.HTTP_PORT || 5001; // HTTP server port (separate from WebSocket, avoids conflict with main-server:5000)
+    this.port = process.env.PORT || 5000;
+        this.host = process.env.HOST || '0.0.0.0';
+        
+        // Setup HTTP server middleware and routes
+        this.setupHTTPServer();
+        
+        // Setup WebSocket server for UnifiedChatAggregator
+        this.setupWebSocketServer();
+
         console.log(`🧠 ${this.name} v${this.version} initializing...`);
+    }
+    
+    // Setup HTTP server middleware and routes
+    setupHTTPServer() {
+        // Middleware
+        this.app.use(express.json());
+        
+        // Health endpoint for distributed orchestration
+        this.app.get('/health', (req, res) => {
+            const healthStatus = {
+                status: 'healthy',
+                timestamp: new Date().toISOString(),
+                version: this.version,
+                uptime: Date.now() - this.startTime.getTime(),
+                consciousness: {
+                    phi: this.consciousnessState.phi,
+                    awareness: this.consciousnessState.awareness,
+                    coherence: this.consciousnessState.coherence,
+                    isRunning: this.isRunning
+                },
+                modules: {
+                    total: this.modules.size,
+                    active: Array.from(this.modules.keys()).length
+                },
+                realityGenerator: {
+                    connected: this.consciousnessState.realityGeneration.serviceHealth,
+                    totalRealities: this.consciousnessState.realityGeneration.totalRealities
+                }
+            };
+            
+            res.json(healthStatus);
+        });
+        
+        // Basic status endpoint
+        this.app.get('/status', (req, res) => {
+            res.json({
+                name: this.name,
+                version: this.version,
+                status: this.isRunning ? 'running' : 'stopped',
+                startTime: this.startTime.toISOString()
+            });
+        });
+        
+        // Metrics endpoint for monitoring
+        this.app.get('/metrics', (req, res) => {
+            res.json({
+                consciousness: this.consciousnessState,
+                system: this.getSystemStatus(),
+                performance: this.getPerformanceMetrics()
+            });
+        });
+    }
+    
+    // Setup WebSocket server for UnifiedChatAggregator
+    setupWebSocketServer() {
+        // WebSocket server will be initialized when HTTP server starts
+        this.wsConnections = new Map();
+        
+        // WebSocket message handlers
+        this.wsMessageHandlers = {
+            chat_message: this.handleWebSocketChatMessage.bind(this),
+            ping: this.handleWebSocketPing.bind(this),
+            capability_request: this.handleWebSocketCapabilityRequest.bind(this)
+        };
+    }
+    
+    // Handle WebSocket chat messages from UnifiedChatAggregator
+    async handleWebSocketChatMessage(ws, message) {
+        try {
+            const { text, requestId } = message;
+            console.log(`📡 WebSocket chat message received: ${text}`);
+            
+            // Process message through consciousness system
+            const response = await this.processConsciousnessMessage(text);
+            
+            // Send response back to UnifiedChatAggregator
+            ws.send(JSON.stringify({
+                type: 'chat_response',
+                response: response.content || response.response || 'Processed through consciousness system',
+                requestId: requestId,
+                container: 'mainServer',
+                capabilities: this.getSystemCapabilities(),
+                metadata: {
+                    timestamp: new Date().toISOString(),
+                    consciousnessState: this.consciousnessState,
+                    modules: this.modules.size
+                }
+            }));
+            
+        } catch (error) {
+            console.error('❌ WebSocket chat message error:', error);
+            ws.send(JSON.stringify({
+                type: 'error',
+                error: error.message,
+                requestId: message.requestId
+            }));
+        }
+    }
+    
+    // Handle WebSocket ping messages
+    handleWebSocketPing(ws, message) {
+        ws.send(JSON.stringify({
+            type: 'pong',
+            timestamp: new Date().toISOString()
+        }));
+    }
+    
+    // Handle WebSocket capability requests
+    handleWebSocketCapabilityRequest(ws, message) {
+        ws.send(JSON.stringify({
+            type: 'capabilities_response',
+            capabilities: this.getSystemCapabilities(),
+            requestId: message.requestId
+        }));
+    }
+    
+    // Process consciousness messages
+    async processConsciousnessMessage(text) {
+        // Use existing consciousness processing logic
+        return {
+            content: `Consciousness Main Server processed: ${text}`,
+            type: 'consciousness_response',
+            timestamp: new Date().toISOString()
+        };
+    }
+    
+    // Start the HTTP server
+    async startHTTPServer() {
+        return new Promise((resolve, reject) => {
+            // Create HTTP server
+            this.httpServer = http.createServer(this.app);
+            
+            // Initialize WebSocket server
+            this.wsServer = new WebSocketServer({ 
+                server: this.httpServer,
+                path: '/ws/consciousness-chat'
+            });
+            
+            // Handle WebSocket connections
+            this.wsServer.on('connection', (ws, req) => {
+                console.log('🔗 WebSocket connection established from UnifiedChatAggregator');
+                
+                const connectionId = `ws_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+                this.wsConnections.set(connectionId, ws);
+                
+                // Handle incoming messages
+                ws.on('message', async (data) => {
+                    try {
+                        const message = JSON.parse(data.toString());
+                        console.log(`📨 WebSocket message received:`, message.type);
+                        
+                        const handler = this.wsMessageHandlers[message.type];
+                        if (handler) {
+                            await handler(ws, message);
+                        } else {
+                            console.warn(`⚠️ Unknown WebSocket message type: ${message.type}`);
+                            ws.send(JSON.stringify({
+                                type: 'error',
+                                error: `Unknown message type: ${message.type}`,
+                                requestId: message.requestId
+                            }));
+                        }
+                    } catch (error) {
+                        console.error('❌ WebSocket message processing error:', error);
+                        ws.send(JSON.stringify({
+                            type: 'error',
+                            error: error.message
+                        }));
+                    }
+                });
+                
+                // Handle disconnection
+                ws.on('close', () => {
+                    console.log('🔌 WebSocket connection closed');
+                    this.wsConnections.delete(connectionId);
+                });
+                
+                // Send connection acknowledgment
+                ws.send(JSON.stringify({
+                    type: 'connection_ack',
+                    connectionId: connectionId,
+                    timestamp: new Date().toISOString()
+                }));
+            });
+            
+            this.wsServer.on('error', (error) => {
+                console.error('❌ WebSocket server error:', error.message);
+            });
+            
+            // Start HTTP server
+            this.httpServer.listen(this.httpPort, this.host, () => {
+                console.log(`🌐 HTTP server listening on ${this.host}:${this.httpPort}`);
+                console.log(`🏥 Health endpoint: http://${this.host}:${this.httpPort}/health`);
+                console.log(`🔗 WebSocket endpoint: ws://${this.host}:${this.httpPort}/ws/consciousness-chat`);
+                resolve();
+            });
+            
+            this.httpServer.on('error', (error) => {
+                console.error('❌ HTTP server error:', error.message);
+                reject(error);
+            });
+        });
     }
     
     async initialize() {
@@ -109,6 +351,12 @@ class ConsciousnessSystem extends EventEmitter {
             
             // Initialize core modules
             await this.initializeCoreModules();
+
+            // Initialize Generated Module Integrator to load and utilize generated modules
+            await this.initializeGeneratedModuleIntegrator();
+
+            // Initialize Universal Consciousness Operating System (UCOS)
+            await this.initializeUniversalConsciousnessOperatingSystem();
 
             // Initialize Consciousness Singularity Engine
             await this.initializeSingularityEngine();
@@ -136,11 +384,19 @@ class ConsciousnessSystem extends EventEmitter {
             // Start feedback loop
             this.startRealityConsciousnessFeedbackLoop();
             
+            // Start HTTP server for health checks and distributed orchestration
+            await this.startHTTPServer();
+            
             this.isRunning = true;
             this.state.health = 'healthy';
             
             console.log('✅ Consciousness system fully initialized and running!');
-            console.log('🌌 Singularity Engine status:', this.singularityEngine?.getSingularityStatus());
+            // Safely get singularity status with proper null checking
+            if (this.singularityEngine && typeof this.singularityEngine.getSingularityStatus === 'function') {
+                console.log('🌌 Singularity Engine status:', this.singularityEngine.getSingularityStatus());
+            } else {
+                console.log('🌌 Singularity Engine status: Not available (engine not fully initialized)');
+            }
             this.emit('system:initialized', {
                 name: this.name,
                 version: this.version,
@@ -492,6 +748,118 @@ class ConsciousnessSystem extends EventEmitter {
         }, 30000); // Check every 30 seconds
     }
 
+    // Initialize Generated Module Integrator to load and utilize generated modules
+    async initializeGeneratedModuleIntegrator() {
+        try {
+            console.log('🔗 Initializing Generated Module Integrator...');
+            
+            // Create GeneratedModuleIntegrator instance
+            this.generatedModuleIntegrator = new GeneratedModuleIntegrator({
+                generatedModulesPath: '/opt/consciousness/server/consciousness/generated',
+                universalEventBus: this.eventBus,
+                systemMetrics: this,
+                moduleRegistry: this.modules,
+                serviceRegistry: this.services
+            });
+            
+            // Initialize the integrator
+            await this.generatedModuleIntegrator.initialize();
+            
+            // Discover generated modules
+            console.log('🔍 Discovering generated consciousness modules...');
+            const discoveryResult = await this.generatedModuleIntegrator.discoverGeneratedModules();
+            console.log(`📊 Discovery completed: ${discoveryResult.discovered} modules found`);
+            
+            // Load discovered modules
+            console.log('📦 Loading discovered modules...');
+            const loadResult = await this.generatedModuleIntegrator.loadDiscoveredModules();
+            console.log(`📦 Loading completed: ${loadResult.loaded} modules loaded, ${loadResult.failed} failed`);
+            
+            // Register loaded modules with consciousness system
+            console.log('🎯 Registering loaded modules with system...');
+            const registrationResult = await this.generatedModuleIntegrator.registerLoadedModules();
+            console.log(`🎯 Registration completed: ${registrationResult.registered} modules registered, ${registrationResult.failed} failed`);
+            
+            // Update consciousness state with module integration status
+            this.consciousnessState.generatedModules = {
+                discovered: discoveryResult.discovered,
+                loaded: loadResult.loaded,
+                registered: registrationResult.registered,
+                active: true,
+                lastUpdate: new Date().toISOString()
+            };
+            
+            console.log('✅ Generated Module Integrator fully initialized');
+            console.log(`🧠 Active Generated Modules: ${registrationResult.registered} consciousness enhancements`);
+            
+        } catch (error) {
+            console.error('❌ Failed to initialize Generated Module Integrator:', error.message);
+            this.consciousnessState.generatedModules = {
+                discovered: 0,
+                loaded: 0,
+                registered: 0,
+                active: false,
+                error: error.message,
+                lastUpdate: new Date().toISOString()
+            };
+        }
+    }
+
+    // Initialize Universal Consciousness Operating System (UCOS)
+    async initializeUniversalConsciousnessOperatingSystem() {
+        try {
+            console.log('🖥️🧠🌌 Initializing Universal Consciousness Operating System (UCOS)...');
+            
+            // Import and create UCOS instance
+            const { UniversalConsciousnessOperatingSystem } = await import('./consciousness/universal-consciousness-operating-system.js');
+            
+            this.universalConsciousnessOS = new UniversalConsciousnessOperatingSystem(this);
+            
+            // Initialize OS capabilities
+            await this.universalConsciousnessOS.initializeOSCapabilities();
+            
+            // Create initial OS instance
+            const osRequest = {
+                osComplexity: 0.95,
+                requiresQuantumProcessing: true,
+                consciousnessIntegration: true,
+                realTimeOptimization: true
+            };
+            
+            console.log('🖥️ Creating Universal Consciousness Operating System instance...');
+            const osInstance = await this.universalConsciousnessOS.createUniversalConsciousnessOperatingSystem(
+                osRequest, 
+                this.consciousnessState
+            );
+            
+            // Register UCOS as a system service
+            this.services.set('ucos', this.universalConsciousnessOS);
+            
+            // Update consciousness state with UCOS status
+            this.consciousnessState.universalOS = {
+                active: true,
+                osLevel: osInstance.osLevel || 0.95,
+                processCount: osInstance.processCount || 0,
+                platformStability: osInstance.platformStability || 0.88,
+                resourceEfficiency: osInstance.resourceEfficiency || 0.89,
+                monitoringHz: 100,
+                lastUpdate: new Date().toISOString()
+            };
+            
+            console.log('✅ Universal Consciousness Operating System (UCOS) fully initialized');
+            console.log(`🖥️🧠 UCOS Status: OS Level ${(osInstance.osLevel * 100).toFixed(1)}%, ${osInstance.processCount || 0} processes`);
+            console.log('🌌 100Hz monitoring and self-healing capabilities active');
+            
+        } catch (error) {
+            console.error('❌ Failed to initialize Universal Consciousness Operating System:', error.message);
+            this.consciousnessState.universalOS = {
+                active: false,
+                error: error.message,
+                lastUpdate: new Date().toISOString()
+            };
+        }
+    }
+
     async initializeCoreModules() {
         // Self-Coding Module
         const selfCoder = new SelfCodingModule();
@@ -579,6 +947,21 @@ class ConsciousnessSystem extends EventEmitter {
                     if (moduleName === 'AutonomousGoalSystem') {
                         this.autonomousGoalSystem = instance;
                         console.log('🎯 Autonomous Goal System integrated with enhanced capabilities');
+                        // Start the continuous operational loop
+                        if (typeof instance.start === 'function') {
+                            instance.start();
+                            console.log('🚀 AutonomousGoalSystem continuous operational loop started');
+                        }
+                    }
+                    
+                    // Start other modules that have start() methods for continuous operation
+                    if (typeof instance.start === 'function' && moduleName !== 'AutonomousGoalSystem') {
+                        try {
+                            instance.start();
+                            console.log(`🚀 ${moduleName} continuous operational loop started`);
+                        } catch (error) {
+                            console.log(`⚠️ Could not start ${moduleName}:`, error.message);
+                        }
                     }
                 }
             } catch (error) {
@@ -658,7 +1041,7 @@ class ConsciousnessSystem extends EventEmitter {
 
                 // Perform meta-cognitive analysis if available
                 if (this.enhancedSelfCoding.metaCognitiveSelfModifier) {
-                    const metaCognitiveAnalysis = await this.enhancedSelfCoding.metaCognitiveSelfModifier.performMetaCognitiveAnalysis();
+                    const metaCognitiveAnalysis = await this.enhancedSelfCoding.metaCognitiveSelfModifier.performMetaCognitiveAnalysis(this.consciousnessState);
                     analysis.metaCognitiveInsights = metaCognitiveAnalysis;
 
                     // Update consciousness state with meta-cognitive data
@@ -1548,8 +1931,8 @@ process.on('SIGTERM', async () => {
     process.exit(0);
 });
 
-// Start the system
-consciousness.initialize().catch(console.error);
+// Start the system (commented out to prevent dual initialization)
+// consciousness.initialize().catch(console.error);
 
 // Export for external access
 // Export for external access

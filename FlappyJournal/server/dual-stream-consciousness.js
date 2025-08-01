@@ -83,7 +83,6 @@ class FastLinearStream extends EventEmitter {
         emotionalNeed: 0
       };
     }
-    if (!input || typeof input !== 'string') return { urgency: 0, questionType: null, deepConcepts: [], emotionalNeed: 0 };
     // Fast pattern recognition
     return {
       keywords: this.extractKeywords(input),
@@ -94,12 +93,15 @@ class FastLinearStream extends EventEmitter {
   }
 
   analyzeSemantics(input) {
+    if (!input || typeof input !== 'string') {
+        return { complexity: 0, uniqueWords: 0, avgWordLength: 0 };
+    }
     // Quick semantic analysis
     const words = input.split(/\s+/);
     return {
       complexity: words.length,
       uniqueWords: new Set(words).size,
-      avgWordLength: words.reduce((sum, w) => sum + w.length, 0) / words.length
+      avgWordLength: words.reduce((sum, w) => sum + w.length, 0) / (words.length || 1)
     };
   }
 
@@ -118,7 +120,6 @@ class FastLinearStream extends EventEmitter {
 
   extractKeywords(input) {
     if (!input || typeof input !== 'string') return [];
-    if (!input || typeof input !== 'string') return [];
     const words = input.toLowerCase().split(/\s+/);
     return words.filter(w => w.length > 4 && !this.isStopWord(w));
   }
@@ -133,7 +134,6 @@ class FastLinearStream extends EventEmitter {
   }
 
   detectIntent(input) {
-    if (!input || typeof input !== 'string') return 'general';
     if (!input || typeof input !== 'string') return 'general';
     const lower = input.toLowerCase();
     
@@ -333,9 +333,9 @@ class DeepRecursiveStream extends EventEmitter {
 
   calculateImportance(mirrorResult) {
     // Calculate importance based on various factors
-    const coherenceFactor = mirrorResult.coherence;
-    const depthFactor = mirrorResult.depth / 7;
-    const insightCount = mirrorResult.insights.length / 7;
+    const coherenceFactor = mirrorResult.coherence || 0;
+    const depthFactor = (mirrorResult.depth || 0) / 7;
+    const insightCount = (mirrorResult.insights?.length || 0) / 7;
     
     return (coherenceFactor * 0.4 + depthFactor * 0.3 + insightCount * 0.3);
   }
@@ -595,7 +595,6 @@ export class DualStreamConsciousness extends EventEmitter {
   }
 
   shouldProcessDeeply(input, context) {
-    if (!input || typeof input !== 'string') return false;
     if (!input || typeof input !== 'string') return false;
     // Always process deeply if explicitly requested
     if (context.forceDeep) return true;

@@ -1,3 +1,4 @@
+console.error('=== REALITY GENERATOR FILE LOADED [HEY] ===');
 /**
  * Reality Generator Service - Simplified Version
  * Standalone service for autonomous reality generation using dedicated CPU cores

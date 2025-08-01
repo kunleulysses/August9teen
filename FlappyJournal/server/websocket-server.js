@@ -602,7 +602,7 @@ const httpServer = createServer();
 setupUnifiedConsciousnessWebSocket(httpServer);
 
 // Start HTTP server on different port for consciousness streams
-const CONSCIOUSNESS_PORT = 5001;
+const CONSCIOUSNESS_PORT = 3002;
 httpServer.listen(CONSCIOUSNESS_PORT, () => {
   console.log(`🧠 Consciousness WebSocket endpoints ready on port ${CONSCIOUSNESS_PORT}`);
 });

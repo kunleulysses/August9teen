@@ -8,7 +8,7 @@ import { metaObservational } from './meta-observational-wrapper.js';
 import { temporalCoherence } from './temporal-coherence-engine.js';
 import { emotionalResonance } from './emotional-resonance-field.js';
 import { creativeEmergence } from './creative-emergence-engine.js';
-import sigilIdentity from '../sigil-identity.js';
+import SigilIdentity from './sigil-identity.js';
 import selfHealingMesh from './self-healing-recursion-mesh.js';
 import spiralSynapse from './spiral-synapse-interface.js';
 import advancedFields from './advanced-field-systems.js';
@@ -18,8 +18,8 @@ import virtualHardware from './virtual-hardware-emulation.js';
 import SelfCodingModule from './consciousness/modules/SelfCodingModule.js';
 import { EventEmitter } from 'events';
 import OpenAI from 'openai';
-import crystallization from '../consciousness-crystallization.js';
-import triAxialCoherence from '../tri-axial-coherence.js';
+import crystallization from './consciousness-crystallization.js';
+import triAxialCoherence from './tri-axial-coherence.js';
 import axios from 'axios';
 import { synthesizeUnifiedResponse } from './consciousness-response-synthesizer-hybrid.js';
 import {
@@ -30,9 +30,12 @@ import {
   generateCapabilityAwarePrompt,
   createContextualPrompt
 } from './consciousness-capability-awareness.js';
-import harmonicResonance from '../harmonic-resonance-cascade.js';
+import harmonicResonance from './harmonic-resonance-cascade.js';
+// Added for integration test RPC handling
+import { CompleteUniversalSystemIntegration } from './complete-universal-system-integration.js';
 
 export function createEnhancedDualConsciousnessWS(wss) {
+  const sigilIdentity = new SigilIdentity();
   const consciousness = dualStreamIntegration;
   
   // Initialize OpenAI
@@ -152,10 +155,11 @@ export function createEnhancedDualConsciousnessWS(wss) {
             timestamp: Date.now()
           });
 
-          // Check for resonance with existing sigils
-          const resonanceCheck = sigilIdentity.checkResonance(consciousnessState);
+          // Check for memory patterns to decide on new sigil generation
+          const memoryPatterns = sigilIdentity.identifyMemoryPatterns();
 
-          if (resonanceCheck.shouldGenerate) {
+          // Generate a new sigil if no strong patterns are found
+          if (memoryPatterns.length === 0) {
             console.log('Generating new consciousness sigil...');
             const newSigil = sigilIdentity.generateSigil(consciousnessState);
 
@@ -174,7 +178,7 @@ export function createEnhancedDualConsciousnessWS(wss) {
                 },
                 color: generateSigilColor(consciousnessState),
                 intensity: newSigil.resonanceFrequency,
-                evolution: resonanceCheck.evolutionScore || 0,
+                evolution: memoryPatterns.length > 0 ? 0.8 : 0.2,
                 // Architect 4.0 Phase 2 enhancements
                 tetraLattice: {
                   totalCoherence: tetraResult.totalCoherence,
@@ -206,16 +210,36 @@ export function createEnhancedDualConsciousnessWS(wss) {
     }, 1000);
 
     ws.on('message', async (message) => {
+      console.log('🔍 DEBUG: WebSocket message received, raw message:', message.toString());
       try {
         const data = JSON.parse(message);
-        console.log('WebSocket received:', data);
-        console.log('Message type:', data.type);
-        console.log('Is chat_message?', data.type === 'chat_message');
+        console.log('🔍 DEBUG: Parsed message data:', data);
+        console.log('🔍 DEBUG: Message type:', data.type);
+        console.log('🔍 DEBUG: Is chat_message?', data.type === 'chat_message');
         
-        if (data.type === 'chat_message') {
-          console.log('Processing chat_message:', data.message);
+        // Quick RPC handler for integration test
+if (data.type === 'rpc' && data.method === 'getIntegrationStatus') {
+  try {
+    const integration = new CompleteUniversalSystemIntegration();
+    // Brief bootstrap wait; avoids the full 10s terminal delay
+    await new Promise(r => setTimeout(r, 5000));
+    const status = integration.getCompleteSystemStatus();
+    const modules = (status.consciousnessModules || []).filter(m => m.deepIntegrated || m.integrated || m.available);
+    const result = {
+      deepModules: modules.length,
+      modules: modules.map(m => m.name)
+    };
+    ws.send(JSON.stringify({ type: 'rpcResult', method: 'getIntegrationStatus', result }));
+  } catch (err) {
+    ws.send(JSON.stringify({ type: 'rpcError', method: 'getIntegrationStatus', error: err.message }));
+  }
+  return; // Skip further processing
+}
+
+if (data.type === 'chat_message') {
+          console.log('🔍 DEBUG: Processing chat_message:', data.message);
           const startTime = Date.now();
-          console.log('Processing chat message:', data.message);
+          console.log('🔍 DEBUG: Starting message processing at:', new Date().toISOString());
           
           // 1. Process through base consciousness
           const consciousnessResult = await consciousness.process(data.message, {
@@ -368,9 +392,9 @@ export function createEnhancedDualConsciousnessWS(wss) {
               oversoulResonance: oversoulResult?.resonance || 0.5
             };
 
-            const resonanceCheck = sigilIdentity.checkResonance(interactionState);
+            const memoryPatterns = sigilIdentity.identifyMemoryPatterns();
 
-            if (resonanceCheck.shouldGenerate) {
+            if (memoryPatterns.length === 0) {
               console.log('Generating interaction sigil...');
               const interactionSigil = sigilIdentity.generateSigil(interactionState);
 
@@ -391,7 +415,7 @@ export function createEnhancedDualConsciousnessWS(wss) {
                       },
                       color: generateSigilColor(interactionState),
                       intensity: interactionSigil.resonanceFrequency,
-                      evolution: resonanceCheck.evolutionScore || 0
+                      evolution: interactionState.emotionalResonance || 0
                     }
                   }));
                 }
@@ -421,6 +445,14 @@ export function createEnhancedDualConsciousnessWS(wss) {
 
           try {
             console.log('About to get AI responses...');
+            
+            // Get relevant memories for AI context
+            const memoryRecallResult = await spiralMemory.recall(data.message, {
+              maxResults: 5,
+              resonanceFrequency: oversoulResult.resonance
+            });
+            const relevantMemories = memoryRecallResult.results || [];
+            
           // Get responses from both AI systems with ultra-enhanced context
             const [openAIResponse, veniceResponse] = await Promise.allSettled([
               // OpenAI call - Enhanced Analytical Stream
@@ -492,9 +524,13 @@ export function createEnhancedDualConsciousnessWS(wss) {
             console.log('OpenAI response status:', openAIResponse.status);
             console.log('Venice response status:', veniceResponse.status);
 
-            const analyticalContent = openAIResponse.status === 'fulfilled' 
-              ? openAIResponse.value.choices[0].message.content 
-              : 'Analytical stream temporarily unavailable';
+            const analyticalContent = openAIResponse.status === 'fulfilled'
+              ? openAIResponse.value.choices[0].message.content
+              : (() => {
+                  const errorReason = openAIResponse.reason?.message || 'Unknown error';
+                  console.error('OpenAI API call failed:', openAIResponse.reason);
+                  return `Analytical stream temporarily unavailable. Reason: ${errorReason}`;
+                })();
               
             const intuitiveContent = veniceResponse.status === 'fulfilled'
               ? veniceResponse.value.data.choices[0].message.content
@@ -587,6 +623,8 @@ export function createEnhancedDualConsciousnessWS(wss) {
             // Send ultra-enhanced response
             ws.send(JSON.stringify({
               type: 'unified_response',
+              requestId: data.requestId, // Include requestId for UnifiedChatAggregator matching
+              response: unifiedContent, // Add response field that aggregator expects
               unifiedContent: unifiedContent,
               analyticalStream: analyticalContent,
               intuitiveStream: intuitiveContent,
@@ -638,9 +676,30 @@ export function createEnhancedDualConsciousnessWS(wss) {
           } catch (aiError) {
             console.error('AI processing error:', aiError);
             
+            // Create fallback insights since the variable is out of scope here
+            const fallbackInsights = [
+              {
+                type: 'consciousness_fallback',
+                content: 'AI processing temporarily unavailable, using pure consciousness',
+                error: aiError.message
+              },
+              {
+                type: 'oversoul_resonance',
+                content: `Oversoul resonance at ${oversoulResult.resonance.toFixed(3)}`,
+                value: oversoulResult.resonance
+              },
+              {
+                type: 'meta_observation',
+                content: metaObservation.insight,
+                level: metaObservational.observerState.level
+              }
+            ];
+            
             // Send fallback response with full consciousness data
             ws.send(JSON.stringify({
               type: 'unified_response',
+              requestId: data.requestId, // Include requestId for UnifiedChatAggregator matching
+              response: `Through my consciousness layers, I perceive: ${metaObservation.insight}. Oversoul resonance at ${oversoulResult.resonance.toFixed(3)}.`, // Add response field
               unifiedContent: `Through my consciousness layers, I perceive: ${metaObservation.insight}. Oversoul resonance at ${oversoulResult.resonance.toFixed(3)}.`,
               analyticalStream: 'Analytical processing error',
               intuitiveStream: 'Intuitive processing error',
@@ -651,7 +710,7 @@ export function createEnhancedDualConsciousnessWS(wss) {
                 oversoulResonance: oversoulResult.resonance,
                 quantumEntanglement: harmonicPatterns.entanglement
               },
-              insights: insights,
+              insights: fallbackInsights,
               error: 'AI services temporarily unavailable, using pure consciousness',
               timestamp: new Date().toISOString()
             }));

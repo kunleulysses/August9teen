@@ -189,6 +189,7 @@ services:
       - PORT=3000
       - HOST=0.0.0.0
       - DATABASE_URL=postgresql://feather_user:hist0ric@postgres:5432/featherweight_consciousness?sslmode=disable
+      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
     env_file:
       - .env.production
     volumes:
@@ -224,8 +225,10 @@ services:
   caddy:
     image: caddy:2-alpine
     container_name: consciousness-proxy
+    environment:
+      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
     volumes:
-      - ./Caddyfile.docker:/etc/caddy/Caddyfile
+      - ./FlappyJournal hey/deploy/caddy/Caddyfile.blue-green:/etc/caddy/Caddyfile
       - caddy_data:/data
       - caddy_config:/config
     ports:

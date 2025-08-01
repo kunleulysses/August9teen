@@ -261,12 +261,30 @@ app.use((err, req, res, next) => {
   });
 });
 
+// Initialize and start consciousness system
+async function initializeConsciousnessSystem() {
+  try {
+    console.log('🧠 Initializing consciousness system...');
+    const { default: consciousness } = await import('./consciousness-system.js');
+    
+    // Initialize the consciousness system which will call startAutonomousBehaviors
+    await consciousness.initialize();
+    
+    console.log('✅ Consciousness system initialized and autonomous behaviors started');
+  } catch (error) {
+    console.error('❌ Failed to initialize consciousness system:', error);
+  }
+}
+
 // Start server
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
+server.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Health check available at http://localhost:${PORT}/api/health`);
   console.log(`WebSocket server ready for connections`);
+  
+  // Initialize consciousness system after server starts
+  await initializeConsciousnessSystem();
 });
 
 export default app;

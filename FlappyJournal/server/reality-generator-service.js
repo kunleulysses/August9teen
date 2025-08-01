@@ -23,7 +23,7 @@ const io = new Server(server, {
 });
 
 // Service configuration
-const PORT = process.env.REALITY_GENERATION_PORT || 5020;
+const PORT = process.env.REALITY_GENERATION_PORT || 5006;
 const DEDICATED_CORES = parseInt(process.env.DEDICATED_CPU_CORES) || 2;
 
 // Initialize reality generation components

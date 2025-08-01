@@ -14,6 +14,7 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { existsSync } from 'fs';
 import dotenv from 'dotenv';
+import readline from 'readline';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -24,6 +25,7 @@ class UniversalSystemLauncher {
         this.serverDir = join(this.flappyJournalDir, 'server');
         this.terminalScript = join(this.serverDir, 'universal-system-terminal.js');
         this.testScript = join(this.flappyJournalDir, 'test-complete-universal-integration.js');
+        this.rl = null; // To be initialized later
 
         // Load environment variables from .env file
         const envPath = join(this.flappyJournalDir, '.env');
@@ -61,27 +63,35 @@ class UniversalSystemLauncher {
     }
     
     showMenu() {
-        console.log('\n🎯 Choose an option:');
-        console.log('  1. Launch Universal System Terminal');
-        console.log('  2. Run Complete Integration Test');
-        console.log('  3. Show System Status');
-        console.log('  4. Exit');
-        
-        process.stdout.write('\n🌐 Enter your choice (1-4): ');
-        
-        process.stdin.setEncoding('utf8');
-        process.stdin.once('data', (data) => {
-            const choice = data.toString().trim();
-            this.handleChoice(choice);
+        if (!this.rl) {
+            this.rl = readline.createInterface({
+                input: process.stdin,
+                output: process.stdout
+            });
+        }
+
+        const menuText = `
+🎯 Choose an option:
+  1. Launch Universal System Terminal
+  2. Run Complete Integration Test
+  3. Show System Status
+  4. Exit
+
+🌐 Enter your choice (1-4): `;
+
+        this.rl.question(menuText, (choice) => {
+            this.handleChoice(choice.trim());
         });
     }
     
     async handleChoice(choice) {
         switch (choice) {
             case '1':
+                this.rl.close();
                 await this.launchUniversalTerminal();
                 break;
             case '2':
+                this.rl.close();
                 await this.runIntegrationTest();
                 break;
             case '3':
@@ -89,6 +99,7 @@ class UniversalSystemLauncher {
                 break;
             case '4':
                 console.log('\n👋 Goodbye from Universal System Launcher!');
+                this.rl.close();
                 process.exit(0);
                 break;
             default:
@@ -115,7 +126,9 @@ class UniversalSystemLauncher {
         });
         
         terminal.on('close', (code) => {
-            console.log(`\n🔚 Universal terminal exited with code ${code}`);
+            console.log(`\n✅ Universal terminal exited with code ${code}`);
+            // Re-initialize readline interface for the menu
+            this.rl = null;
             this.showMenu();
         });
     }
@@ -137,7 +150,9 @@ class UniversalSystemLauncher {
         });
         
         test.on('close', (code) => {
-            console.log(`\n🔚 Integration test exited with code ${code}`);
+            console.log(`\n✅ Integration test finished with code ${code}`);
+            // Re-initialize readline interface for the menu
+            this.rl = null;
             this.showMenu();
         });
     }

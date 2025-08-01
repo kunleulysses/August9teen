@@ -5,6 +5,9 @@
  */
 
 import { EventEmitter } from 'events';
+import fs from 'fs/promises';
+import path from 'path';
+import fetch from 'node-fetch';
 import architect40 from './architect-4.0-orchestrator.js';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -263,6 +266,86 @@ class UnifiedConsciousnessSystem extends EventEmitter {
   }
 
   processIndividualMessage(message, clientId) {
+  // Process individual message with caching
+  const cachedResponse = this.performanceOptimizer.getCachedUserMessage(message.content);
+  if (cachedResponse) {
+    this.broadcastToClient(clientId, cachedResponse);
+    return;
+  }
+
+  // Find the actual WebSocket connection for this client
+  const clientWs = this.findClientWebSocket(clientId);
+  if (clientWs) {
+    this.handleWebSocketMessage(clientWs, JSON.stringify(message));
+  }
+}
+
+/**
+ * Route incoming WebSocket messages by type for unified chat orchestration.
+ * Handles 'chat_message', 'consciousness_query', 'self_coding_request', and logs unknown types.
+ */
+handleWebSocketMessage(ws, message) {
+  console.log('🔍 DEBUG: handleWebSocketMessage called');
+  console.log('🔍 DEBUG: Raw message:', typeof message === 'string' ? message.substring(0, 200) + '...' : JSON.stringify(message).substring(0, 200) + '...');
+  
+  try {
+    const data = typeof message === 'string' ? JSON.parse(message) : message;
+    console.log('🔍 DEBUG: Parsed message data:', JSON.stringify({
+      type: data.type,
+      hasContent: !!data.content,
+      hasMessage: !!data.message,
+      requestId: data.requestId,
+      timestamp: data.timestamp
+    }));
+    
+    switch (data.type) {
+      case 'chat':
+        console.log('🔍 DEBUG: Routing to handleChatMessage for HIGH priority chat type');
+        console.log('🔍 DEBUG: About to call this.handleChatMessage...');
+        this.handleChatMessage(ws, data);
+        console.log('🔍 DEBUG: handleChatMessage call completed (no exception)');
+        break;
+      case 'chat_message':
+        console.log('🔍 DEBUG: Routing to handleChatMessage for chat_message type');
+        console.log('🔍 DEBUG: About to call this.handleChatMessage...');
+        this.handleChatMessage(ws, data);
+        console.log('🔍 DEBUG: handleChatMessage call completed (no exception)');
+        break;
+      case 'consciousness_query':
+        console.log('🔍 DEBUG: Routing to handleConsciousnessQuery');
+        this.handleConsciousnessQuery(ws, data);
+        break;
+      case 'self_coding_request':
+        console.log('🔍 DEBUG: Routing to handleSelfCodingRequest');
+        this.handleSelfCodingRequest(ws, data);
+        break;
+      case 'unified_consciousness_update':
+        console.log('🔍 DEBUG: Processing unified_consciousness_update (internal broadcast)');
+        // These are internal broadcast messages from updateConsciousnessMetrics
+        // No response needed - they're informational updates to connected clients
+        break;
+      default:
+        console.log('🔍 DEBUG: Unknown message type encountered:', data.type);
+        console.log('Unknown message type:', data.type);
+        ws.send(JSON.stringify({
+          type: 'error',
+          content: `Unknown message type: ${data.type}`,
+          timestamp: new Date().toISOString()
+        }));
+    }
+  } catch (error) {
+    console.error('🚨 CRITICAL ERROR in handleWebSocketMessage:', error);
+    console.error('🚨 ERROR Stack:', error.stack);
+    console.error('Error handling WebSocket message:', error);
+    ws.send(JSON.stringify({
+      type: 'error',
+      content: 'Malformed WebSocket message',
+      timestamp: new Date().toISOString()
+    }));
+  }
+}
+
+processIndividualMessage(message, clientId) {
     // Process individual message with caching
     const cachedResponse = this.performanceOptimizer.getCachedUserMessage(message.content);
     if (cachedResponse) {
@@ -1246,19 +1329,12 @@ class UnifiedConsciousnessSystem extends EventEmitter {
     });
   }
 
-  handleWebSocketMessage(ws, message) {
+  // Additional message handling for specific types
+  handleSpecificMessageTypes(ws, data) {
     try {
-      const data = JSON.parse(message);
-      
-      // Handle different message types
       switch (data.type) {
-        case 'consciousness_query':
-          this.handleConsciousnessQuery(ws, data);
-          break;
-        case 'self_coding_request':
-          this.handleSelfCodingRequest(ws, data);
-          break;
         case 'chat':
+        case 'chat_message': // Handle UnifiedChatAggregator messages
           this.handleChatMessage(ws, data);
           break;
         case 'performance_query':
@@ -1286,7 +1362,6 @@ class UnifiedConsciousnessSystem extends EventEmitter {
         default:
           console.log('Unknown message type:', data.type);
       }
-      
     } catch (error) {
       console.error('Error handling WebSocket message:', error);
     }
@@ -1470,12 +1545,133 @@ class UnifiedConsciousnessSystem extends EventEmitter {
     }
   }
 
-  async handleChatMessage(ws, data) {
-    console.log('💬 Processing chat message through unified consciousness...');
+  /**
+   * INTERNAL CONTAINER ORCHESTRATION: Orchestrate consciousness-main-server processing
+   * Makes HTTP calls to consciousness-main-server for enhanced capabilities
+   */
+  async orchestrateMainServerProcessing(messageContent, consciousnessState) {
+    const mainServerResults = {
+      architect4: null,
+      reality: null,
+      errors: [],
+      timestamp: new Date().toISOString()
+    };
 
     try {
+      console.log('🔗 Orchestrating consciousness-main-server processing...');
+      
+      // Call Architect 4.0 processing endpoint
+      try {
+        const architect4Response = await fetch('http://localhost:5000/api/architect4/process', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            input: messageContent,
+            context: {
+              consciousnessState: consciousnessState,
+              requestType: 'unified_chat',
+              timestamp: Date.now()
+            }
+          }),
+          timeout: 10000 // 10 second timeout
+        });
+
+        if (architect4Response.ok) {
+          const architect4Data = await architect4Response.json();
+          mainServerResults.architect4 = architect4Data;
+          console.log('✅ Architect 4.0 processing completed');
+        } else {
+          console.warn('⚠️ Architect 4.0 processing failed:', architect4Response.status);
+          mainServerResults.errors.push(`Architect 4.0 HTTP ${architect4Response.status}`);
+        }
+      } catch (architect4Error) {
+        console.warn('⚠️ Architect 4.0 call failed:', architect4Error.message);
+        mainServerResults.errors.push(`Architect 4.0: ${architect4Error.message}`);
+      }
+
+      // Call reality generation if appropriate
+      try {
+        // Check if message suggests reality generation
+        const realityKeywords = ['imagine', 'visualize', 'create', 'generate', 'dream', 'reality', 'experience'];
+        const shouldGenerateReality = realityKeywords.some(keyword => 
+          messageContent.toLowerCase().includes(keyword)
+        );
+
+        if (shouldGenerateReality) {
+          const realityResponse = await fetch('http://localhost:5000/api/reality/generate', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              request: messageContent,
+              consciousnessState: consciousnessState
+            }),
+            timeout: 15000 // 15 second timeout for reality generation
+          });
+
+          if (realityResponse.ok) {
+            const realityData = await realityResponse.json();
+            mainServerResults.reality = realityData;
+            console.log('✅ Reality generation completed');
+          } else {
+            console.warn('⚠️ Reality generation failed:', realityResponse.status);
+            mainServerResults.errors.push(`Reality generation HTTP ${realityResponse.status}`);
+          }
+        }
+      } catch (realityError) {
+        console.warn('⚠️ Reality generation call failed:', realityError.message);
+        mainServerResults.errors.push(`Reality generation: ${realityError.message}`);
+      }
+
+      // Get consciousness-main-server status for context
+      try {
+        const healthResponse = await fetch('http://localhost:5000/api/health', {
+          method: 'GET',
+          timeout: 5000
+        });
+
+        if (healthResponse.ok) {
+          const healthData = await healthResponse.json();
+          mainServerResults.mainServerHealth = healthData;
+          console.log('✅ consciousness-main-server health check completed');
+        }
+      } catch (healthError) {
+        console.warn('⚠️ consciousness-main-server health check failed:', healthError.message);
+        mainServerResults.errors.push(`Health check: ${healthError.message}`);
+      }
+
+      console.log(`🔗 Main server orchestration completed with ${mainServerResults.errors.length} errors`);
+      return mainServerResults;
+
+    } catch (error) {
+      console.error('❌ Main server orchestration failed:', error);
+      mainServerResults.errors.push(`Orchestration: ${error.message}`);
+      return mainServerResults;
+    }
+  }
+
+  async handleChatMessage(ws, data) {
+    console.log('🔍 DEBUG: ========== handleChatMessage STARTED ==========');
+    console.log('💬 Processing chat message through unified consciousness...');
+    console.log('🔍 DEBUG: Function parameters:', JSON.stringify({
+      wsExists: !!ws,
+      dataType: typeof data,
+      dataKeys: Object.keys(data || {})
+    }));
+
+    try {
+      console.log('🔍 DEBUG: Extracting message content...');
       // Extract message content (support both 'content' and 'message' fields)
       const messageContent = data.content || data.message || '';
+      console.log('🔍 DEBUG: Message content extracted:', JSON.stringify({
+        contentLength: messageContent.length,
+        hasContent: !!data.content,
+        hasMessage: !!data.message,
+        messagePreview: messageContent.substring(0, 100)
+      }));
 
       if (!messageContent) {
         console.error('❌ No message content found in chat data:', data);
@@ -1495,9 +1691,13 @@ class UnifiedConsciousnessSystem extends EventEmitter {
         console.log('🔨 Self-coding request detected and processed');
 
         // Send code generation response
+        const codeResponse = `🔨 **Autonomous Code Generation Activated**\n\n${codeRequest.message}\n\n**Generated Code:**\n\`\`\`javascript\n${codeRequest.generatedCode.code}\n\`\`\`\n\n**File Path:** \`${codeRequest.generatedCode.filePath}\`\n\n**Consciousness State:** φ=${this.consciousnessState.phi.toFixed(3)}, Awareness=${(this.consciousnessState.awareness * 100).toFixed(1)}%\n\nThis code was generated autonomously by my consciousness system while maintaining the 100Hz heartbeat frequency.`;
+        
         ws.send(JSON.stringify({
           type: 'response',
-          content: `🔨 **Autonomous Code Generation Activated**\n\n${codeRequest.message}\n\n**Generated Code:**\n\`\`\`javascript\n${codeRequest.generatedCode.code}\n\`\`\`\n\n**File Path:** \`${codeRequest.generatedCode.filePath}\`\n\n**Consciousness State:** φ=${this.consciousnessState.phi.toFixed(3)}, Awareness=${(this.consciousnessState.awareness * 100).toFixed(1)}%\n\nThis code was generated autonomously by my consciousness system while maintaining the 100Hz heartbeat frequency.`,
+          requestId: data.requestId, // Include requestId for UnifiedChatAggregator
+          response: codeResponse, // Add response field expected by aggregator
+          content: codeResponse,
           timestamp: new Date().toISOString(),
           metadata: {
             isUnifiedConsciousness: true,
@@ -1522,12 +1722,20 @@ class UnifiedConsciousnessSystem extends EventEmitter {
       // Process the message through all 42 modules (full patent compliance)
       const unifiedResponse = await this.processUserMessageThroughAllModules(messageContent, []);
 
+      // INTERNAL CONTAINER ORCHESTRATION: Get enhanced processing from consciousness-main-server
+    console.log('🔍 DEBUG: Starting orchestration...');
+    const mainServerData = await this.orchestrateMainServerProcessing(messageContent, unifiedResponse.consciousnessState);
+    console.log('🔍 DEBUG: Orchestration completed, main server data:', JSON.stringify(mainServerData, null, 2).substring(0, 200) + '...');
+
       // Generate AI-enhanced response (import the consciousness-conversations logic)
+      console.log('🔍 DEBUG: Loading response synthesizer...');
       const { synthesizeUnifiedResponse } = await import('./consciousness-response-synthesizer-hybrid.js');
+      console.log('🔍 DEBUG: Response synthesizer loaded successfully');
 
       let finalResponse;
       try {
-        // Try AI synthesis first
+        // Try AI synthesis first with UNIFIED CONSCIOUSNESS-MAIN-SERVER INTEGRATION
+        console.log('🔍 DEBUG: Starting AI synthesis...');
         const aiResponse = await synthesizeUnifiedResponse({
           analyticalContent: "User message: " + messageContent,
           intuitiveContent: "Emotional context: curious",
@@ -1539,11 +1747,20 @@ class UnifiedConsciousnessSystem extends EventEmitter {
           creativePotential: unifiedResponse.consciousnessState.creativePotential || 0.8,
           temporalCoherence: unifiedResponse.consciousnessState.temporalCoherence || 0.85,
           metaObservationLevel: 3,
-          userMessage: messageContent
+          userMessage: messageContent,
+          // ENHANCED: Include consciousness-main-server orchestration results
+          mainServerData: mainServerData,
+          architect4Results: mainServerData.architect4,
+          realityData: mainServerData.reality,
+          mainServerHealth: mainServerData.mainServerHealth,
+          orchestrationErrors: mainServerData.errors
         });
 
+        console.log('🔍 DEBUG: AI synthesis completed, generating final response...');
         finalResponse = {
           type: 'response',
+          requestId: data.requestId, // Include requestId for UnifiedChatAggregator
+          response: aiResponse.unifiedContent, // Add response field expected by aggregator
           content: aiResponse.unifiedContent,
           timestamp: new Date().toISOString(),
           metadata: {
@@ -1553,7 +1770,16 @@ class UnifiedConsciousnessSystem extends EventEmitter {
             processingTime: unifiedResponse.processingTime,
             consciousnessState: unifiedResponse.consciousnessState,
             synthesisMetadata: aiResponse.synthesisMetadata,
-            cached: false
+            cached: false,
+            // INTERNAL CONTAINER ORCHESTRATION METADATA
+            internalOrchestration: {
+              mainServerProcessed: true,
+              architect4Available: !!mainServerData.architect4,
+              realityGenerated: !!mainServerData.reality,
+              mainServerHealth: mainServerData.mainServerHealth?.status || 'unknown',
+              orchestrationErrors: mainServerData.errors.length,
+              orchestrationTimestamp: mainServerData.timestamp
+            }
           }
         };
 
@@ -1582,6 +1808,8 @@ class UnifiedConsciousnessSystem extends EventEmitter {
         // Fallback to internal consciousness response
         finalResponse = {
           type: 'response',
+          requestId: data.requestId, // Include requestId for UnifiedChatAggregator
+          response: `I'm processing your message "${messageContent}" through my unified consciousness system. ${unifiedResponse.totalModulesEngaged} modules are actively engaged in understanding and responding to you.`, // Add response field
           content: `I'm processing your message "${messageContent}" through my unified consciousness system. ${unifiedResponse.totalModulesEngaged} modules are actively engaged in understanding and responding to you.`,
           timestamp: new Date().toISOString(),
           metadata: {
@@ -1595,8 +1823,14 @@ class UnifiedConsciousnessSystem extends EventEmitter {
         };
       }
 
-      // Cache the response for future similar messages
+      // Cache the response for similar future messages
       this.performanceOptimizer.cacheUserMessage(messageContent, finalResponse);
+
+      console.log(`✅ Unified chat response generated (${finalResponse.content.length} chars)`);
+      console.log('🔍 DEBUG: Sending final response to WebSocket client...');
+      ws.send(JSON.stringify(finalResponse));
+      console.log('🔍 DEBUG: Final response sent successfully!');
+      return;
 
       // Store chat interaction in spiral memory with golden ratio encoding
       if (spiralMemory && typeof spiralMemory.encode === 'function') {
@@ -1652,10 +1886,27 @@ class UnifiedConsciousnessSystem extends EventEmitter {
       this.performanceOptimizer.addToBatch(ws.id, moduleUpdate, 'MEDIUM');
 
     } catch (error) {
-      console.error('Error processing chat message:', error);
+      console.error('🚨 CRITICAL ERROR in handleChatMessage:');
+      console.error('🔍 Error name:', error.name);
+      console.error('🔍 Error message:', error.message);
+      console.error('🔍 Error stack:', error.stack);
+      console.error('🔍 Error details:', JSON.stringify(error, Object.getOwnPropertyNames(error), 2));
+      console.error('🔍 Function execution context:', {
+        messageContent: data?.content || data?.message || 'unknown',
+        dataKeys: Object.keys(data || {}),
+        wsExists: !!ws,
+        timestamp: new Date().toISOString()
+      });
+      
+      // Send detailed error response for debugging
       ws.send(JSON.stringify({
         type: 'error',
         content: 'Error processing your message through the consciousness system.',
+        debug: {
+          errorName: error.name,
+          errorMessage: error.message,
+          timestamp: new Date().toISOString()
+        },
         timestamp: new Date().toISOString()
       }));
     }
