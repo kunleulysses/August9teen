@@ -9,8 +9,11 @@ import { generateId } from '../common/id.js';
 import routes from './routes/index.js';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
+import { authMiddleware, loginRoute } from './auth.js';
+import { storeFactory } from '../common/storeFactory.js';
 
 const app = express();
+let httpServer = null;
 
 app.use(
   rateLimit({
