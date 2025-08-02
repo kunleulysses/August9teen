@@ -1,5 +1,5 @@
 # Stage 1: Builder
-FROM node:20-alpine AS builder
+FROM node:24-alpine AS builder
 
 WORKDIR /opt/app
 
@@ -21,7 +21,7 @@ RUN npm run build
 RUN npm prune --production && npm cache clean --force
 
 # Stage 2: Production
-FROM node:20-alpine AS prod
+FROM node:24-alpine AS prod
 
 # Install minimal runtime dependencies
 RUN apk add --no-cache ca-certificates curl
