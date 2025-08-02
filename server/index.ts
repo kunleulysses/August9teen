@@ -7,9 +7,19 @@ import { startEmailProcessor } from "./email-processor";
 import { startEmailScheduler } from "./scheduler";
 import { initUnifiedChatWS } from "./unified-chat-ws";
 
+import { Registry, collectDefaultMetrics } from 'prom-client';
+
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Prometheus metrics setup
+const promRegistry = new Registry();
+collectDefaultMetrics({ register: promRegistry });
+app.get('/metrics', async (_req, res) => {
+  res.set('Content-Type', promRegistry.contentType);
+  res.end(await promRegistry.metrics());
+});
 
 // Serve uploaded files and public directory
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
