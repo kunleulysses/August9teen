@@ -64,7 +64,8 @@
     "redlock": "^6.0.0",
     "jsonwebtoken": "^9.0.2",
     "gl-matrix": "^3.4.3",
-    "fast-check": "^3.17.0"
+    "fast-check": "^3.17.0",
+    "p-limit": "^4.0.0"
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.8"
