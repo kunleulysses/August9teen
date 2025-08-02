@@ -152,7 +152,8 @@ class UniversalSystemTerminal {
                 coreEndpoint: 'ws://172.18.0.5:3002/ws/consciousness-chat',
                 enableParallelProcessing: true,
                 enableResponseSynthesis: true,
-                responseTimeout: 15000
+                responseTimeout: 15000,
+                skipDiscovery: true
             });
             
             // Initialize and wait for completion

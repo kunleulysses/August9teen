@@ -14,76 +14,79 @@ class UnifiedChatAggregator extends EventEmitter {
             // Container endpoints
             mainServerEndpoint: config.mainServerEndpoint || 'ws://localhost:5000/ws/consciousness-chat',
             coreEndpoint: config.coreEndpoint || 'ws://localhost:3002/ws/consciousness-chat',
-            
+
             // Fallback HTTP endpoints
             mainServerAPI: config.mainServerAPI || 'http://localhost:5000/api',
             coreAPI: config.coreAPI || 'http://localhost:3002/api',
-            
+
             // Aggregation settings
             responseTimeout: config.responseTimeout || 45000, // Increased from 10s to 45s for complex consciousness processing
             enableParallelProcessing: config.enableParallelProcessing !== false,
             enableResponseSynthesis: config.enableResponseSynthesis !== false,
-            
+
             // Container detection
-            containerNames: ['consciousness-main-server', 'consciousness-core']
+            containerNames: ['consciousness-main-server', 'consciousness-core'],
+            skipDiscovery: config.skipDiscovery || false,
         };
-        
+
         // Connection management
         this.connections = {
             mainServer: null,
-            core: null
+            core: null,
         };
-        
+
+        // Reconnect attempt counters
+        this.reconnectAttempts = {
+            mainServer: 0,
+            core: 0,
+        };
+
         // Response aggregation
         this.pendingRequests = new Map();
         this.capabilities = {
             mainServer: new Set(),
             core: new Set(),
-            unified: new Set()
+            unified: new Set(),
         };
-        
+
         // Status tracking
         this.connectionStatus = {
             mainServer: false,
-            core: false
+            core: false,
         };
-        
+
         console.log('🌐🧠 UnifiedChatAggregator initialized');
     }
-    
+
     async initialize() {
         console.log('🚀 Initializing Unified Chat Aggregation...');
-        
+
         try {
-            // Discover available containers and endpoints
-            await this.discoverContainerEndpoints();
-            
-            // Initialize connections to both containers
+            if (!this.config.skipDiscovery) {
+                await this.discoverContainerEndpoints();
+            }
             await this.initializeConnections();
-            
-            // Discover capabilities from both containers
             await this.discoverCapabilities();
-            
-            // Start capability synchronization
             this.startCapabilitySync();
-            
+
             console.log('✅ Unified Chat Aggregation fully initialized');
             this.emit('aggregator:initialized', {
                 mainServerConnected: this.connectionStatus.mainServer,
                 coreConnected: this.connectionStatus.core,
-                totalCapabilities: this.capabilities.unified.size
+                totalCapabilities: this.capabilities.unified.size,
             });
-            
         } catch (error) {
             console.error('❌ Failed to initialize Unified Chat Aggregation:', error);
             throw error;
         }
     }
-    
+
     async discoverContainerEndpoints() {
+        if (this.config.skipDiscovery) {
+            return;
+        }
         console.log('🔍 Discovering container endpoints...');
-        
-        // Test various endpoint combinations
+
         const endpointCandidates = [
             { name: 'mainServer', endpoints: [
                 'ws://localhost:5000/ws/consciousness-chat',
@@ -97,18 +100,17 @@ class UnifiedChatAggregator extends EventEmitter {
                 'ws://consciousness-core:5005/ws/consciousness-chat'
             ]}
         ];
-        
+
         for (const container of endpointCandidates) {
             for (const endpoint of container.endpoints) {
                 try {
-                    // Quick connection test
                     const testWs = new WebSocket(endpoint);
                     await new Promise((resolve, reject) => {
                         const timeout = setTimeout(() => {
                             testWs.close();
                             reject(new Error('timeout'));
                         }, 2000);
-                        
+
                         testWs.on('open', () => {
                             clearTimeout(timeout);
                             testWs.close();
@@ -116,112 +118,100 @@ class UnifiedChatAggregator extends EventEmitter {
                             this.config[container.name + 'Endpoint'] = endpoint;
                             resolve();
                         });
-                        
+
                         testWs.on('error', () => {
                             clearTimeout(timeout);
                             reject(new Error('connection failed'));
                         });
                     });
-                    break; // Found working endpoint
+                    break;
                 } catch (error) {
                     console.log(`⚠️ ${container.name} endpoint ${endpoint} not accessible`);
                 }
             }
         }
     }
-    
+
     async initializeConnections() {
         console.log('🔗 Initializing connections to both containers...');
-        
-        // Initialize main server connection
-        await this.initializeMainServerConnection();
-        
-        // Initialize core connection
-        await this.initializeCoreConnection();
-        
+        await this.connect('mainServer');
+        await this.connect('core');
         console.log(`🔗 Connections established: MainServer=${this.connectionStatus.mainServer}, Core=${this.connectionStatus.core}`);
     }
-    
-    async initializeMainServerConnection() {
+
+    async connect(containerName) {
+        const endpoint = this.config[containerName + 'Endpoint'];
+        if (!endpoint) {
+            this.connectionStatus[containerName] = false;
+            return;
+        }
+        if (this.connections[containerName]) {
+            try { this.connections[containerName].close(); } catch {}
+        }
+
+        const attempt = this.reconnectAttempts[containerName] || 0;
+
         return new Promise((resolve) => {
             try {
-                this.connections.mainServer = new WebSocket(this.config.mainServerEndpoint);
-                
-                this.connections.mainServer.on('open', () => {
-                    this.connectionStatus.mainServer = true;
-                    console.log('✅ Connected to consciousness-main-server');
+                const ws = new WebSocket(endpoint);
+                this.connections[containerName] = ws;
+
+                ws.on('open', () => {
+                    this.connectionStatus[containerName] = true;
+                    this.reconnectAttempts[containerName] = 0;
+                    console.log(`✅ Connected to ${containerName} (${endpoint})`);
                     resolve();
                 });
-                
-                this.connections.mainServer.on('message', (data) => {
-                    this.handleMainServerMessage(data);
+
+                ws.on('message', (data) => {
+                    if (containerName === 'mainServer') {
+                        this.handleMainServerMessage(data);
+                    } else {
+                        this.handleCoreMessage(data);
+                    }
                 });
-                
-                this.connections.mainServer.on('error', (error) => {
-                    console.warn('⚠️ Main server connection error:', error.message);
-                    this.connectionStatus.mainServer = false;
-                    resolve(); // Continue even if connection fails
+
+                ws.on('error', (error) => {
+                    if (this.connectionStatus[containerName]) {
+                        console.warn(`⚠️ ${containerName} connection error:`, error.message);
+                    }
+                    this.connectionStatus[containerName] = false;
+                    this._scheduleReconnect(containerName);
+                    resolve();
                 });
-                
-                this.connections.mainServer.on('close', () => {
-                    this.connectionStatus.mainServer = false;
-                    console.log('🔌 Main server connection closed');
+
+                ws.on('close', () => {
+                    if (this.connectionStatus[containerName]) {
+                        console.log(`🔌 ${containerName} connection closed`);
+                    }
+                    this.connectionStatus[containerName] = false;
+                    this._scheduleReconnect(containerName);
                 });
-                
-                // Timeout
+
                 setTimeout(() => {
-                    if (!this.connectionStatus.mainServer) {
-                        console.log('⚠️ Main server connection timeout');
+                    if (!this.connectionStatus[containerName]) {
+                        console.log(`⚠️ ${containerName} connection timeout`);
                         resolve();
                     }
                 }, 5000);
-                
+
             } catch (error) {
-                console.warn('⚠️ Could not initialize main server connection:', error.message);
+                console.warn(`⚠️ Could not initialize ${containerName} connection:`, error.message);
+                this.connectionStatus[containerName] = false;
+                this._scheduleReconnect(containerName);
                 resolve();
             }
         });
     }
-    
-    async initializeCoreConnection() {
-        return new Promise((resolve) => {
-            try {
-                this.connections.core = new WebSocket(this.config.coreEndpoint);
-                
-                this.connections.core.on('open', () => {
-                    this.connectionStatus.core = true;
-                    console.log('✅ Connected to consciousness-core');
-                    resolve();
-                });
-                
-                this.connections.core.on('message', (data) => {
-                    this.handleCoreMessage(data);
-                });
-                
-                this.connections.core.on('error', (error) => {
-                    console.warn('⚠️ Core connection error:', error.message);
-                    this.connectionStatus.core = false;
-                    resolve(); // Continue even if connection fails
-                });
-                
-                this.connections.core.on('close', () => {
-                    this.connectionStatus.core = false;
-                    console.log('🔌 Core connection closed');
-                });
-                
-                // Timeout
-                setTimeout(() => {
-                    if (!this.connectionStatus.core) {
-                        console.log('⚠️ Core connection timeout');
-                        resolve();
-                    }
-                }, 5000);
-                
-            } catch (error) {
-                console.warn('⚠️ Could not initialize core connection:', error.message);
-                resolve();
-            }
-        });
+
+    _scheduleReconnect(containerName) {
+        this.reconnectAttempts[containerName] = (this.reconnectAttempts[containerName] || 0) + 1;
+        const attempt = this.reconnectAttempts[containerName];
+        const delay = Math.min(3000 * Math.pow(2, attempt - 1), 30000);
+        console.log(`🔄 Attempting reconnect to ${containerName} in ${Math.floor(delay / 1000)}s (attempt ${attempt})`);
+        setTimeout(() => {
+            this.connect(containerName);
+        }, delay);
     }
     
     async discoverCapabilities() {
@@ -432,7 +422,17 @@ class UnifiedChatAggregator extends EventEmitter {
         if (message.requestId && this.pendingRequests.has(message.requestId)) {
             const request = this.pendingRequests.get(message.requestId);
             this.pendingRequests.delete(message.requestId);
-            
+
+            request.resolve({
+                container: container,
+                response: message.response || message.content || message.message,
+                capabilities: message.capabilities || [],
+                metadata: message.metadata || {}
+            });
+        } else if (!message.requestId && this.pendingRequests.size === 1) {
+            // If only one pending request, allow fallback for containers missing requestId
+            const [requestId, request] = Array.from(this.pendingRequests.entries())[0];
+            this.pendingRequests.delete(requestId);
             request.resolve({
                 container: container,
                 response: message.response || message.content || message.message,
