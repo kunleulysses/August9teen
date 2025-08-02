@@ -1,3 +1,5 @@
+import '../shared/secretBootstrap';
+import '../shared/opentelemetry';
 import { storage } from "./storage";
 import { emailService } from "./email";
 import { simpleParser } from "mailparser";

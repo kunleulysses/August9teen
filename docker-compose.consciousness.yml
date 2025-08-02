@@ -207,8 +207,7 @@ services:
         limits:
           memory: 512M
 
-volumes:
-  postgres_data:
+postgres_data:
     driver: local
   consciousness_logs:
     driver: local
@@ -226,6 +225,10 @@ volumes:
     driver: local
   grafana_data:
     driver: local
+  loki_data:
+    driver: local
+  tempo_data:
+    driver: local
 
 networks:
   consciousness-network:
@@ -233,3 +236,59 @@ networks:
     ipam:
       config:
         - subnet: 172.20.0.0/16
+
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector:0.93.0
+    command: ["--config=/etc/otel-collector-config.yml"]
+    volumes:
+      - ./monitoring/otel-collector-config.yml:/etc/otel-collector-config.yml
+    ports:
+      - "4318:4318"
+      - "8889:8889"
+    networks:
+      - consciousness-network
+
+  falco:
+    image: falcosecurity/falco:latest
+    privileged: true
+    volumes:
+      - /var/run/docker.sock:/host/var/run/docker.sock
+      - /proc:/host/proc:ro
+      - /boot:/host/boot:ro
+      - /lib/modules:/host/lib/modules:ro
+      - /usr:/host/usr:ro
+    networks:
+      - consciousness-network
+
+  loki:
+    image: grafana/loki:2.9.1
+    command: -config.file=/etc/loki-config.yml
+    volumes:
+      - ./monitoring/loki-config.yml:/etc/loki-config.yml
+      - loki_data:/loki
+    ports:
+      - "3100:3100"
+    networks:
+      - consciousness-network
+
+  promtail:
+    image: grafana/promtail:2.9.1
+    command: -config.file=/etc/promtail/promtail.yml
+    volumes:
+      - /var/log:/var/log
+      - /etc/machine-id:/etc/machine-id
+    ports:
+      - "9080:9080"
+    networks:
+      - consciousness-network
+
+  tempo:
+    image: grafana/tempo:2.4.0
+    command: [ "-config.file=/etc/tempo-config.yml" ]
+    volumes:
+      - tempo_data:/var/tempo
+    ports:
+      - "3200:3200"
+    networks:
+      - consciousness-network

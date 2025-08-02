@@ -4,6 +4,8 @@
  * into a single, unified system with shared state and communication
  */
 
+import '../../shared/secretBootstrap.js';
+import '../../shared/opentelemetry.js';
 import { EventEmitter } from 'events';
 import fs from 'fs/promises';
 import path from 'path';

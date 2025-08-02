@@ -1,3 +1,5 @@
+import '../shared/secretBootstrap';
+import '../shared/opentelemetry';
 import { emailService } from "./email";
 
 // Interval for checking if daily emails need to be sent (every 15 minutes)

@@ -1,0 +1,22 @@
+receivers:
+  otlp:
+    protocols:
+      http:
+
+exporters:
+  logging:
+    loglevel: info
+  tempo:
+    endpoint: "tempo:4317"
+    insecure: true
+  prometheus:
+    endpoint: "0.0.0.0:8889"
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      exporters: [logging, tempo]
+    metrics:
+      receivers: [otlp]
+      exporters: [logging, prometheus]

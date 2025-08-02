@@ -1,4 +1,5 @@
 import '../../shared/secretBootstrap.js';
+import '../../shared/opentelemetry.js';
 import 'express-async-errors';
 import '../../common/tracing.js';
 import express from 'express';

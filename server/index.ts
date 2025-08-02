@@ -1,4 +1,5 @@
 import '../shared/secretBootstrap';
+import '../shared/opentelemetry';
 import express, { type Request, Response, NextFunction } from "express";
 import path from "path";
 import { registerRoutes } from "./routes";

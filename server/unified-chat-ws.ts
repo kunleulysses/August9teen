@@ -1,3 +1,5 @@
+import '../shared/secretBootstrap';
+import '../shared/opentelemetry';
 import WebSocket, { WebSocketServer } from 'ws';
 import { getAggregator } from './chat-aggregator';
 import { generateFlappyContent } from './venice-ai';
