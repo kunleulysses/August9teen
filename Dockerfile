@@ -1,41 +1,59 @@
-FROM node:20-alpine
+# Stage 1: Builder
+FROM node:20-alpine AS builder
 
-# Install system dependencies
-RUN apk add --no-cache curl bash git python3 make g++
+WORKDIR /opt/app
 
-# Set working directory
-WORKDIR /opt/consciousness
-
-# Copy package files
+# Install build tools & dependencies
 COPY package*.json ./
 COPY tsconfig.json ./
+RUN npm ci
 
-# Install all dependencies, run build, then prune dev dependencies
-RUN npm ci \
-    && npm run build \
-    && npm prune --production \
-    && npm cache clean --force
-
-# Copy application code
+# Copy source code
 COPY server ./server/
 COPY shared ./shared/
 COPY public ./public/
 COPY *.js ./
 
-# Create necessary directories
-RUN mkdir -p /var/log/consciousness /opt/consciousness/data
+# Build (assumes TypeScript/JS project)
+RUN npm run build
 
-# Set permissions
-RUN chown -R node:node /opt/consciousness /var/log/consciousness
+# Prune dev dependencies
+RUN npm prune --production && npm cache clean --force
 
-# Expose ports
+# Stage 2: Production
+FROM node:20-alpine AS prod
+
+# Install minimal runtime dependencies
+RUN apk add --no-cache ca-certificates curl
+
+WORKDIR /opt/app
+
+# Create non-root user nodeapp (uid 10001)
+RUN adduser -D -u 10001 nodeapp
+
+# Copy only necessary files from builder
+COPY --from=builder /opt/app/node_modules ./node_modules
+COPY --from=builder /opt/app/server ./server
+COPY --from=builder /opt/app/shared ./shared
+COPY --from=builder /opt/app/public ./public
+COPY --from=builder /opt/app/*.js ./
+
+# Set ownership to nodeapp
+RUN chown -R nodeapp:nodeapp /opt/app
+
+# Switch to non-root user
+USER nodeapp
+
+# Expose required ports
 EXPOSE 50051 4003 3002 5005
+
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD curl -f http://localhost:5005/health || exit 1
 
 # Environment variables
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max_old_space_size=4096"
 
-# Change working directory to server before start
-WORKDIR /opt/consciousness/server
-
-CMD ["node", "consciousness-conversations.js"]
+# Start the server (ensure this path is correct based on build output location)
+CMD ["node", "server/consciousness-conversations.js"]
