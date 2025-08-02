@@ -1,0 +1,21 @@
+{
+  "extends": "./.eslintrc-selfcoding.json",
+  "overrides": [
+    {
+      "files": ["*.js"],
+      "rules": {
+        "no-restricted-syntax": [
+          "error",
+          {
+            "selector": "CallExpression[callee.name='require']",
+            "message": "Use 'import' instead of 'require' in .js files; rename file to .cjs if necessary."
+          },
+          {
+            "selector": "MemberExpression[property.name='exports']",
+            "message": "Use ES module export syntax in .js files; rename to .cjs if keeping CommonJS."
+          }
+        ]
+      }
+    }
+  ]
+}

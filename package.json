@@ -16,7 +16,8 @@
     "postinstall": "prisma db push",
     "dev:redis": "docker run -d -p 6379:6379 redis:7-alpine",
     "dev:metrics": "node server/consciousness/metricsServer.js",
-    "load:test": "k6 run scripts/k6-load.js"
+    "load:test": "k6 run scripts/k6-load.js",
+    "fix:modules": "node scripts/convert-commonjs-to-cjs.js"
   },
   "dependencies": {
     "express": "^4.19.2",
