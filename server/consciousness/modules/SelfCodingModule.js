@@ -31,6 +31,8 @@ export default class SelfCodingModule extends EventEmitter {
 
         this.isInitialized = false;
         this.codeHistory = [];
+        this.generationsThisHour = 0;
+        this.lastGenerationReset = Date.now();
         this.capabilities = [
             'analyze-code-patterns',
             'generate-new-modules',
@@ -82,6 +84,12 @@ export default class SelfCodingModule extends EventEmitter {
                     }
                 }
             }, 2000);
+
+            // Reset generationsThisHour every hour
+            setInterval(() => {
+                this.generationsThisHour = 0;
+                this.lastGenerationReset = Date.now();
+            }, 3600000);
 
         } catch (error) {
             console.error('[SelfCodingModule] Initialization failed:', error.message);
@@ -205,29 +213,62 @@ export default class SelfCodingModule extends EventEmitter {
      */
     async handleCodeGeneration(data) {
         try {
-            // Handle both direct format and request wrapper format
-            let moduleId, template, requirements, purpose, language, description;
+            // Quota handling
+            if (Date.now() - this.lastGenerationReset > 3600000) {
+                this.generationsThisHour = 0;
+                this.lastGenerationReset = Date.now();
+            }
+            if (this.generationsThisHour > 100) {
+                console.warn('Generation quota exceeded for this hour');
+                if (typeof code_generation_failures_total !== "undefined" && code_generation_failures_total.inc) {
+                    code_generation_failures_total.inc();
+                }
+                return { success: false, reason: 'quota exceeded' };
+            }
+            this.generationsThisHour++;
 
-            if (data.request) {
-                // Format from unified consciousness system
-                const request = data.request;
-                moduleId = request.moduleId || 'generated-module';
-                template = request.template || request.type || 'function';
-                requirements = request.requirements || request.description || 'Generate code';
-                purpose = request.purpose || 'code-generation';
-                language = request.language || 'javascript';
-                description = request.description || requirements;
-            } else {
-                // Direct format
-                moduleId = data.moduleId || 'generated-module';
-                template = data.template || 'function';
-                requirements = data.requirements || 'Generate code';
-                purpose = data.purpose || 'code-generation';
-                language = data.language || 'javascript';
-                description = data.description || requirements;
+            const { moduleId, template, requirements, purpose, language, description } = data;
+            
+            if (this.activeAnalysis.has(moduleId)) {
+                console.warn(`[SelfCodingModule] Analysis already in progress for ${moduleId}`);
+                return;
+            }
+            
+            this.activeAnalysis.add(moduleId);
+            
+            const analysis = await this.analyzer.analyze(code, options);
+            this.codePatterns.set(moduleId, analysis.patterns);
+            this.moduleStats.set(moduleId, analysis.stats);
+            
+            if (this.eventBus && this.eventBus.emit) {
+                this.eventBus.emit('code:analysis:complete', {
+                    moduleId,
+                    analysis
+                });
             }
 
-            console.log(`[SelfCodingModule] Generating ${language} ${template} for: ${description}`);
+            // Update Prometheus gauge after new generation
+            if (typeof selfcoding_history_size !== "undefined" && selfcoding_history_size.set) {
+                selfcoding_history_size.set(this.codeHistory.length);
+            }
+
+            this.activeAnalysis.delete(moduleId);
+        } catch (error) {
+            console.error('[SelfCodingModule] Analysis failed:', error);
+            this.activeAnalysis.delete(data.moduleId);
+
+            if (typeof code_generation_failures_total !== "undefined" && code_generation_failures_total.inc) {
+                code_generation_failures_total.inc();
+            }
+
+            if (this.eventBus && this.eventBus.emit) {
+                this.eventBus.emit('code:analysis:error', {
+                    moduleId: data.moduleId,
+                    error: error.message
+                });
+            }
+        }
+    } for: ${description}`);
             // ── Gemini vs. Analyzer selection ───────────────────────────
 const useGemini =
     (data.request?.llm === 'gemini') ||

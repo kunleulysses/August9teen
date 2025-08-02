@@ -1,3 +1,9 @@
+jest.mock('ioredis', () => {
+  return jest.fn().mockImplementation(() => ({
+    set: jest.fn().mockResolvedValue(),
+    get: jest.fn().mockResolvedValue(null)
+  }));
+});
 import SigilBasedCodeAuthenticator from '../server/consciousness/sigil-based-code-authenticator.js';
 
 test('Tampering with sigil-embedded code invalidates authenticity', async () => {
