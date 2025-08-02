@@ -1,0 +1,182 @@
+version: '3.8'
+
+secrets:
+  openai_api_key:
+    file: ./secrets/openai_api_key.txt
+  gemini_api_key:
+    file: ./secrets/gemini_api_key.txt
+  venice_ai_api_key:
+    file: ./secrets/venice_ai_api_key.txt
+  postgres_password:
+    file: ./secrets/postgres_password.txt
+  api_jwt_secret:
+    file: ./secrets/api_jwt_secret.txt
+  gf_admin_password:
+    file: ./secrets/gf_admin_password.txt
+  cloudflare_api_token:
+    file: ./secrets/cloudflare_api_token.txt
+
+services:
+  postgres:
+    image: postgres:15.5-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    secrets:
+      - postgres_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./setup-database.sql:/docker-entrypoint-initdb.d/setup-database.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - consciousness-network
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
+  consciousness-core:
+    image: consciousness-core:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.consciousness
+    environment:
+      NODE_ENV: production
+      CONSCIOUSNESS_MODE: ${CONSCIOUSNESS_MODE}
+      DATABASE_URL: ${DATABASE_URL}
+      OPENAI_API_KEY_FILE: /run/secrets/openai_api_key
+      GEMINI_API_KEY_FILE: /run/secrets/gemini_api_key
+      VENICE_AI_API_KEY_FILE: /run/secrets/venice_ai_api_key
+      API_JWT_SECRET_FILE: /run/secrets/api_jwt_secret
+      # Legacy fallback for code not yet adapted:
+      OPENAI_API_KEY: /run/secrets/openai_api_key
+      GEMINI_API_KEY: /run/secrets/gemini_api_key
+      VENICE_AI_API_KEY: /run/secrets/venice_ai_api_key
+      API_JWT_SECRET: /run/secrets/api_jwt_secret
+      # Add other non-secret envs as needed...
+    secrets:
+      - openai_api_key
+      - gemini_api_key
+      - venice_ai_api_key
+      - api_jwt_secret
+    volumes:
+      - consciousness_logs:/var/log/consciousness
+      - consciousness_data:/opt/consciousness/data
+      - ./FlappyJournal/server:/opt/consciousness/server:ro
+    ports:
+      - "3002:3002"
+      - "5005:5005"
+    networks:
+      - consciousness-network
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+
+  main-server:
+    image: consciousness-main-server:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.ui
+    environment:
+      NODE_ENV: production
+      PORT: 5000
+      HOST: 0.0.0.0
+      DATABASE_URL: ${DATABASE_URL}
+      OPENAI_API_KEY_FILE: /run/secrets/openai_api_key
+      GEMINI_API_KEY_FILE: /run/secrets/gemini_api_key
+      VENICE_AI_API_KEY_FILE: /run/secrets/venice_ai_api_key
+      API_JWT_SECRET_FILE: /run/secrets/api_jwt_secret
+      OPENAI_API_KEY: /run/secrets/openai_api_key
+      GEMINI_API_KEY: /run/secrets/gemini_api_key
+      VENICE_AI_API_KEY: /run/secrets/venice_ai_api_key
+      API_JWT_SECRET: /run/secrets/api_jwt_secret
+    secrets:
+      - openai_api_key
+      - gemini_api_key
+      - venice_ai_api_key
+      - api_jwt_secret
+    volumes:
+      - web_uploads:/opt/app/uploads
+      - web_logs:/var/log/web
+    ports:
+      - "5000:5000"
+    networks:
+      - consciousness-network
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
+  web-app:
+    image: consciousness-web-app:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.ui
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOST: 0.0.0.0
+      DATABASE_URL: ${DATABASE_URL}
+      CLOUDFLARE_API_TOKEN_FILE: /run/secrets/cloudflare_api_token
+      GF_SECURITY_ADMIN_PASSWORD_FILE: /run/secrets/gf_admin_password
+      CLOUDFLARE_API_TOKEN: /run/secrets/cloudflare_api_token
+      GF_SECURITY_ADMIN_PASSWORD: /run/secrets/gf_admin_password
+    secrets:
+      - cloudflare_api_token
+      - gf_admin_password
+    volumes:
+      - web_uploads:/opt/app/uploads
+      - web_logs:/var/log/web
+    ports:
+      - "3000:3000"
+    networks:
+      - consciousness-network
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
+  caddy:
+    image: caddy:2.7.6-alpine
+    environment:
+      CLOUDFLARE_API_TOKEN_FILE: /run/secrets/cloudflare_api_token
+      CLOUDFLARE_API_TOKEN: /run/secrets/cloudflare_api_token
+    secrets:
+      - cloudflare_api_token
+    volumes:
+      - ./Caddyfile.docker:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - consciousness-network
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+volumes:
+  postgres_data:
+    driver: local
+  consciousness_logs:
+    driver: local
+  consciousness_data:
+    driver: local
+  web_uploads:
+    driver: local
+  web_logs:
+    driver: local
+  caddy_data:
+    driver: local
+  caddy_config:
+    driver: local
+
+networks:
+  consciousness-network:
+    driver: overlay

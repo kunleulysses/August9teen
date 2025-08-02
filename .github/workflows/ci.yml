@@ -1,13 +1,53 @@
-name: CI
-on: [push, pull_request]
+name: ci
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 3 * * 1'  # Weekly, Monday at 3am UTC
+
 jobs:
-  build-test:
+  trivy-scan:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Install Trivy
+        uses: aquasecurity/trivy-action@master
         with:
-          node-version: 20
-      - run: npm ci
-      - run: npm run test:ci
-      - run: npm audit --audit-level=high || true
+          cache: true
+
+      - name: Trivy config scan on Dockerfiles and source
+        run: |
+          trivy fs --exit-code 1 --severity HIGH,CRITICAL .
+
+      - name: Build root Dockerfile image
+        run: docker build -f Dockerfile -t test-image .
+
+      - name: Trivy image scan (root Dockerfile)
+        run: trivy image --exit-code 1 --severity HIGH,CRITICAL test-image
+
+  compose-health:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        compose:
+          - docker-compose.api.yml
+          - docker-compose.consciousness.yml
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Integration and health test
+        run: |
+          chmod +x scripts/compose-health-check.sh
+          bash scripts/compose-health-check.sh "${{ matrix.compose }}"

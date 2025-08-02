@@ -7,20 +7,42 @@ services:
       dockerfile: Dockerfile.api
     ports:
       - "3000:3000"
+    env_file:
+      - .env.production
     environment:
-      - PORT=3000
-      - STORE_BACKEND=postgres
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
-      - API_JWT_SECRET=changeme
+      PORT: ${PORT}
+      STORE_BACKEND: ${STORE_BACKEND}
+      DATABASE_URL: ${DATABASE_URL}
+      API_JWT_SECRET: ${API_JWT_SECRET}
     depends_on:
       - postgres
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
 
   postgres:
-    image: postgres:16-alpine
-    restart: always
+    image: postgres:16.2-alpine
+    env_file:
+      - .env.production
     environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_DB: postgres
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - "5432:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3

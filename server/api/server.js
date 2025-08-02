@@ -1,3 +1,4 @@
+import '../../shared/secretBootstrap.js';
 import 'express-async-errors';
 import '../../common/tracing.js';
 import express from 'express';
@@ -13,6 +14,7 @@ import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import { authMiddleware, loginRoute } from './auth.js';
 import { getStore, closeStore } from '../common/storeFactory.js';
+import { register as metricsRegister } from './metrics.js';
 
 const app = express();
 let httpServer = null;
@@ -72,6 +74,11 @@ const openApiDocument = YAML.load(new URL('./openapi.yaml', import.meta.url).pat
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
 app.use(routes);
+
+app.get('/metrics', async (_req, res) => {
+  res.set('Content-Type', metricsRegister.contentType);
+  res.end(await metricsRegister.metrics());
+});
 
 app.get('/health', (req, res) => {
   if (config.NODE_ENV !== 'production') {
