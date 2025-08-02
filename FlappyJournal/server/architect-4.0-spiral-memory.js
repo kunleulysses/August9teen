@@ -467,12 +467,14 @@ export class SpiralMemoryEngine extends EventEmitter {
         const coherenceScores = memories.map(m => m.resonanceFrequency);
         const avgCoherence = coherenceScores.length > 0 
             ? coherenceScores.reduce((sum, freq) => sum + freq, 0) / coherenceScores.length 
-            : 0;
+            : 0.5; // Default to 0.5 if no memories
         const coherenceHealth = Math.max(0, 1 - Math.abs(avgCoherence - 0.5));
         
         const now = Date.now();
         const oldMemories = memories.filter(m => now - m.timestamp >= 86400000).length;
-        const ageHealth = Math.max(0, 1 - (oldMemories / memories.length));
+        const ageHealth = memories.length > 0 
+            ? Math.max(0, 1 - (oldMemories / memories.length))
+            : 1.0; // Perfect health if no memories
         
         // Weighted health score
         return (memoryUtilization * 0.3 + coherenceHealth * 0.4 + ageHealth * 0.3);
