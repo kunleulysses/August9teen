@@ -19,7 +19,9 @@ class ConsciousnessEventBus extends EventEmitter {
     }
 
     /**
-     * Subscribe to an event with signature verification (opts.verifySignature)
+     * Subscribe to an event, optionally enabling signature verification.
+     * If opts.verifySignature is true, the handler is wrapped to check payload.signature using verify().
+     * Otherwise, behaves as a standard EventEmitter subscription.
      */
     subscribe(moduleName, eventName, handler, opts = {}) {
         if (!this.subscribers.has(eventName)) {
@@ -29,16 +31,20 @@ class ConsciousnessEventBus extends EventEmitter {
             module: moduleName,
             handler: handler
         });
+
         if (!opts.verifySignature) {
             this.on(eventName, handler);
         } else {
-            this.on(eventName, (payload) => {
-                if (!payload.signature || !verify(payload, payload.signature)) {
+            // Wrap handler for signature verification
+            const wrappedHandler = (payload) => {
+                if (!payload || !payload.signature || !verify(payload, payload.signature)) {
                     this.emit('event:invalid_signature', { event: eventName, payload });
                     return;
                 }
                 handler(payload);
-            });
+            };
+            this.on(eventName, wrappedHandler);
+            // Note: unsubscribe for verified subscriptions currently unsupported/documented
         }
         console.log(`[ConsciousnessEventBus] ${moduleName} subscribed to ${eventName}${opts.verifySignature ? " (verifying signature)" : ""}`);
     }
@@ -61,24 +67,6 @@ class ConsciousnessEventBus extends EventEmitter {
         
         // Call parent emit
         return super.emit(eventName, ...args);
-    }
-    
-    /**
-     * Subscribe to an event with metadata
-     */
-    subscribe(moduleName, eventName, handler) {
-        if (!this.subscribers.has(eventName)) {
-            this.subscribers.set(eventName, new Set());
-        }
-        
-        this.subscribers.get(eventName).add({
-            module: moduleName,
-            handler: handler
-        });
-        
-        this.on(eventName, handler);
-        
-        console.log(`[ConsciousnessEventBus] ${moduleName} subscribed to ${eventName}`);
     }
     
     /**
