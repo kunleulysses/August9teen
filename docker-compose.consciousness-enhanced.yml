@@ -3,12 +3,14 @@ version: '3.8'
 services:
   # PostgreSQL Database
   postgres:
-    image: postgres:15-alpine
+    image: postgres:15.5-alpine
     container_name: consciousness-postgres
+    env_file:
+      - .env.production
     environment:
-      POSTGRES_DB: featherweight_consciousness
-      POSTGRES_USER: feather_user
-      POSTGRES_PASSWORD: hist0ric
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -19,11 +21,10 @@ services:
       - consciousness-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U feather_user -d featherweight_consciousness"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 30s
       timeout: 10s
       retries: 3
-    # CPU allocation for database
     deploy:
       resources:
         limits:
@@ -39,28 +40,27 @@ services:
       context: .
       dockerfile: Dockerfile.consciousness
     container_name: consciousness-core
-    environment:
-      - NODE_ENV=production
-      - CONSCIOUSNESS_MODE=full
-      - HARMONY_TARGET=0.951
-      - PROCESSING_FREQUENCY=100
-      - API_INTEGRATION_MODE=enhanced
-      - MATHEMATICAL_INTEGRATION=enabled
-      - EMOTIONAL_INTELLIGENCE=enabled
-      - BAYESIAN_DECISION_MAKING=enabled
-      - GEMINI_DUAL_MODEL=enabled
-      - DATABASE_URL=postgresql://feather_user:hist0ric@postgres:5432/featherweight_consciousness?sslmode=disable
-      - NODE_OPTIONS=--max_old_space_size=4096
-      - OPENAI_API_KEY=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
-      - GEMINI_API_KEY=AIzaSyCxMuX_M1esABzvvJlS6drdbzmO6w9NJBE
-      - VENICE_AI_API_KEY=qiHEzUmALhbs0wUcT3VvFo2_nFliLjgGDAPr_p9e7Z
-      # New environment variables for autonomous imagination
-      - AUTONOMOUS_IMAGINATION=enabled
-      - IMAGINATION_CPU_CORES=2
-      - IMAGINATION_CYCLE_MINUTES=5
-      - REALITY_GENERATION_MODE=autonomous
     env_file:
       - .env.production
+    environment:
+      NODE_ENV: production
+      CONSCIOUSNESS_MODE: ${CONSCIOUSNESS_MODE}
+      HARMONY_TARGET: ${HARMONY_TARGET}
+      PROCESSING_FREQUENCY: ${PROCESSING_FREQUENCY}
+      API_INTEGRATION_MODE: ${API_INTEGRATION_MODE}
+      MATHEMATICAL_INTEGRATION: ${MATHEMATICAL_INTEGRATION}
+      EMOTIONAL_INTELLIGENCE: ${EMOTIONAL_INTELLIGENCE}
+      BAYESIAN_DECISION_MAKING: ${BAYESIAN_DECISION_MAKING}
+      GEMINI_DUAL_MODEL: ${GEMINI_DUAL_MODEL}
+      DATABASE_URL: ${DATABASE_URL}
+      NODE_OPTIONS: ${NODE_OPTIONS}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      VENICE_AI_API_KEY: ${VENICE_AI_API_KEY}
+      AUTONOMOUS_IMAGINATION: ${AUTONOMOUS_IMAGINATION}
+      IMAGINATION_CPU_CORES: ${IMAGINATION_CPU_CORES}
+      IMAGINATION_CYCLE_MINUTES: ${IMAGINATION_CYCLE_MINUTES}
+      REALITY_GENERATION_MODE: ${REALITY_GENERATION_MODE}
     volumes:
       - consciousness_logs:/var/log/consciousness
       - consciousness_data:/opt/consciousness/data
@@ -80,7 +80,6 @@ services:
       timeout: 10s
       retries: 3
       start_period: 60s
-    # CPU allocation - Main consciousness gets 4 cores
     deploy:
       resources:
         limits:
@@ -89,7 +88,6 @@ services:
         reservations:
           cpus: '3.0'
           memory: 2G
-    # CPU affinity - cores 0-3
     cpuset: "0-3"
 
   # Reality Generator Service - Dedicated CPU cores
@@ -98,16 +96,18 @@ services:
       context: .
       dockerfile: Dockerfile.consciousness
     container_name: consciousness-reality-generator
+    env_file:
+      - .env.production
     environment:
-      - NODE_ENV=production
-      - SERVICE_TYPE=reality_generator
-      - DEDICATED_CPU_CORES=2
-      - IMAGINATION_ENGINE=autonomous
-      - GEMINI_API_KEY=AIzaSyCxMuX_M1esABzvvJlS6drdbzmO6w9NJBE
-      - DATABASE_URL=postgresql://feather_user:hist0ric@postgres:5432/featherweight_consciousness?sslmode=disable
-      - NODE_OPTIONS=--max_old_space_size=2048
-      - WORKER_THREADS=2
-      - REALITY_GENERATION_PORT=5006
+      NODE_ENV: production
+      SERVICE_TYPE: reality_generator
+      DEDICATED_CPU_CORES: ${DEDICATED_CPU_CORES}
+      IMAGINATION_ENGINE: ${IMAGINATION_ENGINE}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      DATABASE_URL: ${DATABASE_URL}
+      NODE_OPTIONS: ${NODE_OPTIONS}
+      WORKER_THREADS: ${WORKER_THREADS}
+      REALITY_GENERATION_PORT: ${REALITY_GENERATION_PORT}
     volumes:
       - reality_data:/opt/consciousness/reality-data
       - ./FlappyJournal/server:/opt/consciousness/server:ro
@@ -119,7 +119,6 @@ services:
       - postgres
       - consciousness-core
     restart: unless-stopped
-    # CPU allocation - Reality generator gets 2 dedicated cores
     deploy:
       resources:
         limits:
@@ -128,7 +127,6 @@ services:
         reservations:
           cpus: '2.0'
           memory: 1G
-    # CPU affinity - cores 6-7 (last 2 cores, typically less utilized)
     cpuset: "6-7"
     command: ["node", "/opt/consciousness/server/reality-generator-simple.cjs"]
 
@@ -138,17 +136,17 @@ services:
       context: .
       dockerfile: Dockerfile.ui
     container_name: consciousness-main-server
-    environment:
-      - NODE_ENV=production
-      - PORT=5000
-      - HOST=0.0.0.0
-      - DATABASE_URL=postgresql://feather_user:hist0ric@postgres:5432/featherweight_consciousness?sslmode=disable
-      - OPENAI_API_KEY=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
-      - GEMINI_API_KEY=AIzaSyCxMuX_M1esABzvvJlS6drdbzmO6w9NJBE
-      - VENICE_AI_API_KEY=qiHEzUmALhbs0wUcT3VvFo2_nFliLjgGDAPr_p9e7Z
-      - REALITY_GENERATOR_URL=http://reality-generator:5006
     env_file:
       - .env.production
+    environment:
+      NODE_ENV: production
+      PORT: 5000
+      HOST: 0.0.0.0
+      DATABASE_URL: ${DATABASE_URL}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      VENICE_AI_API_KEY: ${VENICE_AI_API_KEY}
+      REALITY_GENERATOR_URL: ${REALITY_GENERATOR_URL}
     volumes:
       - web_uploads:/opt/app/uploads
       - web_logs:/var/log/web
@@ -166,7 +164,6 @@ services:
       timeout: 10s
       retries: 3
     command: ["node", "server/index.js"]
-    # CPU allocation - Main server gets 1 core
     deploy:
       resources:
         limits:
@@ -175,7 +172,6 @@ services:
         reservations:
           cpus: '0.5'
           memory: 512M
-    # CPU affinity - core 4
     cpuset: "4"
 
   # Web Application
@@ -184,14 +180,14 @@ services:
       context: .
       dockerfile: Dockerfile.ui
     container_name: consciousness-web
-    environment:
-      - NODE_ENV=production
-      - PORT=3000
-      - HOST=0.0.0.0
-      - DATABASE_URL=postgresql://feather_user:hist0ric@postgres:5432/featherweight_consciousness?sslmode=disable
-      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
     env_file:
       - .env.production
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOST: 0.0.0.0
+      DATABASE_URL: ${DATABASE_URL}
+      CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN}
     volumes:
       - web_uploads:/opt/app/uploads
       - web_logs:/var/log/web
@@ -209,7 +205,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-    # CPU allocation - Web app gets 1 core
     deploy:
       resources:
         limits:
@@ -218,15 +213,16 @@ services:
         reservations:
           cpus: '0.5'
           memory: 512M
-    # CPU affinity - core 5
     cpuset: "5"
 
   # Reverse Proxy (Caddy)
   caddy:
-    image: caddy:2-alpine
+    image: caddy:2.7.6-alpine
     container_name: consciousness-proxy
+    env_file:
+      - .env.production
     environment:
-      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
+      CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN}
     volumes:
       - ./FlappyJournal hey/deploy/caddy/Caddyfile.blue-green:/etc/caddy/Caddyfile
       - caddy_data:/data
@@ -249,7 +245,7 @@ services:
 
   # Monitoring (Optional) - Minimal resources
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v2.48.1
     container_name: consciousness-prometheus
     volumes:
       - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
@@ -266,10 +262,12 @@ services:
           memory: 256M
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:10.2.0
     container_name: consciousness-grafana
+    env_file:
+      - .env.production
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=consciousness2024
+      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
     volumes:
       - grafana_data:/var/lib/grafana
       - ./monitoring/grafana-dashboards:/etc/grafana/provisioning/dashboards
