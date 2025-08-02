@@ -1,3 +1,4 @@
+import '../shared/secretBootstrap';
 import express, { type Request, Response, NextFunction } from "express";
 import path from "path";
 import { registerRoutes } from "./routes";

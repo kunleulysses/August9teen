@@ -1,3 +1,4 @@
+import '../../shared/secretBootstrap.js';
 import 'express-async-errors';
 import '../../common/tracing.js';
 import express from 'express';
