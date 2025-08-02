@@ -1,0 +1,66 @@
+# === Node.js/Monorepo Standard Excludes ===
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# === Source Control ===
+.git
+.gitignore
+
+# === Test & Dev Directories ===
+tests
+__tests__
+test-env
+coverage
+.vscode
+.augment
+
+# === Documentation & Markdown ===
+docs
+*.md
+*.pdf
+
+# === Static Analysis / IDE ===
+*.swp
+*.swo
+*.bak
+
+# === Dist/Build Output ===
+dist
+artifacts
+backups
+
+# === Monitoring / Metrics / Logs ===
+monitoring
+prometheus
+*.log
+reality-generator.log
+
+# === Shell Scripts (allowlist will override) ===
+*.sh
+
+# === Other Unneeded Top-Level Folders ===
+audit
+attached_assets
+august9teen-landing
+
+# === Exclude Project Misc/Meta Files ===
+Dockerfile*
+Caddyfile.docker
+
+# === Allowlist: Explicitly Include Build-Essential Files ===
+!package*.json
+!tsconfig*.json
+!vite.config.*
+!tailwind.config.*
+!postcss.config.*
+!server/
+!client/
+!shared/
+!shared-consciousness/
+!public/
+!FlappyJournal/
+!FlappyJournal hey/
+!setup-database.sql
