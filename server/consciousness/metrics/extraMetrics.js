@@ -19,3 +19,8 @@ export const code_generation_failures_total = new client.Counter({
   name: 'code_generation_failures_total',
   help: 'Total number of code generation failures'
 });
+
+export const sigil_verifications_total = new client.Counter({
+  name: 'sigil_verifications_total',
+  help: 'Total sigil verifications'
+});

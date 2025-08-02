@@ -11,6 +11,10 @@ import SigilBasedCodeAuthenticator from '../sigil-based-code-authenticator.js';
 import GeminiAIClient from '../integrations/GeminiAIClient.js';
 import prettier from 'prettier';
 import { getAdapter } from '../llm/index.js';
+import {
+  selfcoding_history_size,
+  code_generation_failures_total
+} from '../metrics/extraMetrics.js';
 
 export default class SelfCodingModule extends EventEmitter {
     constructor() {
