@@ -3,6 +3,7 @@ import { conversations, journalEntries } from "../shared/schema";
 import { eq } from "drizzle-orm";
 import { generateFlappyContent } from "./venice-ai";
 import { memoryService } from "./memory-service";
+import { getAggregator } from "./chat-aggregator";
 
 /**
  * Add conversation routes to Express app
@@ -32,29 +33,55 @@ export function addConversationRoutes(app) {
         .where(eq(conversations.userId, req.user.id))
         .orderBy(conversations.createdAt, 'desc')
         .limit(5);
-      
+
       // Build conversation history context
       const conversationHistory = userConversations.map(conv => ({
         userMessage: conv.userMessage,
         flappyResponse: conv.flappyResponse,
         timestamp: conv.createdAt
       }));
-      
+
       // Get recent memories to enhance the context
       const userMemories = await memoryService.getRelevantMemories(req.user.id, message, 3);
-      
-      // Force chat mode with enhanced context for better follow-up questions
-      const flappyResponse = await generateFlappyContent(
-        'chatConversation',
-        message,
-        req.user,
-        {
-          conversationHistory,
-          userMemories,
-          shouldGenerateReflectionPrompt: true
+
+      let flappyText: string | null = null;
+      let reflectionPrompt: string | null = null;
+
+      // Try aggregator first
+      try {
+        const aggregator = await getAggregator();
+        if (aggregator) {
+          const unified = await aggregator.processUnifiedChat(message);
+          if (unified && unified.response) {
+            flappyText = unified.response;
+            // UnifiedChatAggregator may not provide reflectionPrompt, so keep null if missing
+            // If you later extend aggregator to support structured prompts, can parse here.
+          }
         }
-      );
-      
+      } catch (err) {
+        // Aggregator failed or unavailable, will fallback below
+        console.warn("[add-conversation-routes] UnifiedChatAggregator failed, falling back to Venice AI:", err);
+      }
+
+      // Fallback to Venice AI if needed
+      let flappyResponse = {
+        content: flappyText,
+        reflectionPrompt: null as string | null,
+      };
+
+      if (!flappyText) {
+        flappyResponse = await generateFlappyContent(
+          'chatConversation',
+          message,
+          req.user,
+          {
+            conversationHistory,
+            userMemories,
+            shouldGenerateReflectionPrompt: true
+          }
+        );
+      }
+
       // Save the conversation to the database including the reflection prompt
       const [conversation] = await db.insert(conversations)
         .values({
@@ -68,9 +95,9 @@ export function addConversationRoutes(app) {
           reflectionPrompt: flappyResponse.reflectionPrompt || null
         })
         .returning();
-      
+
       // Return the response text and reflection prompt
-      return res.status(200).json({ 
+      return res.status(200).json({
         response: flappyResponse.content,
         reflectionPrompt: flappyResponse.reflectionPrompt,
         conversationId: conversation.id,
@@ -78,7 +105,7 @@ export function addConversationRoutes(app) {
       });
     } catch (error) {
       console.error("Error in conversation handler:", error);
-      return res.status(500).json({ 
+      return res.status(500).json({
         message: "Failed to process conversation",
         success: false
       });

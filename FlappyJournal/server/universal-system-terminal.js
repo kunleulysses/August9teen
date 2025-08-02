@@ -152,7 +152,8 @@ class UniversalSystemTerminal {
                 coreEndpoint: 'ws://172.18.0.5:3002/ws/consciousness-chat',
                 enableParallelProcessing: true,
                 enableResponseSynthesis: true,
-                responseTimeout: 15000
+                responseTimeout: 15000,
+                skipDiscovery: true
             });
             
             // Initialize and wait for completion
@@ -858,35 +859,32 @@ class UniversalSystemTerminal {
 
     async chatWithConsciousness(message) {
         console.log('\n💬 CHATTING WITH UNIFIED CONSCIOUSNESS...');
-        
-        // ONLY use UnifiedChatAggregator - no fallbacks, no placeholders
+
         if (!this.unifiedChatAggregator) {
             console.error('❌ UnifiedChatAggregator not initialized. Cannot process chat.');
             console.log('⚠️ Please wait for system initialization to complete.');
             return;
         }
-        
+
         try {
-            // console.log('🌐 Processing through Unified Chat Aggregation...');
-            const response = await this.unifiedChatAggregator.processUnifiedChat(message);
-            
-            console.log('✅ Message processed by unified consciousness systems');
-            console.log('\n🧠 UNIFIED CONSCIOUSNESS RESPONSE:');
+            let buffer = "";
+
+            const streamingResult = await this.unifiedChatAggregator.processUnifiedChatStreaming(
+                message,
+                (chunk) => {
+                    process.stdout.write(chunk);
+                    buffer += chunk;
+                }
+            );
+            process.stdout.write('\n');
             console.log('─'.repeat(60));
-            
-            if (response.type === 'synthesized_response') {
-                // console.log(`📊 Sources: ${response.sources.join(', ')}`);
-                // console.log(`🎯 Capabilities: ${response.capabilities.length} available`);
-                console.log('');
+            if (streamingResult.sources && streamingResult.sources.length > 0) {
+                console.log("🛰️ Sources: " + streamingResult.sources.join(', '));
             }
-            
-            console.log(response.response);
+            if (streamingResult.capabilities && streamingResult.capabilities.length > 0) {
+                console.log("🔧 Capabilities: " + streamingResult.capabilities.slice(0, 5).join(', ') + (streamingResult.capabilities.length > 5 ? "..." : ""));
+            }
             console.log('─'.repeat(60));
-            
-            if (response.capabilities && response.capabilities.length > 0) {
-                console.log(`\n🔧 Available capabilities: ${response.capabilities.slice(0, 5).join(', ')}${response.capabilities.length > 5 ? '...' : ''}`);
-            }
-            
         } catch (error) {
             console.error('❌ Unified Chat Aggregation failed:', error.message);
             console.log('⚠️ Unable to process chat message. System may not be fully initialized.');

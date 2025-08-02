@@ -5,6 +5,7 @@ import { setupVite, serveStatic, log } from "./vite";
 import { addConversationRoutes } from "./add-conversation-routes";
 import { startEmailProcessor } from "./email-processor";
 import { startEmailScheduler } from "./scheduler";
+import { initUnifiedChatWS } from "./unified-chat-ws";
 
 const app = express();
 app.use(express.json());
@@ -52,6 +53,9 @@ app.use((req, res, next) => {
   
   // Then register conversation routes after auth is configured
   addConversationRoutes(app);
+
+  // Initialize unified chat websocket streaming
+  initUnifiedChatWS(server);
   
   // Start the email processor for background processing of email queue
   startEmailProcessor();
