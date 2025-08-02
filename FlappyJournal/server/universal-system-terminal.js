@@ -867,10 +867,9 @@ class UniversalSystemTerminal {
         }
 
         try {
-            const requestId = Date.now();
             let buffer = "";
 
-            await this.unifiedChatAggregator.processUnifiedChatStreaming(
+            const streamingResult = await this.unifiedChatAggregator.processUnifiedChatStreaming(
                 message,
                 (chunk) => {
                     process.stdout.write(chunk);
@@ -879,7 +878,13 @@ class UniversalSystemTerminal {
             );
             process.stdout.write('\n');
             console.log('─'.repeat(60));
-
+            if (streamingResult.sources && streamingResult.sources.length > 0) {
+                console.log("🛰️ Sources: " + streamingResult.sources.join(', '));
+            }
+            if (streamingResult.capabilities && streamingResult.capabilities.length > 0) {
+                console.log("🔧 Capabilities: " + streamingResult.capabilities.slice(0, 5).join(', ') + (streamingResult.capabilities.length > 5 ? "..." : ""));
+            }
+            console.log('─'.repeat(60));
         } catch (error) {
             console.error('❌ Unified Chat Aggregation failed:', error.message);
             console.log('⚠️ Unable to process chat message. System may not be fully initialized.');

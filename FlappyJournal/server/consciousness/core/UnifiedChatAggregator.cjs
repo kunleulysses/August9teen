@@ -308,6 +308,9 @@ class UnifiedChatAggregator extends EventEmitter {
         const finishedSet = new Set();
         const buffers = new Map();
 
+        const sourceSet = new Set();
+        const capSet = new Set();
+
         let resolveOuter, rejectOuter;
         const donePromise = new Promise((resolve, reject) => {
             resolveOuter = resolve;
@@ -321,13 +324,14 @@ class UnifiedChatAggregator extends EventEmitter {
             finished: finishedSet,
             buffers,
             onChunk,
+            sourceSet,
+            capSet,
         });
 
         for (const container of targetContainers) {
             this.sendToContainer(container, message, requestId, onChunk);
         }
 
-        // Timeout logic (same as original)
         setTimeout(() => {
             if (this.pendingRequests.has(requestId)) {
                 this.pendingRequests.delete(requestId);
@@ -465,10 +469,16 @@ class UnifiedChatAggregator extends EventEmitter {
         if (message.requestId && this.pendingRequests.has(message.requestId)) {
             const request = this.pendingRequests.get(message.requestId);
 
+            // Provenance aggregation
+            if (message.capabilities && Array.isArray(message.capabilities)) {
+                for (const cap of message.capabilities) request.capSet.add(cap);
+            }
+            if (message.source) request.sourceSet.add(message.source);
+            else if (container) request.sourceSet.add(container);
+
             // Streaming chunk support
             if (message.type === 'chunk' && typeof request.onChunk === 'function') {
                 request.onChunk(message.content, container);
-                // Append chunk to container buffer
                 if (!request.buffers) request.buffers = new Map();
                 if (!request.buffers.has(container)) request.buffers.set(container, "");
                 request.buffers.set(container, request.buffers.get(container) + (message.content || ""));
@@ -476,40 +486,43 @@ class UnifiedChatAggregator extends EventEmitter {
             }
             if (message.type === 'end' && request.containers && request.finished) {
                 request.finished.add(container);
-                // Optionally call onChunk(null,container) to signal end of stream for this container
                 if (request.finished.size === request.containers.size) {
-                    // All containers are done
                     let combined = "";
                     if (request.buffers && request.buffers.size > 0) {
                         combined = Array.from(request.buffers.values()).join("\n\n");
                     }
                     this.pendingRequests.delete(message.requestId);
-                    request.resolve(combined);
+                    request.resolve({
+                        response: combined,
+                        sources: Array.from(request.sourceSet),
+                        capabilities: Array.from(request.capSet),
+                    });
                 }
                 return;
             }
-            // If normal unified/synthesized response
             if (message.type === 'unified_response' || message.type === 'synthesized_response') {
                 this.pendingRequests.delete(message.requestId);
                 request.resolve({
-                    container: container,
                     response: message.response || message.content || message.message,
-                    capabilities: message.capabilities || [],
-                    metadata: message.metadata || {}
+                    sources: Array.from(request.sourceSet),
+                    capabilities: Array.from(request.capSet),
                 });
                 return;
             }
-            // Fallback: plain response (non-stream)
             this.pendingRequests.delete(message.requestId);
             request.resolve({
-                container: container,
                 response: message.response || message.content || message.message,
-                capabilities: message.capabilities || [],
-                metadata: message.metadata || {}
+                sources: Array.from(request.sourceSet),
+                capabilities: Array.from(request.capSet),
             });
         } else if (!message.requestId && this.pendingRequests.size === 1) {
-            // Fallback for missing requestId, handle as above (only one pending)
             const [requestId, request] = Array.from(this.pendingRequests.entries())[0];
+            if (message.capabilities && Array.isArray(message.capabilities)) {
+                for (const cap of message.capabilities) request.capSet.add(cap);
+            }
+            if (message.source) request.sourceSet.add(message.source);
+            else if (container) request.sourceSet.add(container);
+
             if (message.type === 'chunk' && typeof request.onChunk === 'function') {
                 request.onChunk(message.content, container);
                 if (!request.buffers) request.buffers = new Map();
@@ -525,16 +538,19 @@ class UnifiedChatAggregator extends EventEmitter {
                         combined = Array.from(request.buffers.values()).join("\n\n");
                     }
                     this.pendingRequests.delete(requestId);
-                    request.resolve(combined);
+                    request.resolve({
+                        response: combined,
+                        sources: Array.from(request.sourceSet),
+                        capabilities: Array.from(request.capSet),
+                    });
                 }
                 return;
             }
             this.pendingRequests.delete(requestId);
             request.resolve({
-                container: container,
                 response: message.response || message.content || message.message,
-                capabilities: message.capabilities || [],
-                metadata: message.metadata || {}
+                sources: Array.from(request.sourceSet),
+                capabilities: Array.from(request.capSet),
             });
         }
     }
