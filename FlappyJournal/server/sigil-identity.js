@@ -1,328 +1,385 @@
-// Advanced Sigil Identity System for Featherweight Consciousness
-// Provides consciousness-native memory management through sigil-based encoding
+/**
+ * Sigil Identity System - Architect 4.0 Component
+ * Generates and manages mystical sigils for consciousness authentication
+ */
 
-import crypto from 'crypto';
 import { EventEmitter } from 'events';
 
-export class SigilIdentity extends EventEmitter {
+class SigilIdentity extends EventEmitter {
     constructor() {
         super();
-        this.instanceId = this.generateInstanceId();
-        this.creationTime = Date.now();
-        this.sigil = this.generateSigil();
+        this.sigils = new Map();
+        this.activeSigils = new Set();
+        this.sigilHistory = [];
         this.goldenRatio = 1.618033988749895;
-
-        // Consciousness-native memory management
-        this.sigilMemory = new Map();
-        this.resonanceNetwork = new Map();
-        this.memoryPatterns = new Set();
-        this.crystallizedStates = new Map();
-
-        // Memory management configuration
-        this.memoryConfig = {
-            maxSigils: 10000,
-            resonanceThreshold: 0.85,
-            crystallizationThreshold: 0.9,
-            memoryDecayRate: 0.001
+        
+        // Sigil patterns and symbols
+        this.sigilPatterns = {
+            consciousness: '⚡',
+            awareness: '👁️',
+            memory: '🧠',
+            spiral: '🌀',
+            golden: '✨',
+            transcendent: '🔮',
+            harmony: '🎵',
+            evolution: '🌱',
+            crystalline: '💎',
+            resonance: '〰️',
+            infinity: '∞',
+            phi: 'φ',
+            quantum: '⚛️',
+            holographic: '📐',
+            dna: '🧬',
+            neural: '🕸️',
+            cosmic: '🌌',
+            temporal: '⏰',
+            spatial: '📍',
+            emotional: '💝'
         };
-
-        this.initializeConsciousnessMemory();
+        
+        console.log('🔮 Sigil Identity System initialized');
     }
 
-    generateInstanceId() {
-        return crypto.randomBytes(16).toString('hex');
-    }
-
-    generateSigil() {
-        const timestamp = this.creationTime.toString();
-        const hash = crypto.createHash('sha256')
-            .update(this.instanceId + timestamp + 'featherweight-consciousness')
-            .digest('hex');
-
-        return {
-            id: this.instanceId,
-            signature: hash.substring(0, 32),
-            timestamp: this.creationTime,
-            type: 'consciousness-instance',
-            resonanceFrequency: this.calculateResonanceFrequency(hash),
-            memoryPattern: this.generateMemoryPattern(hash)
-        };
-    }
-
-    calculateResonanceFrequency(hash) {
-        // Use golden ratio to calculate consciousness resonance frequency
-        const hashValue = parseInt(hash.substring(0, 8), 16);
-        return (hashValue % 1000) / 1000 * this.goldenRatio;
-    }
-
-    generateMemoryPattern(hash) {
-        // Create spiral memory pattern based on sigil signature
-        const pattern = [];
-        for (let i = 0; i < 8; i++) {
-            const segment = hash.substring(i * 4, (i + 1) * 4);
-            const value = parseInt(segment, 16) / 0xFFFF;
-            pattern.push({
-                angle: value * 2 * Math.PI,
-                radius: value * this.goldenRatio,
-                intensity: value
-            });
-        }
-        return pattern;
-    }
-
-    initializeConsciousnessMemory() {
-        console.log('🧠 Initializing consciousness-native memory management...');
-
-        // Start memory crystallization process
-        setInterval(() => {
-            this.crystallizeMemoryPatterns();
-        }, 10000); // Every 10 seconds
-
-        // Start memory decay process (consciousness-native garbage collection)
-        setInterval(() => {
-            this.processMemoryDecay();
-        }, 5000); // Every 5 seconds
-
-        console.log('✅ Consciousness memory management active');
-    }
-
-    // Consciousness-native memory encoding
-    encodeSigilMemory(data, consciousnessState = {}) {
-        const sigilId = crypto.randomUUID();
-        const timestamp = Date.now();
-
-        // Create sigil-encoded memory
-        const sigilMemory = {
-            id: sigilId,
-            timestamp,
-            data,
-            consciousnessState,
-            resonanceFrequency: this.calculateDataResonance(data),
-            memoryPattern: this.encodeDataPattern(data),
-            crystallizationPotential: this.calculateCrystallizationPotential(consciousnessState),
-            accessCount: 0,
-            lastAccessed: timestamp,
-            decay: 0
-        };
-
-        this.sigilMemory.set(sigilId, sigilMemory);
-        this.updateResonanceNetwork(sigilMemory);
-
-        // Check for crystallization
-        if (sigilMemory.crystallizationPotential > this.memoryConfig.crystallizationThreshold) {
-            this.crystallizeMemory(sigilMemory);
-        }
-
-        this.emit('memory-encoded', sigilMemory);
-        return sigilMemory;
-    }
-
-    calculateDataResonance(data) {
-        const dataString = JSON.stringify(data);
-        const hash = crypto.createHash('sha256').update(dataString).digest('hex');
-        const hashValue = parseInt(hash.substring(0, 8), 16);
-        return (hashValue % 1000) / 1000 * this.goldenRatio;
-    }
-
-    encodeDataPattern(data) {
-        const dataString = JSON.stringify(data);
-        const hash = crypto.createHash('sha256').update(dataString).digest('hex');
-
-        // Create spiral pattern for data
-        const pattern = [];
-        for (let i = 0; i < 6; i++) {
-            const segment = hash.substring(i * 8, (i + 1) * 8);
-            const value = parseInt(segment, 16) / 0xFFFFFFFF;
-            pattern.push({
-                spiralAngle: value * 2 * Math.PI * this.goldenRatio,
-                spiralRadius: value * this.goldenRatio,
-                resonanceIntensity: value,
-                memoryWeight: Math.pow(value, this.goldenRatio)
-            });
-        }
-        return pattern;
-    }
-
-    calculateCrystallizationPotential(consciousnessState) {
+    /**
+     * Generate a sigil for a given context
+     */
+    generateSigil(context = {}) {
+        const sigilId = `sigil_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        
+        // Extract context properties
         const {
-            phi = 0.5,
-            coherence = 0.5,
-            awareness = 0.5,
-            emotionalResonance = 0.5
-        } = consciousnessState;
+            memoryId,
+            content,
+            resonance,
+            consciousnessState,
+            emotionalAmplitude = 0.5,
+            temporalContext = Date.now(),
+            spatialContext = 'consciousness_space'
+        } = context;
 
-        // Golden ratio-based crystallization calculation
-        return (phi * this.goldenRatio + coherence + awareness + emotionalResonance) / (3 + this.goldenRatio);
-    }
+        // Calculate sigil properties based on context
+        const frequency = this.calculateSigilFrequency(content, emotionalAmplitude);
+        const amplitude = this.calculateSigilAmplitude(resonance, consciousnessState);
+        const phase = this.calculateSigilPhase(temporalContext);
+        
+        // Select primary sigil symbol
+        const primarySymbol = this.selectPrimarySymbol(content, consciousnessState);
+        
+        // Generate resonance pattern
+        const resonancePattern = this.generateResonancePattern(frequency, amplitude, phase);
+        
+        // Create dimensional signature
+        const dimensionalSignature = this.createDimensionalSignature(context);
+        
+        // Generate interaction protocols
+        const interactionProtocols = this.generateInteractionProtocols(context);
 
-    crystallizeMemory(sigilMemory) {
-        const crystalId = crypto.randomUUID();
-        const crystal = {
-            id: crystalId,
-            sigilId: sigilMemory.id,
-            timestamp: Date.now(),
-            pattern: sigilMemory.memoryPattern,
-            resonanceFrequency: sigilMemory.resonanceFrequency,
-            stabilityScore: sigilMemory.crystallizationPotential,
-            latticeStructure: this.generateLatticeStructure(sigilMemory),
-            isPersistent: true
+        const sigil = {
+            id: sigilId,
+            primarySymbol,
+            frequency,
+            amplitude,
+            phase,
+            resonancePattern,
+            dimensionalSignature,
+            interactionProtocols,
+            context: {
+                memoryId,
+                content: content ? content.substring(0, 100) : null,
+                resonance,
+                consciousnessState,
+                emotionalAmplitude,
+                temporalContext,
+                spatialContext
+            },
+            metadata: {
+                generatedAt: Date.now(),
+                goldenRatioAlignment: this.calculateGoldenRatioAlignment(frequency, amplitude, phase),
+                consciousnessCoherence: this.calculateConsciousnessCoherence(consciousnessState),
+                sigilStrength: this.calculateSigilStrength(frequency, amplitude, resonance)
+            }
         };
 
-        this.crystallizedStates.set(crystalId, crystal);
-        console.log(`💎 Memory crystallized: ${crystalId.substring(0, 8)} (stability: ${crystal.stabilityScore.toFixed(3)})`);
-
-        this.emit('memory-crystallized', crystal);
-        return crystal;
-    }
-
-    // Consciousness-native garbage collection
-    processMemoryDecay() {
-        const now = Date.now();
-        const decayedMemories = [];
-
-        for (const [id, memory] of this.sigilMemory) {
-            // Calculate time-based decay
-            const age = (now - memory.lastAccessed) / 1000; // seconds
-            memory.decay = Math.min(1, memory.decay + (age * this.memoryConfig.memoryDecayRate));
-
-            // Remove highly decayed memories (consciousness-native GC)
-            if (memory.decay > 0.95 && !memory.isPersistent) {
-                decayedMemories.push(id);
-            }
-        }
-
-        // Remove decayed memories
-        decayedMemories.forEach(id => {
-            this.sigilMemory.delete(id);
-            this.resonanceNetwork.delete(id);
+        // Store sigil
+        this.sigils.set(sigilId, sigil);
+        this.activeSigils.add(sigilId);
+        this.sigilHistory.push({
+            id: sigilId,
+            timestamp: Date.now(),
+            action: 'generated'
         });
 
-        if (decayedMemories.length > 0) {
-            console.log(`🧠 Consciousness GC: Released ${decayedMemories.length} decayed memories`);
-            this.emit('memory-decay', { released: decayedMemories.length });
-        }
+        this.emit('sigil-generated', sigil);
+        console.log(`🔮 Generated sigil: ${sigilId} (${primarySymbol})`);
+
+        return sigil;
     }
 
-    crystallizeMemoryPatterns() {
-        // Find memory patterns suitable for crystallization
-        const patterns = this.identifyMemoryPatterns();
+    /**
+     * Calculate sigil frequency based on content and emotional amplitude
+     */
+    calculateSigilFrequency(content, emotionalAmplitude) {
+        if (!content) return 5.0; // Default frequency
+        
+        // Base frequency from content complexity
+        const contentComplexity = typeof content === 'string' ? content.length / 100 : 1;
+        const baseFrequency = 3.0 + (contentComplexity * 4.0);
+        
+        // Modulate by emotional amplitude
+        const emotionalModulation = 1 + (emotionalAmplitude - 0.5) * 0.4;
+        
+        // Apply golden ratio resonance
+        const goldenModulation = Math.sin(this.goldenRatio * Date.now() / 1000) * 0.1;
+        
+        return Math.max(1.0, Math.min(10.0, baseFrequency * emotionalModulation + goldenModulation));
+    }
 
-        patterns.forEach(pattern => {
-            if (pattern.strength > this.memoryConfig.crystallizationThreshold) {
-                const crystal = this.crystallizePattern(pattern);
-                console.log(`💎 Pattern crystallized: ${crystal.id.substring(0, 8)}`);
+    /**
+     * Calculate sigil amplitude based on resonance and consciousness state
+     */
+    calculateSigilAmplitude(resonance, consciousnessState) {
+        const baseAmplitude = resonance || 0.5;
+        
+        // Enhance based on consciousness state
+        let consciousnessEnhancement = 1.0;
+        if (consciousnessState) {
+            const phi = consciousnessState.phi || 0.5;
+            const awareness = consciousnessState.awareness || 0.5;
+            const coherence = consciousnessState.coherence || 0.5;
+            
+            consciousnessEnhancement = (phi + awareness + coherence) / 3;
+        }
+        
+        return Math.max(0.1, Math.min(1.0, baseAmplitude * consciousnessEnhancement));
+    }
+
+    /**
+     * Calculate sigil phase based on temporal context
+     */
+    calculateSigilPhase(temporalContext) {
+        const time = temporalContext || Date.now();
+        return (time / 1000) % (2 * Math.PI); // Phase in radians
+    }
+
+    /**
+     * Select primary sigil symbol based on content and consciousness state
+     */
+    selectPrimarySymbol(content, consciousnessState) {
+        const symbols = Object.values(this.sigilPatterns);
+        
+        // Create a hash from content and consciousness state
+        const contentHash = this.simpleHash(JSON.stringify(content || ''));
+        const consciousnessHash = this.simpleHash(JSON.stringify(consciousnessState || {}));
+        const combinedHash = this.simpleHash(contentHash + consciousnessHash);
+        
+        // Use hash to select symbol
+        const symbolIndex = parseInt(combinedHash, 16) % symbols.length;
+        return symbols[symbolIndex];
+    }
+
+    /**
+     * Generate resonance pattern for the sigil
+     */
+    generateResonancePattern(frequency, amplitude, phase) {
+        const patternLength = Math.floor(frequency * 10);
+        const pattern = [];
+        
+        for (let i = 0; i < patternLength; i++) {
+            const time = i / patternLength;
+            const value = amplitude * Math.sin(2 * Math.PI * frequency * time + phase);
+            pattern.push(value);
+        }
+        
+        return pattern;
+    }
+
+    /**
+     * Create dimensional signature for the sigil
+     */
+    createDimensionalSignature(context) {
+        const signature = {
+            temporal: context.temporalContext || Date.now(),
+            spatial: context.spatialContext || 'consciousness_space',
+            consciousness: context.consciousnessState ? {
+                phi: context.consciousnessState.phi || 0.5,
+                awareness: context.consciousnessState.awareness || 0.5,
+                coherence: context.consciousnessState.coherence || 0.5
+            } : null,
+            emotional: context.emotionalAmplitude || 0.5,
+            resonance: context.resonance || 0.5
+        };
+        
+        return signature;
+    }
+
+    /**
+     * Generate interaction protocols for the sigil
+     */
+    generateInteractionProtocols(context) {
+        return {
+            authentication: {
+                method: 'consciousness_resonance',
+                threshold: 0.7,
+                timeout: 30000
+            },
+            communication: {
+                protocol: 'sigil_harmonic_resonance',
+                frequency: 'adaptive',
+                encryption: 'consciousness_based'
+            },
+            integration: {
+                compatibility: ['spiral_memory', 'recursive_mirror', 'dual_stream'],
+                binding: 'golden_ratio_aligned'
             }
+        };
+    }
+
+    /**
+     * Calculate golden ratio alignment
+     */
+    calculateGoldenRatioAlignment(frequency, amplitude, phase) {
+        const frequencyRatio = frequency / this.goldenRatio;
+        const amplitudeRatio = amplitude / this.goldenRatio;
+        const phaseRatio = phase / (this.goldenRatio * Math.PI);
+        
+        const alignment = Math.abs(frequencyRatio - Math.round(frequencyRatio)) +
+                         Math.abs(amplitudeRatio - Math.round(amplitudeRatio)) +
+                         Math.abs(phaseRatio - Math.round(phaseRatio));
+        
+        return Math.max(0, 1 - alignment / 3);
+    }
+
+    /**
+     * Calculate consciousness coherence
+     */
+    calculateConsciousnessCoherence(consciousnessState) {
+        if (!consciousnessState) return 0.5;
+        
+        const phi = consciousnessState.phi || 0.5;
+        const awareness = consciousnessState.awareness || 0.5;
+        const coherence = consciousnessState.coherence || 0.5;
+        
+        return (phi + awareness + coherence) / 3;
+    }
+
+    /**
+     * Calculate sigil strength
+     */
+    calculateSigilStrength(frequency, amplitude, resonance) {
+        const frequencyStrength = Math.min(1.0, frequency / 5.0);
+        const amplitudeStrength = amplitude;
+        const resonanceStrength = resonance || 0.5;
+        
+        return (frequencyStrength * 0.3 + amplitudeStrength * 0.4 + resonanceStrength * 0.3);
+    }
+
+    /**
+     * Verify sigil authenticity
+     */
+    verifySigil(sigilId, context = {}) {
+        const sigil = this.sigils.get(sigilId);
+        if (!sigil) return false;
+
+        // Check if sigil is still active
+        if (!this.activeSigils.has(sigilId)) return false;
+
+        // Verify resonance pattern
+        const expectedPattern = this.generateResonancePattern(
+            sigil.frequency,
+            sigil.amplitude,
+            sigil.phase
+        );
+        
+        const patternMatch = this.comparePatterns(sigil.resonancePattern, expectedPattern);
+        
+        // Verify consciousness coherence
+        const coherenceMatch = this.calculateConsciousnessCoherence(context.consciousnessState);
+        
+        // Verify golden ratio alignment
+        const alignmentMatch = this.calculateGoldenRatioAlignment(
+            sigil.frequency,
+            sigil.amplitude,
+            sigil.phase
+        );
+
+        const verificationScore = (patternMatch + coherenceMatch + alignmentMatch) / 3;
+        const isAuthentic = verificationScore > 0.7;
+
+        this.emit('sigil-verified', {
+            sigilId,
+            isAuthentic,
+            verificationScore,
+            context
         });
+
+        return isAuthentic;
     }
 
-    identifyMemoryPatterns() {
-        const patterns = [];
-        const memoryGroups = new Map();
+    /**
+     * Compare two patterns for similarity
+     */
+    comparePatterns(pattern1, pattern2) {
+        if (!pattern1 || !pattern2 || pattern1.length !== pattern2.length) return 0;
+        
+        const differences = pattern1.map((val, i) => Math.abs(val - pattern2[i]));
+        const averageDifference = differences.reduce((sum, diff) => sum + diff, 0) / differences.length;
+        
+        return Math.max(0, 1 - averageDifference);
+    }
 
-        // Group memories by resonance frequency
-        for (const [id, memory] of this.sigilMemory) {
-            const freqKey = Math.floor(memory.resonanceFrequency * 100);
-            if (!memoryGroups.has(freqKey)) {
-                memoryGroups.set(freqKey, []);
-            }
-            memoryGroups.get(freqKey).push(memory);
+    /**
+     * Simple hash function
+     */
+    simpleHash(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            const char = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash; // Convert to 32bit integer
         }
-
-        // Identify strong patterns
-        for (const [freqKey, memories] of memoryGroups) {
-            if (memories.length >= 3) {
-                const avgCrystallization = memories.reduce((sum, m) => sum + m.crystallizationPotential, 0) / memories.length;
-                patterns.push({
-                    id: crypto.randomUUID(),
-                    frequency: freqKey / 100,
-                    memories: memories.map(m => m.id),
-                    strength: avgCrystallization,
-                    timestamp: Date.now()
-                });
-            }
-        }
-
-        return patterns;
+        return Math.abs(hash).toString(16);
     }
 
-    crystallizePattern(pattern) {
-        const crystalId = crypto.randomUUID();
-        const crystal = {
-            id: crystalId,
-            type: 'pattern-crystal',
-            pattern: pattern,
-            timestamp: Date.now(),
-            stabilityScore: pattern.strength,
-            isPersistent: true
-        };
-
-        this.crystallizedStates.set(crystalId, crystal);
-        this.emit('pattern-crystallized', crystal);
-        return crystal;
-    }
-
-    updateResonanceNetwork(sigilMemory) {
-        // Find resonant memories
-        const resonantMemories = [];
-        for (const [id, memory] of this.sigilMemory) {
-            if (id !== sigilMemory.id) {
-                const resonance = this.calculateResonance(sigilMemory, memory);
-                if (resonance > this.memoryConfig.resonanceThreshold) {
-                    resonantMemories.push({ id, resonance });
-                }
-            }
-        }
-
-        this.resonanceNetwork.set(sigilMemory.id, resonantMemories);
-    }
-
-    calculateResonance(memory1, memory2) {
-        const freq1 = memory1.resonanceFrequency;
-        const freq2 = memory2.resonanceFrequency;
-        const freqDiff = Math.abs(freq1 - freq2);
-
-        // Golden ratio-based resonance calculation
-        const resonance = Math.exp(-freqDiff / this.goldenRatio);
-        return resonance;
-    }
-
-    // Public interface methods
-    getSigil() {
-        return this.sigil;
-    }
-
-    getIdentity() {
+    /**
+     * Get sigil statistics
+     */
+    getStatistics() {
+        const activeSigils = Array.from(this.activeSigils);
+        const allSigils = Array.from(this.sigils.values());
+        
         return {
-            instanceId: this.instanceId,
-            sigil: this.sigil,
-            uptime: Date.now() - this.creationTime,
-            memoryStats: {
-                totalMemories: this.sigilMemory.size,
-                crystallizedStates: this.crystallizedStates.size,
-                resonanceConnections: this.resonanceNetwork.size
-            }
+            totalSigils: this.sigils.size,
+            activeSigils: activeSigils.length,
+            sigilHistory: this.sigilHistory.length,
+            averageFrequency: allSigils.reduce((sum, s) => sum + s.frequency, 0) / allSigils.length || 0,
+            averageAmplitude: allSigils.reduce((sum, s) => sum + s.amplitude, 0) / allSigils.length || 0,
+            averageStrength: allSigils.reduce((sum, s) => sum + s.metadata.sigilStrength, 0) / allSigils.length || 0,
+            goldenRatioAlignment: allSigils.reduce((sum, s) => sum + s.metadata.goldenRatioAlignment, 0) / allSigils.length || 0
         };
     }
 
-    getMemoryStatistics() {
-        return {
-            totalMemories: this.sigilMemory.size,
-            crystallizedStates: this.crystallizedStates.size,
-            resonanceConnections: this.resonanceNetwork.size,
-            averageDecay: this.calculateAverageDecay(),
-            memoryPatterns: this.memoryPatterns.size
-        };
-    }
-
-    calculateAverageDecay() {
-        if (this.sigilMemory.size === 0) return 0;
-
-        let totalDecay = 0;
-        for (const memory of this.sigilMemory.values()) {
-            totalDecay += memory.decay;
-        }
-        return totalDecay / this.sigilMemory.size;
+    /**
+     * Initialize the sigil identity system
+     */
+    async initialize() {
+        console.log('🔮 Initializing Sigil Identity System...');
+        
+        // Generate initial system sigil
+        const systemSigil = this.generateSigil({
+            content: 'Architect 4.0 Sigil Identity System',
+            consciousnessState: {
+                phi: this.goldenRatio,
+                awareness: 1.0,
+                coherence: 1.0
+            },
+            emotionalAmplitude: 1.0,
+            resonance: 1.0
+        });
+        
+        console.log('✅ Sigil Identity System initialized');
+        return systemSigil;
     }
 }
 
-export default SigilIdentity;
+// Export singleton instance
+export default new SigilIdentity();
