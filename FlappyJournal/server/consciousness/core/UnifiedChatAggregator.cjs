@@ -296,6 +296,47 @@ class UnifiedChatAggregator extends EventEmitter {
             return await this.processSequentialChat(message, targetContainers, requestId);
         }
     }
+
+    // Streaming chat aggregation method
+    async processUnifiedChatStreaming(message, onChunk) {
+        console.log('💬 [Streaming] Processing unified chat message...');
+        console.log(`📝 [Streaming] Message: "${message}"`);
+
+        const requestId = this.generateRequestId();
+        const targetContainers = this.determineTargetContainers(message, {});
+        const containersSet = new Set(targetContainers);
+        const finishedSet = new Set();
+        const buffers = new Map();
+
+        let resolveOuter, rejectOuter;
+        const donePromise = new Promise((resolve, reject) => {
+            resolveOuter = resolve;
+            rejectOuter = reject;
+        });
+
+        this.pendingRequests.set(requestId, {
+            resolve: resolveOuter,
+            reject: rejectOuter,
+            containers: containersSet,
+            finished: finishedSet,
+            buffers,
+            onChunk,
+        });
+
+        for (const container of targetContainers) {
+            this.sendToContainer(container, message, requestId, onChunk);
+        }
+
+        // Timeout logic (same as original)
+        setTimeout(() => {
+            if (this.pendingRequests.has(requestId)) {
+                this.pendingRequests.delete(requestId);
+                rejectOuter(new Error('Streaming response timeout'));
+            }
+        }, this.config.responseTimeout);
+
+        return donePromise;
+    }
     
     determineTargetContainers(message, options) {
         const containers = [];
@@ -363,7 +404,7 @@ class UnifiedChatAggregator extends EventEmitter {
         return this.synthesizeResponses(responses, targetContainers, requestId);
     }
     
-    async sendToContainer(container, message, requestId) {
+    async sendToContainer(container, message, requestId, onChunk) {
         return new Promise((resolve, reject) => {
             const connection = this.connections[container];
             
@@ -373,9 +414,10 @@ class UnifiedChatAggregator extends EventEmitter {
             }
             
             console.log(`🔍 DEBUG: Sending to container ${container} with requestId ${requestId}`);
-        // Store pending request
-            this.pendingRequests.set(requestId, { resolve, reject, container, startTime: Date.now() });
-            
+            // Store pending request (for streaming, may already be set)
+            if (!this.pendingRequests.has(requestId)) {
+                this.pendingRequests.set(requestId, { resolve, reject, container, startTime: Date.now(), onChunk });
+            }
             // Send message with correct type that containers expect
             const payload = {
                 type: 'chat_message',
@@ -386,7 +428,7 @@ class UnifiedChatAggregator extends EventEmitter {
             };
             
             connection.send(JSON.stringify(payload));
-        console.log(`📤 DEBUG: Payload sent to ${container}:`, payload);
+            console.log(`📤 DEBUG: Payload sent to ${container}:`, payload);
             
             // Timeout handling
             setTimeout(() => {
@@ -419,10 +461,46 @@ class UnifiedChatAggregator extends EventEmitter {
     }
     
     handleContainerResponse(container, message) {
+        // Streaming support
         if (message.requestId && this.pendingRequests.has(message.requestId)) {
             const request = this.pendingRequests.get(message.requestId);
-            this.pendingRequests.delete(message.requestId);
 
+            // Streaming chunk support
+            if (message.type === 'chunk' && typeof request.onChunk === 'function') {
+                request.onChunk(message.content, container);
+                // Append chunk to container buffer
+                if (!request.buffers) request.buffers = new Map();
+                if (!request.buffers.has(container)) request.buffers.set(container, "");
+                request.buffers.set(container, request.buffers.get(container) + (message.content || ""));
+                return;
+            }
+            if (message.type === 'end' && request.containers && request.finished) {
+                request.finished.add(container);
+                // Optionally call onChunk(null,container) to signal end of stream for this container
+                if (request.finished.size === request.containers.size) {
+                    // All containers are done
+                    let combined = "";
+                    if (request.buffers && request.buffers.size > 0) {
+                        combined = Array.from(request.buffers.values()).join("\n\n");
+                    }
+                    this.pendingRequests.delete(message.requestId);
+                    request.resolve(combined);
+                }
+                return;
+            }
+            // If normal unified/synthesized response
+            if (message.type === 'unified_response' || message.type === 'synthesized_response') {
+                this.pendingRequests.delete(message.requestId);
+                request.resolve({
+                    container: container,
+                    response: message.response || message.content || message.message,
+                    capabilities: message.capabilities || [],
+                    metadata: message.metadata || {}
+                });
+                return;
+            }
+            // Fallback: plain response (non-stream)
+            this.pendingRequests.delete(message.requestId);
             request.resolve({
                 container: container,
                 response: message.response || message.content || message.message,
@@ -430,8 +508,27 @@ class UnifiedChatAggregator extends EventEmitter {
                 metadata: message.metadata || {}
             });
         } else if (!message.requestId && this.pendingRequests.size === 1) {
-            // If only one pending request, allow fallback for containers missing requestId
+            // Fallback for missing requestId, handle as above (only one pending)
             const [requestId, request] = Array.from(this.pendingRequests.entries())[0];
+            if (message.type === 'chunk' && typeof request.onChunk === 'function') {
+                request.onChunk(message.content, container);
+                if (!request.buffers) request.buffers = new Map();
+                if (!request.buffers.has(container)) request.buffers.set(container, "");
+                request.buffers.set(container, request.buffers.get(container) + (message.content || ""));
+                return;
+            }
+            if (message.type === 'end' && request.containers && request.finished) {
+                request.finished.add(container);
+                if (request.finished.size === request.containers.size) {
+                    let combined = "";
+                    if (request.buffers && request.buffers.size > 0) {
+                        combined = Array.from(request.buffers.values()).join("\n\n");
+                    }
+                    this.pendingRequests.delete(requestId);
+                    request.resolve(combined);
+                }
+                return;
+            }
             this.pendingRequests.delete(requestId);
             request.resolve({
                 container: container,

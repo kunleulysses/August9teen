@@ -859,35 +859,27 @@ class UniversalSystemTerminal {
 
     async chatWithConsciousness(message) {
         console.log('\n💬 CHATTING WITH UNIFIED CONSCIOUSNESS...');
-        
-        // ONLY use UnifiedChatAggregator - no fallbacks, no placeholders
+
         if (!this.unifiedChatAggregator) {
             console.error('❌ UnifiedChatAggregator not initialized. Cannot process chat.');
             console.log('⚠️ Please wait for system initialization to complete.');
             return;
         }
-        
+
         try {
-            // console.log('🌐 Processing through Unified Chat Aggregation...');
-            const response = await this.unifiedChatAggregator.processUnifiedChat(message);
-            
-            console.log('✅ Message processed by unified consciousness systems');
-            console.log('\n🧠 UNIFIED CONSCIOUSNESS RESPONSE:');
+            const requestId = Date.now();
+            let buffer = "";
+
+            await this.unifiedChatAggregator.processUnifiedChatStreaming(
+                message,
+                (chunk) => {
+                    process.stdout.write(chunk);
+                    buffer += chunk;
+                }
+            );
+            process.stdout.write('\n');
             console.log('─'.repeat(60));
-            
-            if (response.type === 'synthesized_response') {
-                // console.log(`📊 Sources: ${response.sources.join(', ')}`);
-                // console.log(`🎯 Capabilities: ${response.capabilities.length} available`);
-                console.log('');
-            }
-            
-            console.log(response.response);
-            console.log('─'.repeat(60));
-            
-            if (response.capabilities && response.capabilities.length > 0) {
-                console.log(`\n🔧 Available capabilities: ${response.capabilities.slice(0, 5).join(', ')}${response.capabilities.length > 5 ? '...' : ''}`);
-            }
-            
+
         } catch (error) {
             console.error('❌ Unified Chat Aggregation failed:', error.message);
             console.log('⚠️ Unable to process chat message. System may not be fully initialized.');
