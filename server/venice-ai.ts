@@ -4,7 +4,8 @@ import { storage } from "./storage";
 import { ConversationMemory } from "@shared/schema";
 
 // Venice AI API configuration
-const apiKey = process.env.VENICE_API_KEY;
+import { loadSecret } from "../shared/loadSecret";
+const apiKey = loadSecret('VENICE_API_KEY');
 const VENICE_API_BASE_URL = 'https://api.venice.ai/api/v1';
 
 // Venice AI client interface
