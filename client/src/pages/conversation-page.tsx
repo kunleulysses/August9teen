@@ -31,6 +31,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { format } from "date-fns";
+import { useUnifiedChatWS } from "@/hooks/use-unified-chat";
 
 // Define the form schema
 const messageFormSchema = z.object({
@@ -204,10 +205,56 @@ export default function ConversationPage() {
     }
   };
 
+  // Streaming unified chat state
+  const [streamBuffer, setStreamBuffer] = useState("");
+  const [streamingId, setStreamingId] = useState<string | null>(null);
+
+  // WebSocket streaming hook
+  const ws = useUnifiedChatWS({
+    onChunk: (chunk) => {
+      setStreamBuffer((prev) => prev + chunk);
+    },
+    onEnd: () => {
+      if (streamingId) {
+        // Remove loading, push real message
+        setMessages((prev) => {
+          const filtered = prev.filter((m) => m.id !== streamingId);
+          return [
+            ...filtered,
+            {
+              id: generateId(),
+              content: streamBuffer,
+              type: "flappy",
+              timestamp: new Date(),
+            },
+          ];
+        });
+        setStreamingId(null);
+        setStreamBuffer("");
+      }
+      setIsSubmitting(false);
+    },
+    onError: (msg) => {
+      if (streamingId) {
+        setMessages((prev) =>
+          prev.filter((m) => m.id !== streamingId)
+        );
+        setStreamingId(null);
+        setStreamBuffer("");
+      }
+      setIsSubmitting(false);
+      toast({
+        title: "Live chat error",
+        description: msg,
+        variant: "destructive",
+      });
+    },
+  });
+
   // Handle form submission
   async function onSubmit(data: MessageFormValues) {
     if (isSubmitting || !isActive) return;
-    
+
     // Check message limit for free users
     if (!user?.isPremium && messageCount >= MAX_FREE_MESSAGES) {
       setShowUpgradePrompt(true);
@@ -218,9 +265,9 @@ export default function ConversationPage() {
       });
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     // Add user message to the conversation
     const userMessage: Message = {
       id: generateId(),
@@ -228,17 +275,40 @@ export default function ConversationPage() {
       type: "user",
       timestamp: new Date(),
     };
-    
+
     setMessages((prev) => [...prev, userMessage]);
-    
+
     // Increment message count
-    setMessageCount(prevCount => prevCount + 1);
-    
+    setMessageCount((prevCount) => prevCount + 1);
+
     // Reset the form
     form.reset();
-    
+
+    // Try unified WS streaming first
+    let wsUsed = false;
+    if (ws && ws.sendMessage && ws.readyState === 1) {
+      const loadingId = generateId();
+      setStreamingId(loadingId);
+      setStreamBuffer("");
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: loadingId,
+          content: "Flappy is ruffling his feathers...",
+          type: "flappy",
+          timestamp: new Date(),
+        },
+      ]);
+      wsUsed = ws.sendMessage(data.message);
+    }
+
+    if (wsUsed) {
+      // Handled by streaming callbacks above
+      return;
+    }
+    // Fallback to REST if WS unavailable
+
     try {
-      // Add a loading state for Flappy's response
       const loadingId = generateId();
       setMessages((prev) => [
         ...prev,
@@ -249,22 +319,19 @@ export default function ConversationPage() {
           timestamp: new Date(),
         },
       ]);
-      
-      // Call the API to get Flappy's response
-      // Note: We're NOT creating a journal entry automatically anymore
+
       const response = await apiRequest("POST", "/api/conversation", {
         message: data.message,
-        createJournalEntry: false, // Don't create a journal entry automatically
-        isFirstMessage: messages.filter(m => m.type === "flappy").length === 0, // Check if this is the first flappy message
+        createJournalEntry: false,
+        isFirstMessage: messages.filter((m) => m.type === "flappy").length === 0,
       });
-      
+
       if (!response.ok) {
         throw new Error("Failed to send message");
       }
-      
+
       const responseData = await response.json();
-      
-      // Remove the loading message and add Flappy's actual response
+
       setMessages((prev) => {
         const filtered = prev.filter((msg) => msg.id !== loadingId);
         return [
@@ -275,26 +342,29 @@ export default function ConversationPage() {
             type: "flappy",
             timestamp: new Date(),
             reflectionPrompt: responseData.reflectionPrompt || undefined,
-            conversationId: responseData.conversationId
+            conversationId: responseData.conversationId,
           },
         ];
       });
-      
-      // Use the first message as a potential title for the conversation
+
       if (messages.length <= 2 && !conversationTitle) {
-        // Extract a title from the first user message - limit to 50 chars
-        const potentialTitle = data.message.length > 50 
-          ? data.message.substring(0, 47) + "..."
-          : data.message;
+        const potentialTitle =
+          data.message.length > 50
+            ? data.message.substring(0, 47) + "..."
+            : data.message;
         setConversationTitle(potentialTitle);
       }
     } catch (error) {
-      // Remove the loading message if there was an error
-      setMessages((prev) => prev.filter((msg) => msg.content !== "Flappy is ruffling his feathers..."));
-      
+      setMessages((prev) =>
+        prev.filter((msg) => msg.content !== "Flappy is ruffling his feathers...")
+      );
+
       toast({
         title: "Message Failed",
-        description: error instanceof Error ? error.message : "Something went wrong. Please try again.",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Something went wrong. Please try again.",
         variant: "destructive",
       });
     } finally {
