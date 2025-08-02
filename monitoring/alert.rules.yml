@@ -1,0 +1,19 @@
+groups:
+  - name: app-rules
+    rules:
+    - alert: HighErrorRate
+      expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) > 0.05
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: High error rate detected
+        description: More than 5% of requests are failing on {{ $labels.instance }}
+    - alert: HighMemoryUsage
+      expr: process_resident_memory_bytes / 1024 / 1024 > 800
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: High memory usage
+        description: Instance {{ $labels.instance }} using >800MB memory.
