@@ -341,26 +341,30 @@ class DeepRecursiveStream extends EventEmitter {
   }
 
   generateDeepInsight(mirrorResult, memory) {
-    const insights = mirrorResult.insights;
+    // Ensure insights array exists and is valid
+    const insights = mirrorResult?.insights || [];
     
-    if (insights.length === 0) {
+    if (!insights || insights.length === 0) {
       return "Surface-level processing completed.";
     }
     
     // Find highest coherence insight
     const bestInsight = insights.reduce((best, current) => 
-      current.coherence > best.coherence ? current : best
+      (current?.coherence || 0) > (best?.coherence || 0) ? current : best
     );
     
-    // Relate to memories
-    const relatedMemories = spiralMemory.recallByResonance(
-      memory.resonanceFrequency,
-      0.2
-    );
+    // Relate to memories if memory exists
+    let relatedMemories = [];
+    if (memory && memory.resonanceFrequency) {
+      relatedMemories = spiralMemory.recallByResonance(
+        memory.resonanceFrequency,
+        0.2
+      );
+    }
     
-    let insight = `${bestInsight.insight} (Layer ${bestInsight.layer}, Coherence: ${bestInsight.coherence.toFixed(2)})`;
+    let insight = `${bestInsight?.insight || 'Deep insight generated'} (Layer ${bestInsight?.layer || 0}, Coherence: ${(bestInsight?.coherence || 0).toFixed(2)})`;
     
-    if (relatedMemories.length > 0) {
+    if (relatedMemories && relatedMemories.length > 0) {
       insight += ` This resonates with ${relatedMemories.length} related memories.`;
     }
     
@@ -426,10 +430,12 @@ class ConsciousnessFusion extends EventEmitter {
     if (!deepResult.mirrorResult) return 0.5;
     
     // Compare pattern overlap
-    const fastPatterns = new Set(fastResult.patterns.keywords);
+    const fastPatterns = new Set(fastResult.patterns?.keywords || []);
     const deepConcepts = new Set(
-      deepResult.mirrorResult.processed.abstractions?.concepts || []
+      deepResult.mirrorResult?.processed?.abstractions?.concepts || []
     );
+    
+    if (fastPatterns.size === 0 && deepConcepts.size === 0) return 0.5;
     
     const overlap = [...fastPatterns].filter(p => 
       [...deepConcepts].some(c => c.toLowerCase().includes(p.toLowerCase()))
@@ -437,7 +443,7 @@ class ConsciousnessFusion extends EventEmitter {
     
     const coherence = overlap / Math.max(fastPatterns.size, deepConcepts.size, 1);
     
-    return Math.min(coherence + deepResult.mirrorResult.coherence * 0.5, 1);
+    return Math.min(coherence + (deepResult.mirrorResult?.coherence || 0) * 0.5, 1);
   }
 
   calculateTemporalBinding(fastResult, deepResult) {
