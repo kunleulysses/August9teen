@@ -1,9 +1,11 @@
 import 'express-async-errors';
 import express from 'express';
+import { startHeartbeat } from '../../consciousness/heartbeat.js';
 // OpenTelemetry lazy-load for production only:
 if (process.env.NODE_ENV === 'production') {
   await import('../../observability/init-otel.js');
 }
+startHeartbeat('api-server');
 import 'express-async-errors';
 import bodyParser from 'body-parser';
 import rateLimit from 'express-rate-limit';
