@@ -1,8 +1,10 @@
-import { EventEmitter } from 'events';
+const { EventEmitter } = require('events');
 
-export class SafeEventEmitter extends EventEmitter {
+class SafeEventEmitter extends EventEmitter {
   constructor(...args) {
     super(...args);
     this.setMaxListeners(50);
   }
 }
+
+module.exports = { SafeEventEmitter };

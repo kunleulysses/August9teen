@@ -12,6 +12,7 @@ COPY tsconfig.json ./
 COPY prisma ./prisma
 COPY server/api ./server/api
 COPY server/common ./server/common
+COPY server/consciousness ./server/consciousness
 COPY server/common ./common
 COPY shared ./shared
 
@@ -23,6 +24,9 @@ RUN npm ci --ignore-scripts \
 # --- Production stage ---
 FROM node:20-alpine AS prod
 
+# Install curl for health checks
+RUN apk add --no-cache curl
+
 # Create a dedicated non-root user (uid 10001)
 RUN addgroup -g 10001 nodeapp && adduser -D -u 10001 -G nodeapp nodeapp
 
@@ -32,6 +36,7 @@ WORKDIR /app
 COPY --from=builder /build/node_modules ./node_modules
 COPY --from=builder /build/server/api ./server/api
 COPY --from=builder /build/server/common ./server/common
+COPY --from=builder /build/server/consciousness ./server/consciousness
 COPY --from=builder /build/common ./common
 COPY --from=builder /build/shared ./shared
 COPY --from=builder /build/package*.json ./

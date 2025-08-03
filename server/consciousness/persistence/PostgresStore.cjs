@@ -8,12 +8,12 @@
  *   );
  */
 
-import pkg from 'pg';
+const pkg = require('pg');
 const { Pool } = pkg;
 
 const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/postgres';
 
-export class PostgresStore {
+class PostgresStore {
   constructor() {
     this.pool = new Pool({ connectionString: DATABASE_URL });
     this.ready = this._init();
@@ -81,3 +81,5 @@ export class PostgresStore {
     return (await this.get(key)) || [];
   }
 }
+
+module.exports = { PostgresStore };

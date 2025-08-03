@@ -1,10 +1,11 @@
+/*
  * DNA-Sigil Reality Encoding System
  * Revolutionary system for encoding entire realities with DNA-sigil patterns
  * Enables reality evolution, self-healing, and inter-reality interactions
  */
 
-import { SafeEventEmitter } from '../common/safeEventEmitter.cjs';
-import { getStore } from '../common/storeFactory.cjs';
+const { SafeEventEmitter } = require('../common/safeEventEmitter.cjs');
+const { getStore } = require('../common/storeFactory.cjs');
 
 class DNASigilRealityEncoding extends SafeEventEmitter {
     constructor({
@@ -3409,4 +3410,4 @@ class DNASigilRealityEncoding extends SafeEventEmitter {
     }
 }
 
-export { DNASigilRealityEncoding };
+module.exports = { DNASigilRealityEncoding };

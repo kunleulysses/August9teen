@@ -10,7 +10,7 @@
  * This is a stub implementation using a local Map. 
  * Replace with Postgres/other backend by following the same shape.
  */
-export class InMemoryStore {
+class InMemoryStore {
   constructor() {
     this.map = new Map();
   }
@@ -39,3 +39,5 @@ export class InMemoryStore {
     return this.map.get(key) || [];
   }
 }
+
+module.exports = { InMemoryStore };

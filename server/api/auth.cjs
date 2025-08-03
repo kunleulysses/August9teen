@@ -1,10 +1,10 @@
-import jwt from 'jsonwebtoken';
-import config from '../common/config.cjs';
-import logger from '../common/logger.cjs';
-import { authErrors } from './metrics.cjs';
+const jwt = require('jsonwebtoken');
+const config = require('../common/config.cjs');
+const logger = require('../common/logger.cjs');
+const { authErrors } = require('./metrics.cjs');
 
-import fs from 'fs';
-const { generateKeyPairSync } = await import('crypto');
+const fs = require('fs');
+const { generateKeyPairSync } = require('crypto');
 
 const privateEnv = process.env.API_JWT_PRIVATE_KEY;
 const publicEnv  = process.env.API_JWT_PUBLIC_KEY;

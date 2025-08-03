@@ -1,4 +1,4 @@
-import client from 'prom-client';
+const client = require('prom-client');
 
 client.collectDefaultMetrics();
 

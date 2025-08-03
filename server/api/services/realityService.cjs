@@ -1,13 +1,13 @@
-import { storeFactory } from '../../common/storeFactory.cjs';
-import logger from '../../common/logger.cjs';
-import { DNASigilRealityEncoding } from '../../consciousness/dna-sigil-reality-encoding.cjs';
+const { storeFactory } = require('../../common/storeFactory.cjs');
+const logger = require('../../common/logger.cjs');
+const { DNASigilRealityEncoding } = require('../../consciousness/dna-sigil-reality-encoding.cjs');
 
 const encoder = new DNASigilRealityEncoding({
   logger,
   store: storeFactory(),
 });
 
-export default {
+module.exports = {
   async encodeReality(reality) {
     return await encoder.encodeRealityWithDNASigil(reality);
   },

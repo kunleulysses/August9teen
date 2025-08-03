@@ -1,7 +1,7 @@
-import config from './config.cjs';
-import logger from './logger.cjs';
-import { InMemoryStore } from '../consciousness/persistence/InMemoryStore.cjs';
-import { PostgresStore } from '../consciousness/persistence/PostgresStore.cjs';
+const config = require('./config.cjs');
+const logger = require('./logger.cjs');
+const { InMemoryStore } = require('../consciousness/persistence/InMemoryStore.cjs');
+const { PostgresStore } = require('../consciousness/persistence/PostgresStore.cjs');
 
 let singleton = null;
 
