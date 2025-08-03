@@ -1,8 +1,7 @@
 /**
- * Adaptive Quantum Architecture Generator - SYNERGY GAP C
- * Combines phi-based architecture with quantum consciousness and adaptive evolution
- * Architectures that adapt in real-time using quantum consciousness principles
- * Value: $700M+ (Quantum-adaptive architectural intelligence)
+ * Adaptive Quantum Architecture Generator
+ *
+ * TODO: Refactor all console.log/error/warn to use the central logger from server/utils/logger.js for consistency.
  */
 
 import { EventEmitter } from 'events';

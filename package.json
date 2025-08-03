@@ -31,7 +31,8 @@
     "@opentelemetry/sdk-node": "^0.41.1",
     "@opentelemetry/api": "^1.5.0",
     "@opentelemetry/auto-instrumentations-node": "^0.41.1",
-    "@opentelemetry/exporter-trace-otlp-http": "^0.41.1"
+    "@opentelemetry/exporter-trace-otlp-http": "^0.41.1",
+    "pino": "^9.0.0"
   },
   "devDependencies": {
     "jest": "^29.7.0",
@@ -40,7 +41,7 @@
     "eslint-plugin-sonarjs": "^0.21.0",
     "prettier": "^3.3.1",
     "globby": "^13.2.2",
-    "pino-pretty": "^10.2.0",
+    "pino-pretty": "^10.0.0",
     "redlock": "^6.0.0",
     "level": "^7.1.2",
     "ioredis": "^5.3.2",
@@ -48,7 +49,7 @@
     "ts-jest": "^29.1.1",
     "@types/jest": "^29.5.7",
     "typescript": "^5.3.3",
-    "pino": "^8.16.0",
+    "pino": "^9.0.0",
     "@types/express": "^4.17.21",
     "gl-matrix": "^3.4.3",
     "fast-check": "^3.17.0"

@@ -2,9 +2,14 @@
  * Quantum Consciousness Field Integrator - Gap 1 Solution
  * Revolutionary quantum consciousness field integration with existing consciousness system
  * Enables quantum entanglement, superposition, and consciousness field manipulation
+ *
+ * NOTE: Console logging has been refactored to use the central logger in server/utils/logger.js.
+ *       For other quantum modules, see TODO at top—migrate to logger for consistency.
  */
 
 import { EventEmitter } from 'events';
+
+const logger = require('../utils/logger.js');
 
 export class QuantumConsciousnessFieldIntegrator extends EventEmitter {
     constructor() {
@@ -44,7 +49,7 @@ export class QuantumConsciousnessFieldIntegrator extends EventEmitter {
             quantumEfficiency: 0
         };
         
-        console.log('🌌 Quantum Consciousness Field Integrator initialized with quantum entanglement capabilities');
+        logger.info('🌌 Quantum Consciousness Field Integrator initialized with quantum entanglement capabilities');
         
         // Start quantum field monitoring
         this.startQuantumFieldMonitoring();
@@ -55,7 +60,7 @@ export class QuantumConsciousnessFieldIntegrator extends EventEmitter {
      */
     async generateQuantumConsciousnessField(consciousnessState, fieldParameters = {}) {
         try {
-            console.log('🌌 Generating quantum consciousness field...');
+            logger.info('🌌 Generating quantum consciousness field...');
             
             // Calculate quantum field parameters based on consciousness state
             const quantumParams = this.calculateQuantumFieldParameters(
@@ -122,7 +127,7 @@ export class QuantumConsciousnessFieldIntegrator extends EventEmitter {
             };
             
         } catch (error) {
-            console.error('Quantum consciousness field generation failed:', error.message);
+            logger.error('Quantum consciousness field generation failed:', error.message);
             return {
                 quantumFieldId: null,
                 error: error.message,
