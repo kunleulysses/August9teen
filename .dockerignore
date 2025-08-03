@@ -62,5 +62,6 @@ Caddyfile.docker
 !shared-consciousness/
 !public/
 !FlappyJournal/
+!FlappyJournal/start-unified-consciousness.js
 !FlappyJournal hey/
 !setup-database.sql
