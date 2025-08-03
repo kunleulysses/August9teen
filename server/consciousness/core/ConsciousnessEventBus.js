@@ -9,6 +9,9 @@ import { sign, verify } from './security/eventSign.js';
 const HEARTBEAT_EVENT = 'system:heartbeat';
 const STALE_MS = 5 * 60 * 1000; // 5 minutes
 
+const HEARTBEAT_EVENT = 'heartbeat';
+const STALE_MS = 60000 * 5; // 5 minutes
+
 class ConsciousnessEventBus extends EventEmitter {
     constructor() {
         super();
@@ -19,15 +22,8 @@ class ConsciousnessEventBus extends EventEmitter {
         this.historyCount = 0;
         this.subscribers = new Map();
         this.lastHeartbeat = new Map();
-
-        // Heartbeat/cleanup timer
-        setInterval(() => {
-            const now = Date.now();
-            for (const [moduleName, ts] of this.lastHeartbeat.entries()) {
-                if (now - ts > STALE_MS) {
-                    this.unsubscribeModule(moduleName);
-                    this.lastHeartbeat.delete(moduleName);
-                }
+        console.log('[ConsciousnessEventBus] Initialized');
+    }
             }
         }, 60 * 1000);
 

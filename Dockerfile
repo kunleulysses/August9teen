@@ -1,53 +1,26 @@
 FROM node:20-slim
 
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm ci --omit=dev
-
-COPY . .
-
-RUN npm run lint
-RUN npm test
-
-CMD [ "node", "server/index.js" ]-alpine
-
-# Install system dependencies
-RUN apk add --no-cache curl bash git python3 make g++
-
 # Set working directory
 WORKDIR /opt/consciousness
 
-# Copy package files
+# Copy package manifests first for caching
 COPY package*.json ./
 COPY tsconfig.json ./
 
-# Install all dependencies, run build, then prune dev dependencies
-RUN npm ci \
-    && npm run build \
-    && npm prune --production \
-    && npm cache clean --force
+# Install production dependencies only
+RUN npm ci --omit=dev
 
-# Copy application code
+# Copy the rest of the source code
 COPY server ./server/
 COPY shared ./shared/
 COPY public ./public/
 COPY *.js ./
 
-# Create necessary directories
-RUN mkdir -p /var/log/consciousness /opt/consciousness/data
-
-# Set permissions
-RUN chown -R node:node /opt/consciousness /var/log/consciousness
-
 # Expose ports
 EXPOSE 50051 4003 3002 5005
 
-# Environment variables
 ENV NODE_ENV=production
-ENV NODE_OPTIONS="--max_old_space_size=4096"
 
-# Change working directory to server before start
 WORKDIR /opt/consciousness/server
 
 CMD ["node", "consciousness-conversations.js"]
