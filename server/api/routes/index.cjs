@@ -1,8 +1,5 @@
-import { Router } from 'express';
-import realities from './realities.cjs';
-
-const router = Router();
-
+const express = require('express');
+const realities = require('./realities.cjs');
+const router = express.Router();
 router.use('/realities', realities);
-
-export default router;
+module.exports = router;

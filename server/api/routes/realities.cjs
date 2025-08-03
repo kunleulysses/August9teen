@@ -1,44 +1,25 @@
-import { Router } from 'express';
-import realityService from '../services/realityService.cjs';
-import { z } from 'zod';
-import { realitiesCreated } from '../metrics.cjs';
+const express = require('express');
+const router = express.Router();
+const realityService = require('../services/realityService.cjs');
+const metrics = require('../metrics.cjs');
 
-const router = Router();
-
-const realitySchema = z.object({
-  id: z.string().max(80),
-  data: z.any().optional(),
+router.post('/', async (req, res) => {
+  try {
+    const reality = await realityService.createReality(req.body);
+    metrics.realitiesCreated.inc();
+    res.status(201).json(reality);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 });
 
-function validate(schema) {
-  return (req, res, next) => {
-    const result = schema.safeParse(req.body);
-    if (!result.success) {
-      const details = result.error.errors.map(e => ({
-        path: e.path,
-        message: e.message,
-      }));
-      const err = new Error('validation');
-      err.validation = true;
-      err.details = details;
-      return next(err);
-    }
-    req.body = result.data;
-    next();
-  };
-}
-
-router.post('/', validate(realitySchema), async (req, res) => {
-  const reality = req.body;
-  const encoded = await realityService.encodeReality(reality);
-  realitiesCreated.inc();
-  res.status(201).json({ id: encoded.id });
+router.get('/', async (req, res) => {
+  try {
+    const realities = await realityService.getAllRealities();
+    res.json(realities);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 });
 
-router.get('/:id', async (req, res) => {
-  const encoded = await realityService.getEncodedReality(req.params.id);
-  if (!encoded) return res.status(404).json({ error: 'Not found' });
-  res.json(encoded);
-});
-
-export default router;
+module.exports = router;
