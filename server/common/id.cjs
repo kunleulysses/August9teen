@@ -1,12 +1,8 @@
-import { randomUUID as nodeRandomUUID, createHash } from 'crypto';
-import { v4 as uuidv4 } from 'uuid';
+const { randomUUID: nodeRandomUUID, createHash } = require('crypto');
+const { v4: uuidv4 } = require('uuid');
 
-// Always prefer native randomUUID if available, otherwise fallback to uuid.
 function generateId() {
-  if (typeof nodeRandomUUID === 'function') {
-    return nodeRandomUUID();
-  }
-  return uuidv4();
+  return typeof nodeRandomUUID === 'function' ? nodeRandomUUID() : uuidv4();
 }
 
 function generateHash(input) {
