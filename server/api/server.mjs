@@ -17,7 +17,8 @@ import auth from './auth.cjs';
 const { authMiddleware, loginRoute } = auth;
 import storePkg from '../common/storeFactory.cjs';
 const { getStore, closeStore } = storePkg;
-import { register as metricsRegister } from './metrics.cjs';
+import metricsPkg from './metrics.cjs';
+const { register: metricsRegister } = metricsPkg;
 
 const app = express();
 let httpServer = null;
