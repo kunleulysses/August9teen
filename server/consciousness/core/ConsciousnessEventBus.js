@@ -12,6 +12,9 @@ const STALE_MS = 5 * 60 * 1000; // 5 minutes
 const HEARTBEAT_EVENT = 'heartbeat';
 const STALE_MS = 60000 * 5; // 5 minutes
 
+const HEARTBEAT_EVENT = 'system:heartbeat';
+const STALE_MS = 5 * 60 * 1000; // 5 minutes
+
 class ConsciousnessEventBus extends EventEmitter {
     constructor() {
         super();
@@ -22,6 +25,15 @@ class ConsciousnessEventBus extends EventEmitter {
         this.historyCount = 0;
         this.subscribers = new Map();
         this.lastHeartbeat = new Map();
+        setInterval(() => {
+          const now = Date.now();
+          for (const [module, ts] of this.lastHeartbeat.entries()) {
+            if (now - ts > STALE_MS) {
+              this.unsubscribeModule(module);
+              this.lastHeartbeat.delete(module);
+            }
+          }
+        }, 60_000);
         console.log('[ConsciousnessEventBus] Initialized');
     }
             }
