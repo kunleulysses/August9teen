@@ -34,6 +34,7 @@ COPY FlappyJournal/sigil-identity.js ./
 COPY FlappyJournal/consciousness-crystallization.js ./
 COPY FlappyJournal/tri-axial-coherence.js ./
 COPY FlappyJournal/harmonic-resonance-cascade.js ./
+COPY FlappyJournal/start-unified-consciousness.js ./
 
 # Create necessary directories
 RUN mkdir -p /var/log/consciousness \
@@ -67,4 +68,4 @@ ENV GEMINI_DUAL_MODEL=enabled
 ENV NODE_OPTIONS="--max_old_space_size=4096"
 
 # Start command - Run unified consciousness system with autonomous coding agent
-CMD ["node", "server/unified-consciousness-system.js"]
+CMD ["node", "start-unified-consciousness.js"]
