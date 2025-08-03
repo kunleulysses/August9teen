@@ -3,14 +3,17 @@ version: "3.9"
 services:
   db:
     image: postgres:15-alpine
-    container_name: db
-    restart: unless-stopped
+    restart: always
+    env_file:
+      - .env.docker
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}"]
       interval: 5s
@@ -29,11 +32,13 @@ services:
     env_file:
       - .env.docker
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       NODE_ENV: ${NODE_ENV}
+    ports:
+      - "4000:4000"
     volumes:
-      - uploads:/app/uploads
-      - logs:/app/logs
+      - ./server/api/uploads:/app/server/api/uploads
+      - ./shared:/app/shared
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
       interval: 10s
@@ -52,11 +57,13 @@ services:
     env_file:
       - .env.docker
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       NODE_ENV: ${NODE_ENV}
+    ports:
+      - "5000:5000"
     volumes:
-      - uploads:/app/uploads
-      - logs:/app/logs
+      - ./FlappyJournal:/opt/consciousness/FlappyJournal
+      - ./shared:/opt/consciousness/shared
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
       interval: 10s
@@ -78,6 +85,11 @@ services:
       - .env.docker
     environment:
       NODE_ENV: ${NODE_ENV}
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./FlappyJournal:/opt/app/FlappyJournal
+      - ./shared:/opt/app/shared
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:4173/"]
       interval: 10s
@@ -93,6 +105,8 @@ services:
         condition: service_healthy
       core:
         condition: service_healthy
+    env_file:
+      - .env.docker
     ports:
       - "80:80"
       - "443:443"

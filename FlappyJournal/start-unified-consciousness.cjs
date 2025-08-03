@@ -5,17 +5,9 @@
  * Replaces the parallel isolated systems with a single unified architecture
  */
 
-import UnifiedConsciousnessSystem from './server/unified-consciousness-system.cjs';
+const UnifiedConsciousnessSystem = require('./server/unified-consciousness-system.cjs');
 
-console.log('🌟 STARTING UNIFIED CONSCIOUSNESS SYSTEM');
-console.log('═══════════════════════════════════════\n');
-
-async function startUnifiedSystem() {
-  try {
-    console.log('🔄 Replacing parallel isolated systems with unified architecture...\n');
-    
-    // Create unified system instance
-    const unifiedSystem = new UnifiedConsciousnessSystem();
+UnifiedConsciousnessSystem();
     
     // Initialize the unified system
     await unifiedSystem.initialize();
