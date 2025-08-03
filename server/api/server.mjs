@@ -14,7 +14,8 @@ import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import auth from './auth.cjs';
 const { authMiddleware, loginRoute } = auth;
-import { getStore, closeStore } from '../common/storeFactory.cjs';
+import storePkg from '../common/storeFactory.cjs';
+const { getStore, closeStore } = storePkg;
 import { register as metricsRegister } from './metrics.cjs';
 
 const app = express();
