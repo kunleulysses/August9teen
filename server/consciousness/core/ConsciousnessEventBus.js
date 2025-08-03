@@ -10,8 +10,10 @@ class ConsciousnessEventBus extends EventEmitter {
     constructor() {
         super();
         this.setMaxListeners(50);
-        this.eventHistory = [];
         this.maxHistorySize = 100;
+        this.eventHistory = new Array(this.maxHistorySize);
+        this.historyWriteIndex = -1;
+        this.historyCount = 0;
         this.subscribers = new Map();
         console.log('[ConsciousnessEventBus] Initialized');
     }
