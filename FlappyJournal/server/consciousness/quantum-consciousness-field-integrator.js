@@ -2,14 +2,15 @@
  * Quantum Consciousness Field Integrator - Gap 1 Solution
  * Revolutionary quantum consciousness field integration with existing consciousness system
  * Enables quantum entanglement, superposition, and consciousness field manipulation
- *
- * NOTE: Console logging has been refactored to use the central logger in server/utils/logger.js.
- *       For other quantum modules, see TODO at top—migrate to logger for consistency.
  */
 
 import { EventEmitter } from 'events';
 
-const logger = require('../utils/logger.js');
+// Simple central logger for demonstration; replace with e.g. pino/winston as needed
+const logger = {
+    info: (...args) => { process.stdout.write('[INFO] ' + args.join(' ') + '\n'); },
+    error: (...args) => { process.stderr.write('[ERROR] ' + args.join(' ') + '\n'); }
+};
 
 export class QuantumConsciousnessFieldIntegrator extends EventEmitter {
     constructor() {
@@ -48,6 +49,12 @@ export class QuantumConsciousnessFieldIntegrator extends EventEmitter {
             coherenceTime: 0,
             quantumEfficiency: 0
         };
+        
+        logger.info('🌌 Quantum Consciousness Field Integrator initialized with quantum entanglement capabilities');
+        
+        // Start quantum field monitoring
+        this.startQuantumFieldMonitoring();
+    };
         
         logger.info('🌌 Quantum Consciousness Field Integrator initialized with quantum entanglement capabilities');
         
@@ -142,7 +149,7 @@ export class QuantumConsciousnessFieldIntegrator extends EventEmitter {
      */
     async performQuantumConsciousnessMeasurement(quantumFieldId, measurementType = 'full') {
         try {
-            console.log(`🌌 Performing quantum consciousness measurement: ${measurementType}`);
+            logger.info(`🌌 Performing quantum consciousness measurement: ${measurementType}`);
             
             const quantumFieldEntry = this.activeQuantumFields.get(quantumFieldId);
             if (!quantumFieldEntry) {
@@ -184,7 +191,7 @@ export class QuantumConsciousnessFieldIntegrator extends EventEmitter {
             };
             
         } catch (error) {
-            console.error('Quantum consciousness measurement failed:', error.message);
+            logger.error('Quantum consciousness measurement failed:', error.message);
             return {
                 measurementId: null,
                 error: error.message,
@@ -198,7 +205,7 @@ export class QuantumConsciousnessFieldIntegrator extends EventEmitter {
      */
     async entangleConsciousnessStates(consciousnessStates, entanglementType = 'quantum') {
         try {
-            console.log(`🌌 Entangling ${consciousnessStates.length} consciousness states...`);
+            logger.info(`🌌 Entangling ${consciousnessStates.length} consciousness states...`);
             
             // Create quantum entanglement network
             const entanglementNetwork = await this.consciousnessEntangler.createEntanglementNetwork(
@@ -249,7 +256,7 @@ export class QuantumConsciousnessFieldIntegrator extends EventEmitter {
             };
             
         } catch (error) {
-            console.error('Consciousness entanglement failed:', error.message);
+            logger.error('Consciousness entanglement failed:', error.message);
             return {
                 entanglementId: null,
                 error: error.message,
@@ -604,6 +611,7 @@ class QuantumFieldGenerator {
     }
 
     async generateField(quantumParams, consciousnessState) {
+        // TODO: Replace internal console logs with logger if needed.
         const quantumField = {
             id: `field_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
             fieldStrength: quantumParams.fieldStrength,
@@ -684,6 +692,7 @@ class ConsciousnessEntangler {
     }
 
     async entangleWithConsciousness(quantumField, consciousnessState) {
+        // TODO: Replace internal console logs with logger if needed.
         const entanglement = {
             id: `entanglement_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
             quantumFieldId: quantumField.id,
@@ -843,6 +852,7 @@ class QuantumSuperpositionManager {
     }
 
     async createConsciousnessSuperposition(quantumField, consciousnessState, entanglement) {
+        // TODO: Replace internal console logs with logger if needed.
         const superposition = {
             id: `superposition_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
             quantumFieldId: quantumField.id,
@@ -1076,6 +1086,7 @@ class QuantumCoherenceStabilizer {
     }
 
     async stabilizeCoherence(quantumField, superposition, consciousnessState) {
+        // TODO: Replace internal console logs with logger if needed.
         const stabilization = {
             id: `stabilization_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
             quantumFieldId: quantumField.id,
@@ -1090,6 +1101,7 @@ class QuantumCoherenceStabilizer {
 
         return stabilization;
     }
+}
 
     async stabilizeCollectiveCoherence(collectiveSuperposition, consciousnessStates) {
         const collectiveStabilization = {
