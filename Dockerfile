@@ -1,4 +1,16 @@
-FROM node:20-alpine
+FROM node:20-slim
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci --omit=dev
+
+COPY . .
+
+RUN npm run lint
+RUN npm test
+
+CMD [ "node", "server/index.js" ]-alpine
 
 # Install system dependencies
 RUN apk add --no-cache curl bash git python3 make g++

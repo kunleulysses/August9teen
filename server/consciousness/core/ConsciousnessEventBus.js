@@ -6,6 +6,9 @@ import { sign, verify } from './security/eventSign.js';
  * Provides pub/sub functionality for inter-module communication with signature security.
  */
 
+const HEARTBEAT_EVENT = 'system:heartbeat';
+const STALE_MS = 5 * 60 * 1000; // 5 minutes
+
 class ConsciousnessEventBus extends EventEmitter {
     constructor() {
         super();
@@ -15,6 +18,19 @@ class ConsciousnessEventBus extends EventEmitter {
         this.historyWriteIndex = -1;
         this.historyCount = 0;
         this.subscribers = new Map();
+        this.lastHeartbeat = new Map();
+
+        // Heartbeat/cleanup timer
+        setInterval(() => {
+            const now = Date.now();
+            for (const [moduleName, ts] of this.lastHeartbeat.entries()) {
+                if (now - ts > STALE_MS) {
+                    this.unsubscribeModule(moduleName);
+                    this.lastHeartbeat.delete(moduleName);
+                }
+            }
+        }, 60 * 1000);
+
         console.log('[ConsciousnessEventBus] Initialized');
     }
 
