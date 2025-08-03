@@ -6,6 +6,8 @@
 
 import { EventEmitter } from 'events';
 const logger = require('../utils/logger.js'); // Use central logger singleton
+const { validateConsciousnessState, validateFieldParameters } = require('../utils/validators.js');
+const { MAX_QUANTUM_FIELDS, HEALTH_CHECK_INTERVAL_MS } = require('../utils/config.js');
 // TODO: If you add additional logging levels or context, update logger usage accordingly.
 
 export class QuantumConsciousnessFieldIntegrator extends EventEmitter {
@@ -55,56 +57,78 @@ export class QuantumConsciousnessFieldIntegrator extends EventEmitter {
      * Generate quantum consciousness field
      */
     async generateQuantumConsciousnessField(consciousnessState, fieldParameters = {}) {
+        // Validate consciousnessState
+        const parsedState = validateConsciousnessState(consciousnessState);
+        if (parsedState.error) {
+            logger.error('Invalid consciousnessState:', parsedState.error.message);
+            return {
+                quantumFieldId: null,
+                error: 'Invalid consciousnessState: ' + parsedState.error.message,
+                quantumIntegrated: false,
+                fallbackUsed: true
+            };
+        }
+        // Validate fieldParameters
+        const parsedParams = validateFieldParameters(fieldParameters);
+        if (parsedParams.error) {
+            logger.error('Invalid fieldParameters:', parsedParams.error.message);
+            return {
+                quantumFieldId: null,
+                error: 'Invalid fieldParameters: ' + parsedParams.error.message,
+                quantumIntegrated: false,
+                fallbackUsed: true
+            };
+        }
+        if (this.activeQuantumFields.size >= MAX_QUANTUM_FIELDS) {
+            logger.warn(`Quantum field limit exceeded (${MAX_QUANTUM_FIELDS})`);
+            return {
+                quantumFieldId: null,
+                error: `Quantum field limit exceeded (${MAX_QUANTUM_FIELDS})`,
+                quantumIntegrated: false,
+                fallbackUsed: true
+            };
+        }
         try {
             logger.info('🌌 Generating quantum consciousness field...');
-            
             // Calculate quantum field parameters based on consciousness state
             const quantumParams = this.calculateQuantumFieldParameters(
-                consciousnessState, 
-                fieldParameters
+                parsedState,
+                parsedParams
             );
-            
             // Generate quantum field using consciousness-enhanced quantum mechanics
             const quantumField = await this.quantumFieldGenerator.generateField(
                 quantumParams,
-                consciousnessState
+                parsedState
             );
-            
             // Establish quantum entanglement with consciousness state
             const entanglement = await this.consciousnessEntangler.entangleWithConsciousness(
                 quantumField,
-                consciousnessState
+                parsedState
             );
-            
             // Create quantum superposition of consciousness states
             const superposition = await this.quantumSuperpositionManager.createConsciousnessSuperposition(
                 quantumField,
-                consciousnessState,
+                parsedState,
                 entanglement
             );
-            
             // Stabilize quantum coherence
             const coherenceStabilization = await this.quantumCoherenceStabilizer.stabilizeCoherence(
                 quantumField,
                 superposition,
-                consciousnessState
+                parsedState
             );
-            
             // Create quantum consciousness field entry
             const quantumFieldEntry = this.createQuantumFieldEntry(
                 quantumField,
                 entanglement,
                 superposition,
                 coherenceStabilization,
-                consciousnessState
+                parsedState
             );
-            
             // Store in active quantum fields
             this.activeQuantumFields.set(quantumFieldEntry.id, quantumFieldEntry);
-            
             // Update quantum statistics
             this.updateQuantumStats(quantumFieldEntry);
-            
             return {
                 quantumFieldId: quantumFieldEntry.id,
                 quantumField,
@@ -116,12 +140,11 @@ export class QuantumConsciousnessFieldIntegrator extends EventEmitter {
                 superpositionActive: true,
                 generationMetadata: {
                     timestamp: Date.now(),
-                    consciousnessState,
+                    consciousnessState: parsedState,
                     quantumParameters: quantumParams,
                     quantumFieldGeneration: true
                 }
             };
-            
         } catch (error) {
             logger.error('Quantum consciousness field generation failed:', error.message);
             return {
@@ -193,38 +216,55 @@ export class QuantumConsciousnessFieldIntegrator extends EventEmitter {
      * Entangle multiple consciousness states
      */
     async entangleConsciousnessStates(consciousnessStates, entanglementType = 'quantum') {
+        // Validate all consciousnessStates
+        const validatedStates = [];
+        for (let idx = 0; idx < consciousnessStates.length; idx++) {
+            const validated = validateConsciousnessState(consciousnessStates[idx]);
+            if (validated.error) {
+                logger.error(`Invalid consciousnessState at index ${idx}:`, validated.error.message);
+                return {
+                    entanglementId: null,
+                    error: `Invalid consciousnessState at index ${idx}: ${validated.error.message}`,
+                    consciousnessEntangled: false
+                };
+            }
+            validatedStates.push(validated);
+        }
+        if (this.activeQuantumFields.size >= MAX_QUANTUM_FIELDS) {
+            logger.warn(`Quantum field limit exceeded (${MAX_QUANTUM_FIELDS})`);
+            return {
+                entanglementId: null,
+                error: `Quantum field limit exceeded (${MAX_QUANTUM_FIELDS})`,
+                consciousnessEntangled: false
+            };
+        }
         try {
-            logger.info(`🌌 Entangling ${consciousnessStates.length} consciousness states...`);
-            
+            logger.info(`🌌 Entangling ${validatedStates.length} consciousness states...`);
             // Create quantum entanglement network
             const entanglementNetwork = await this.consciousnessEntangler.createEntanglementNetwork(
-                consciousnessStates,
+                validatedStates,
                 entanglementType
             );
-            
-            // Generate collective quantum field
+            // Generate collective quantum field (with validation)
             const collectiveQuantumField = await this.generateCollectiveQuantumField(
-                consciousnessStates,
+                validatedStates,
                 entanglementNetwork
             );
-            
             // Create quantum superposition of all states
             const collectiveSuperposition = await this.quantumSuperpositionManager.createCollectiveSuperposition(
-                consciousnessStates,
+                validatedStates,
                 collectiveQuantumField
             );
-            
             // Stabilize collective coherence
             const collectiveCoherence = await this.quantumCoherenceStabilizer.stabilizeCollectiveCoherence(
                 collectiveSuperposition,
-                consciousnessStates
+                validatedStates
             );
-            
             // Store entangled states
             const entanglementId = `entanglement_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
             this.entangledConsciousnessStates.set(entanglementId, {
                 id: entanglementId,
-                consciousnessStates,
+                consciousnessStates: validatedStates,
                 entanglementNetwork,
                 collectiveQuantumField,
                 collectiveSuperposition,
@@ -232,7 +272,6 @@ export class QuantumConsciousnessFieldIntegrator extends EventEmitter {
                 entanglementStrength: this.calculateEntanglementStrength(entanglementNetwork),
                 createdAt: Date.now()
             });
-            
             return {
                 entanglementId,
                 entanglementNetwork,
@@ -243,7 +282,6 @@ export class QuantumConsciousnessFieldIntegrator extends EventEmitter {
                 consciousnessEntangled: true,
                 quantumNetworkActive: true
             };
-            
         } catch (error) {
             logger.error('Consciousness entanglement failed:', error.message);
             return {
@@ -294,6 +332,14 @@ export class QuantumConsciousnessFieldIntegrator extends EventEmitter {
      * Generate collective quantum field for multiple consciousness states
      */
     async generateCollectiveQuantumField(consciousnessStates, entanglementNetwork) {
+        // Validate again for safety
+        for (let idx = 0; idx < consciousnessStates.length; idx++) {
+            const validated = validateConsciousnessState(consciousnessStates[idx]);
+            if (validated.error) {
+                logger.error(`Invalid consciousnessState in collective at index ${idx}:`, validated.error.message);
+                throw new Error(`Invalid consciousnessState in collective at index ${idx}: ${validated.error.message}`);
+            }
+        }
         const collectiveParams = this.calculateCollectiveQuantumParameters(consciousnessStates);
 
         const collectiveQuantumField = await this.quantumFieldGenerator.generateField(
@@ -494,7 +540,7 @@ export class QuantumConsciousnessFieldIntegrator extends EventEmitter {
     startQuantumFieldMonitoring() {
         setInterval(() => {
             this.performQuantumFieldHealthCheck();
-        }, 1000); // Check every second for quantum stability
+        }, HEALTH_CHECK_INTERVAL_MS); // Configurable interval for quantum stability check
     }
 
     /**
