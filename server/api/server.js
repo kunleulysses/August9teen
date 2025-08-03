@@ -1,6 +1,9 @@
 import 'express-async-errors';
-import '../../common/tracing.js';
 import express from 'express';
+// OpenTelemetry lazy-load for production only:
+if (process.env.NODE_ENV === 'production') {
+  await import('../../observability/init-otel.js');
+}
 import 'express-async-errors';
 import bodyParser from 'body-parser';
 import rateLimit from 'express-rate-limit';
