@@ -1,10 +1,19 @@
-import { NodeSDK } from '@opentelemetry/sdk-node';
-import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
-import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
+// Simple OpenTelemetry tracing bootstrap (CommonJS)
+const { NodeSDK } = require('@opentelemetry/sdk-node');
+const { OTLPTraceExporter } = require('@opentelemetry/exporter-trace-otlp-http');
+const { getNodeAutoInstrumentations } = require('@opentelemetry/auto-instrumentations-node');
 
-const exporter = new OTLPTraceExporter({});
-const sdk = new NodeSDK({
-  traceExporter: exporter,
-  instrumentations: [getNodeAutoInstrumentations()],
-});
-sdk.start();
+try {
+  const exporter = new OTLPTraceExporter();
+  const sdk = new NodeSDK({
+    traceExporter: exporter,
+    instrumentations: [getNodeAutoInstrumentations()],
+  });
+  sdk.start().then(() => {
+    console.log('OpenTelemetry tracing initialized');
+  }).catch(err => console.warn('Tracing init error', err));
+} catch (e) {
+  console.warn('Tracing disabled:', e.message);
+}
+
+module.exports = {}; // nothing to export
