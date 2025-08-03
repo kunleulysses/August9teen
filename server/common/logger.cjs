@@ -1,11 +1,15 @@
-import pino from 'pino';
-import config from './config.cjs';
+// Logger setup using pino and config (CommonJS)
+const pino = require('pino');
+const config = require('./config.cjs');
 
 const logger = pino({
-  level: config.LOG_LEVEL,
-  ...(config.NODE_ENV === 'development'
-    ? { transport: { target: 'pino-pretty', options: { colorize: true } } }
-    : {}),
+  level: config.LOG_LEVEL || 'info',
+  transport: process.env.NODE_ENV !== 'production'
+    ? {
+        target: 'pino-pretty',
+        options: { colorize: true, translateTime: true }
+      }
+    : undefined,
 });
 
-export default logger;
+module.exports = logger;
