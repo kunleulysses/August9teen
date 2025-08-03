@@ -9,5 +9,6 @@ jobs:
         with:
           node-version: 20
       - run: npm ci
+- run: npm run size:check
       - run: npm run test:ci
       - run: npm audit --audit-level=high || true
