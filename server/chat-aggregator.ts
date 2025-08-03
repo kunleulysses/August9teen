@@ -1,4 +1,4 @@
-import UnifiedChatAggregator = require("../consciousness/core/UnifiedChatAggregator.cjs");
+import UnifiedChatAggregator from "../consciousness/core/UnifiedChatAggregator.cjs";
 
 let aggregatorInstance: any = null;
 let aggregatorReady: Promise<any> | null = null;

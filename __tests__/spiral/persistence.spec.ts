@@ -1,4 +1,4 @@
-import SpiralMemoryArchitecture from '../../FlappyJournal/server/consciousness/core/SpiralMemoryArchitecture';
+import SpiralMemoryArchitecture from '../../FlappyJournal/server/consciousness/core/SpiralMemoryArchitecture.cjs';
 
 describe('Persistence', () => {
   it('stores and reloads memories', async () => {

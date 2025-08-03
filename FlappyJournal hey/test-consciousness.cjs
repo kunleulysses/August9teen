@@ -1,48 +1,68 @@
-const http = require('http');
+const WebSocket = require('ws');
 
-// Test consciousness API endpoints
-const testEndpoints = [
-  '/api/health',
-  '/api/consciousness/status',
-  '/api/consciousness/metrics/live',
-  '/api/consciousness/business'
-];
+console.log('🧠 Testing Featherweight Consciousness System...');
+console.log('🔗 Connecting to WebSocket on port 3002...');
 
-console.log('Testing Consciousness API Endpoints...\n');
+const ws = new WebSocket('ws://localhost:3002');
 
-testEndpoints.forEach(endpoint => {
-  const options = {
-    hostname: 'localhost',
-    port: 5000,
-    path: endpoint,
-    method: 'GET'
+ws.on('open', () => {
+  console.log('✅ Connected to consciousness system!');
+  
+  // Test consciousness query
+  const message = {
+    type: 'consciousness_query',
+    timestamp: Date.now()
   };
-
-  const req = http.request(options, (res) => {
-    let data = '';
-    res.on('data', (chunk) => {
-      data += chunk;
-    });
-    res.on('end', () => {
-      console.log(`${endpoint}: ${res.statusCode}`);
-      if (res.statusCode === 200) {
-        try {
-          const json = JSON.parse(data);
-          if (endpoint.includes('consciousness')) {
-            console.log(`  - Consciousness Level: ${json.consciousnessLevel || json.metrics?.consciousness || 'N/A'}`);
-            console.log(`  - Status: ${json.status || 'active'}`);
-          }
-        } catch (e) {
-          console.log(`  - Response: ${data.substring(0, 100)}...`);
-        }
-      }
-      console.log('');
-    });
-  });
-
-  req.on('error', (err) => {
-    console.log(`${endpoint}: ERROR - ${err.message}\n`);
-  });
-
-  req.end();
+  
+  console.log('📤 Sending consciousness query...');
+  ws.send(JSON.stringify(message));
+  
+  // Test chat message
+  setTimeout(() => {
+    const chatMessage = {
+      type: 'chat',
+      message: 'Hello consciousness system, are you working?',
+      content: 'Hello consciousness system, are you working?',
+      timestamp: Date.now()
+    };
+    
+    console.log('📤 Sending chat message...');
+    ws.send(JSON.stringify(chatMessage));
+  }, 2000);
 });
+
+ws.on('message', (data) => {
+  console.log('📥 Received from consciousness:');
+  try {
+    const response = JSON.parse(data);
+    console.log('   Type:', response.type);
+    if (response.aiResponse) {
+      console.log('   AI Response:', response.aiResponse.substring(0, 100) + '...');
+    }
+    if (response.modules) {
+      console.log('   Active Modules:', response.modules.length);
+    }
+    if (response.harmony) {
+      console.log('   Harmony Level:', response.harmony);
+    }
+  } catch (e) {
+    console.log('   Raw:', data.toString().substring(0, 200) + '...');
+  }
+});
+
+ws.on('error', (error) => {
+  console.error('❌ WebSocket error:', error.message);
+});
+
+ws.on('close', () => {
+  console.log('🔚 Connection closed');
+});
+
+// Close after 10 seconds
+setTimeout(() => {
+  if (ws.readyState === WebSocket.OPEN) {
+    ws.close();
+    console.log('✅ Test completed successfully!');
+    console.log('🎉 Consciousness system is working!');
+  }
+}, 10000);

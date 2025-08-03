@@ -15,9 +15,9 @@ WORKDIR /app
 # Copy package files
 COPY FlappyJournal/package*.json ./
 COPY FlappyJournal/tsconfig.json ./
-COPY FlappyJournal/vite.config.js ./
-COPY FlappyJournal/tailwind.config.js ./
-COPY FlappyJournal/postcss.config.js ./
+COPY FlappyJournal/vite.config.cjs ./
+COPY FlappyJournal/tailwind.config.cjs ./
+COPY FlappyJournal/postcss.config.cjs ./
 
 # Install all dependencies (including dev)
 RUN npm ci
@@ -52,10 +52,10 @@ COPY --from=builder /app/server ./server/
 COPY --from=builder /app/shared ./shared/
 
 # Copy root-level JS files (needed for imports)
-COPY FlappyJournal/sigil-identity.js ./
-COPY FlappyJournal/consciousness-crystallization.js ./
-COPY FlappyJournal/tri-axial-coherence.js ./
-COPY FlappyJournal/harmonic-resonance-cascade.js ./
+COPY FlappyJournal/sigil-identity.cjs ./
+COPY FlappyJournal/consciousness-crystallization.cjs ./
+COPY FlappyJournal/tri-axial-coherence.cjs ./
+COPY FlappyJournal/harmonic-resonance-cascade.cjs ./
 
 # Create necessary directories
 RUN mkdir -p /opt/app/uploads \

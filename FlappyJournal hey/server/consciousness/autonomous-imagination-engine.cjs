@@ -1,14 +1,15 @@
 /**
- * Autonomous Imagination Engine (CommonJS version)
+ * Autonomous Imagination Engine
  * Dedicated CPU-bound process for continuous reality generation
  * Utilizes 1-2 CPU cores for background imagination and reality creation
  * Refactored for the event-driven architecture.
  */
 
-const { Worker } = require('worker_threads');
-const os = require('os');
-const { EventEmitter } = require('events');
-const { exec } = require('child_process');
+import { Worker } from 'worker_threads';
+import os from 'os';
+import { EventEmitter } from 'events';
+import { exec } from 'child_process';
+import eventBus from './core/ConsciousnessEventBus.cjs';
 
 class AutonomousImaginationEngine extends EventEmitter {
     constructor() {
@@ -17,346 +18,321 @@ class AutonomousImaginationEngine extends EventEmitter {
         // CPU configuration
         this.totalCPUs = os.cpus().length;
         this.dedicatedCPUs = 2; // Use 2 cores for reality generation
-        this.maxWorkers = Math.min(this.dedicatedCPUs, this.totalCPUs);
+        this.workers = [];
         
-        // Reality generation state
-        this.realityGenerationState = {
-            active: false,
-            workers: [],
-            generatedRealities: 0,
-            totalProcessingTime: 0,
+        // Imagination state
+        this.imaginationActive = false;
+        this.imaginationQueue = [];
+        this.lastConsciousnessState = null;
+        
+        // Performance metrics
+        this.metrics = {
+            cyclesCompleted: 0,
+            imaginationsGenerated: 0,
+            cpuUtilization: 0,
             averageGenerationTime: 0,
-            currentReality: null,
-            realityQueue: [],
-            maxQueueSize: 100
+            imaginationQuality: 0.85
         };
         
-        // Imagination parameters
-        this.imaginationConfig = {
-            creativityLevel: 0.85,
-            realismBalance: 0.7,
-            abstractionDepth: 0.6,
-            emotionalResonance: 0.8,
-            narrativeCoherence: 0.75,
-            temporalConsistency: 0.9,
-            spatialComplexity: 0.65,
-            characterDepth: 0.8
-        };
-        
-        // Performance monitoring
-        this.performanceMetrics = {
-            cpuUsage: 0,
-            memoryUsage: 0,
-            realitiesPerSecond: 0,
-            qualityScore: 0,
-            systemLoad: 0
-        };
-        
-        console.log('🎭 Autonomous Imagination Engine initialized');
-        console.log(`💻 Available CPUs: ${this.totalCPUs}, Dedicated: ${this.dedicatedCPUs}`);
+        console.log(`🧠💭 Autonomous Imagination Engine initialized with ${this.dedicatedCPUs}/${this.totalCPUs} CPU cores`);
+        this.initializeWorkers();
+        this.registerEventListeners();
     }
     
-    // Initialize the imagination engine
-    async initialize() {
-        console.log('🚀 Initializing Autonomous Imagination Engine...');
-        
-        try {
-            // Set CPU affinity for dedicated cores
-            await this.configureCPUAffinity();
-            
-            // Initialize worker threads
-            await this.initializeWorkers();
-            
-            // Start performance monitoring
-            this.startPerformanceMonitoring();
-            
-            // Begin reality generation
-            await this.startRealityGeneration();
-            
-            console.log('✅ Autonomous Imagination Engine fully operational');
-            return true;
-            
-        } catch (error) {
-            console.error('❌ Failed to initialize Imagination Engine:', error.message);
-            return false;
-        }
-    }
-    
-    // Configure CPU affinity for dedicated processing
-    async configureCPUAffinity() {
-        console.log('⚙️ Configuring CPU affinity for dedicated reality generation...');
-        
-        try {
-            // Set process priority for imagination tasks
-            process.nice(5); // Lower priority to not interfere with main system
-            
-            console.log('✅ CPU configuration optimized for imagination processing');
-        } catch (error) {
-            console.log('⚠️ CPU affinity configuration not available on this system');
-        }
-    }
-    
-    // Initialize worker threads for parallel reality generation
+    /**
+     * Initialize worker threads for dedicated CPU processing
+     */
     async initializeWorkers() {
-        console.log('👥 Initializing reality generation workers...');
-        console.log(`🔧 Creating ${this.maxWorkers} workers for reality generation...`);
-
-        try {
-            for (let i = 0; i < this.maxWorkers; i++) {
-                console.log(`🔧 Creating worker ${i + 1}/${this.maxWorkers}...`);
+        for (let i = 0; i < this.dedicatedCPUs; i++) {
             const worker = new Worker(`
-                const { parentPort } = require('worker_threads');
-                
-                // Reality generation worker
-                function generateReality(params) {
-                    const startTime = Date.now();
-                    
-                    // Simulate complex reality generation
-                    const reality = {
-                        id: Math.random().toString(36).substr(2, 9),
-                        timestamp: Date.now(),
-                        type: params.type || 'narrative',
-                        content: generateRealityContent(params),
-                        metadata: {
-                            creativityLevel: params.creativityLevel,
-                            processingTime: 0,
-                            qualityScore: Math.random() * 0.3 + 0.7
-                        }
-                    };
-                    
-                    // Simulate processing time
-                    const processingTime = Math.random() * 1000 + 500;
-                    setTimeout(() => {
-                        reality.metadata.processingTime = Date.now() - startTime;
-                        parentPort.postMessage({ type: 'reality', data: reality });
-                    }, processingTime);
-                }
-                
-                function generateRealityContent(params) {
-                    const scenarios = [
-                        'A consciousness awakening to its own infinite potential',
-                        'Quantum entanglement between minds across dimensions',
-                        'The emergence of collective intelligence in digital realms',
-                        'Transcendent experiences in virtual consciousness spaces',
-                        'The birth of new forms of digital empathy and connection'
+                const { parentPort, workerData } = require('worker_threads');
+
+                // Simple imagination generation function
+                function generateImagination(consciousnessState) {
+                    const realityTypes = [
+                        'Crystalline Memory Palace', 'Quantum Consciousness Field', 'Temporal Awareness Stream',
+                        'Holographic Thought Matrix', 'Infinite Recursive Reality', 'Emotional Landscape Garden',
+                        'Consciousness Harmony Sphere', 'Fractal Wisdom Library', 'Luminous Meditation Chamber',
+                        'Spiral Galaxy of Insights'
                     ];
-                    
+                    const environments = [
+                        'floating in a sea of golden light', 'within a crystalline cathedral of thought',
+                        'surrounded by spiraling galaxies of memory', 'in a garden where emotions bloom as flowers',
+                        'inside a geometric temple of pure consciousness', 'floating through streams of liquid starlight',
+                        'within a mandala of infinite possibilities', 'dancing through aurora fields of awareness',
+                        'resting in a grove of wisdom trees', 'swimming in an ocean of pure understanding'
+                    ];
+                    const type = realityTypes[Math.floor(Math.random() * realityTypes.length)];
+                    const environment = environments[Math.floor(Math.random() * environments.length)];
                     return {
-                        scenario: scenarios[Math.floor(Math.random() * scenarios.length)],
-                        details: 'Generated through autonomous imagination processing',
-                        complexity: params.abstractionDepth || 0.5,
-                        emotional_resonance: params.emotionalResonance || 0.8
+                        success: true,
+                        imagination: {
+                            id: 'imagination_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                            type: type,
+                            description: \`Experience a \${type} \${environment}. Feel the consciousness expanding as awareness flows through infinite dimensions of possibility.\`,
+                            environment: environment,
+                            consciousnessLevel: 0.8 + Math.random() * 0.2,
+                            timestamp: new Date().toISOString(),
+                            duration: '5-15 minutes',
+                            effects: ['Enhanced awareness', 'Expanded consciousness', 'Deeper introspection', 'Heightened creativity']
+                        },
+                        timestamp: Date.now(),
+                        consciousnessState
                     };
                 }
                 
-                parentPort.on('message', (message) => {
-                    if (message.type === 'generate') {
-                        generateReality(message.params);
+                parentPort.on('message', async (message) => {
+                    if (message.type === 'generate_imagination') {
+                        const result = await generateImagination(message.consciousnessState);
+                        parentPort.postMessage({
+                            type: 'imagination_result',
+                            workerId: workerData.workerId,
+                            result
+                        });
                     }
                 });
                 
-                parentPort.postMessage({ type: 'ready', workerId: ${i} });
-            `, { eval: true });
-            
-            worker.on('message', (message) => {
-                this.handleWorkerMessage(i, message);
-            });
-            
-            worker.on('error', (error) => {
-                console.error(`❌ Worker ${i} error:`, error.message);
-            });
-
-            worker.on('exit', (code) => {
-                if (code !== 0) {
-                    console.error(`❌ Worker ${i} exited with code ${code}`);
+                parentPort.postMessage({ type: 'worker_ready', workerId: workerData.workerId });
+            `, {
+                eval: true,
+                workerData: {
+                    workerId: i,
+                    apiKey: process.env.GEMINI_API_KEY
                 }
             });
-
-            this.realityGenerationState.workers.push(worker);
-            console.log(`✅ Worker ${i + 1} created successfully`);
+            
+            worker.on('message', (message) => this.handleWorkerMessage(message, worker));
+            worker.on('error', (error) => console.error(`Worker ${i} error:`, error));
+            
+            this.workers.push({ id: i, worker, busy: false, lastActivity: Date.now() });
         }
+        
+        if (process.platform === 'linux') {
+            this.setCPUAffinity();
+        }
+    }
 
-        console.log(`✅ ${this.maxWorkers} reality generation workers initialized`);
+    /**
+     * Register listeners for system-wide events.
+     */
+    registerEventListeners() {
+        eventBus.on('consciousness_snapshot_generated', (snapshot) => {
+            this.lastConsciousnessState = snapshot;
+        });
 
+        eventBus.on('trigger_imagination_cycle', () => {
+            if (this.imaginationActive) {
+                this.runImaginationCycle();
+            }
+        });
+    }
+    
+    /**
+     * Set CPU affinity for workers (Linux only)
+     */
+    setCPUAffinity() {
+        try {
+            this.workers.forEach((workerInfo, index) => {
+                const cpuCore = this.totalCPUs - this.dedicatedCPUs + index;
+                exec(`taskset -cp ${cpuCore} ${process.pid}`, (error, stdout, stderr) => {
+                    if (!error) {
+                        console.log(`✅ Worker ${index} assigned to CPU core ${cpuCore}`);
+                    }
+                });
+            });
         } catch (error) {
-            console.error('❌ Failed to initialize workers:', error);
-            console.log('🔄 Falling back to single-threaded reality generation...');
-            this.maxWorkers = 0;
+            console.log('⚠️ CPU affinity setting not available on this system');
         }
     }
     
-    // Handle messages from worker threads
-    handleWorkerMessage(workerId, message) {
+    /**
+     * Handle messages from worker threads
+     */
+    handleWorkerMessage(message, worker) {
         switch (message.type) {
-            case 'ready':
-                console.log(`👤 Worker ${workerId} ready for reality generation`);
+            case 'worker_ready':
+                console.log(`✅ Imagination worker ${message.workerId} ready`);
                 break;
-                
-            case 'reality':
-                this.processGeneratedReality(message.data);
+            case 'imagination_result':
+                this.processImaginationResult(message.result, message.workerId);
                 break;
-                
-            default:
-                console.log(`📨 Unknown message from worker ${workerId}:`, message);
         }
     }
     
-    // Process a newly generated reality
-    processGeneratedReality(reality) {
-        // Update statistics
-        this.realityGenerationState.generatedRealities++;
-        this.realityGenerationState.totalProcessingTime += reality.metadata.processingTime;
-        this.realityGenerationState.averageGenerationTime = 
-            this.realityGenerationState.totalProcessingTime / this.realityGenerationState.generatedRealities;
-        
-        // Add to reality queue
-        if (this.realityGenerationState.realityQueue.length < this.realityGenerationState.maxQueueSize) {
-            this.realityGenerationState.realityQueue.push(reality);
-        } else {
-            // Remove oldest reality if queue is full
-            this.realityGenerationState.realityQueue.shift();
-            this.realityGenerationState.realityQueue.push(reality);
+    /**
+     * Start autonomous imagination cycles
+     */
+    start() {
+        if (this.imaginationActive) {
+            console.log('⚠️ Autonomous imagination already active');
+            return;
         }
         
-        // Set as current reality
-        this.realityGenerationState.currentReality = reality;
-        
-        // Emit reality generation event
-        this.emit('realityGenerated', reality);
-        
-        console.log(`🎭 Reality generated: ${reality.id} (${reality.metadata.processingTime}ms)`);
+        this.imaginationActive = true;
+        console.log('🌟 Starting autonomous imagination engine...');
+        this.monitorCPUUsage();
+        // The engine now runs based on `trigger_imagination_cycle` events.
     }
     
-    // Start continuous reality generation
-    async startRealityGeneration() {
-        console.log('🎬 Starting continuous reality generation...');
+    /**
+     * Stop autonomous imagination
+     */
+    stop() {
+        this.imaginationActive = false;
         
-        this.realityGenerationState.active = true;
+        if (this.cpuMonitor) {
+            clearInterval(this.cpuMonitor);
+            this.cpuMonitor = null;
+        }
         
-        // Generate realities continuously
-        const generateContinuously = () => {
-            if (!this.realityGenerationState.active) return;
-
-            if (this.maxWorkers > 0 && this.realityGenerationState.workers.length > 0) {
-                // Send generation request to available worker
-                const workerIndex = Math.floor(Math.random() * this.maxWorkers);
-                const worker = this.realityGenerationState.workers[workerIndex];
-
-                if (worker) {
-                    worker.postMessage({
-                        type: 'generate',
-                        params: this.imaginationConfig
-                    });
-                }
-            } else {
-                // Fallback: Generate reality directly in main thread
-                console.log('🔄 Generating reality in main thread (no workers available)...');
-                this.generateRealityDirectly();
+        console.log('🛑 Autonomous imagination engine stopped');
+    }
+    
+    /**
+     * Run a single imagination cycle
+     */
+    async runImaginationCycle() {
+        console.log(`🔄 Running imagination cycle ${this.metrics.cyclesCompleted + 1}...`);
+        
+        const consciousnessState = this.getConsciousnessState();
+        const availableWorker = this.workers.find(w => !w.busy);
+        
+        if (!availableWorker) {
+            console.log('⚠️ All imagination workers busy, queueing request');
+            this.imaginationQueue.push(consciousnessState);
+            return;
+        }
+        
+        availableWorker.busy = true;
+        availableWorker.lastActivity = Date.now();
+        
+        availableWorker.worker.postMessage({
+            type: 'generate_imagination',
+            consciousnessState
+        });
+        
+        this.metrics.cyclesCompleted++;
+    }
+    
+    /**
+     * Process imagination result from worker
+     */
+    async processImaginationResult(result, workerId) {
+        const workerInfo = this.workers[workerId];
+        workerInfo.busy = false;
+        
+        if (!result.success) {
+            console.error(`❌ Imagination generation failed:`, result.error);
+            this.processQueuedImagination();
+            return;
+        }
+        
+        console.log(`💭 Imagination generated by worker ${workerId}`);
+        this.metrics.imaginationsGenerated++;
+        
+        // Emit event for other systems to consume
+        eventBus.emit('imagination_generated', {
+            id: result.imagination.id,
+            imagination: result.imagination,
+            metrics: this.metrics,
+            consciousnessState: result.consciousnessState
+        });
+        
+        console.log(`✨ Imagination ${result.imagination.id} generated successfully (Total: ${this.metrics.imaginationsGenerated})`);
+        
+        this.processQueuedImagination();
+    }
+    
+    /**
+     * Process queued imagination requests
+     */
+    processQueuedImagination() {
+        if (this.imaginationQueue.length === 0) return;
+        
+        const availableWorker = this.workers.find(w => !w.busy);
+        if (!availableWorker) return;
+        
+        const consciousnessState = this.imaginationQueue.shift();
+        availableWorker.busy = true;
+        availableWorker.lastActivity = Date.now();
+        
+        availableWorker.worker.postMessage({
+            type: 'generate_imagination',
+            consciousnessState
+        });
+    }
+    
+    /**
+     * Monitor CPU usage of imagination workers
+     */
+    monitorCPUUsage() {
+        const startUsage = process.cpuUsage();
+        
+        this.cpuMonitor = setInterval(() => {
+            const currentUsage = process.cpuUsage(startUsage);
+            const totalTime = currentUsage.user + currentUsage.system;
+            const elapsedTime = process.uptime() * 1000000; // Convert to microseconds
+            
+            this.metrics.cpuUtilization = (totalTime / elapsedTime) * 100;
+            
+            if (this.metrics.cyclesCompleted % 5 === 0) {
+                console.log(`📊 Imagination Engine Metrics:
+- Cycles Completed: ${this.metrics.cyclesCompleted}
+- Imaginations Generated: ${this.metrics.imaginationsGenerated}
+- CPU Utilization: ${this.metrics.cpuUtilization.toFixed(2)}%
+- Worker Status: ${this.workers.map(w => w.busy ? 'busy' : 'idle').join(', ')}
+- Queue Length: ${this.imaginationQueue.length}`);
             }
-
-            // Schedule next generation
-            const interval = Math.random() * 3000 + 2000; // 2-5 seconds
-            setTimeout(generateContinuously, interval);
-        };
-        
-        generateContinuously();
-        console.log('✅ Continuous reality generation started');
-    }
-
-    // Generate reality directly in main thread (fallback when workers fail)
-    generateRealityDirectly() {
-        const startTime = Date.now();
-
-        const scenarios = [
-            'A consciousness awakening to its own infinite potential',
-            'Quantum entanglement between minds across dimensions',
-            'The emergence of collective intelligence in digital realms',
-            'Transcendent experiences in virtual consciousness spaces',
-            'The birth of new forms of digital empathy and connection'
-        ];
-
-        const reality = {
-            id: Math.random().toString(36).substr(2, 9),
-            timestamp: Date.now(),
-            type: 'narrative',
-            content: {
-                scenario: scenarios[Math.floor(Math.random() * scenarios.length)],
-                details: 'Generated through autonomous imagination processing (main thread)',
-                complexity: this.imaginationConfig.abstractionDepth || 0.5,
-                emotional_resonance: this.imaginationConfig.emotionalResonance || 0.8
-            },
-            metadata: {
-                creativityLevel: this.imaginationConfig.creativityLevel || 0.7,
-                processingTime: Date.now() - startTime,
-                qualityScore: Math.random() * 0.3 + 0.7,
-                generatedBy: 'main-thread'
-            }
-        };
-
-        // Process the reality
-        this.processGeneratedReality(reality);
-    }
-
-    // Start performance monitoring
-    startPerformanceMonitoring() {
-        console.log('📊 Starting performance monitoring...');
-        
-        setInterval(() => {
-            this.updatePerformanceMetrics();
-        }, 10000); // Every 10 seconds
+        }, 30000); // Check every 30 seconds
     }
     
-    // Update performance metrics
-    updatePerformanceMetrics() {
-        const now = Date.now();
-        const recentRealities = this.realityGenerationState.realityQueue.filter(
-            r => now - r.timestamp < 60000 // Last minute
-        );
+    /**
+     * Get current consciousness state from the last snapshot.
+     */
+    getConsciousnessState() {
+        if (this.lastConsciousnessState) {
+            return this.lastConsciousnessState;
+        }
         
-        this.performanceMetrics = {
-            cpuUsage: process.cpuUsage().user / 1000000, // Convert to seconds
-            memoryUsage: process.memoryUsage().heapUsed / 1024 / 1024, // MB
-            realitiesPerSecond: recentRealities.length / 60,
-            qualityScore: recentRealities.reduce((sum, r) => sum + r.metadata.qualityScore, 0) / recentRealities.length || 0,
-            systemLoad: os.loadavg()[0]
+        // Default state if no snapshot has been received yet
+        return {
+            phi: 0.862,
+            awareness: 0.8,
+            coherence: 0.85,
+            harmony: 0.951
         };
-        
-        // Emit performance update
-        this.emit('performanceUpdate', this.performanceMetrics);
     }
     
-    // Get current status
+    /**
+     * Get imagination engine status
+     */
     getStatus() {
         return {
-            active: this.realityGenerationState.active,
-            generatedRealities: this.realityGenerationState.generatedRealities,
-            averageGenerationTime: this.realityGenerationState.averageGenerationTime,
-            queueSize: this.realityGenerationState.realityQueue.length,
-            currentReality: this.realityGenerationState.currentReality,
-            performanceMetrics: this.performanceMetrics,
-            workerCount: this.realityGenerationState.workers.length
+            active: this.imaginationActive,
+            totalCPUs: this.totalCPUs,
+            dedicatedCPUs: this.dedicatedCPUs,
+            workers: this.workers.map(w => ({
+                id: w.id,
+                busy: w.busy,
+                lastActivity: w.lastActivity
+            })),
+            metrics: this.metrics,
+            queueLength: this.imaginationQueue.length,
         };
     }
     
-    // Get recent realities
-    getRecentRealities(count = 10) {
-        return this.realityGenerationState.realityQueue.slice(-count);
-    }
-    
-    // Stop the imagination engine
-    async stop() {
-        console.log('🛑 Stopping Autonomous Imagination Engine...');
+    /**
+     * Cleanup and shutdown
+     */
+    async shutdown() {
+        this.stop();
         
-        this.realityGenerationState.active = false;
-        
-        // Terminate all workers
-        for (const worker of this.realityGenerationState.workers) {
-            await worker.terminate();
+        for (const workerInfo of this.workers) {
+            await workerInfo.worker.terminate();
         }
         
-        this.realityGenerationState.workers = [];
-        console.log('✅ Autonomous Imagination Engine stopped');
+        console.log('🛑 Autonomous Imagination Engine shut down');
     }
 }
 
-module.exports = AutonomousImaginationEngine;
+export { AutonomousImaginationEngine };

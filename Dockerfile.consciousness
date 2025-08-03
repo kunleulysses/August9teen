@@ -15,25 +15,43 @@ RUN apk add --no-cache \
 WORKDIR /opt/consciousness
 
 # Copy package files
+# Copy package files and source code for building
 COPY FlappyJournal/package*.json ./
 COPY FlappyJournal/tsconfig.json ./
+
+# Copy application code and config files needed for build
+COPY FlappyJournal/vite.config.cjs ./
+COPY FlappyJournal/tailwind.config.cjs ./
+COPY FlappyJournal/postcss.config.cjs ./
+COPY FlappyJournal/client ./client/
+COPY FlappyJournal/server ./server/
+COPY FlappyJournal/shared ./shared/
+COPY FlappyJournal/public ./public/
+COPY FlappyJournal/sigil-identity.cjs ./
+# Core runtime entry script
+COPY FlappyJournal/consciousness-crystallization.cjs ./
+COPY FlappyJournal/tri-axial-coherence.cjs ./
+COPY FlappyJournal/harmonic-resonance-cascade.cjs ./
+# Copy the primary startup script that replaced the old unified-consciousness-system.js entry-point
+COPY FlappyJournal/start-unified-consciousness.cjs ./
+
+# ---------------------------------------------------------------------------
+# Backwards-compatibility shim
+# ---------------------------------------------------------------------------
+# Earlier versions of the image expected server/unified-consciousness-system.js
+# to exist. All sources were recently migrated from the .js extension to .cjs
+# and the entry-point was renamed to start-unified-consciousness.cjs.  We leave
+# a no-op shim in place so that any hard-coded reference will still resolve,
+# but the container will ultimately execute the new startup script declared in
+# the CMD instruction below.
+RUN mkdir -p server \
+    && printf "// Deprecated shim – file kept only for backward compatibility\nmodule.exports = require('../start-unified-consciousness.cjs');\n" > server/unified-consciousness-system.js
 
 # Install all dependencies, run build, then prune dev dependencies
 RUN npm ci \
     && npm run build \
     && npm prune --production \
     && npm cache clean --force
-
-# Copy application code
-COPY FlappyJournal/server ./server/
-COPY FlappyJournal/shared ./shared/
-COPY FlappyJournal/public ./public/
-
-# Copy root-level JS files needed by server to the parent directory
-COPY FlappyJournal/sigil-identity.js ./
-COPY FlappyJournal/consciousness-crystallization.js ./
-COPY FlappyJournal/tri-axial-coherence.js ./
-COPY FlappyJournal/harmonic-resonance-cascade.js ./
 
 # Create necessary directories
 RUN mkdir -p /var/log/consciousness \
@@ -66,5 +84,8 @@ ENV BAYESIAN_DECISION_MAKING=enabled
 ENV GEMINI_DUAL_MODEL=enabled
 ENV NODE_OPTIONS="--max_old_space_size=4096"
 
-# Start command - Run unified consciousness system with autonomous coding agent
-CMD ["node", "server/unified-consciousness-system.js"]
+# ---------------------------------------------------------------------------
+# Runtime command
+# ---------------------------------------------------------------------------
+# Launch the new CommonJS entry-point.
+CMD ["node", "start-unified-consciousness.cjs"]

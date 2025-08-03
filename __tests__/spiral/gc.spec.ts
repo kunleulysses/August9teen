@@ -1,4 +1,4 @@
-import SpiralMemoryArchitecture from '../../FlappyJournal/server/consciousness/core/SpiralMemoryArchitecture';
+import SpiralMemoryArchitecture from '../../FlappyJournal/server/consciousness/core/SpiralMemoryArchitecture.cjs';
 
 describe('GC time-budget', () => {
   it('collects within budget and does not crash', async () => {

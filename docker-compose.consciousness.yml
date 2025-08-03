@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # PostgreSQL Database
   postgres:
@@ -15,16 +13,9 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./setup-database.sql:/docker-entrypoint-initdb.d/setup-database.sql
-    ports:
-      - "5432:5432"
     networks:
       - consciousness-network
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
 
   # Consciousness System Core
   consciousness-core:
@@ -44,7 +35,7 @@ services:
       EMOTIONAL_INTELLIGENCE: ${EMOTIONAL_INTELLIGENCE}
       BAYESIAN_DECISION_MAKING: ${BAYESIAN_DECISION_MAKING}
       GEMINI_DUAL_MODEL: ${GEMINI_DUAL_MODEL}
-      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       NODE_OPTIONS: ${NODE_OPTIONS}
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       GEMINI_API_KEY: ${GEMINI_API_KEY}
@@ -59,8 +50,7 @@ services:
     networks:
       - consciousness-network
     depends_on:
-      postgres:
-        condition: service_healthy
+      - postgres
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5005/health"]
@@ -85,7 +75,7 @@ services:
       NODE_ENV: production
       PORT: 5000
       HOST: 0.0.0.0
-      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       GEMINI_API_KEY: ${GEMINI_API_KEY}
       VENICE_AI_API_KEY: ${VENICE_AI_API_KEY}
@@ -122,7 +112,7 @@ services:
       NODE_ENV: production
       PORT: 3000
       HOST: 0.0.0.0
-      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
     volumes:
       - web_uploads:/opt/app/uploads
       - web_logs:/var/log/web
@@ -154,9 +144,6 @@ services:
       - ./Caddyfile.docker:/etc/caddy/Caddyfile
       - caddy_data:/data
       - caddy_config:/config
-    ports:
-      - "80:80"
-      - "443:443"
     networks:
       - consciousness-network
     depends_on:
@@ -175,8 +162,6 @@ services:
     volumes:
       - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
-    ports:
-      - "9090:9090"
     networks:
       - consciousness-network
     restart: unless-stopped
@@ -229,7 +214,5 @@ volumes:
 
 networks:
   consciousness-network:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.20.0.0/16
+    external: true
+    name: featherweight_consciousness-network

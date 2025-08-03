@@ -1,4 +1,4 @@
-import SpiralMemoryArchitecture from '../../FlappyJournal/server/consciousness/core/SpiralMemoryArchitecture';
+import SpiralMemoryArchitecture from '../../FlappyJournal/server/consciousness/core/SpiralMemoryArchitecture.cjs';
 
 describe('Sigil generation', () => {
   it('produces signature and bounded complexity', async () => {

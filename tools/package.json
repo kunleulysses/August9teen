@@ -1,0 +1,13 @@
+{
+  "name": "converter-tools",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "fast-glob": "^3.3.1",
+    "p-limit": "^4.0.0"
+  },
+  "scripts": {
+    "convert": "node fix-modules.mjs",
+    "convert:dry": "node fix-modules.mjs --dry"
+  }
+}
