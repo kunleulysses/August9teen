@@ -1,5 +1,5 @@
 # --- Builder stage ---
-FROM node:20-alpine AS builder
+FROM node:24-alpine AS builder
 
 WORKDIR /build
 
@@ -19,7 +19,7 @@ RUN npm ci \
   && npm cache clean --force
 
 # --- Production stage ---
-FROM node:20-alpine AS prod
+FROM node:24-alpine AS prod
 
 # Create a dedicated non-root user (uid 10001)
 RUN addgroup -g 10001 nodeapp && adduser -D -u 10001 -G nodeapp nodeapp
