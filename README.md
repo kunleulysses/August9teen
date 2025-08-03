@@ -94,6 +94,15 @@ More to come soon.
 
 ---
 
+## Running Locally with Docker
+
+```bash
+cp .env.docker.example .env.docker  # then edit if needed
+docker compose up --build
+# or include monitoring containers
+docker compose --profile monitoring up --build
+```
+
 ## 🧬 License
 
 MIT for open-source logic components. Proprietary assets like Flappy IP and the plush toy designs are developed and held under the August9teen creative studio.
