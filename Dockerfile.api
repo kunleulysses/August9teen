@@ -18,7 +18,6 @@ COPY shared ./shared
 # Install all dependencies and build
 RUN npm ci --ignore-scripts \
   && npx prisma generate \
-  && npm prune --production \
   && npm cache clean --force
 
 # --- Production stage ---
