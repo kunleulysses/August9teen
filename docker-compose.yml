@@ -8,13 +8,13 @@ services:
     env_file:
       - .env.docker
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-appdb}
+      POSTGRES_USER: ${POSTGRES_USER:-appuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-apppassword}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}"]
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -31,8 +31,8 @@ services:
     env_file:
       - .env.docker
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
-      NODE_ENV: ${NODE_ENV}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-appuser}:${POSTGRES_PASSWORD:-apppassword}@db:5432/${POSTGRES_DB:-appdb}
+      NODE_ENV: ${NODE_ENV:-development}
     volumes:
       - uploads:/app/uploads
       - logs:/app/logs
@@ -54,8 +54,8 @@ services:
     env_file:
       - .env.docker
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
-      NODE_ENV: ${NODE_ENV}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-appuser}:${POSTGRES_PASSWORD:-apppassword}@db:5432/${POSTGRES_DB:-appdb}
+      NODE_ENV: ${NODE_ENV:-development}
     volumes:
       - uploads:/app/uploads
       - logs:/app/logs
@@ -101,7 +101,7 @@ services:
       - "80:80"
       - "443:443"
     environment:
-      - CADDY_MAINTENANCE=${CADDY_MAINTENANCE}
+      - CADDY_MAINTENANCE=${CADDY_MAINTENANCE:-off}
     volumes:
       - ./Caddyfile.docker:/etc/caddy/Caddyfile
       - caddy_data:/data
@@ -111,7 +111,6 @@ services:
     image: prom/prometheus:latest
     container_name: prometheus
     restart: unless-stopped
-    profiles: ["monitoring"]
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
@@ -121,7 +120,6 @@ services:
     image: grafana/grafana:latest
     container_name: grafana
     restart: unless-stopped
-    profiles: ["monitoring"]
     ports:
       - "3001:3000"
     environment:

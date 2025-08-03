@@ -40,5 +40,5 @@ class UnifiedConsciousnessSystem {
   }
 }
 
-export default UnifiedConsciousnessSystem;
+module.exports = UnifiedConsciousnessSystem;
 
