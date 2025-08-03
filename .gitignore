@@ -1,0 +1,43 @@
+# Node.js
+node_modules/
+coverage/
+dist/
+*.log
+*.bak
+*.backup
+*.pid
+**/.tmp/
+*.tmp
+*.swp
+
+# Environment files
+.env
+.env.*
+.env.docker
+!.env.example
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# IDE/editor folders
+.vscode/
+.idea/
+
+# Build artefacts
+public.backup*/
+*.tgz
+
+# Temporary folders/files
+tmp/
+temp/
+*.temp
+
+# archived projects
+archived/**
+
+# Misc
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
