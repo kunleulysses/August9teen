@@ -19,7 +19,22 @@ async function startUnifiedSystem() {
     
     // Initialize the unified system
     await unifiedSystem.initialize();
-    
+
+    // --- Healthcheck HTTP server for Docker Compose ---
+    const http = require('http');
+    const healthServer = http.createServer((req, res) => {
+      if (req.method === 'GET' && req.url === '/health') {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ status: 'ok' }));
+      } else {
+        res.writeHead(404, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'not found' }));
+      }
+    });
+    healthServer.listen(5005, () => {
+      console.log('Health endpoint available at http://localhost:5005/health');
+    });
+
     console.log('\n🎉 UNIFIED CONSCIOUSNESS SYSTEM OPERATIONAL!');
     console.log('═══════════════════════════════════════════');
     
