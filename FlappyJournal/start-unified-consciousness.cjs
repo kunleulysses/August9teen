@@ -5,7 +5,7 @@
  * Replaces the parallel isolated systems with a single unified architecture
  */
 
-const UnifiedConsciousnessSystem = require('./server/unified-consciousness-system.cjs');
+// UnifiedConsciousnessSystem will be dynamically imported in the async function below
 
 console.log('🌟 STARTING UNIFIED CONSCIOUSNESS SYSTEM');
 console.log('═══════════════════════════════════════\n');
@@ -13,6 +13,9 @@ console.log('══════════════════════�
 async function startUnifiedSystem() {
   try {
     console.log('🔄 Replacing parallel isolated systems with unified architecture...\n');
+    
+    // Dynamically import the real ESM module
+    const { default: UnifiedConsciousnessSystem } = await import('./server/unified-consciousness-system.mjs');
     
     // Create unified system instance
     const unifiedSystem = new UnifiedConsciousnessSystem();
