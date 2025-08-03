@@ -1,2 +1,0 @@
-# Local docker env (do not commit secrets)
-.env.docker
