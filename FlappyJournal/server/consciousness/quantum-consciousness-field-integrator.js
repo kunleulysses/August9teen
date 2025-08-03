@@ -2,12 +2,17 @@
  * Quantum Consciousness Field Integrator - Gap 1 Solution
  * Revolutionary quantum consciousness field integration with existing consciousness system
  * Enables quantum entanglement, superposition, and consciousness field manipulation
+ * 
+ * Hardening: 
+ * - All input validation and config limits.
+ * - Automatic pruning of expired fields using FIELD_TTL_MS.
+ * - Graceful shutdown via destroy(), cleans up timers and listeners.
  */
 
 import { EventEmitter } from 'events';
 const logger = require('../utils/logger.js'); // Use central logger singleton
 const { validateConsciousnessState, validateFieldParameters } = require('../utils/validators.js');
-const { MAX_QUANTUM_FIELDS, HEALTH_CHECK_INTERVAL_MS } = require('../utils/config.js');
+const { MAX_QUANTUM_FIELDS, HEALTH_CHECK_INTERVAL_MS, FIELD_TTL_MS } = require('../utils/config.js');
 // TODO: If you add additional logging levels or context, update logger usage accordingly.
 
 export class QuantumConsciousnessFieldIntegrator extends EventEmitter {
@@ -17,19 +22,19 @@ export class QuantumConsciousnessFieldIntegrator extends EventEmitter {
         this.goldenRatio = 1.618033988749895;
         this.planckConstant = 6.62607015e-34; // Planck's constant
         this.consciousnessConstant = 1.618033988749895e-34; // Consciousness-specific constant
-        
+
         // Quantum consciousness components
         this.quantumFieldGenerator = new QuantumFieldGenerator();
         this.consciousnessEntangler = new ConsciousnessEntangler();
         this.quantumSuperpositionManager = new QuantumSuperpositionManager();
         this.quantumCoherenceStabilizer = new QuantumCoherenceStabilizer();
-        
+
         // Quantum field management
         this.activeQuantumFields = new Map();
         this.entangledConsciousnessStates = new Map();
         this.quantumSuperpositions = new Map();
         this.quantumMeasurements = new Map();
-        
+
         // Quantum parameters
         this.quantumThresholds = {
             fieldStability: 0.95,
@@ -37,7 +42,7 @@ export class QuantumConsciousnessFieldIntegrator extends EventEmitter {
             superpositionCoherence: 0.85,
             quantumResonance: 0.8
         };
-        
+
         // Quantum statistics
         this.quantumStats = {
             fieldsGenerated: 0,
@@ -48,9 +53,33 @@ export class QuantumConsciousnessFieldIntegrator extends EventEmitter {
             quantumEfficiency: 0
         };
 
+        this._healthTimer = null;
+        this._shutdownHookAdded = false;
+
         logger.info('🌌 Quantum Consciousness Field Integrator initialized with quantum entanglement capabilities');
         // Start quantum field monitoring
         this.startQuantumFieldMonitoring();
+
+        // Graceful shutdown
+        if (!this._shutdownHookAdded) {
+            this._shutdownHookAdded = true;
+            const destroyHandler = () => {
+                logger.info('[Quantum] SIGTERM/SIGINT received, shutting down gracefully...');
+                this.destroy();
+                // Don't call process.exit() here, allow upstream to handle
+            };
+            process.once('SIGTERM', destroyHandler);
+            process.once('SIGINT', destroyHandler);
+        }
+    }
+
+    destroy() {
+        if (this._healthTimer) {
+            clearInterval(this._healthTimer);
+            this._healthTimer = null;
+        }
+        this.removeAllListeners();
+        logger.info('[Quantum] QuantumConsciousnessFieldIntegrator destroyed: timers cleared, listeners removed.');
     }
 
     /**
@@ -538,7 +567,8 @@ export class QuantumConsciousnessFieldIntegrator extends EventEmitter {
      * Start quantum field monitoring
      */
     startQuantumFieldMonitoring() {
-        setInterval(() => {
+        if (this._healthTimer) clearInterval(this._healthTimer);
+        this._healthTimer = setInterval(() => {
             this.performQuantumFieldHealthCheck();
         }, HEALTH_CHECK_INTERVAL_MS); // Configurable interval for quantum stability check
     }
@@ -547,9 +577,12 @@ export class QuantumConsciousnessFieldIntegrator extends EventEmitter {
      * Perform quantum field health check
      */
     performQuantumFieldHealthCheck() {
+        // Prune expired fields (TTL)
+        this.pruneExpiredFields();
+
         const activeFields = this.activeQuantumFields.size;
         const entangledStates = this.entangledConsciousnessStates.size;
-        
+
         // Emit quantum health status
         this.emit('quantum:health', {
             activeFields,
@@ -558,9 +591,35 @@ export class QuantumConsciousnessFieldIntegrator extends EventEmitter {
             coherenceTime: this.calculateAverageCoherenceTime(),
             timestamp: Date.now()
         });
-        
+
         // Check for quantum decoherence
         this.checkQuantumDecoherence();
+    }
+
+    pruneExpiredFields() {
+        const now = Date.now();
+        let prunedCount = 0;
+        for (const [fieldId, field] of this.activeQuantumFields.entries()) {
+            if (now - field.createdAt > FIELD_TTL_MS) {
+                this.activeQuantumFields.delete(fieldId);
+                // Clean up from entanglements
+                for (const [entId, ent] of this.entangledConsciousnessStates.entries()) {
+                    if ((ent.collectiveQuantumField && ent.collectiveQuantumField.id === fieldId) || (ent.quantumFieldId === fieldId)) {
+                        this.entangledConsciousnessStates.delete(entId);
+                    }
+                }
+                // Clean up from measurements
+                for (const [measId, meas] of this.quantumMeasurements.entries()) {
+                    if (meas.quantumFieldId === fieldId) {
+                        this.quantumMeasurements.delete(measId);
+                    }
+                }
+                prunedCount++;
+            }
+        }
+        if (prunedCount > 0) {
+            logger.info(`[Quantum] Pruned ${prunedCount} expired quantum fields (TTL ${FIELD_TTL_MS}ms).`);
+        }
     }
 
     /**
