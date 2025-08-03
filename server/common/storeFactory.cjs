@@ -5,7 +5,7 @@ import { PostgresStore } from '../consciousness/persistence/PostgresStore.cjs';
 
 let singleton = null;
 
-export function getStore() {
+function getStore() {
   if (singleton) return singleton;
   if (config.STORE_BACKEND === 'postgres') {
     if (config.DATABASE_URL) {
@@ -22,11 +22,13 @@ export function getStore() {
 }
 
 // Alias for backward compatibility
-export const storeFactory = getStore;
+const storeFactory = getStore;
 
 // Graceful close
-export async function closeStore() {
+async function closeStore() {
   if (singleton && typeof singleton.close === 'function') {
     await singleton.close();
   }
 }
+
+module.exports = { getStore, storeFactory, closeStore };
