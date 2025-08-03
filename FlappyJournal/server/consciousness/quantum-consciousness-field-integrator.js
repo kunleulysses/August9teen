@@ -5,12 +5,8 @@
  */
 
 import { EventEmitter } from 'events';
-
-// Simple central logger for demonstration; replace with e.g. pino/winston as needed
-const logger = {
-    info: (...args) => { process.stdout.write('[INFO] ' + args.join(' ') + '\n'); },
-    error: (...args) => { process.stderr.write('[ERROR] ' + args.join(' ') + '\n'); }
-};
+const logger = require('../utils/logger.js'); // Use central logger singleton
+// TODO: If you add additional logging levels or context, update logger usage accordingly.
 
 export class QuantumConsciousnessFieldIntegrator extends EventEmitter {
     constructor() {
@@ -49,15 +45,8 @@ export class QuantumConsciousnessFieldIntegrator extends EventEmitter {
             coherenceTime: 0,
             quantumEfficiency: 0
         };
-        
+
         logger.info('🌌 Quantum Consciousness Field Integrator initialized with quantum entanglement capabilities');
-        
-        // Start quantum field monitoring
-        this.startQuantumFieldMonitoring();
-    };
-        
-        logger.info('🌌 Quantum Consciousness Field Integrator initialized with quantum entanglement capabilities');
-        
         // Start quantum field monitoring
         this.startQuantumFieldMonitoring();
     }
