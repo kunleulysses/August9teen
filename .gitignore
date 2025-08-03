@@ -32,8 +32,8 @@ tmp/
 temp/
 *.temp
 
-# Ignore duplicate FlappyJournal hey (until review)
-FlappyJournal hey/**
+# archived projects
+archived/**
 
 # Misc
 npm-debug.log*
