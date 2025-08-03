@@ -12,7 +12,8 @@ import { generateId } from '../common/id.cjs';
 import routes from './routes/index.cjs';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
-import { authMiddleware, loginRoute } from './auth.cjs';
+import auth from './auth.cjs';
+const { authMiddleware, loginRoute } = auth;
 import { getStore, closeStore } from '../common/storeFactory.cjs';
 import { register as metricsRegister } from './metrics.cjs';
 

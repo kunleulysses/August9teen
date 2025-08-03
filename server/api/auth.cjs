@@ -21,7 +21,7 @@ if (!PRIVATE_KEY || !PUBLIC_KEY) {
   }
 }
 
-export function authMiddleware(req, res, next) {
+function authMiddleware(req, res, next) {
   if (
     (req.method === 'GET' && req.path === '/health') ||
     (req.method === 'GET' && req.path.startsWith('/docs'))
@@ -44,7 +44,7 @@ export function authMiddleware(req, res, next) {
   }
 }
 
-export function loginRoute(req, res) {
+function loginRoute(req, res) {
   const { user } = req.body || {};
   if (!user || typeof user !== 'string') {
     return res.status(400).json({ error: 'Missing user' });
@@ -52,3 +52,5 @@ export function loginRoute(req, res) {
   const token = jwt.sign({ user }, PRIVATE_KEY, { expiresIn: '1h', algorithm: 'RS256' });
   res.json({ token });
 }
+
+module.exports = { authMiddleware, loginRoute };
