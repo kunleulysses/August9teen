@@ -12,6 +12,7 @@ COPY tsconfig.json ./
 COPY prisma ./prisma
 COPY server/api ./server/api
 COPY server/common ./server/common
+COPY server/common ./common
 COPY shared ./shared
 
 # Install all dependencies and build
@@ -32,6 +33,7 @@ WORKDIR /app
 COPY --from=builder /build/node_modules ./node_modules
 COPY --from=builder /build/server/api ./server/api
 COPY --from=builder /build/server/common ./server/common
+COPY --from=builder /build/common ./common
 COPY --from=builder /build/shared ./shared
 COPY --from=builder /build/package*.json ./
 
