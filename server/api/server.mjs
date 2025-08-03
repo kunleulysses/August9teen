@@ -68,13 +68,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(bodyParser.json());
-
-const openApiDocument = YAML.load(new URL('./openapi.yaml', import.meta.url).pathname);
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
-
-app.use(routes);
-
 app.get('/metrics', async (_req, res) => {
   res.set('Content-Type', metricsRegister.contentType);
   res.end(await metricsRegister.metrics());
