@@ -27,8 +27,8 @@ import { createEnhancedDualConsciousnessWS } from './enhanced-dual-consciousness
 const { recursiveMirror } = await import('./architect-4.0-recursive-mirror.cjs').catch(() => ({}));
 const { SelfAwarenessFeedbackLoop } = await import('./self-awareness-feedback-loop.cjs').catch(() => ({}));
 const { QuantumConsciousnessField } = await import('./quantum-consciousness-field.cjs').catch(() => ({}));
-import { EmotionalResonanceField } from './emotional-resonance-field.cjs';
-import { TemporalCoherenceEngine } from './temporal-coherence-engine.cjs';
+import { EmotionalResonanceField, emotionalResonance } from './emotional-resonance-field.cjs';
+import { TemporalCoherenceEngine, temporalCoherence as temporalCoherenceEngine } from './temporal-coherence-engine.cjs';
 
 class UnifiedConsciousnessIntegration {
   constructor() {
@@ -44,6 +44,14 @@ class UnifiedConsciousnessIntegration {
       // Step 1: Register all standard modules
       registerStandardModules();
       console.log('✅ Standard modules registered');
+
+      // Bind event bus to emotionalResonance and temporalCoherenceEngine
+      if (emotionalResonance && typeof emotionalResonance.bindEventBus === 'function') {
+        emotionalResonance.bindEventBus(consciousnessEventBus);
+      }
+      if (temporalCoherenceEngine && typeof temporalCoherenceEngine.bindEventBus === 'function') {
+        temporalCoherenceEngine.bindEventBus(consciousnessEventBus);
+      }
 
       // Step 2: Connect existing consciousness services
       await this.connectExistingServices();
