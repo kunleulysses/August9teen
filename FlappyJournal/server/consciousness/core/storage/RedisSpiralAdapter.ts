@@ -39,6 +39,10 @@ class RedisSpiralAdapter extends SpiralStorageAdapter {
   async keys(prefix = ''): Promise<string[]> {
     return await this.redis.keys(prefix + '*');
   }
+  async atomicIncr(key: string, increment: number = 1): Promise<number> {
+    // Atomic increment operation for Redis
+    return await this.redis.incrby(key, increment);
+  }
 }
 
 export default RedisSpiralAdapter;

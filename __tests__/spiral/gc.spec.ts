@@ -2,8 +2,15 @@ import SpiralMemoryArchitecture from '../../FlappyJournal/server/consciousness/c
 
 describe('GC time-budget', () => {
   it('collects within budget and does not crash', async () => {
-    const spiral = new SpiralMemoryArchitecture();
+    const { InMemorySpiralAdapter } = require('../../FlappyJournal/server/consciousness/core/storage/SpiralStorageAdapter.cjs');
+    const spiral = new SpiralMemoryArchitecture({ storage: new InMemorySpiralAdapter() });
     await spiral.initialize();
+
+    // Wait for initialization to complete
+    while (!spiral.isInitialized) {
+      await new Promise(resolve => setTimeout(resolve, 10));
+    }
+
     const N = 1000;
     for (let i = 0; i < N; ++i) {
       await spiral.storeMemory('foo'+i, 'memory', 'shallow', []);

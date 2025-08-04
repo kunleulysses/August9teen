@@ -1,5 +1,11 @@
 # 🕊️ Featherweight – A Private AI Companion for Emotional Wellness
 
+[![Test Suite](https://github.com/featherweight/featherweight/actions/workflows/test.yml/badge.svg)](https://github.com/featherweight/featherweight/actions/workflows/test.yml)
+[![Coverage](https://img.shields.io/badge/coverage-65%25-yellow)](https://github.com/featherweight/featherweight/actions/workflows/test.yml)
+[![Security](https://github.com/featherweight/featherweight/actions/workflows/security-and-quality.yml/badge.svg)](https://github.com/featherweight/featherweight/actions/workflows/security-and-quality.yml)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Node.js](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](package.json)
+
 Featherweight is a lightweight journaling and conversation assistant powered by uncensored large language models. It’s designed to help users reflect, heal, and grow — with privacy, personality, and emotional depth at its core.
 
 Flappy, the companion at the heart of Featherweight, is a mystical, emotionally intelligent character trained on therapeutic practices and user memory. It evolves with the user and appears across platforms: web, email, SMS, and eventually physical plush toys and mobile apps.
@@ -91,6 +97,62 @@ Recent critical improvements:
 Featherweight is a new kind of AI wellness product — one that listens more than it speaks. Whether you’re a developer, emotional tech thinker, or community organizer, we’re building this space for (and with) real people.
 
 More to come soon.
+
+---
+
+## 🧪 Development & Testing
+
+### Prerequisites
+- Node.js ≥18.0.0
+- Redis (for full test suite)
+- npm or yarn
+
+### Installation
+```bash
+git clone https://github.com/featherweight/featherweight.git
+cd featherweight
+npm install
+```
+
+### Running Tests
+```bash
+# Run all tests
+npm test
+
+# Run with coverage (requires ≥80% to pass)
+npm test -- --coverage
+
+# Run specific test suites
+npm test __tests__/spiral/          # Spiral memory tests
+npm test __tests__/storage/         # Storage adapter tests
+
+# Verify coverage threshold
+npm run verify-coverage
+
+# Run tests with Redis (for full adapter testing)
+TEST_REDIS_URL=redis://localhost:6379/15 npm test
+```
+
+### Coverage Requirements
+- **Minimum Coverage**: 80% (lines, statements, functions, branches)
+- **Scope**: `FlappyJournal/server/consciousness/core/**`
+- **CI Enforcement**: Builds fail if coverage drops below threshold
+- **Reports**: Generated in `coverage/` directory
+
+### Storage Adapter Contract
+All storage adapters must pass the contract test suite:
+```bash
+npm test __tests__/storage/adapterContract.spec.ts
+```
+
+Adding a new adapter? Run `npm test storage` - it must pass the contract.
+
+### Spiral Memory Architecture
+The consciousness core includes comprehensive test coverage:
+- Unit tests for memory storage and retrieval
+- Concurrency safety validation
+- Garbage collection testing
+- Statistics rebuilding verification
 
 ---
 

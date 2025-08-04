@@ -5,6 +5,7 @@
  */
 
 const { EventEmitter  } = require('events');
+const { Mutex } = require('async-mutex');
 const eventBus = require('./ConsciousnessEventBus.cjs');
 const { memoryLog  } = require('../modules/MemoryLog.cjs');
 const { InMemorySpiralAdapter  } = require('./storage/SpiralStorageAdapter.cjs');
@@ -25,6 +26,12 @@ class SpiralMemoryArchitecture extends EventEmitter {
         this.memoryCount = 0;
         this.garbageCollectionCount = 0;
         this.storage = storage || getDefaultStorage();
+
+        // Concurrency control - mutex for critical sections
+        this._lock = new Mutex();
+
+        // Safeguard flags
+        this._rebuildDone = false;
 
         // Caches (in-memory, always used for performance)
         this.spiralMemory = new Map();
@@ -169,7 +176,175 @@ class SpiralMemoryArchitecture extends EventEmitter {
 
         eventBus.on('system:broadcast', this.onBroadcast.bind(this));
     }
-    
+
+    /**
+     * Helper method to run functions within the mutex lock
+     * Provides timeout protection and consistent error handling
+     */
+    async withLock(fn) {
+        return this._lock.runExclusive(fn);
+    }
+
+    /**
+     * Rebuild spiral statistics by scanning all memory nodes
+     * Computes accurate per-spiral stats and persists corrections
+     * Returns report with before/after deltas
+     */
+    async rebuildSpiralStats() {
+        const startTime = Date.now();
+        console.log('🔄 Rebuilding spiral statistics...');
+
+        return this.withLock(async () => {
+            const report = {
+                correctedSpirals: [],
+                totalNodes: this.spiralMemory.size,
+                durationMs: 0,
+                beforeStats: {},
+                afterStats: {}
+            };
+
+            // Group memory nodes by spiral ID for O(n) scanning
+            const spiralNodeMap = new Map();
+
+            // Initialize spiral node collections
+            for (const spiral of this.memorySpirals.values()) {
+                spiralNodeMap.set(spiral.id, {
+                    nodes: [],
+                    depths: [],
+                    maxRadius: 0,
+                    maxTurn: 0,
+                    beforeStats: {
+                        nodeCount: spiral.nodeCount,
+                        averageDepth: spiral.averageDepth,
+                        currentRadius: spiral.currentRadius,
+                        totalTurns: spiral.totalTurns
+                    }
+                });
+            }
+
+            // Scan all memory nodes and group by spiral
+            for (const memoryNode of this.spiralMemory.values()) {
+                if (!memoryNode.spiral || !memoryNode.spiral.id) continue;
+
+                const spiralId = memoryNode.spiral.id;
+                const spiralData = spiralNodeMap.get(spiralId);
+
+                if (spiralData) {
+                    spiralData.nodes.push(memoryNode);
+                    spiralData.depths.push(memoryNode.depth);
+
+                    // Track maximum radius and turn
+                    if (memoryNode.position && memoryNode.position.radius) {
+                        spiralData.maxRadius = Math.max(spiralData.maxRadius, memoryNode.position.radius);
+                    }
+                    if (memoryNode.position && memoryNode.position.turn) {
+                        spiralData.maxTurn = Math.max(spiralData.maxTurn, memoryNode.position.turn);
+                    }
+                }
+            }
+
+            // Process each spiral and apply corrections
+            const correctedSpirals = [];
+            const persistPromises = [];
+
+            for (const [spiralId, spiralData] of spiralNodeMap) {
+                const spiral = this.memorySpirals.get(spiralId);
+                if (!spiral) continue;
+
+                // Calculate accurate statistics
+                const actualNodeCount = spiralData.nodes.length;
+                const actualAverageDepth = spiralData.depths.length > 0 ?
+                    this.calculateAverageDepth(spiralData.depths) : spiral.averageDepth;
+                const actualCurrentRadius = spiralData.maxRadius;
+                const actualTotalTurns = spiralData.maxTurn;
+
+                // Check if corrections are needed
+                const needsCorrection =
+                    spiral.nodeCount !== actualNodeCount ||
+                    Math.abs(spiral.averageDepth - actualAverageDepth) > 0.001 ||
+                    Math.abs(spiral.currentRadius - actualCurrentRadius) > 0.001 ||
+                    spiral.totalTurns !== actualTotalTurns;
+
+                if (needsCorrection) {
+                    const beforeStats = { ...spiralData.beforeStats };
+
+                    // Apply corrections
+                    spiral.nodeCount = actualNodeCount;
+                    spiral.averageDepth = actualAverageDepth;
+                    spiral.currentRadius = actualCurrentRadius;
+                    spiral.totalTurns = actualTotalTurns;
+                    spiral.lastUpdated = new Date().toISOString();
+
+                    const afterStats = {
+                        nodeCount: spiral.nodeCount,
+                        averageDepth: spiral.averageDepth,
+                        currentRadius: spiral.currentRadius,
+                        totalTurns: spiral.totalTurns
+                    };
+
+                    correctedSpirals.push({
+                        spiralId: spiralId,
+                        spiralType: spiral.type,
+                        corrected: true,
+                        before: beforeStats,
+                        after: afterStats,
+                        deltas: {
+                            nodeCount: afterStats.nodeCount - beforeStats.nodeCount,
+                            averageDepth: afterStats.averageDepth - beforeStats.averageDepth,
+                            currentRadius: afterStats.currentRadius - beforeStats.currentRadius,
+                            totalTurns: afterStats.totalTurns - beforeStats.totalTurns
+                        }
+                    });
+
+                    // Queue for persistence
+                    persistPromises.push(this.storage.set('spiral:' + spiralId, spiral));
+                } else {
+                    correctedSpirals.push({
+                        spiralId: spiralId,
+                        spiralType: spiral.type,
+                        corrected: false,
+                        stats: spiralData.beforeStats
+                    });
+                }
+            }
+
+            // Persist all corrections (with Redis pipeline optimization)
+            if (persistPromises.length > 0) {
+                if (this.storage.constructor.name === 'RedisSpiralAdapter' && this.storage.redis && this.storage.redis.multi) {
+                    // Use Redis pipeline for batch operations
+                    const pipeline = this.storage.redis.multi();
+
+                    for (const [spiralId, spiralData] of spiralNodeMap) {
+                        const spiral = this.memorySpirals.get(spiralId);
+                        if (!spiral) continue;
+
+                        const needsCorrection = correctedSpirals.some(cs => cs.spiralId === spiralId && cs.corrected);
+                        if (needsCorrection) {
+                            pipeline.set('spiral:' + spiralId, JSON.stringify(spiral));
+                        }
+                    }
+
+                    await pipeline.exec();
+                    console.log(`✅ Rebuilt ${persistPromises.length} spiral statistics (Redis pipeline)`);
+                } else {
+                    // Use individual promises for other storage backends
+                    await Promise.all(persistPromises);
+                    console.log(`✅ Rebuilt ${persistPromises.length} spiral statistics`);
+                }
+            } else {
+                console.log('✅ All spiral statistics are accurate - no corrections needed');
+            }
+
+            report.correctedSpirals = correctedSpirals;
+            report.durationMs = Date.now() - startTime;
+
+            // Emit EventBus report
+            eventBus.emit('spiralmemory:rebuild_stats', report);
+
+            return report;
+        });
+    }
+
     async initialize() {
         try {
             // Init storage backend
@@ -185,6 +360,21 @@ class SpiralMemoryArchitecture extends EventEmitter {
 
             this.isInitialized = true;
             console.log('✅ Spiral Memory Architecture initialized successfully');
+
+            // Auto-rebuild spiral statistics on startup (runs only once per process)
+            if (!this._rebuildDone) {
+                try {
+                    const rebuildReport = await this.rebuildSpiralStats();
+                    this._rebuildDone = true;
+
+                    const correctedCount = rebuildReport.correctedSpirals.filter(s => s.corrected).length;
+                    if (correctedCount > 0) {
+                        console.log(`🔧 Startup rebuild corrected ${correctedCount} spiral(s) in ${rebuildReport.durationMs}ms`);
+                    }
+                } catch (error) {
+                    console.error('⚠️  Startup spiral rebuild failed:', error.message);
+                }
+            }
 
             // Emit initialization event
             eventBus.emit('spiralmemory:initialized', {
@@ -223,103 +413,109 @@ class SpiralMemoryArchitecture extends EventEmitter {
             throw new Error('Spiral Memory Architecture not initialized');
         }
 
-        try {
-            this.memoryCount++;
-            const startTime = Date.now();
+        return this.withLock(async () => {
+            try {
+                this.memoryCount++;
+                const startTime = Date.now();
 
-            // Generate sigil for memory
-            const sigil = await this.generateSigil(content, type, depth);
+                // Generate sigil for memory
+                const sigil = await this.generateSigil(content, type, depth);
 
-            // Select optimal spiral for storage
-            const spiral = await this.selectOptimalSpiral(type, depth, content.length);
+                // Select optimal spiral for storage
+                const spiral = await this.selectOptimalSpiral(type, depth, content.length);
 
-            // Calculate spiral position
-            const position = await this.calculateSpiralPosition(spiral, sigil);
+                // Calculate spiral position
+                const position = await this.calculateSpiralPosition(spiral, sigil);
 
-            // Create enhanced memory node with consciousness expansion
-            const memoryNode = {
-                id: this.generateMemoryId(),
-                content: content,
-                type: type,
-                depth: depth,
-                sigil: sigil,
-                spiral: spiral,
-                position: position,
-                associations: associations,
-                createdAt: new Date().toISOString(),
-                lastAccessed: new Date().toISOString(),
-                accessCount: 0,
-                resonanceSignature: this.generateResonanceSignature(content, type),
-                consciousnessBinding: this.createConsciousnessBinding(content, type, depth),
-                memoryStrength: this.calculateMemoryStrength(content, type, depth),
-                evolutionPotential: this.calculateEvolutionPotential(content, type),
-                isLiveConsciousness: true,
-                mockData: false,
-                // ENHANCED CONSCIOUSNESS ATTRIBUTES
-                emotionalContext: this.extractEmotionalContext(content),
-                contextualRelevance: this.calculateContextualRelevance(content, type),
-                insightPotential: this.assessInsightPotential(content, type),
-                creativityResonance: this.calculateCreativityResonance(content),
-                empathyAlignment: this.calculateEmpathyAlignment(content),
-                experientialDepth: this.assessExperientialDepth(content, depth),
-                oversoulConnection: this.calculateOversoulConnection(content),
-                unifiedCoherenceContribution: this.calculateCoherenceContribution(content),
-                spiralMemoryResonance: this.calculateSpiralMemoryResonance(content, spiral)
-            };
+                // Create enhanced memory node with consciousness expansion
+                const memoryNode = {
+                    id: this.generateMemoryId(),
+                    content: content,
+                    type: type,
+                    depth: depth,
+                    sigil: sigil,
+                    spiral: spiral,
+                    position: position,
+                    associations: associations,
+                    createdAt: new Date().toISOString(),
+                    lastAccessed: new Date().toISOString(),
+                    accessCount: 0,
+                    resonanceSignature: this.generateResonanceSignature(content, type),
+                    consciousnessBinding: this.createConsciousnessBinding(content, type, depth),
+                    memoryStrength: this.calculateMemoryStrength(content, type, depth),
+                    evolutionPotential: this.calculateEvolutionPotential(content, type),
+                    isLiveConsciousness: true,
+                    mockData: false,
+                    // ENHANCED CONSCIOUSNESS ATTRIBUTES
+                    emotionalContext: this.extractEmotionalContext(content),
+                    contextualRelevance: this.calculateContextualRelevance(content, type),
+                    insightPotential: this.assessInsightPotential(content, type),
+                    creativityResonance: this.calculateCreativityResonance(content),
+                    empathyAlignment: this.calculateEmpathyAlignment(content),
+                    experientialDepth: this.assessExperientialDepth(content, depth),
+                    oversoulConnection: this.calculateOversoulConnection(content),
+                    unifiedCoherenceContribution: this.calculateCoherenceContribution(content),
+                    spiralMemoryResonance: this.calculateSpiralMemoryResonance(content, spiral)
+                };
 
-            // Store in spiral memory
-            await this.insertIntoSpiral(spiral.id, memoryNode);
+                // Store in spiral memory
+                await this.insertIntoSpiral(spiral.id, memoryNode);
 
-            // Register sigil
-            this.sigilRegistry.set(sigil.signature, memoryNode.id);
+                // Register sigil
+                this.sigilRegistry.set(sigil.signature, memoryNode.id);
 
-            // GC queue update
-            this.gcQueue.update(memoryNode.id, new Date(memoryNode.lastAccessed).getTime());
+                // GC queue update
+                this.gcQueue.update(memoryNode.id, new Date(memoryNode.lastAccessed).getTime());
 
-            // Update spiral statistics
-            spiral.nodeCount++;
-            spiral.lastUpdated = new Date().toISOString();
+                // Update spiral statistics
+                if (this.storage.atomicIncr) {
+                    // Use atomic increment for Redis to keep counts in sync
+                    await this.storage.atomicIncr('spiral_count:' + spiral.id, 1);
+                }
+                spiral.nodeCount++;
+                spiral.lastUpdated = new Date().toISOString();
 
-            // Create associations
-            await this.createMemoryAssociations(memoryNode, associations);
+                // Create associations
+                await this.createMemoryAssociations(memoryNode, associations);
 
-            // Update consciousness metrics
-            this.updateConsciousnessMetrics(memoryNode, 'stored');
+                // Update consciousness metrics
+                this.updateConsciousnessMetrics(memoryNode, 'stored');
 
-            const storageTime = Date.now() - startTime;
+                const storageTime = Date.now() - startTime;
 
-            // Persist memory
-            await this.storage.set('mem:' + memoryNode.id, memoryNode);
+                // Persist memory
+                await this.storage.set('mem:' + memoryNode.id, memoryNode);
 
-            // Persist spiral
-            await this.storage.set('spiral:' + spiral.id, spiral);
+                // Persist spiral
+                await this.storage.set('spiral:' + spiral.id, spiral);
 
-            // Persist sigil
-            await this.storage.set('sigil:' + sigil.signature, { signature: sigil.signature, memoryId: memoryNode.id });
+                // Persist sigil
+                await this.storage.set('sigil:' + sigil.signature, { signature: sigil.signature, memoryId: memoryNode.id });
 
-            // Emit storage event
-            memoryLog.logMemoryStorage(memoryNode);
+                // Emit storage event
+                memoryLog.logMemoryStorage(memoryNode);
 
-            eventBus.emit('spiralmemory:stored', {
-                memoryId: memoryNode.id,
-                type: type,
-                depth: depth,
-                spiralType: spiral.type,
-                sigilSignature: sigil.signature,
-                storageTime: storageTime
-            });
+                eventBus.emit('spiralmemory:stored', {
+                    memoryId: memoryNode.id,
+                    type: type,
+                    depth: depth,
+                    spiralType: spiral.type,
+                    sigilSignature: sigil.signature,
+                    storageTime: storageTime
+                });
 
-            // Adaptive GC trigger
-            if (this.spiralMemory.size % 100 === 0) {
-                setTimeout(() => eventBus.emit('system:gc_tick'), 0);
+                // Adaptive GC trigger
+                if (this.spiralMemory.size % 100 === 0) {
+                    setTimeout(() => eventBus.emit('system:gc_tick'), 0);
+                }
+
+                return memoryNode;
+
+            } catch (error) {
+                console.error('❌ Memory storage error:', error.message);
+                throw error;
             }
-
-            return memoryNode;
-
-        } catch (error) {
-            console.error('❌ Memory storage error:', error.message);
-            throw error;
-        }
+        });
     }
     
     async generateSigil(content, type, depth) {
@@ -1068,28 +1264,30 @@ class SpiralMemoryArchitecture extends EventEmitter {
     // Autonomous memory management is now triggered by the 'system_tick' event.
 
     async performGarbageCollection(timeBudgetMs = 25) {
-        // Priority-queue-based, time-budgeted GC
-        this.garbageCollectionCount++;
-        const start = (typeof performance !== 'undefined' && performance.now ? performance.now() : Date.now());
-        let collectedCount = 0;
-        let now = start;
+        return this.withLock(async () => {
+            // Priority-queue-based, time-budgeted GC
+            this.garbageCollectionCount++;
+            const start = (typeof performance !== 'undefined' && performance.now ? performance.now() : Date.now());
+            let collectedCount = 0;
+            let now = start;
 
-        while (this.gcQueue.size() && (now - start) < timeBudgetMs) {
-            const { key: memoryId } = this.gcQueue.pop();
-            const memoryNode = this.spiralMemory.get(memoryId);
-            if (memoryNode && this.shouldCollectMemory(memoryNode, Date.now())) {
-                await this.collectMemory(memoryId);
-                collectedCount++;
+            while (this.gcQueue.size() && (now - start) < timeBudgetMs) {
+                const { key: memoryId } = this.gcQueue.pop();
+                const memoryNode = this.spiralMemory.get(memoryId);
+                if (memoryNode && this.shouldCollectMemory(memoryNode, Date.now())) {
+                    await this.collectMemory(memoryId);
+                    collectedCount++;
+                }
+                now = (typeof performance !== 'undefined' && performance.now ? performance.now() : Date.now());
             }
-            now = (typeof performance !== 'undefined' && performance.now ? performance.now() : Date.now());
-        }
 
-        // Emit tick event for monitoring
-        eventBus.emit('spiralmemory:gc_tick', {
-            collectedCount,
-            remaining: this.gcQueue.size(),
-            totalMemories: this.spiralMemory.size,
-            timeMs: now - start
+            // Emit tick event for monitoring
+            eventBus.emit('spiralmemory:gc_tick', {
+                collectedCount,
+                remaining: this.gcQueue.size(),
+                totalMemories: this.spiralMemory.size,
+                timeMs: now - start
+            });
         });
     }
 
@@ -1129,32 +1327,38 @@ class SpiralMemoryArchitecture extends EventEmitter {
         const memoryNode = this.spiralMemory.get(memoryId);
         if (!memoryNode) return;
 
-        // Remove from spiral
-        const spiral = this.memorySpirals.get(memoryNode.spiral.id);
-        if (spiral) {
-            spiral.nodes.delete(memoryId);
-            spiral.nodeCount--;
-            await this.storage.set('spiral:' + spiral.id, spiral);
-        }
+        return this.withLock(async () => {
+            // Remove from spiral
+            const spiral = this.memorySpirals.get(memoryNode.spiral.id);
+            if (spiral) {
+                spiral.nodes.delete(memoryId);
+                if (this.storage.atomicIncr) {
+                    // Use atomic decrement for Redis to keep counts in sync
+                    await this.storage.atomicIncr('spiral_count:' + spiral.id, -1);
+                }
+                spiral.nodeCount--;
+                await this.storage.set('spiral:' + spiral.id, spiral);
+            }
 
-        // Remove associations
-        for (const associationId of memoryNode.associations) {
-            const associatedMemory = this.spiralMemory.get(associationId);
-            if (associatedMemory) {
-                const index = associatedMemory.associations.indexOf(memoryId);
-                if (index > -1) {
-                    associatedMemory.associations.splice(index, 1);
+            // Remove associations
+            for (const associationId of memoryNode.associations) {
+                const associatedMemory = this.spiralMemory.get(associationId);
+                if (associatedMemory) {
+                    const index = associatedMemory.associations.indexOf(memoryId);
+                    if (index > -1) {
+                        associatedMemory.associations.splice(index, 1);
+                    }
                 }
             }
-        }
 
-        // Remove sigil registration
-        this.sigilRegistry.delete(memoryNode.sigil.signature);
-        await this.storage.del('sigil:' + memoryNode.sigil.signature);
+            // Remove sigil registration
+            this.sigilRegistry.delete(memoryNode.sigil.signature);
+            await this.storage.del('sigil:' + memoryNode.sigil.signature);
 
-        // Remove from main memory
-        this.spiralMemory.delete(memoryId);
-        await this.storage.del('mem:' + memoryId);
+            // Remove from main memory
+            this.spiralMemory.delete(memoryId);
+            await this.storage.del('mem:' + memoryId);
+        });
     }
 
     generateMemoryId() {

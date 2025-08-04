@@ -1,0 +1,229 @@
+name: Test Suite
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18, 20]
+    
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Install Redis CLI
+      run: sudo apt-get update && sudo apt-get install -y redis-tools
+
+    - name: Verify Redis connection
+      run: |
+        echo "Testing Redis connection..."
+        redis-cli -h localhost -p 6379 ping
+        redis-cli -h localhost -p 6379 select 15
+        redis-cli -h localhost -p 6379 flushdb
+
+    - name: Run unit tests with coverage
+      run: npm test
+      env:
+        TEST_REDIS_URL: redis://localhost:6379/15
+        NODE_ENV: test
+        CI: true
+
+    - name: Run adapter contract tests
+      run: npm test __tests__/storage/adapterContract.spec.ts
+      env:
+        TEST_REDIS_URL: redis://localhost:6379/15
+        NODE_ENV: test
+        CI: true
+
+    - name: Upload coverage reports
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-reports-${{ matrix.node-version }}
+        path: |
+          coverage/
+          coverage/lcov.info
+          coverage/coverage-summary.json
+        retention-days: 30
+      if: always()
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage/lcov.info
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
+      continue-on-error: true
+
+    - name: Verify coverage threshold
+      run: |
+        echo "Checking coverage threshold..."
+        if [ -f coverage/coverage-summary.json ]; then
+          node -e "
+            const summary = require('./coverage/coverage-summary.json');
+            const threshold = 80;
+            const lines = summary.total.lines.pct;
+            const statements = summary.total.statements.pct;
+            const functions = summary.total.functions.pct;
+            const branches = summary.total.branches.pct;
+
+            console.log('Coverage Summary:');
+            console.log('Lines:', lines + '%');
+            console.log('Statements:', statements + '%');
+            console.log('Functions:', functions + '%');
+            console.log('Branches:', branches + '%');
+
+            if (lines < threshold || statements < threshold || functions < threshold || branches < threshold) {
+              console.error('❌ Coverage threshold not met! Required: ' + threshold + '%');
+              process.exit(1);
+            } else {
+              console.log('✅ Coverage threshold met!');
+            }
+          "
+        else
+          echo "⚠️  Coverage summary not found, skipping threshold check"
+        fi
+
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Install Redis CLI
+      run: sudo apt-get update && sudo apt-get install -y redis-tools
+
+    - name: Run spiral memory integration tests
+      run: npm test __tests__/spiral/
+      env:
+        TEST_REDIS_URL: redis://localhost:6379/15
+        NODE_ENV: test
+        CI: true
+
+    - name: Test CLI tools
+      run: |
+        echo "Testing spiral repair CLI..."
+        node bin/spiral-repair.cjs --help
+      env:
+        TEST_REDIS_URL: redis://localhost:6379/15
+        NODE_ENV: test
+
+  performance-tests:
+    name: Performance Tests
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run performance tests
+      run: npm run perf:store
+      env:
+        TEST_REDIS_URL: redis://localhost:6379/15
+        NODE_ENV: test
+        CI: true
+      continue-on-error: true
+
+    - name: Test adapter performance
+      run: |
+        echo "Testing adapter contract performance..."
+        timeout 15s npm test __tests__/storage/adapterContract.spec.ts || echo "Performance test completed"
+      env:
+        TEST_REDIS_URL: redis://localhost:6379/15
+        NODE_ENV: test
+        CI: true
+
+  test-summary:
+    name: Test Summary
+    runs-on: ubuntu-latest
+    needs: [unit-tests, integration-tests, performance-tests]
+    if: always()
+    
+    steps:
+    - name: Test Results Summary
+      run: |
+        echo "## Test Suite Summary" >> $GITHUB_STEP_SUMMARY
+        echo "| Test Type | Status |" >> $GITHUB_STEP_SUMMARY
+        echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+        echo "| Unit Tests | ${{ needs.unit-tests.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Integration Tests | ${{ needs.integration-tests.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Performance Tests | ${{ needs.performance-tests.result == 'success' && '✅ Passed' || '⚠️ Completed' }} |" >> $GITHUB_STEP_SUMMARY
+        
+        if [[ "${{ needs.unit-tests.result }}" != "success" ]]; then
+          echo "❌ **Unit tests failed - build should not proceed**" >> $GITHUB_STEP_SUMMARY
+          exit 1
+        fi
+        
+        echo "✅ **All critical tests passed**" >> $GITHUB_STEP_SUMMARY

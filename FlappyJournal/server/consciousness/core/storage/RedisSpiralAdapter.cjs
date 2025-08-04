@@ -27,6 +27,10 @@ class RedisSpiralAdapter extends SpiralStorageAdapter {
     // Use SCAN for production (here, KEYS for simplicity)
     return await this.redis.keys(prefix + '*');
   }
+  async atomicIncr(key, increment = 1) {
+    // Atomic increment operation for Redis
+    return await this.redis.incrby(key, increment);
+  }
 }
 
 module.exports = RedisSpiralAdapter;
