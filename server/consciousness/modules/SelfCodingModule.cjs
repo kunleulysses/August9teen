@@ -35,8 +35,8 @@ export default class SelfCodingModule extends EventEmitter {
 
         this.isInitialized = false;
         this.codeHistory = [];
-        this.generationsThisHour = 0;
-        this.lastGenerationReset = Date.now();
+        // this.generationsThisHour = 0;
+        // this.lastGenerationReset = Date.now();
         this.capabilities = [
             'analyze-code-patterns',
             'generate-new-modules',
@@ -217,19 +217,16 @@ export default class SelfCodingModule extends EventEmitter {
      */
     async handleCodeGeneration(data) {
         try {
-            // Quota handling
-            if (Date.now() - this.lastGenerationReset > 3600000) {
-                this.generationsThisHour = 0;
-                this.lastGenerationReset = Date.now();
-            }
-            if (this.generationsThisHour > 100) {
-                console.warn('Generation quota exceeded for this hour');
+            // Quota handling (persisted)
+            const { incrWithinHour } = await import('../utils/quotaStore.cjs');
+            const allowed = await incrWithinHour('default', 1, 100);
+            if (!allowed) {
+                console.warn('Generation quota exceeded for this hour (persisted)');
                 if (typeof code_generation_failures_total !== "undefined" && code_generation_failures_total.inc) {
                     code_generation_failures_total.inc();
                 }
                 return { success: false, reason: 'quota exceeded' };
             }
-            this.generationsThisHour++;
 
             const { moduleId, template, requirements, purpose, language, description } = data;
             
