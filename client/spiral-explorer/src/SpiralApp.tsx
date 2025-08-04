@@ -84,7 +84,20 @@ export default function SpiralApp() {
     fetch('/api/spiral')
       .then(r => r.json())
       .then(j => setNodes(j.nodes));
-    // TODO: websocket live updates
+    // WebSocket live updates (auto-refresh spiral state)
+    useEffect(() => {
+      const wsUrl =
+        import.meta.env.VITE_SPIRAL_WS ||
+        (window.location.origin.replace(/^http/, 'ws') + '/ws/spiral');
+      const ws = new window.WebSocket(wsUrl);
+      ws.onmessage = (e) => {
+        try {
+          const data = JSON.parse(e.data);
+          if (Array.isArray(data.nodes)) setNodes(data.nodes as NodeData[]);
+        } catch {}
+      };
+      return () => ws.close();
+    }, []);
   }, []);
 
   return (
