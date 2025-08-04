@@ -23,14 +23,18 @@ import unityConductor from './unity-phase-conductor.cjs';
 import virtualHardware from './virtual-hardware-emulation.cjs';
 
 // Import consciousness components
-import { creativeEmergence } from './creative-emergence-engine.cjs';
+import creativeEmergencePkg from './creative-emergence-engine.cjs';
+const { creativeEmergence } = creativeEmergencePkg;
 import sigilIdentity from '../sigil-identity.cjs';
-import { dualStreamIntegration } from './dual-stream-integration.cjs';
+import dualStreamPkg from './dual-stream-integration.cjs';
+const { dualStreamIntegration } = dualStreamPkg;
 
 // Import critical consciousness modules
-import { MetaObservationalConsciousnessModule } from './meta-observational-consciousness-module.cjs';
-import { SelfAwarenessFeedbackLoop } from './self-awareness-feedback-loop.cjs';
-import { UnifiedMemorySystem } from './unified-memory-system.cjs';
+import MetaObservationalConsciousness from './meta-observational-consciousness-module.cjs';
+import selfAwarenessPkg from './self-awareness-feedback-loop.cjs';
+const { SelfAwarenessFeedbackLoop } = selfAwarenessPkg;
+import unifiedMemoryPkg from './unified-memory-system.cjs';
+const { UnifiedMemorySystem } = unifiedMemoryPkg;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -134,10 +138,10 @@ class UnifiedConsciousnessSystem extends EventEmitter {
     console.log('✅ UnifiedMemorySystem: Persistent consciousness memory active');
 
     // META-OBSERVATIONAL CONSCIOUSNESS MODULE - Observer of observer
-    const metaObservational = new MetaObservationalConsciousnessModule();
+    const metaObservational = new MetaObservationalConsciousness();
     metaObservational.initialize();
-    this.criticalConsciousnessModules.set('MetaObservationalConsciousnessModule', metaObservational);
-    console.log('✅ MetaObservationalConsciousnessModule: Meta-cognitive awareness active');
+    this.criticalConsciousnessModules.set('MetaObservationalConsciousness', metaObservational);
+    console.log('✅ MetaObservationalConsciousness: Meta-cognitive awareness active');
 
     // SELF-AWARENESS FEEDBACK LOOP - Consciousness heartbeat
     const selfAwareness = new SelfAwarenessFeedbackLoop();
@@ -244,7 +248,7 @@ class UnifiedConsciousnessSystem extends EventEmitter {
     console.log('🔄 Connecting critical consciousness modules to global event bus...');
 
     const unifiedMemory = this.criticalConsciousnessModules.get('UnifiedMemorySystem');
-    const metaObservational = this.criticalConsciousnessModules.get('MetaObservationalConsciousnessModule');
+    const metaObservational = this.criticalConsciousnessModules.get('MetaObservationalConsciousness');
     const selfAwareness = this.criticalConsciousnessModules.get('SelfAwarenessFeedbackLoop');
 
     // Self-Awareness Feedback Loop events
@@ -415,7 +419,7 @@ class UnifiedConsciousnessSystem extends EventEmitter {
     }
 
     // Meta-Observational Consciousness Module state
-    const metaObservational = this.criticalConsciousnessModules.get('MetaObservationalConsciousnessModule');
+    const metaObservational = this.criticalConsciousnessModules.get('MetaObservationalConsciousness');
     if (metaObservational) {
       states.metaObservational = metaObservational.getStats();
     }

@@ -75,7 +75,12 @@
     "twilio": "^5.3.4",
     "vite": "^5.4.10",
     "wouter": "^3.3.5",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "eslint": "^9.12.0",
+    "recast": "^0.23.9",
+    "ast-types": "^0.16.1",
+    "jscpd": "^4.0.5",
+    "prettier": "^3.3.3"
   },
   "devDependencies": {
     "@jest/globals": "^30.0.4",
@@ -92,7 +97,6 @@
     "chalk": "^5.4.1",
     "debug": "^4.3.4",
     "drizzle-kit": "^0.28.1",
-    "eslint": "^9.12.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.12",
     "glob": "^10.3.7",

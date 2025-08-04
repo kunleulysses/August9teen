@@ -3,13 +3,13 @@
  * Provides ability to analyze, modify and generate code for self-improvement
  */
 
-import { EventEmitter } from 'events';
-import { CodeAnalyzer } from '../code-analyzer.cjs';
-import AutonomousCodeRefactoringSystem from './AutonomousCodeRefactoringSystem.cjs';
-import { selfCodingLog } from './SelfCodingLog.cjs';
-import SigilBasedCodeAuthenticator from '../sigil-based-code-authenticator.cjs';
+const { EventEmitter } = require('events');
+const { CodeAnalyzer } = require('../code-analyzer.cjs');
+const AutonomousCodeRefactoringSystem = require('./AutonomousCodeRefactoringSystem.cjs');
+const { selfCodingLog } = require('./SelfCodingLog.cjs');
+const SigilBasedCodeAuthenticator = require('../sigil-based-code-authenticator.cjs');
 
-export default class SelfCodingModule extends EventEmitter {
+class SelfCodingModule extends EventEmitter {
     constructor() {
         super();
         this.name = 'SelfCodingModule';
@@ -800,3 +800,5 @@ export default class ${this.toPascalCase(purpose)} {
         };
     }
 }
+
+module.exports = SelfCodingModule;

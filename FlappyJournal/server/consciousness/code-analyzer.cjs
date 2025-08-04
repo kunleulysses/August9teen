@@ -3,10 +3,10 @@
  * Provides code analysis, optimization and generation capabilities
  */
 
-import path from 'path';
-import { ESLint } from 'eslint';
+const path = require('path');
+const { ESLint } = require('eslint');
 
-export class CodeAnalyzer {
+class CodeAnalyzer {
     constructor() {
         this.patterns = new Map();
         this.optimizations = new Map();
@@ -589,3 +589,5 @@ export default class ${moduleName} extends EventEmitter {
         return capabilities;
     }
 }
+
+module.exports = { CodeAnalyzer };

@@ -1,13 +1,13 @@
-import { EventEmitter } from 'events';
-import eventBus from '../core/ConsciousnessEventBus.cjs';
+const { EventEmitter } = require('events');
+const eventBus = require('../core/ConsciousnessEventBus.cjs');
 
-// New dependencies
-import recast from 'recast';
-import * as astTypes from 'ast-types';
-import jscpd from 'jscpd';
-import prettier from 'prettier';
+// New dependencies - temporarily commented out due to missing packages
+// const recast = require('recast');
+// const astTypes = require('ast-types');
+// const jscpd = require('jscpd');
+// const prettier = require('prettier');
 
-export default class AutonomousCodeRefactoringSystem extends EventEmitter {
+class AutonomousCodeRefactoringSystem extends EventEmitter {
   constructor(selfCodingModule, codeAnalyzer) {
     super();
     this.name = 'AutonomousCodeRefactoringSystem';
@@ -398,3 +398,5 @@ export default class AutonomousCodeRefactoringSystem extends EventEmitter {
     };
   }
 }
+
+module.exports = AutonomousCodeRefactoringSystem;
