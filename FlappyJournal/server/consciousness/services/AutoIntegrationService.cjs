@@ -5,6 +5,7 @@
 
 const { EventEmitter  } = require('events');
 const eventBus = require('../core/ConsciousnessEventBus.cjs');
+const { child: getLogger } = require('../utils/logger.cjs');
 
 module.exports = class AutoIntegrationService extends EventEmitter {
     constructor() {
@@ -12,14 +13,16 @@ module.exports = class AutoIntegrationService extends EventEmitter {
         this.name = 'AutoIntegrationService';
         this.integrations = new Map();
         this.pending = new Set();
-        
-        console.log('[AutoIntegrationService] Created');
+
+        // Initialize structured logger
+        this.log = getLogger({ module: 'AutoIntegrationService' });
+        this.log.info('AutoIntegrationService created');
         this.initialize();
     }
 
     initialize() {
         this.setupEventHandlers();
-        console.log('[AutoIntegrationService] Initialized');
+        this.log.info('AutoIntegrationService initialized');
         this.emit('initialized', { name: this.name, status: 'initialized' });
     }
 
@@ -28,7 +31,7 @@ module.exports = class AutoIntegrationService extends EventEmitter {
         eventBus.on('module:new', this.handleNewModule.bind(this));
         eventBus.on('system:sync', this.handleSystemSync.bind(this));
         
-        console.log('[AutoIntegrationService] Event handlers setup');
+        this.log.info('Event handlers setup');
     }
 
     async handleCodeGeneration(data) {
@@ -53,7 +56,11 @@ module.exports = class AutoIntegrationService extends EventEmitter {
             });
             
         } catch (error) {
-            console.error(`[AutoIntegrationService] Integration failed for ${moduleId}:`, error);
+            this.log.error({
+                moduleId,
+                error: error.message,
+                stack: error.stack
+            }, 'Integration failed for module');
             
             eventBus.emit('integration:error', {
                 moduleId,
@@ -68,7 +75,7 @@ module.exports = class AutoIntegrationService extends EventEmitter {
         const { moduleId, config } = data;
         
         try {
-            console.log(`[AutoIntegrationService] Processing new module ${moduleId}`);
+            this.log.info({ moduleId }, 'Processing new module');
             
             // Would implement module registration logic here
             
@@ -78,7 +85,11 @@ module.exports = class AutoIntegrationService extends EventEmitter {
             });
             
         } catch (error) {
-            console.error(`[AutoIntegrationService] Module registration failed for ${moduleId}:`, error);
+            this.log.error({
+                moduleId,
+                error: error.message,
+                stack: error.stack
+            }, 'Module registration failed');
             
             eventBus.emit('module:registration:error', {
                 moduleId,
@@ -89,7 +100,7 @@ module.exports = class AutoIntegrationService extends EventEmitter {
 
     async handleSystemSync(data) {
         try {
-            console.log('[AutoIntegrationService] Processing system sync');
+            this.log.info('Processing system sync');
             
             // Would implement system synchronization logic here
             
@@ -99,7 +110,10 @@ module.exports = class AutoIntegrationService extends EventEmitter {
             });
             
         } catch (error) {
-            console.error('[AutoIntegrationService] System sync failed:', error);
+            this.log.error({
+                error: error.message,
+                stack: error.stack
+            }, 'System sync failed');
             
             eventBus.emit('system:sync:error', {
                 error: error.message
@@ -125,7 +139,7 @@ module.exports = class AutoIntegrationService extends EventEmitter {
     }
 
     shutdown() {
-        console.log('[AutoIntegrationService] Shutting Down');
+        this.log.info('AutoIntegrationService shutting down');
     }
 
     getSelfAwarenessStatus() {

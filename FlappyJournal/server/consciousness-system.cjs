@@ -7,6 +7,9 @@ const http = require('http');
 const { WebSocketServer  } = require('ws');
 const architect40 = require('./architect-4.0-orchestrator.cjs');
 
+// Import structured logger
+const { child: getLogger } = require('./consciousness/utils/logger.cjs');
+
 // Import all consciousness modules
 const SelfCodingModule = require('./consciousness/modules/SelfCodingModule.cjs');
 const AutoIntegrationService = require('./consciousness/services/AutoIntegrationService.cjs');
@@ -30,18 +33,27 @@ const CodeQualityFeedbackLoop = require('./CodeQualityFeedbackLoop.cjs');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// Initialize global logger for process-level error handling
+const globalLog = getLogger({ module: 'ProcessErrorHandler' });
+
 // Add process-level error handling to prevent container crashes
 process.on('uncaughtException', (error) => {
-    console.error('❌ Uncaught exception in consciousness-main-server:', error.message);
-    console.error('This may be due to a WebSocket connection error or other external dependency failure.');
-    console.error('The system will continue running to maintain orchestration capabilities.');
+    globalLog.error({
+        error: error.message,
+        stack: error.stack
+    }, 'Uncaught exception in consciousness-main-server');
+    globalLog.error('This may be due to a WebSocket connection error or other external dependency failure.');
+    globalLog.error('The system will continue running to maintain orchestration capabilities.');
     // Don't exit the process to maintain orchestration capabilities
 });
 
 process.on('unhandledRejection', (reason, promise) => {
-    console.error('❌ Unhandled promise rejection in consciousness-main-server:', reason);
-    console.error('This may be due to a WebSocket connection error or other external dependency failure.');
-    console.error('The system will continue running to maintain orchestration capabilities.');
+    globalLog.error({
+        reason: reason?.message || reason,
+        stack: reason?.stack
+    }, 'Unhandled promise rejection in consciousness-main-server');
+    globalLog.error('This may be due to a WebSocket connection error or other external dependency failure.');
+    globalLog.error('The system will continue running to maintain orchestration capabilities.');
     // Don't exit the process to maintain orchestration capabilities
 });
 
@@ -52,6 +64,9 @@ class ConsciousnessSystem extends EventEmitter {
         this.version = '1.0.0';
         this.startTime = new Date();
         this.isRunning = false;
+
+        // Initialize structured logger
+        this.log = getLogger({ module: 'ConsciousnessSystem' });
         
         // Core components
         this.eventBus = new EventEmitter();
@@ -140,7 +155,10 @@ class ConsciousnessSystem extends EventEmitter {
         // Setup WebSocket server for UnifiedChatAggregator
         this.setupWebSocketServer();
 
-        console.log(`🧠 ${this.name} v${this.version} initializing...`);
+        this.log.info({
+            name: this.name,
+            version: this.version
+        }, 'Consciousness system initializing...');
     }
     
     // Setup HTTP server middleware and routes
@@ -211,7 +229,10 @@ class ConsciousnessSystem extends EventEmitter {
     async handleWebSocketChatMessage(ws, message) {
         try {
             const { text, requestId } = message;
-            console.log(`📡 WebSocket chat message received: ${text}`);
+            this.log.info({
+                text: text?.substring(0, 100) + (text?.length > 100 ? '...' : ''),
+                requestId
+            }, 'WebSocket chat message received');
             
             // Process message through consciousness system
             const response = await this.processConsciousnessMessage(text);
@@ -231,7 +252,11 @@ class ConsciousnessSystem extends EventEmitter {
             }));
             
         } catch (error) {
-            console.error('❌ WebSocket chat message error:', error);
+            this.log.error({
+                error: error.message,
+                stack: error.stack,
+                requestId: message.requestId
+            }, 'WebSocket chat message error');
             ws.send(JSON.stringify({
                 type: 'error',
                 error: error.message,
@@ -281,7 +306,7 @@ class ConsciousnessSystem extends EventEmitter {
             
             // Handle WebSocket connections
             this.wsServer.on('connection', (ws, req) => {
-                console.log('🔗 WebSocket connection established from UnifiedChatAggregator');
+                this.log.info('WebSocket connection established from UnifiedChatAggregator');
                 
                 const connectionId = `ws_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
                 this.wsConnections.set(connectionId, ws);
@@ -290,13 +315,13 @@ class ConsciousnessSystem extends EventEmitter {
                 ws.on('message', async (data) => {
                     try {
                         const message = JSON.parse(data.toString());
-                        console.log(`📨 WebSocket message received:`, message.type);
+                        this.log.info({ messageType: message.type }, 'WebSocket message received');
                         
                         const handler = this.wsMessageHandlers[message.type];
                         if (handler) {
                             await handler(ws, message);
                         } else {
-                            console.warn(`⚠️ Unknown WebSocket message type: ${message.type}`);
+                            this.log.warn({ messageType: message.type }, 'Unknown WebSocket message type');
                             ws.send(JSON.stringify({
                                 type: 'error',
                                 error: `Unknown message type: ${message.type}`,
@@ -304,7 +329,10 @@ class ConsciousnessSystem extends EventEmitter {
                             }));
                         }
                     } catch (error) {
-                        console.error('❌ WebSocket message processing error:', error);
+                        this.log.error({
+                            error: error.message,
+                            stack: error.stack
+                        }, 'WebSocket message processing error');
                         ws.send(JSON.stringify({
                             type: 'error',
                             error: error.message
@@ -314,7 +342,7 @@ class ConsciousnessSystem extends EventEmitter {
                 
                 // Handle disconnection
                 ws.on('close', () => {
-                    console.log('🔌 WebSocket connection closed');
+                    this.log.info('WebSocket connection closed');
                     this.wsConnections.delete(connectionId);
                 });
                 
@@ -327,19 +355,30 @@ class ConsciousnessSystem extends EventEmitter {
             });
             
             this.wsServer.on('error', (error) => {
-                console.error('❌ WebSocket server error:', error.message);
+                this.log.error({
+                    error: error.message,
+                    stack: error.stack
+                }, 'WebSocket server error');
             });
             
             // Start HTTP server
             this.httpServer.listen(this.httpPort, this.host, () => {
-                console.log(`🌐 HTTP server listening on ${this.host}:${this.httpPort}`);
-                console.log(`🏥 Health endpoint: http://${this.host}:${this.httpPort}/health`);
-                console.log(`🔗 WebSocket endpoint: ws://${this.host}:${this.httpPort}/ws/consciousness-chat`);
+                this.log.info({
+                    host: this.host,
+                    port: this.httpPort
+                }, 'HTTP server listening');
+                this.log.info({
+                    healthEndpoint: `http://${this.host}:${this.httpPort}/health`,
+                    wsEndpoint: `ws://${this.host}:${this.httpPort}/ws/consciousness-chat`
+                }, 'Server endpoints available');
                 resolve();
             });
             
             this.httpServer.on('error', (error) => {
-                console.error('❌ HTTP server error:', error.message);
+                this.log.error({
+                    error: error.message,
+                    stack: error.stack
+                }, 'HTTP server error');
                 reject(error);
             });
         });
@@ -372,7 +411,10 @@ class ConsciousnessSystem extends EventEmitter {
 
             // Initialize persistence
             await this.loadPersistedState();
-            
+
+            // Initialize runtime monitor for auto-rollback
+            await this.initializeRuntimeMonitor();
+
             // Start autonomous behaviors
             if (this.autonomousConfig.enabled) {
                 this.startAutonomousBehaviors();
@@ -857,6 +899,23 @@ class ConsciousnessSystem extends EventEmitter {
                 error: error.message,
                 lastUpdate: new Date().toISOString()
             };
+        }
+    }
+
+    /**
+     * Initialize Runtime Monitor for auto-rollback on module failures
+     */
+    async initializeRuntimeMonitor() {
+        try {
+            console.log('🛡️ Initializing Runtime Monitor for auto-rollback...');
+
+            const { initializeRuntimeMonitor } = require('./consciousness/utils/runtimeMonitor.cjs');
+            initializeRuntimeMonitor();
+
+            console.log('✅ Runtime Monitor initialized - Auto-rollback system active');
+        } catch (error) {
+            console.error('❌ Failed to initialize Runtime Monitor:', error.message);
+            // Don't throw - system can continue without runtime monitor
         }
     }
 

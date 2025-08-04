@@ -1,5 +1,6 @@
 const { EventEmitter  } = require('events');
 const eventBus = require('../ConsciousnessEventBus.cjs');
+const { child: getLogger } = require('../utils/logger.cjs');
 const AutoIntegrationService = require('./AutoIntegrationService.cjs');
 const CodeGenerationService = require('./CodeGenerationService.cjs');
 
@@ -7,17 +8,20 @@ class ConsciousnessIntegration extends EventEmitter {
     constructor() {
         super();
         this.name = 'ConsciousnessIntegration';
-        
+
+        // Initialize structured logger
+        this.log = getLogger({ module: 'ConsciousnessIntegration' });
+
         // Initialize services
         this.autoIntegration = new AutoIntegrationService();
         this.codeGeneration = new CodeGenerationService();
-        
+
         this.initialize();
     }
 
     initialize() {
         this.setupCrossServiceCommunication();
-        console.log('🔗 ConsciousnessIntegration Initialized');
+        this.log.info('ConsciousnessIntegration initialized');
         this.emit('initialized', { name: this.name, status: 'initialized' });
     }
 

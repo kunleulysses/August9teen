@@ -92,10 +92,26 @@ function broadcast(message) {
 
 // Handle WebSocket connections
 wss.on('connection', (ws, req) => {
+    // Check for x-api-key header authentication
+    const apiKey = req.headers['x-api-key'];
+    const expectedKey = process.env.PROM_API_KEY;
+
+    if (!expectedKey) {
+        console.error('PROM_API_KEY environment variable not set');
+        ws.close(4001, 'Server configuration error');
+        return;
+    }
+
+    if (!apiKey || apiKey !== expectedKey) {
+        console.log(`Unauthorized WebSocket connection attempt from ${req.socket.remoteAddress}`);
+        ws.close(4001, 'unauthorized');
+        return;
+    }
+
     const clientId = Date.now().toString();
     clients.set(clientId, ws);
-    
-    console.log(`Client ${clientId} connected`);
+
+    console.log(`Client ${clientId} connected and authenticated`);
     
     // Send initial state
     ws.send(JSON.stringify({

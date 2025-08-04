@@ -2,6 +2,18 @@ const ivm = require('isolated-vm');
 const path = require('path');
 const fs = require('fs').promises;
 
+// Metrics for monitoring
+let sandboxTimeouts = 0;
+let sandboxMemoryLimitExceeded = 0;
+
+// Export metrics for Prometheus
+function getSandboxMetrics() {
+  return {
+    sandbox_timeouts_total: sandboxTimeouts,
+    sandbox_memory_limit_exceeded_total: sandboxMemoryLimitExceeded
+  };
+}
+
 const MEM_MB   = parseInt(process.env.SANDBOX_MEM_MB || '64', 10);
 const TIMEOUT  = parseInt(process.env.SANDBOX_TIMEOUT_MS || '3000', 10);
 
@@ -69,13 +81,20 @@ async function sandboxImport(modulePath) {
     return;
     
   } catch (error) {
+    let wrappedError;
     if (error.message.includes('Script execution timed out')) {
-      throw new Error(`Script execution timed out after ${TIMEOUT}ms: ${abs}`);
+      sandboxTimeouts++;
+      wrappedError = new Error(`Script execution timed out after ${TIMEOUT}ms: ${abs}`);
     } else if (error.message.includes('memory limit')) {
-      throw new Error(`Script exceeded memory limit of ${MEM_MB}MB: ${abs}`);
+      sandboxMemoryLimitExceeded++;
+      wrappedError = new Error(`Script exceeded memory limit of ${MEM_MB}MB: ${abs}`);
     } else {
-      throw new Error(`Sandbox execution failed for ${abs}: ${error.message}`);
+      wrappedError = new Error(`Sandbox execution failed for ${abs}: ${error.message}`);
     }
+
+    // Tag the error with the file path for auto-rollback tracking
+    wrappedError.filePath = abs;
+    throw wrappedError;
   } finally {
     // Always dispose of the isolate to free memory
     if (isolate) {
@@ -84,4 +103,4 @@ async function sandboxImport(modulePath) {
   }
 }
 
-module.exports = { sandboxImport };
+module.exports = { sandboxImport, getSandboxMetrics };

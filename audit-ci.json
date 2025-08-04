@@ -1,0 +1,16 @@
+{
+  "moderate": true,
+  "high": true,
+  "critical": true,
+  "allowlist": [],
+  "skip-dev": false,
+  "report-type": "summary",
+  "output-format": "text",
+  "retry": {
+    "count": 3,
+    "delay": 1000
+  },
+  "advisories": {
+    "exclude": []
+  }
+}

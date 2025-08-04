@@ -7,6 +7,7 @@ import { addConversationRoutes } from "./add-conversation-routes";
 import { startEmailProcessor } from "./email-processor";
 import { startEmailScheduler } from "./scheduler";
 import { initUnifiedChatWS } from "./unified-chat-ws";
+import rateLimit from 'express-rate-limit';
 
 import { Registry, collectDefaultMetrics } from 'prom-client';
 
@@ -17,9 +18,77 @@ app.use(express.urlencoded({ extended: false }));
 // Prometheus metrics setup
 const promRegistry = new Registry();
 collectDefaultMetrics({ register: promRegistry });
-app.get('/metrics', async (_req, res) => {
+
+// Middleware to check x-api-key header for metrics endpoint
+const authenticateMetrics = (req: Request, res: Response, next: NextFunction) => {
+  const apiKey = req.headers['x-api-key'];
+  const expectedKey = process.env.PROM_API_KEY;
+
+  if (!expectedKey) {
+    log('PROM_API_KEY environment variable not set');
+    return res.status(500).send('Server configuration error');
+  }
+
+  if (!apiKey || apiKey !== expectedKey) {
+    log(`Unauthorized metrics access attempt from ${req.ip}`);
+    return res.status(401).send('unauthorized');
+  }
+
+  next();
+};
+
+app.get('/metrics', authenticateMetrics, async (_req, res) => {
   res.set('Content-Type', promRegistry.contentType);
   res.end(await promRegistry.metrics());
+});
+
+// Rate limiter for code generation endpoints
+const codeGenerationLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 30, // 30 requests per minute per API key/IP
+  message: {
+    error: 'Too many code generation requests',
+    retryAfter: '60 seconds'
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => {
+    // Use API key if present, otherwise fall back to IP
+    const apiKey = req.headers['x-api-key'];
+    return apiKey ? `api-key:${apiKey}` : `ip:${req.ip}`;
+  }
+});
+
+// Code generation endpoint with rate limiting
+app.post('/api/code/generate', codeGenerationLimiter, async (req: Request, res: Response) => {
+  try {
+    // This would integrate with the consciousness system
+    // For now, return a placeholder response
+    const { purpose, type, language } = req.body;
+
+    if (!purpose) {
+      return res.status(400).json({ error: 'Purpose is required' });
+    }
+
+    // Log the request
+    log(`Code generation request: ${purpose} (${type || 'module'}, ${language || 'javascript'})`);
+
+    // Placeholder response - in production this would integrate with CodeGenerationService
+    res.json({
+      success: true,
+      message: 'Code generation request received',
+      request: {
+        purpose,
+        type: type || 'module',
+        language: language || 'javascript',
+        timestamp: new Date().toISOString()
+      }
+    });
+
+  } catch (error) {
+    log(`Code generation error: ${error}`);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 // Serve uploaded files and public directory

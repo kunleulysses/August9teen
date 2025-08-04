@@ -28,7 +28,7 @@
     "ast-types": "^0.15.2",
     "express": "^4.19.2",
     "express-async-errors": "^3.1.1",
-    "express-rate-limit": "^7.3.1",
+    "express-rate-limit": "^7.5.1",
     "helmet": "^7.1.0",
     "isolated-vm": "^5.0.4",
     "jscpd": "^4.0.5",

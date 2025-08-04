@@ -1,0 +1,158 @@
+groups:
+  - name: selfcoding_alerts
+    rules:
+      # Code generation failure alerts
+      - alert: CodeGenerationFailuresHigh
+        expr: increase(code_generation_failures_total[5m]) > 5
+        for: 0m
+        labels:
+          severity: warning
+          component: selfcoding
+          service: code-generation
+        annotations:
+          summary: "High number of code generation failures"
+          description: "Code generation has failed {{ $value }} times in the last 5 minutes, which exceeds the threshold of 5 failures."
+          runbook_url: "https://docs.example.com/runbooks/selfcoding/code-generation-failures"
+
+      # Critical: Sigil registry empty
+      - alert: SigilRegistryEmpty
+        expr: sigil_registry_size < 1
+        for: 0m
+        labels:
+          severity: critical
+          component: selfcoding
+          service: sigil-registry
+        annotations:
+          summary: "Sigil registry is empty"
+          description: "The sigil registry size is {{ $value }}, indicating no active sigils. This is a critical state that requires immediate attention."
+          runbook_url: "https://docs.example.com/runbooks/selfcoding/sigil-registry-empty"
+
+      # Stuck code generation jobs
+      - alert: CodeGenerationJobsStuck
+        expr: selfcoding_active_generations > 3
+        for: 2m
+        labels:
+          severity: warning
+          component: selfcoding
+          service: code-generation
+        annotations:
+          summary: "Code generation jobs appear to be stuck"
+          description: "There are {{ $value }} active code generation jobs for more than 2 minutes, which may indicate stuck or hanging processes."
+          runbook_url: "https://docs.example.com/runbooks/selfcoding/stuck-jobs"
+
+      # Sandbox timeout alerts
+      - alert: SandboxTimeoutsDetected
+        expr: increase(sandbox_timeouts_total[10m]) > 0
+        for: 0m
+        labels:
+          severity: warning
+          component: selfcoding
+          service: sandbox
+        annotations:
+          summary: "Sandbox timeouts detected"
+          description: "{{ $value }} sandbox timeouts have occurred in the last 10 minutes, indicating potentially problematic generated code."
+          runbook_url: "https://docs.example.com/runbooks/selfcoding/sandbox-timeouts"
+
+      # Memory usage alerts for sandbox
+      - alert: SandboxMemoryLimitExceeded
+        expr: increase(sandbox_memory_limit_exceeded_total[10m]) > 0
+        for: 0m
+        labels:
+          severity: warning
+          component: selfcoding
+          service: sandbox
+        annotations:
+          summary: "Sandbox memory limits exceeded"
+          description: "{{ $value }} sandbox executions have exceeded memory limits in the last 10 minutes."
+          runbook_url: "https://docs.example.com/runbooks/selfcoding/sandbox-memory"
+
+      # Auto-rollback alerts
+      - alert: AutoRollbacksTriggered
+        expr: increase(auto_rollbacks_total[5m]) > 0
+        for: 0m
+        labels:
+          severity: warning
+          component: selfcoding
+          service: auto-rollback
+        annotations:
+          summary: "Auto-rollbacks have been triggered"
+          description: "{{ $value }} auto-rollbacks have been triggered in the last 5 minutes due to runtime failures."
+          runbook_url: "https://docs.example.com/runbooks/selfcoding/auto-rollbacks"
+
+      # Code generation rate limiting
+      - alert: CodeGenerationRateLimitHit
+        expr: increase(code_generation_rate_limit_hits_total[5m]) > 10
+        for: 0m
+        labels:
+          severity: info
+          component: selfcoding
+          service: rate-limiting
+        annotations:
+          summary: "Code generation rate limits being hit frequently"
+          description: "Rate limits for code generation have been hit {{ $value }} times in the last 5 minutes."
+          runbook_url: "https://docs.example.com/runbooks/selfcoding/rate-limiting"
+
+      # Consciousness system health
+      - alert: ConsciousnessSystemDown
+        expr: up{job="consciousness-system"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: selfcoding
+          service: consciousness-system
+        annotations:
+          summary: "Consciousness system is down"
+          description: "The consciousness system has been down for more than 1 minute."
+          runbook_url: "https://docs.example.com/runbooks/selfcoding/system-down"
+
+      # Module validation failures
+      - alert: ModuleValidationFailuresHigh
+        expr: increase(module_validation_failures_total[5m]) > 3
+        for: 0m
+        labels:
+          severity: warning
+          component: selfcoding
+          service: module-validation
+        annotations:
+          summary: "High number of module validation failures"
+          description: "{{ $value }} module validation failures have occurred in the last 5 minutes."
+          runbook_url: "https://docs.example.com/runbooks/selfcoding/validation-failures"
+
+      # Quota exhaustion alerts
+      - alert: SelfCodingQuotaExhausted
+        expr: selfcoding_quota_remaining < 10
+        for: 0m
+        labels:
+          severity: warning
+          component: selfcoding
+          service: quota-management
+        annotations:
+          summary: "Self-coding quota nearly exhausted"
+          description: "Only {{ $value }} self-coding operations remaining in quota."
+          runbook_url: "https://docs.example.com/runbooks/selfcoding/quota-exhausted"
+
+      # WebSocket connection alerts
+      - alert: ConsciousnessWebSocketConnectionsLow
+        expr: consciousness_websocket_connections < 1
+        for: 5m
+        labels:
+          severity: info
+          component: selfcoding
+          service: websocket
+        annotations:
+          summary: "No active consciousness WebSocket connections"
+          description: "There have been no active consciousness WebSocket connections for 5 minutes."
+          runbook_url: "https://docs.example.com/runbooks/selfcoding/websocket-connections"
+
+      # Generated module count alerts
+      - alert: GeneratedModuleCountHigh
+        expr: generated_modules_total > 100
+        for: 0m
+        labels:
+          severity: info
+          component: selfcoding
+          service: module-management
+        annotations:
+          summary: "High number of generated modules"
+          description: "There are {{ $value }} generated modules, which may indicate the need for cleanup or archival."
+          runbook_url: "https://docs.example.com/runbooks/selfcoding/module-cleanup"
