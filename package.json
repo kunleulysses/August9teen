@@ -39,7 +39,8 @@
     "ast-types": "^0.15.2",
     "jscpd": "^4.3.27",
     "openai": "^4.47.0",
-    "sentiment": "^5.0.2"
+    "sentiment": "^5.0.2",
+    "prettier": "^3.3.1"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.24.7",
@@ -72,11 +73,18 @@
     "p-limit": "^4.0.0",
     "pino": "^8.16.0",
     "pino-pretty": "^11.2.1",
-    "prettier": "^3.3.1",
     "redlock": "^5.0.0-beta.2",
     "ts-jest": "^29.1.1",
     "typescript": "^5.3.3"
   },
+  "activateModules": [
+    "quantum-consciousness-field",
+    "emotional-resonance-field"
+  ],
+  "activateModules": [
+    "quantum-consciousness-field",
+    "emotional-resonance-field"
+  ],
   "optionalDependencies": {
     "bufferutil": "^4.0.8"
   }

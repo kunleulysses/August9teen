@@ -64,3 +64,8 @@ Caddyfile.docker
 !FlappyJournal/
 !FlappyJournal hey/
 !setup-database.sql
+
+# === Additional excludes for production housekeeping ===
+**/*.backup*
+system-backups/
+FlappyJournal/server/add-*self-coding*.cjs
