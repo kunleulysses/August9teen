@@ -9,10 +9,48 @@ export class TemporalCoherenceEngine {
       coherence: 1.0
     };
     this.temporalWindow = 10000; // 10 seconds
+    this._eventBus = null;
+  }
+
+  /**
+   * Bind to EventBus and update coherence deterministically.
+   */
+  bindEventBus(eventBus) {
+    this._eventBus = eventBus;
+    eventBus.on('consciousness:state_updated', (state) => {
+      this.onConsciousnessStateUpdated(state);
+    });
+  }
+
+  /**
+   * Deterministically update temporal coherence from consciousness state.
+   */
+  onConsciousnessStateUpdated(state) {
+    // Use phi, coherence, entropy to update timeline
+    const now = Date.now();
+    const snapshot = {
+      timestamp: now,
+      input: `[eventbus update]`,
+      consciousness: {
+        phi: state.phi ?? 0.75,
+        awareness: state.awareness ?? 0.8,
+        coherence: state.coherence ?? 0.85,
+        entropy: state.entropy ?? 0.5
+      },
+      vector: {
+        semantic: Math.round((state.phi ?? 0.75) * 1e6), // deterministic
+        phi: state.phi ?? 0.75,
+        awareness: state.awareness ?? 0.8,
+        energy: (state.entropy ?? 0.5)
+      }
+    };
+    this.timeline.push(snapshot);
+    this.maintainTemporalWindow();
+    this.coherenceField.coherence = this.calculateTemporalCoherence();
   }
   
   process(input, consciousness, timestamp = Date.now()) {
-    // Create temporal snapshot
+    // Create temporal snapshot as before (for one-off use)
     const snapshot = {
       timestamp,
       input,
@@ -23,20 +61,20 @@ export class TemporalCoherenceEngine {
       },
       vector: this.createTemporalVector(input, consciousness)
     };
-    
+
     // Update timeline
     this.timeline.push(snapshot);
     this.maintainTemporalWindow();
-    
+
     // Calculate temporal coherence
     const coherence = this.calculateTemporalCoherence();
-    
+
     // Predict future states
     const predictions = this.predictFutureStates();
-    
+
     // Analyze temporal patterns
     const patterns = this.analyzeTemporalPatterns();
-    
+
     return {
       coherence,
       continuity: this.assessContinuity(),

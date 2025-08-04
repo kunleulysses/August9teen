@@ -89,20 +89,43 @@ export class RecursiveMirrorCognition {
     }
     /**
      * Extract semantic vector from consciousness state
+     * Uses OpenAI embeddings if API key is present; throws if not configured.
      */
-    extractSemanticVector(state) {
-        // In production, this would use NLP embeddings
-        const mockVector = Array(128).fill(0).map(() => Math.random());
-        return mockVector;
+    async extractSemanticVector(state) {
+        // Use OpenAI embeddings
+        const { OpenAI } = await import("openai");
+        if (!process.env.OPENAI_API_KEY) {
+            throw new Error("OPENAI_API_KEY not set; cannot extract semantic vector.");
+        }
+        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+        const inputText = typeof state.input === "string" ? state.input : JSON.stringify(state);
+        const embeddingResponse = await openai.embeddings.create({
+            model: "text-embedding-ada-002",
+            input: inputText
+        });
+        return embeddingResponse.data[0].embedding;
     }
     /**
      * Measure tone field from emotional and frequency components
+     * Uses emotional resonance field if present, else uses sentiment package.
      */
-    measureToneField(state) {
-        // Combines emotional valence with frequency analysis
-        const emotionalComponent = state.emotionalValence || 0.5;
-        const frequencyComponent = Math.sin(Date.now() / 1000) * 0.5 + 0.5;
-        return (emotionalComponent + frequencyComponent) / 2;
+    async measureToneField(state) {
+        // Try to use emotionalResonance
+        try {
+            const { emotionalResonance } = await import('../emotional-resonance-field.cjs');
+            if (emotionalResonance && emotionalResonance.currentEmotionalResonance !== undefined) {
+                return emotionalResonance.currentEmotionalResonance;
+            }
+        } catch (err) {
+            // Fallback to sentiment analysis
+        }
+        // Fallback: sentiment
+        const Sentiment = (await import("sentiment")).default;
+        const sentiment = new Sentiment();
+        const text = typeof state.input === "string" ? state.input : JSON.stringify(state);
+        const result = sentiment.analyze(text);
+        // Normalize sentiment score between 0 and 1
+        return (result.comparative + 5) / 10;
     }
     /**
      * Match consciousness state to archetypal patterns
