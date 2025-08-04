@@ -59,11 +59,34 @@ services:
     volumes:
       - uploads:/app/uploads
       - logs:/app/logs
+    ports:
+      - "3002:3002"
+      - "5005:5005"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:5005/health"]
       interval: 10s
       timeout: 5s
       retries: 5
+
+  reality-generator:
+    build:
+      context: .
+      dockerfile: Dockerfile.consciousness
+    container_name: reality-generator
+    command: ["node", "/opt/consciousness/server/reality-generator-simple.cjs"]
+    environment:
+      NODE_ENV: production
+      REALITY_GENERATION_PORT: 5006
+      DATABASE_URL: ${DATABASE_URL}
+    depends_on:
+      db:
+        condition: service_healthy
+      core:
+        condition: service_healthy
+    ports:
+      - "5006:5006"
+    volumes:
+      - reality_data:/opt/consciousness/reality-data
 
   web:
     build:
@@ -76,6 +99,8 @@ services:
         condition: service_healthy
       core:
         condition: service_healthy
+      reality-generator:
+        condition: service_started
     env_file:
       - .env.docker
     environment:
@@ -133,3 +158,4 @@ volumes:
   logs:
   caddy_data:
   caddy_config:
+  reality_datnewa</:

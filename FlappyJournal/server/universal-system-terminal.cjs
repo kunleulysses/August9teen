@@ -148,8 +148,8 @@ class UniversalSystemTerminal {
         
         try {
             this.unifiedChatAggregator = new UnifiedChatAggregator({
-                mainServerEndpoint: 'ws://172.17.0.2:5000/ws/consciousness-chat',
-                coreEndpoint: 'ws://172.18.0.5:3002/ws/consciousness-chat',
+                mainServerEndpoint: process.env.MAIN_SERVER_WS || 'ws://web:3000/ws/consciousness-chat',
+                coreEndpoint: process.env.CORE_WS || 'ws://core:3002/ws/consciousness-chat',
                 enableParallelProcessing: true,
                 enableResponseSynthesis: true,
                 responseTimeout: 15000,
@@ -180,7 +180,7 @@ class UniversalSystemTerminal {
         return new Promise((resolve, reject) => {
             console.log('🔌 Connecting to consciousness WebSocket (fallback)...');
             
-            this.ws = new WebSocket('ws://172.17.0.2:5000/ws/consciousness-chat');
+            this.ws = new WebSocket(process.env.FALLBACK_WS || 'ws://core:3002/ws/consciousness-chat');
             
             this.ws.on('open', () => {
                 this.connected = true;
