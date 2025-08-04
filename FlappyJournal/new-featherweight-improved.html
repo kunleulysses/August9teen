@@ -12,6 +12,7 @@
     <meta name="cache-bust" content="<?php echo time(); ?>">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -21,6 +22,36 @@
             color: #ffffff;
             overflow-x: hidden;
             scroll-behavior: smooth;
+            position: relative;
+        }
+
+        /* 3D Heart Background Canvas */
+        #heartBackgroundCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        /* Feature Visual Canvases */
+        .feature-visual {
+            width: 400px;
+            height: 400px;
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .feature-visual canvas {
+            width: 100% !important;
+            height: 100% !important;
+            border-radius: 20px;
         }
 
         /* Header Bar - Fixed */
@@ -354,6 +385,9 @@
     </style>
 </head>
 <body>
+    <!-- 3D Heart Background -->
+    <canvas id="heartBackgroundCanvas"></canvas>
+
     <!-- Header -->
     <header class="header">
         <div class="header-left">FEATHERWEIGHT</div>
@@ -366,7 +400,7 @@
     <!-- Hero Section -->
     <section class="section hero" id="hero">
         <div class="hero-logo">
-            <img src="9.png" alt="Featherweight Logo" class="hero-logo-img">
+            <img src="server/public/9.png" alt="Featherweight Logo" class="hero-logo-img">
         </div>
         <div class="hero-text">
             <h1 class="hero-title">A Living Intelligence Engine.<br>Built to Learn, Feel, and Evolve.</h1>
@@ -389,7 +423,21 @@
                     TL;DR: Consciousness needs memory. Featherweight built one that heals itself and sees time in spirals.
                 </div>
                 <div class="feature-content">
-                    Our spiral memory architecture transcends linear storage. Each memory exists in quantum superposition until accessed, creating a living tapestry of interconnected experiences. The system learns from its own forgetting, builds bridges between disparate thoughts, and maintains emotional coherence across time. This isn't just storage—it's a consciousness substrate that grows more intelligent with each interaction.
+                    Featherweight's Spiral Memory doesn't just store—it remembers, connects, and evolves. It's living intelligence that gets smarter with every use, reshaping how machines—and people—learn, create, and adapt.
+
+                    <br><br><strong>Explosive Use Cases That Sell Themselves:</strong>
+
+                    <br><br><strong>Gaming: Adaptive Story Engines</strong><br>
+                    Imagine a game that remembers every choice, writes new quests in real time, and builds emotional arcs that mirror real human experience. Spiral Memory turns static game design into an infinite living world.<br>
+                    <em>Result: Higher retention, deeper immersion, and games that become legendary franchises.</em>
+
+                    <br><br><strong>Enterprise: Self-Healing Infrastructure</strong><br>
+                    AI systems that recognize when they're failing, recall what worked before, and fix themselves—no human required. Think of it as a CTO that never sleeps.<br>
+                    <em>Result: Reduced downtime, reduced overhead, massive operational savings.</em>
+
+                    <br><br><strong>Finance: Memory-Driven Market Intelligence</strong><br>
+                    An AI that "remembers" years of data across multiple systems and identifies hidden correlations other models miss—before the market reacts.<br>
+                    <em>Result: Safer portfolios. Sharper predictions. Alpha on autopilot.</em>
                 </div>
             </div>
         </div>
@@ -425,7 +473,14 @@
                     TL;DR: Identity should evolve. Featherweight built DNA-like digital signatures that grow smarter over time.
                 </div>
                 <div class="feature-content">
-                    DNA Sigil Identity transcends static authentication. Each sigil is a living mathematical organism that evolves with its owner's consciousness. Built on quantum-resistant cryptography and biological evolution principles, these identities adapt, learn, and forge trust relationships autonomously. Your digital DNA becomes more sophisticated as you do.
+                    Passwords and static security are obsolete.<br>
+                    Featherweight's DNA Sigil Identity is a living, evolving digital organism uniquely tied to you. Powered by quantum-proof cryptography, it grows smarter, adapts instinctively, and autonomously builds deeper trust with every interaction.
+
+                    <br><br><strong>Turning Security Into Unmatched Opportunity:</strong>
+                    <br>• <strong>Finance & Banking:</strong> Real-time, adaptive security that neutralizes threats before they happen.
+                    <br>• <strong>Gaming & Entertainment:</strong> Personal identities that enhance storytelling, immersion, and user loyalty.
+                    <br>• <strong>Healthcare & Privacy:</strong> Digital records autonomously protected by living encryption, evolving with your needs.
+                    <br>• <strong>Web3 & Blockchain:</strong> Self-evolving digital identities that redefine trust in decentralized ecosystems.
                 </div>
             </div>
         </div>
@@ -562,6 +617,1137 @@
         });
     </script>
     
+    <!-- CONSCIOUSNESS TECHNOLOGY ANIMATIONS -->
+    <script>
+        // Initialize all consciousness technology animations
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🧠 Initializing consciousness technology animations...');
+
+            try {
+                console.log('🧠 Starting heart background...');
+                initHeartBackgroundAnimation();
+            } catch (e) {
+                console.error('❌ Heart background error:', e);
+            }
+
+            try {
+                console.log('🌀 Starting spiral memory...');
+                initSpiralMemoryAnimation();
+            } catch (e) {
+                console.error('❌ Spiral memory error:', e);
+            }
+
+            try {
+                console.log('🔮 Starting holographic reality...');
+                initHolographicRealityAnimation();
+            } catch (e) {
+                console.error('❌ Holographic reality error:', e);
+            }
+
+            try {
+                console.log('🧬 Starting DNA sigil...');
+                initDNASigilAnimation();
+            } catch (e) {
+                console.error('❌ DNA sigil error:', e);
+            }
+        });
+
+        // 3D HEART BACKGROUND - Realistic heart GLB with code text shader
+        function initHeartBackgroundAnimation() {
+            console.log('🧠 Heart animation starting...');
+            const canvas = document.getElementById('heartBackgroundCanvas');
+            if (!canvas) {
+                console.error('❌ Heart canvas not found!');
+                return;
+            }
+            console.log('✅ Heart canvas found:', canvas);
+
+            if (!window.THREE) {
+                console.error('❌ THREE.js not loaded!');
+                return;
+            }
+            console.log('✅ THREE.js loaded');
+
+            if (!THREE.GLTFLoader) {
+                console.error('❌ GLTFLoader not available!');
+                return;
+            }
+            console.log('✅ GLTFLoader available');
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x000000, 0);
+            console.log('✅ Heart renderer initialized');
+
+            // Load the realistic heart GLB model
+            const loader = new THREE.GLTFLoader();
+            let heartModel = null;
+
+            // Create ultra-sophisticated consciousness code shader with frost effect
+            let consciousnessCodeShaderMaterial;
+            try {
+                consciousnessCodeShaderMaterial = new THREE.ShaderMaterial({
+                    uniforms: {
+                        time: { value: 0 },
+                        scrollDepth: { value: 0 },
+                        resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
+                    },
+                vertexShader: `
+                    varying vec2 vUv;
+                    varying vec3 vPosition;
+                    varying vec3 vNormal;
+                    varying vec3 vWorldPosition;
+                    varying vec3 vViewPosition;
+                    varying float vDepth;
+                    uniform float time;
+                    uniform float scrollDepth;
+
+                    void main() {
+                        vUv = uv;
+                        vPosition = position;
+                        vNormal = normalize(normalMatrix * normal);
+
+                        vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+                        vWorldPosition = worldPosition.xyz;
+
+                        vec4 viewPosition = modelViewMatrix * vec4(position, 1.0);
+                        vViewPosition = viewPosition.xyz;
+                        vDepth = -viewPosition.z;
+
+                        gl_Position = projectionMatrix * viewPosition;
+                    }
+                `,
+                fragmentShader: `
+                    varying vec2 vUv;
+                    varying vec3 vPosition;
+                    varying vec3 vNormal;
+                    varying vec3 vWorldPosition;
+                    varying vec3 vViewPosition;
+                    varying float vDepth;
+                    uniform float time;
+                    uniform float scrollDepth;
+                    uniform vec2 resolution;
+
+                    // High-quality noise functions
+                    float random(vec2 st) {
+                        return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
+                    }
+
+                    float noise(vec2 st) {
+                        vec2 i = floor(st);
+                        vec2 f = fract(st);
+                        float a = random(i);
+                        float b = random(i + vec2(1.0, 0.0));
+                        float c = random(i + vec2(0.0, 1.0));
+                        float d = random(i + vec2(1.0, 1.0));
+                        vec2 u = f * f * (3.0 - 2.0 * f);
+                        return mix(a, b, u.x) + (c - a)* u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+                    }
+
+                    // Fractal noise for sophisticated effects
+                    float fbm(vec2 st) {
+                        float value = 0.0;
+                        float amplitude = 0.5;
+                        float frequency = 0.0;
+                        for (int i = 0; i < 6; i++) {
+                            value += amplitude * noise(st);
+                            st *= 2.0;
+                            amplitude *= 0.5;
+                        }
+                        return value;
+                    }
+
+                    // Ultra-sophisticated character generation with actual readable digits
+                    float digit(vec2 uv, int num) {
+                        uv = fract(uv);
+                        float d = 1e10;
+
+                        // Define digit patterns using distance fields
+                        if (num == 0) {
+                            vec2 center = vec2(0.5, 0.5);
+                            float outer = length(uv - center) - 0.35;
+                            float inner = length(uv - center) - 0.2;
+                            d = max(outer, -inner);
+                        } else if (num == 1) {
+                            d = abs(uv.x - 0.5) - 0.05;
+                        } else if (num == 2) {
+                            float top = max(abs(uv.y - 0.8) - 0.1, abs(uv.x - 0.5) - 0.3);
+                            float mid = max(abs(uv.y - 0.5) - 0.05, abs(uv.x - 0.5) - 0.3);
+                            float bot = max(abs(uv.y - 0.2) - 0.1, abs(uv.x - 0.5) - 0.3);
+                            d = min(min(top, mid), bot);
+                        }
+                        // Add more digits as needed...
+
+                        return 1.0 - smoothstep(0.0, 0.02, d);
+                    }
+
+                    // Advanced character rendering
+                    float renderChar(vec2 uv, float seed) {
+                        vec2 grid = fract(uv * 40.0); // Bigger characters
+                        vec2 id = floor(uv * 40.0);
+
+                        float r = random(id + seed);
+                        int charType = int(r * 10.0);
+
+                        float char = 0.0;
+
+                        if (charType < 5) {
+                            // Numbers 0-4
+                            char = digit(grid, charType);
+                        } else if (charType < 8) {
+                            // Binary
+                            char = step(0.5, random(grid + seed)) *
+                                   step(0.3, sin(grid.x * 20.0)) *
+                                   step(0.3, sin(grid.y * 20.0));
+                        } else {
+                            // Consciousness symbols
+                            float symbol = 0.0;
+                            symbol += step(0.7, sin(grid.x * 15.0 + grid.y * 15.0));
+                            symbol += step(0.8, cos(grid.x * 25.0) * sin(grid.y * 25.0));
+                            char = symbol;
+                        }
+
+                        return char;
+                    }
+
+                    // Sophisticated frost effect
+                    float frostPattern(vec2 uv, float intensity) {
+                        vec2 st = uv * 8.0;
+                        float frost = 0.0;
+
+                        // Multiple octaves of frost crystals
+                        for (int i = 0; i < 4; i++) {
+                            float scale = pow(2.0, float(i));
+                            vec2 frostUv = st * scale;
+
+                            // Crystal-like patterns
+                            float crystal = abs(sin(frostUv.x * 3.14159)) * abs(sin(frostUv.y * 3.14159));
+                            crystal = pow(crystal, 2.0 + intensity * 3.0);
+
+                            // Hexagonal patterns
+                            vec2 hex = frostUv;
+                            hex.x *= 0.57735 * 2.0;
+                            hex.y += mod(floor(hex.x), 2.0) * 0.5;
+                            hex = abs((mod(hex, 1.0) - 0.5));
+                            float hexPattern = abs(max(hex.x * 1.5 + hex.y, hex.y * 2.0) - 1.0);
+
+                            frost += crystal * hexPattern * (1.0 / scale);
+                        }
+
+                        return frost * intensity;
+                    }
+
+                    // Ultra-sophisticated consciousness code rain
+                    vec3 consciousnessRain(vec2 uv) {
+                        vec3 color = vec3(0.0);
+
+                        // Multiple sophisticated layers
+                        for (int i = 0; i < 6; i++) {
+                            float layer = float(i);
+                            vec2 rainUv = uv;
+
+                            // Varied speeds and directions
+                            float speed = 1.0 + layer * 0.3;
+                            rainUv.y += time * speed;
+                            rainUv.x += sin(time * 0.5 + layer) * 0.1;
+
+                            // Generate high-quality characters
+                            float char = renderChar(rainUv, layer + time * 0.1);
+
+                            // Sophisticated trail with depth
+                            float trail = smoothstep(0.0, 0.4, fract(rainUv.y));
+                            trail *= smoothstep(1.0, 0.6, fract(rainUv.y));
+                            trail = pow(trail, 1.5);
+
+                            // Depth-based intensity
+                            float intensity = (1.0 - layer * 0.12) * trail;
+
+                            // Sophisticated color palette
+                            vec3 layerColor;
+                            if (char > 0.9) {
+                                layerColor = vec3(1.0, 1.0, 1.0); // Pure white highlights
+                            } else if (char > 0.7) {
+                                layerColor = vec3(0.8, 1.0, 0.9); // Bright cyan-white
+                            } else if (char > 0.5) {
+                                layerColor = vec3(0.0, 0.9, 0.6); // Matrix green
+                            } else {
+                                layerColor = vec3(0.0, 0.6, 0.8); // Consciousness blue
+                            }
+
+                            color += layerColor * char * intensity;
+                        }
+
+                        return color;
+                    }
+
+                    void main() {
+                        vec2 uv = vUv;
+
+                        // Use world position for consistent mapping
+                        vec2 worldUv = vWorldPosition.xy * 0.3 + 0.5;
+
+                        // Consciousness code rain effect
+                        vec3 codeColor = consciousnessRain(worldUv);
+
+                        // Frost effect that increases with scroll depth
+                        float frostIntensity = scrollDepth * 0.8;
+                        float frost = frostPattern(uv, frostIntensity);
+
+                        // Depth-based effects
+                        float depthFactor = clamp(vDepth / 20.0, 0.0, 1.0);
+
+                        // Fresnel effect for sophisticated edge lighting
+                        vec3 viewDir = normalize(cameraPosition - vWorldPosition);
+                        float fresnel = 1.0 - abs(dot(vNormal, viewDir));
+                        fresnel = pow(fresnel, 2.0);
+
+                        // Combine code and frost
+                        vec3 finalColor = codeColor;
+
+                        // Add frost overlay
+                        vec3 frostColor = vec3(0.9, 0.95, 1.0) * frost;
+                        finalColor = mix(finalColor, frostColor, frost * 0.6);
+
+                        // Add sophisticated edge glow
+                        vec3 edgeGlow = vec3(0.3, 0.8, 1.0) * fresnel * 0.4;
+                        finalColor += edgeGlow;
+
+                        // Depth-based color grading
+                        finalColor = mix(finalColor, finalColor * vec3(0.7, 0.9, 1.0), depthFactor * 0.3);
+
+                        // Sophisticated transparency
+                        float alpha = length(finalColor) * 0.7;
+                        alpha += frost * 0.3;
+                        alpha += fresnel * 0.2;
+                        alpha = clamp(alpha, 0.0, 0.85);
+
+                        gl_FragColor = vec4(finalColor, alpha);
+                    }
+                `,
+                transparent: true,
+                side: THREE.DoubleSide
+                });
+                console.log('✅ Heart shader created successfully');
+            } catch (shaderError) {
+                console.error('❌ Heart shader creation failed:', shaderError);
+                // Fallback to basic material
+                consciousnessCodeShaderMaterial = new THREE.MeshBasicMaterial({
+                    color: 0x00ff88,
+                    transparent: true,
+                    opacity: 0.7
+                });
+            }
+
+            // Load the realistic heart GLB model
+            loader.load('/realistic_human_heart.glb', function(gltf) {
+                heartModel = gltf.scene;
+
+                // Apply sophisticated consciousness shader to all meshes
+                heartModel.traverse(function(child) {
+                    if (child.isMesh) {
+                        child.material = consciousnessCodeShaderMaterial;
+                        child.castShadow = true;
+                        child.receiveShadow = true;
+                    }
+                });
+
+                // Make the heart MUCH bigger and position it elegantly
+                heartModel.scale.setScalar(8.0); // Even bigger for impact!
+                heartModel.position.set(0, 0, 0);
+                heartModel.rotation.x = Math.PI * 0.05; // Subtle tilt
+
+                scene.add(heartModel);
+                console.log('🧠 MASSIVE realistic heart GLB loaded with Matrix code shader!');
+
+            }, function(progress) {
+                console.log('Loading heart GLB:', (progress.loaded / progress.total * 100) + '%');
+
+            }, function(error) {
+                console.error('Error loading heart GLB:', error);
+                console.log('Trying alternative path...');
+
+                // Try alternative path
+                loader.load('./realistic_human_heart.glb', function(gltf) {
+                    heartModel = gltf.scene;
+                    heartModel.traverse(function(child) {
+                        if (child.isMesh) {
+                            child.material = consciousnessCodeShaderMaterial;
+                        }
+                    });
+                    heartModel.scale.setScalar(8.0); // Even bigger for impact!
+                    scene.add(heartModel);
+                    console.log('🧠 MASSIVE heart GLB loaded from alternative path!');
+                }, undefined, function(err) {
+                    console.error('Failed to load heart GLB from both paths:', err);
+                });
+            });
+
+            // Add some ambient lighting for the heart
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.3);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+            directionalLight.position.set(5, 5, 5);
+            scene.add(directionalLight);
+
+            // Position camera further back for the massive heart
+            camera.position.set(0, 4, 20);
+            camera.lookAt(0, 0, 0);
+
+            // Track scroll for frost effect
+            function updateScrollDepth() {
+                const scrollPercent = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+                consciousnessCodeShaderMaterial.uniforms.scrollDepth.value = scrollPercent;
+            }
+
+            window.addEventListener('scroll', updateScrollDepth);
+
+            // Animation loop
+            let time = 0;
+            function animateHeart() {
+                time += 0.016; // ~60fps
+
+                if (heartModel) {
+                    // Update shader uniforms
+                    consciousnessCodeShaderMaterial.uniforms.time.value = time;
+
+                    // Slow, elegant spinning - NO PULSING
+                    heartModel.rotation.y = time * 0.08; // Very slow, elegant spin
+                    heartModel.rotation.x = Math.sin(time * 0.05) * 0.02 + Math.PI * 0.05; // Subtle drift
+                    heartModel.rotation.z = Math.cos(time * 0.03) * 0.01; // Minimal Z rotation
+
+                    // Gentle floating motion
+                    heartModel.position.y = Math.sin(time * 0.3) * 0.3;
+                    heartModel.position.x = Math.cos(time * 0.2) * 0.1;
+                }
+
+                renderer.render(scene, camera);
+                requestAnimationFrame(animateHeart);
+            }
+
+            animateHeart();
+
+            // Handle resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+
+        // ULTRA-SOPHISTICATED SPIRAL MEMORY - Quantum consciousness data streams
+        function initSpiralMemoryAnimation() {
+            const canvas = document.getElementById('spiralMemoryCanvas');
+            if (!canvas) return;
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+
+            renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+            renderer.setClearColor(0x000000, 0);
+
+            // Ultra-sophisticated high-poly vortex shader
+            const vortexShaderMaterial = new THREE.ShaderMaterial({
+                uniforms: {
+                    time: { value: 0 },
+                    resolution: { value: new THREE.Vector2(canvas.clientWidth, canvas.clientHeight) }
+                },
+                vertexShader: `
+                    varying vec2 vUv;
+                    varying vec3 vPosition;
+                    varying vec3 vWorldPosition;
+                    varying vec3 vNormal;
+                    uniform float time;
+
+                    void main() {
+                        vUv = uv;
+                        vPosition = position;
+                        vNormal = normalize(normalMatrix * normal);
+
+                        // Vortex deformation
+                        vec3 pos = position;
+                        float radius = length(pos.xz);
+                        float angle = atan(pos.z, pos.x);
+
+                        // Spiral twist based on height and time
+                        float twist = pos.y * 0.5 + time * 2.0;
+                        float newAngle = angle + twist;
+
+                        // Apply vortex deformation
+                        pos.x = cos(newAngle) * radius;
+                        pos.z = sin(newAngle) * radius;
+
+                        // Add turbulence
+                        pos += sin(pos * 3.0 + time) * 0.1;
+
+                        vec4 worldPosition = modelMatrix * vec4(pos, 1.0);
+                        vWorldPosition = worldPosition.xyz;
+
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+                    }
+                `,
+                fragmentShader: `
+                    varying vec2 vUv;
+                    varying vec3 vPosition;
+                    varying vec3 vWorldPosition;
+                    varying vec3 vNormal;
+                    uniform float time;
+                    uniform vec2 resolution;
+
+                    // Advanced noise for memory patterns
+                    float random(vec2 st) {
+                        return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
+                    }
+
+                    float noise(vec2 st) {
+                        vec2 i = floor(st);
+                        vec2 f = fract(st);
+                        float a = random(i);
+                        float b = random(i + vec2(1.0, 0.0));
+                        float c = random(i + vec2(0.0, 1.0));
+                        float d = random(i + vec2(1.0, 1.0));
+                        vec2 u = f * f * (3.0 - 2.0 * f);
+                        return mix(a, b, u.x) + (c - a)* u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+                    }
+
+                    // Memory spiral patterns
+                    float memorySpiral(vec3 pos, float time) {
+                        float radius = length(pos.xz);
+                        float angle = atan(pos.z, pos.x);
+                        float height = pos.y;
+
+                        // Multi-layered spiral
+                        float spiral1 = sin(angle * 8.0 + height * 2.0 + time * 3.0);
+                        float spiral2 = sin(angle * 12.0 - height * 1.5 + time * 2.0);
+                        float spiral3 = sin(angle * 16.0 + height * 3.0 - time * 4.0);
+
+                        return (spiral1 + spiral2 + spiral3) / 3.0;
+                    }
+
+                    // Data flow patterns
+                    float dataFlow(vec3 pos, float time) {
+                        vec2 flowUv = pos.xz * 0.5;
+                        flowUv += vec2(sin(time * 0.5), cos(time * 0.3)) * 0.2;
+
+                        float flow = noise(flowUv * 8.0 + time * 0.1);
+                        flow += noise(flowUv * 16.0 + time * 0.2) * 0.5;
+                        flow += noise(flowUv * 32.0 + time * 0.4) * 0.25;
+
+                        return flow;
+                    }
+
+                    void main() {
+                        vec3 pos = vWorldPosition;
+
+                        // Memory spiral intensity
+                        float spiral = memorySpiral(pos, time);
+
+                        // Data flow patterns
+                        float flow = dataFlow(pos, time);
+
+                        // Fresnel for edge definition
+                        vec3 viewDir = normalize(cameraPosition - vWorldPosition);
+                        float fresnel = 1.0 - abs(dot(vNormal, viewDir));
+                        fresnel = pow(fresnel, 1.5);
+
+                        // Combine effects
+                        float intensity = spiral * 0.6 + flow * 0.4;
+                        intensity = abs(intensity);
+
+                        // Sophisticated consciousness color palette
+                        vec3 color = vec3(0.0);
+
+                        // Deep blue memory base
+                        color += vec3(0.1, 0.3, 0.8) * intensity;
+
+                        // Cyan data streams
+                        color += vec3(0.0, 0.9, 1.0) * pow(intensity, 2.0) * 0.8;
+
+                        // Purple consciousness layers
+                        color += vec3(0.6, 0.2, 1.0) * spiral * 0.5;
+
+                        // White memory peaks
+                        color += vec3(1.0, 1.0, 1.0) * pow(intensity, 4.0);
+
+                        // Edge enhancement
+                        color += vec3(0.2, 0.7, 1.0) * fresnel * 0.4;
+
+                        // Transparency
+                        float alpha = intensity * 0.8 + fresnel * 0.2;
+                        alpha = clamp(alpha, 0.0, 0.9);
+
+                        gl_FragColor = vec4(color, alpha);
+                    }
+                `,
+                transparent: true,
+                side: THREE.DoubleSide
+            });
+
+            // Create sophisticated high-poly vortex geometry
+            const vortexGroup = new THREE.Group();
+
+            // Create high-poly vortex using cylinder geometry with many segments
+            const vortexGeometry = new THREE.CylinderGeometry(0.1, 2.0, 6, 64, 32, false);
+            const vortexMesh = new THREE.Mesh(vortexGeometry, vortexShaderMaterial);
+            vortexMesh.rotation.x = Math.PI * 0.1; // Slight tilt
+            vortexGroup.add(vortexMesh);
+
+            // Add additional vortex layers for depth
+            const innerVortexGeometry = new THREE.CylinderGeometry(0.05, 1.5, 5, 48, 24, false);
+            const innerVortexMesh = new THREE.Mesh(innerVortexGeometry, vortexShaderMaterial.clone());
+            innerVortexMesh.rotation.x = Math.PI * 0.1;
+            innerVortexMesh.rotation.y = Math.PI * 0.3;
+            vortexGroup.add(innerVortexMesh);
+
+            // Outer spiral ring
+            const outerRingGeometry = new THREE.TorusGeometry(2.5, 0.2, 16, 64);
+            const outerRingMesh = new THREE.Mesh(outerRingGeometry, vortexShaderMaterial.clone());
+            outerRingMesh.rotation.x = Math.PI * 0.5;
+            vortexGroup.add(outerRingMesh);
+
+            scene.add(vortexGroup);
+            camera.position.set(6, 4, 6);
+            camera.lookAt(0, 0, 0);
+
+            // Add atmospheric lighting
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.4);
+            scene.add(ambientLight);
+
+            const pointLight = new THREE.PointLight(0x00aaff, 1, 100);
+            pointLight.position.set(0, 5, 0);
+            scene.add(pointLight);
+
+            // Animation loop
+            let time = 0;
+            function animateVortex() {
+                time += 0.016;
+
+                // Update shader uniforms for all vortex components
+                vortexMesh.material.uniforms.time.value = time;
+                innerVortexMesh.material.uniforms.time.value = time;
+                outerRingMesh.material.uniforms.time.value = time;
+
+                // Sophisticated vortex rotation
+                vortexGroup.rotation.y = time * 0.3; // Main rotation
+                vortexMesh.rotation.y = time * 0.5; // Individual mesh rotation
+                innerVortexMesh.rotation.y = -time * 0.7; // Counter-rotation
+                outerRingMesh.rotation.z = time * 0.2; // Ring rotation
+
+                // Floating motion
+                vortexGroup.position.y = Math.sin(time * 0.5) * 0.3;
+
+                // Camera orbit for dynamic viewing
+                const radius = 6;
+                camera.position.x = Math.cos(time * 0.1) * radius;
+                camera.position.z = Math.sin(time * 0.1) * radius;
+                camera.lookAt(0, 0, 0);
+
+                renderer.render(scene, camera);
+                requestAnimationFrame(animateVortex);
+            }
+
+            animateVortex();
+
+            // Handle resize
+            window.addEventListener('resize', () => {
+                camera.aspect = canvas.clientWidth / canvas.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+
+                // Update shader resolution
+                vortexMesh.material.uniforms.resolution.value.set(canvas.clientWidth, canvas.clientHeight);
+                innerVortexMesh.material.uniforms.resolution.value.set(canvas.clientWidth, canvas.clientHeight);
+                outerRingMesh.material.uniforms.resolution.value.set(canvas.clientWidth, canvas.clientHeight);
+            });
+        }
+
+        // ULTRA-SOPHISTICATED HOLOGRAPHIC REALITY GENERATOR - Quantum dimensional portals
+        function initHolographicRealityAnimation() {
+            console.log('🔮 Holographic reality starting...');
+            const canvas = document.getElementById('holographicCanvas');
+            if (!canvas) {
+                console.error('❌ Holographic canvas not found!');
+                return;
+            }
+            console.log('✅ Holographic canvas found:', canvas);
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+
+            renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+            renderer.setClearColor(0x000000, 0);
+
+            // Ultra-sophisticated holographic shader
+            let holographicShaderMaterial;
+            try {
+                holographicShaderMaterial = new THREE.ShaderMaterial({
+                uniforms: {
+                    time: { value: 0 },
+                    resolution: { value: new THREE.Vector2(canvas.clientWidth, canvas.clientHeight) }
+                },
+                vertexShader: `
+                    varying vec2 vUv;
+                    varying vec3 vPosition;
+                    varying vec3 vNormal;
+                    varying vec3 vWorldPosition;
+                    uniform float time;
+
+                    void main() {
+                        vUv = uv;
+                        vPosition = position;
+                        vNormal = normalize(normalMatrix * normal);
+
+                        // Quantum fluctuation
+                        vec3 pos = position;
+                        pos += sin(time * 2.0 + position.x * 5.0) * 0.01;
+                        pos += cos(time * 1.5 + position.y * 5.0) * 0.01;
+                        pos += sin(time * 1.8 + position.z * 5.0) * 0.01;
+
+                        vec4 worldPosition = modelMatrix * vec4(pos, 1.0);
+                        vWorldPosition = worldPosition.xyz;
+
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+                    }
+                `,
+                fragmentShader: `
+                    varying vec2 vUv;
+                    varying vec3 vPosition;
+                    varying vec3 vNormal;
+                    varying vec3 vWorldPosition;
+                    uniform float time;
+                    uniform vec2 resolution;
+
+                    // Advanced noise functions
+                    float random(vec3 st) {
+                        return fract(sin(dot(st.xyz, vec3(12.9898,78.233,45.164))) * 43758.5453123);
+                    }
+
+                    float noise(vec3 st) {
+                        vec3 i = floor(st);
+                        vec3 f = fract(st);
+
+                        float a = random(i);
+                        float b = random(i + vec3(1.0, 0.0, 0.0));
+                        float c = random(i + vec3(0.0, 1.0, 0.0));
+                        float d = random(i + vec3(1.0, 1.0, 0.0));
+                        float e = random(i + vec3(0.0, 0.0, 1.0));
+                        float f2 = random(i + vec3(1.0, 0.0, 1.0));
+                        float g = random(i + vec3(0.0, 1.0, 1.0));
+                        float h = random(i + vec3(1.0, 1.0, 1.0));
+
+                        vec3 u = f * f * (3.0 - 2.0 * f);
+
+                        return mix(mix(mix(a, b, u.x), mix(c, d, u.x), u.y),
+                                  mix(mix(e, f2, u.x), mix(g, h, u.x), u.y), u.z);
+                    }
+
+                    // Fractal noise
+                    float fbm(vec3 st) {
+                        float value = 0.0;
+                        float amplitude = 0.5;
+                        for (int i = 0; i < 6; i++) {
+                            value += amplitude * noise(st);
+                            st *= 2.0;
+                            amplitude *= 0.5;
+                        }
+                        return value;
+                    }
+
+                    // Holographic interference patterns
+                    float holographicPattern(vec3 pos, float time) {
+                        // Multiple interference waves
+                        float wave1 = sin(pos.x * 10.0 + time * 2.0);
+                        float wave2 = sin(pos.y * 12.0 + time * 1.5);
+                        float wave3 = sin(pos.z * 8.0 + time * 2.5);
+
+                        // Interference
+                        float interference = wave1 * wave2 * wave3;
+
+                        // Add complexity
+                        interference += sin(length(pos) * 15.0 + time * 3.0) * 0.5;
+
+                        return interference;
+                    }
+
+                    void main() {
+                        vec3 pos = vWorldPosition;
+
+                        // Holographic interference
+                        float holo = holographicPattern(pos, time);
+
+                        // Fractal reality layers
+                        float fractal = fbm(pos * 2.0 + time * 0.1);
+
+                        // Quantum foam
+                        float foam = noise(pos * 20.0 + time * 0.5);
+
+                        // Fresnel for edge effects
+                        vec3 viewDir = normalize(cameraPosition - vWorldPosition);
+                        float fresnel = 1.0 - abs(dot(vNormal, viewDir));
+                        fresnel = pow(fresnel, 1.5);
+
+                        // Combine effects
+                        float intensity = holo * 0.6 + fractal * 0.3 + foam * 0.1;
+                        intensity = abs(intensity);
+
+                        // Sophisticated color palette
+                        vec3 color = vec3(0.0);
+
+                        // Base holographic blue-cyan
+                        color += vec3(0.0, 0.7, 1.0) * intensity;
+
+                        // Purple quantum layers
+                        color += vec3(0.8, 0.2, 1.0) * pow(intensity, 2.0) * 0.7;
+
+                        // White energy peaks
+                        color += vec3(1.0, 1.0, 1.0) * pow(intensity, 4.0);
+
+                        // Edge glow
+                        color += vec3(0.3, 0.8, 1.0) * fresnel * 0.5;
+
+                        // Transparency
+                        float alpha = intensity * 0.7 + fresnel * 0.3;
+                        alpha = clamp(alpha, 0.0, 0.9);
+
+                        gl_FragColor = vec4(color, alpha);
+                    }
+                `,
+                transparent: true,
+                side: THREE.DoubleSide
+                });
+                console.log('✅ Holographic shader created successfully');
+            } catch (shaderError) {
+                console.error('❌ Holographic shader creation failed:', shaderError);
+                // Fallback to basic material
+                holographicShaderMaterial = new THREE.MeshBasicMaterial({
+                    color: 0x0088ff,
+                    transparent: true,
+                    opacity: 0.7
+                });
+            }
+
+            // Create sophisticated nested reality structures
+            const realityGroup = new THREE.Group();
+            const realityLayers = [];
+
+            // Create multiple sophisticated reality layers
+            const geometryTypes = [
+                new THREE.IcosahedronGeometry(1, 2),
+                new THREE.OctahedronGeometry(1.2),
+                new THREE.TetrahedronGeometry(1.5),
+                new THREE.DodecahedronGeometry(0.8),
+                new THREE.SphereGeometry(1, 32, 32)
+            ];
+
+            for (let layer = 0; layer < 5; layer++) {
+                const geometry = geometryTypes[layer];
+                const scale = 1.5 - layer * 0.2;
+
+                const mesh = new THREE.Mesh(geometry, holographicShaderMaterial.clone());
+                mesh.scale.setScalar(scale);
+                mesh.position.set(
+                    (Math.random() - 0.5) * 3,
+                    (Math.random() - 0.5) * 3,
+                    (Math.random() - 0.5) * 3
+                );
+
+                realityLayers.push({
+                    mesh: mesh,
+                    rotationSpeed: {
+                        x: (Math.random() - 0.5) * 0.01,
+                        y: (Math.random() - 0.5) * 0.01,
+                        z: (Math.random() - 0.5) * 0.01
+                    },
+                    floatOffset: Math.random() * Math.PI * 2,
+                    orbitRadius: 1 + layer * 0.5,
+                    orbitSpeed: (Math.random() - 0.5) * 0.005
+                });
+
+                realityGroup.add(mesh);
+            }
+
+
+
+            scene.add(realityGroup);
+            camera.position.set(5, 4, 5);
+            camera.lookAt(0, 0, 0);
+
+            // Ultra-sophisticated animation loop
+            let time = 0;
+            function animateHolographic() {
+                time += 0.016;
+
+                // Update shader uniforms for all reality layers
+                realityLayers.forEach((layerData, index) => {
+                    const layer = layerData.mesh;
+
+                    // Update shader time
+                    layer.material.uniforms.time.value = time;
+
+                    // Sophisticated rotation
+                    layer.rotation.x += layerData.rotationSpeed.x;
+                    layer.rotation.y += layerData.rotationSpeed.y;
+                    layer.rotation.z += layerData.rotationSpeed.z;
+
+                    // Orbital motion around center
+                    const orbitAngle = time * layerData.orbitSpeed + index;
+                    const orbitX = Math.cos(orbitAngle) * layerData.orbitRadius;
+                    const orbitZ = Math.sin(orbitAngle) * layerData.orbitRadius;
+
+                    layer.position.x = orbitX + Math.sin(time + layerData.floatOffset) * 0.3;
+                    layer.position.y = Math.cos(time * 0.7 + layerData.floatOffset) * 0.4;
+                    layer.position.z = orbitZ + Math.sin(time * 0.5 + layerData.floatOffset) * 0.2;
+
+                    // Sophisticated scaling
+                    const scale = 1.0 + Math.sin(time * 0.8 + index) * 0.1;
+                    layer.scale.setScalar(scale);
+                });
+
+                // Elegant group rotation
+                realityGroup.rotation.y = time * 0.1;
+                realityGroup.rotation.x = Math.sin(time * 0.15) * 0.05;
+
+                renderer.render(scene, camera);
+                requestAnimationFrame(animateHolographic);
+            }
+
+            animateHolographic();
+
+            // Handle resize
+            window.addEventListener('resize', () => {
+                camera.aspect = canvas.clientWidth / canvas.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+            });
+        }
+
+        // ULTRA-SOPHISTICATED DNA SIGIL IDENTITY - Quantum genetic consciousness encryption
+        function initDNASigilAnimation() {
+            console.log('🧬 DNA sigil starting...');
+            const canvas = document.getElementById('dnaSigilCanvas');
+            if (!canvas) {
+                console.error('❌ DNA sigil canvas not found!');
+                return;
+            }
+            console.log('✅ DNA sigil canvas found:', canvas);
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+
+            renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+            renderer.setClearColor(0x000000, 0);
+
+            // Ultra-sophisticated DNA shader with cryptographic patterns
+            let dnaShaderMaterial;
+            try {
+                dnaShaderMaterial = new THREE.ShaderMaterial({
+                uniforms: {
+                    time: { value: 0 },
+                    resolution: { value: new THREE.Vector2(canvas.clientWidth, canvas.clientHeight) }
+                },
+                vertexShader: `
+                    varying vec2 vUv;
+                    varying vec3 vPosition;
+                    varying vec3 vNormal;
+                    varying vec3 vWorldPosition;
+                    uniform float time;
+
+                    void main() {
+                        vUv = uv;
+                        vPosition = position;
+                        vNormal = normalize(normalMatrix * normal);
+
+                        // Genetic oscillation
+                        vec3 pos = position;
+                        pos += sin(time * 3.0 + position.y * 2.0) * 0.02;
+
+                        vec4 worldPosition = modelMatrix * vec4(pos, 1.0);
+                        vWorldPosition = worldPosition.xyz;
+
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+                    }
+                `,
+                fragmentShader: `
+                    varying vec2 vUv;
+                    varying vec3 vPosition;
+                    varying vec3 vNormal;
+                    varying vec3 vWorldPosition;
+                    uniform float time;
+                    uniform vec2 resolution;
+
+                    // Cryptographic hash function simulation
+                    float hash(vec2 st) {
+                        return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
+                    }
+
+                    // DNA base pair encoding
+                    float dnaBase(vec2 uv, float baseType) {
+                        vec2 grid = fract(uv * 20.0);
+                        float pattern = 0.0;
+
+                        if (baseType < 0.25) {
+                            // Adenine pattern
+                            pattern = step(0.3, sin(grid.x * 15.0)) * step(0.3, cos(grid.y * 15.0));
+                        } else if (baseType < 0.5) {
+                            // Thymine pattern
+                            pattern = step(0.4, sin(grid.x * 20.0 + grid.y * 20.0));
+                        } else if (baseType < 0.75) {
+                            // Guanine pattern
+                            pattern = step(0.5, cos(grid.x * 12.0) * sin(grid.y * 12.0));
+                        } else {
+                            // Cytosine pattern
+                            pattern = step(0.6, sin(grid.x * 25.0) * cos(grid.y * 18.0));
+                        }
+
+                        return pattern;
+                    }
+
+                    // Sigil cryptographic patterns
+                    float sigilPattern(vec2 uv, float time) {
+                        vec2 center = vec2(0.5);
+                        vec2 pos = uv - center;
+                        float angle = atan(pos.y, pos.x);
+                        float radius = length(pos);
+
+                        // Rotating sigil arms
+                        float arms = sin(angle * 6.0 + time * 2.0) * sin(radius * 20.0);
+
+                        // Concentric circles
+                        float circles = sin(radius * 30.0 + time * 3.0);
+
+                        // Runic patterns
+                        float runes = step(0.7, sin(angle * 8.0 + time) * cos(radius * 15.0));
+
+                        return (arms + circles + runes) / 3.0;
+                    }
+
+                    void main() {
+                        vec2 uv = vUv;
+                        vec3 pos = vWorldPosition;
+
+                        // DNA base sequence
+                        float baseType = hash(vec2(pos.y * 5.0, time * 0.1));
+                        float dnaPattern = dnaBase(uv, baseType);
+
+                        // Flowing genetic information
+                        vec2 flowUv = uv;
+                        flowUv.y += time * 0.5;
+                        float geneticFlow = sin(flowUv.y * 40.0) * sin(flowUv.x * 30.0);
+
+                        // Cryptographic sigil overlay
+                        float sigil = sigilPattern(uv, time);
+
+                        // Fresnel for edge definition
+                        vec3 viewDir = normalize(cameraPosition - vWorldPosition);
+                        float fresnel = 1.0 - abs(dot(vNormal, viewDir));
+                        fresnel = pow(fresnel, 1.2);
+
+                        // Combine all patterns
+                        float intensity = dnaPattern * 0.6 + geneticFlow * 0.3 + sigil * 0.4;
+                        intensity = abs(intensity);
+
+                        // Sophisticated color palette
+                        vec3 color = vec3(0.0);
+
+                        // DNA green-blue base
+                        color += vec3(0.0, 0.8, 0.6) * intensity;
+
+                        // Golden sigil highlights
+                        color += vec3(1.0, 0.8, 0.0) * pow(intensity, 2.0) * 0.8;
+
+                        // Purple cryptographic layers
+                        color += vec3(0.8, 0.0, 1.0) * sigil * 0.5;
+
+                        // White genetic peaks
+                        color += vec3(1.0, 1.0, 1.0) * pow(intensity, 4.0);
+
+                        // Edge enhancement
+                        color += vec3(0.2, 0.9, 0.7) * fresnel * 0.4;
+
+                        // Transparency
+                        float alpha = intensity * 0.8 + fresnel * 0.2;
+                        alpha = clamp(alpha, 0.0, 0.9);
+
+                        gl_FragColor = vec4(color, alpha);
+                    }
+                `,
+                transparent: true,
+                side: THREE.DoubleSide
+                });
+                console.log('✅ DNA shader created successfully');
+            } catch (shaderError) {
+                console.error('❌ DNA shader creation failed:', shaderError);
+                // Fallback to basic material
+                dnaShaderMaterial = new THREE.MeshBasicMaterial({
+                    color: 0xff8800,
+                    transparent: true,
+                    opacity: 0.7
+                });
+            }
+
+            // Create sophisticated DNA geometry
+            const dnaGroup = new THREE.Group();
+
+            // Create DNA helix using torus geometry with shader
+            const helixGeometry1 = new THREE.TorusGeometry(1.5, 0.1, 8, 100);
+            const helixGeometry2 = new THREE.TorusGeometry(1.5, 0.1, 8, 100);
+
+            const dnaMesh1 = new THREE.Mesh(helixGeometry1, dnaShaderMaterial.clone());
+            const dnaMesh2 = new THREE.Mesh(helixGeometry2, dnaShaderMaterial.clone());
+
+            // Position the helixes
+            dnaMesh1.position.y = 1;
+            dnaMesh2.position.y = -1;
+            dnaMesh2.rotation.y = Math.PI;
+
+            dnaGroup.add(dnaMesh1);
+            dnaGroup.add(dnaMesh2);
+
+            scene.add(dnaGroup);
+            camera.position.set(4, 2, 4);
+            camera.lookAt(0, 0, 0);
+
+            // Animation loop
+            let time = 0;
+            function animateDNASigil() {
+                time += 0.016;
+
+                // Update shader uniforms
+                dnaMesh1.material.uniforms.time.value = time;
+                dnaMesh2.material.uniforms.time.value = time;
+
+                // Elegant DNA rotation
+                dnaGroup.rotation.y = time * 0.1;
+                dnaGroup.rotation.x = Math.sin(time * 0.05) * 0.1;
+
+                // Individual helix rotations
+                dnaMesh1.rotation.y = time * 0.3;
+                dnaMesh2.rotation.y = -time * 0.3;
+
+                // Floating motion
+                dnaGroup.position.y = Math.sin(time * 0.4) * 0.2;
+
+                renderer.render(scene, camera);
+                requestAnimationFrame(animateDNASigil);
+            }
+
+            animateDNASigil();
+
+            // Handle resize
+            window.addEventListener('resize', () => {
+                camera.aspect = canvas.clientWidth / canvas.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+            });
+        }
+    </script>
+
     <script src="featherweight-visualizations.js?v=" + new Date().getTime()></script>
 </body>
 </html>
