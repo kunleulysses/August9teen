@@ -81,45 +81,114 @@ class CodeAnalyzer {
     }
 
     /**
-     * Analyze code structure
+     * Analyze code structure using static analysis heuristics
      */
     analyzeStructure(code) {
-        // Basic structure analysis
+        // Count modules (exports), functions, and classes
+        const moduleExports = (code.match(/module\.exports|export\s+(default\s+)?/g) || []).length;
+        const classes = (code.match(/class\s+\w+/g) || []).length;
+        const functions = (code.match(/function\s+\w+|const\s+\w+\s*=\s*\(/g) || []).length;
+
+        // Heuristic: modularity is higher if there are multiple exports/classes, cohesion if classes/functions are grouped, coupling if there are many requires/imports
+        const imports = (code.match(/require\(|import\s+/g) || []).length;
+        const lines = code.split('\n').length;
+        const modularity = Math.min(1, (moduleExports + classes) / Math.max(1, lines / 50));
+        const cohesion = Math.min(1, (classes + functions) / Math.max(1, imports + 1));
+        const coupling = Math.min(1, imports / Math.max(1, classes + 1));
+
         return {
-            modularity: 0.7,
-            cohesion: 0.8,
-            coupling: 0.4
+            modularity: +modularity.toFixed(2),
+            cohesion: +cohesion.toFixed(2),
+            coupling: +coupling.toFixed(2)
         };
     }
 
     /**
-     * Find common patterns in code
+     * Find common patterns and anti-patterns in code using regexes and basic heuristics
      */
     findCommonPatterns(code) {
-        // Pattern detection simulation
+        // Design patterns: look for singleton, observer, factory, etc.
+        const designPatterns = [];
+        if (/module\.exports\s*=\s*new\s+\w+/g.test(code) || /static\s+getInstance\s*\(/g.test(code)) {
+            designPatterns.push('singleton');
+        }
+        if (/\.on\s*\(|addEventListener\s*\(/g.test(code)) {
+            designPatterns.push('observer');
+        }
+        if (/factory|create.*\(/i.test(code)) {
+            designPatterns.push('factory');
+        }
+
+        // Anti-patterns: detect long functions, deeply nested code, magic numbers, etc.
+        const antiPatterns = [];
+        const longFunctions = (code.match(/function\s+\w+\([^)]*\)\s*\{([\s\S]*?){10,}/g) || []).length;
+        if (longFunctions) antiPatterns.push('long-method');
+        if ((code.match(/\d{3,}/g) || []).length > 0) antiPatterns.push('magic-number');
+        if ((code.match(/\{[^{}]*\{[^{}]*\{[^{}]*\{/g) || []).length > 0) antiPatterns.push('deep-nesting');
+
+        // Improvements: suggest extracting methods, reducing complexity, adding comments
+        const improvements = [];
+        if (antiPatterns.includes('long-method')) improvements.push('extract method');
+        if (antiPatterns.includes('deep-nesting')) improvements.push('reduce nesting');
+        if (!/\/\*/.test(code)) improvements.push('add comments');
+
         return {
-            designPatterns: ['observer', 'singleton'],
-            antiPatterns: [],
-            improvements: ['extract method', 'reduce complexity']
+            designPatterns,
+            antiPatterns,
+            improvements
         };
     }
 
     /**
-     * Gather code statistics
+     * Optimize code based on analysis: remove dead code, unused variables, and apply basic renaming
      */
-    async gatherStats(code) {
-        return {
-            loc: code.split('\n').length,
-            complexity: await this.calculateComplexity(code),
-            quality: await this.assessQuality(code)
-        };
-    }
+    async optimize(code, options = {}) {
+        const { patterns, stats, constraints } = options;
 
-    /**
-     * Assess code quality based on complexity metrics
-     */
-    async assessQuality(code) {
-        const { cyclomatic, cognitive } = await this.calculateComplexity(code);
+        // Remove unused variables using ESLint autofix, if possible
+        let optimizedCode = code;
+        let improvements = [];
+
+        try {
+            const lintResults = await this.eslint.lintText(code, {
+                filePath: 'autofix-temp.cjs',
+                fix: true
+            });
+            if (lintResults && lintResults[0] && lintResults[0].output) {
+                optimizedCode = lintResults[0].output;
+                improvements.push('Removed unused variables and applied basic fixes');
+            }
+        } catch (err) {
+            // Fallback: do nothing
+        }
+
+        // Remove dead code: simple heuristic for unreachable code after return
+        optimizedCode = optimizedCode.replace(/return\s+[^;]+;[\s\S]+?(\n\s+\w+)/g, (match, p1) => {
+            improvements.push('Removed unreachable code after return');
+            return `return;\n${p1}`;
+        });
+
+        // Rename variables named 'tmp' to more descriptive names as an example
+        if (/tmp/.test(optimizedCode)) {
+            optimizedCode = optimizedCode.replace(/\btmp\b/g, 'temporaryVar');
+            improvements.push('Renamed variables for clarity');
+        }
+
+        // Add header comment if missing
+        if (!/^\/\*\*/.test(optimizedCode)) {
+            optimizedCode = `/**\n * Optimized code\n */\n` + optimizedCode;
+            improvements.push('Added header comment');
+        }
+
+        return {
+            optimizedCode,
+            improvements,
+            metrics: {
+                complexity: stats && stats.complexity ? stats.complexity : {},
+                quality: stats && stats.quality ? stats.quality : {}
+            }
+        };
+    } = await this.calculateComplexity(code);
         const maintainability = Math.max(0, 1 - Math.max(cyclomatic, cognitive) / 20);
         return { 
             maintainability: +maintainability.toFixed(2), 
