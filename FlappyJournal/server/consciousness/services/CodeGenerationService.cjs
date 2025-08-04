@@ -1,6 +1,11 @@
 const SelfCodingModule = require('../modules/SelfCodingModule.cjs');
 const { EventEmitter  } = require('events');
 const eventBus = require('../ConsciousnessEventBus.cjs');
+const { child: getLogger } = require('../utils/logger.cjs');
+const { safeImport } = require('../utils/safe-loader.cjs');
+const path = require('path');
+
+const log = getLogger({ module: 'CodeGenerationService' });
 
 class CodeGenerationService extends EventEmitter {
     constructor(goalSystem) {
@@ -13,7 +18,7 @@ class CodeGenerationService extends EventEmitter {
     }
 
     async initialize() {
-        console.log('🚀 Initializing Code Generation Service...');
+        log.info('🚀 Initializing Code Generation Service...');
         
         // Initialize the self-coding module
         await this.selfCoder.initialize();
@@ -24,7 +29,7 @@ class CodeGenerationService extends EventEmitter {
         // Register code-related goals
         this.registerCodeGoals();
         
-        console.log('✅ Code Generation Service initialized');
+        log.info('✅ Code Generation Service initialized');
     }
 
     subscribeToEvents() {
@@ -95,7 +100,7 @@ class CodeGenerationService extends EventEmitter {
     }
 
     async handleCodeGeneration(request) {
-        console.log(`📝 Handling code generation request: ${request.purpose}`);
+        log.info(`📝 Handling code generation request: ${request.purpose}`);
         
         try {
             // Generate the code
@@ -118,16 +123,28 @@ class CodeGenerationService extends EventEmitter {
                 filePath: project.filePath,
                 timestamp: new Date()
             });
-            
+
+            // PHASE A: Validate the module via safeImport before integrating
+            if (project.filePath && request.writeToFile !== false) {
+                try {
+                    await safeImport(path.resolve(project.filePath));
+                    eventBus.emit('module:validated', { filePath: project.filePath });
+                    log.info(`✅ Module validated successfully: ${project.filePath}`);
+                } catch (err) {
+                    log.warn(`⚠️ safeImport failed: ${err.message}`);
+                    eventBus.emit('module:invalid', { filePath: project.filePath, error: err.message });
+                }
+            }
+
             // If it's a consciousness module, integrate it
             if (request.purpose.includes('consciousness')) {
                 await this.integrateConsciousnessModule(project);
             }
-            
+
             return project;
             
         } catch (error) {
-            console.error('Code generation failed:', error);
+            log.error('Code generation failed:', error);
             eventBus.emit('code:generation-failed', {
                 error: error.message,
                 request
@@ -137,7 +154,7 @@ class CodeGenerationService extends EventEmitter {
     }
 
     async handleCodeModification(request) {
-        console.log(`✏️ Modifying code: ${request.filePath}`);
+        log.info(`✏️ Modifying code: ${request.filePath}`);
         
         try {
             const result = await this.selfCoder.modifyExistingCode(
@@ -154,7 +171,7 @@ class CodeGenerationService extends EventEmitter {
             return result;
             
         } catch (error) {
-            console.error('Code modification failed:', error);
+            log.error('Code modification failed:', error);
             eventBus.emit('code:modification-failed', {
                 error: error.message,
                 request
@@ -164,7 +181,7 @@ class CodeGenerationService extends EventEmitter {
     }
 
     async handleDebugging(request) {
-        console.log(`🐛 Debugging issue: ${request.error.message}`);
+        log.info(`🐛 Debugging issue: ${request.error.message}`);
         
         try {
             const debugInfo = await this.selfCoder.debugCode(
@@ -191,13 +208,13 @@ class CodeGenerationService extends EventEmitter {
             return debugInfo;
             
         } catch (error) {
-            console.error('Debugging failed:', error);
+            log.error('Debugging failed:', error);
             throw error;
         }
     }
 
     async handleGoalBasedGeneration(goal) {
-        console.log(`🎯 Generating code for goal: ${goal.name}`);
+        log.info(`🎯 Generating code for goal: ${goal.name}`);
         
         // Determine what code to generate based on the goal
         const codeRequest = this.planCodeForGoal(goal);
@@ -235,7 +252,7 @@ class CodeGenerationService extends EventEmitter {
     }
 
     async analyzeSystemNeed(need) {
-        console.log(`🔍 Analyzing system need: ${need.type}`);
+        log.info(`🔍 Analyzing system need: ${need.type}`);
         
         // Determine if code generation can help
         const codeNeeds = {
@@ -264,7 +281,7 @@ class CodeGenerationService extends EventEmitter {
     }
 
     async integrateConsciousnessModule(project) {
-        console.log(`🔗 Integrating consciousness module: ${project.filePath}`);
+        log.info(`🔗 Integrating consciousness module: ${project.filePath}`);
         
         // Register the new module with the event bus
         eventBus.emit('module:register', {
@@ -299,7 +316,7 @@ class CodeGenerationService extends EventEmitter {
     }
 
     async applyDebugFix(fix, context) {
-        console.log(`🔧 Applying debug fix: ${fix.type}`);
+        log.info(`🔧 Applying debug fix: ${fix.type}`);
         
         const modifications = [{
             type: 'modify-method',
@@ -322,7 +339,7 @@ class CodeGenerationService extends EventEmitter {
     }
 
     async generateTestsForModule(modulePath) {
-        console.log(`🧪 Generating tests for: ${modulePath}`);
+        log.info(`🧪 Generating tests for: ${modulePath}`);
         
         try {
             const testInfo = await this.selfCoder.generateTests(modulePath);
@@ -336,7 +353,7 @@ class CodeGenerationService extends EventEmitter {
             return testInfo;
             
         } catch (error) {
-            console.error('Test generation failed:', error);
+            log.error('Test generation failed:', error);
             throw error;
         }
     }
@@ -362,7 +379,7 @@ class CodeGenerationService extends EventEmitter {
     }
 
     shutdown() {
-        console.log('🚀 CodeGenerationService Shutting Down');
+        log.info('🚀 CodeGenerationService Shutting Down');
     }
 
     getSelfAwarenessStatus() {
