@@ -1,7 +1,16 @@
 #!/usr/bin/env node
 
-if (!process.env.OPENAI_API_KEY) {
-  console.error('\u274C OPENAI_API_KEY is missing – semantic embeddings disabled. Aborting startup.');
+// Mandatory infrastructure environment variables (fail fast if present but empty)
+const requiredEnv = [
+  'OPENAI_API_KEY',
+  // database aliases
+  'DB_URL', 'DATABASE_URL', 'PG_URI',
+  // cache aliases
+  'REDIS_URL', 'CACHE_URL'
+];
+const missing = requiredEnv.filter((v) => process.env.hasOwnProperty(v) && !process.env[v]);
+if (missing.length) {
+  console.error(`❌ Missing required env vars: ${missing.join(', ')}`);
   process.exit(1);
 }
 
