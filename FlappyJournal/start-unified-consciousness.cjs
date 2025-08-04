@@ -1,5 +1,10 @@
 #!/usr/bin/env node
 
+if (!process.env.OPENAI_API_KEY) {
+  console.error('\u274C OPENAI_API_KEY is missing – semantic embeddings disabled. Aborting startup.');
+  process.exit(1);
+}
+
 /**
  * Startup script for Unified Consciousness System
  * Replaces the parallel isolated systems with a single unified architecture
