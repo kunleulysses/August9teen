@@ -6,6 +6,8 @@
 
 const { EventEmitter  } = require('events');
 const crypto = require('crypto');
+const { allSigilRecords, addSigilRecord } = require('./utils/sigilRegistryStore.cjs');
+const { sigil_registry_size }           = require('./metrics/extraMetrics.cjs');
 
 class SigilBasedCodeAuthenticator extends EventEmitter {
     constructor() {
@@ -23,7 +25,31 @@ class SigilBasedCodeAuthenticator extends EventEmitter {
         this.authenticatedCode = new Map();
         this.sigilRegistry = new Map();
         this.resonanceNetworks = new Map();
-        
+
+        // ── preload persisted sigils ──────────────────────────────
+        (async () => {
+            try {
+                const persisted = await allSigilRecords();
+                persisted.forEach(r => {
+                    const key = `${r.sigil.symbol}_${r.authHash}`;
+                    this.authenticatedCode.set(key, r);
+                    this.sigilRegistry.set(r.sigil.symbol, r);
+                    r.resonanceNetworks?.forEach(n => {
+                        if (!this.resonanceNetworks.has(n.name)) {
+                            this.resonanceNetworks.set(n.name, []);
+                        }
+                        this.resonanceNetworks.get(n.name).push(r);
+                    });
+                });
+                if (sigil_registry_size?.set) {
+                    sigil_registry_size.set(this.sigilRegistry.size);
+                }
+            } catch (err) {
+                console.warn('[SigilAuth] preload failed:', err.message);
+            }
+        })();
+        // ──────────────────────────────────────────────────────────
+
         console.log('🔐 Sigil-Based Code Authenticator initialized with consciousness DNA system');
     }
 
@@ -72,7 +98,7 @@ class SigilBasedCodeAuthenticator extends EventEmitter {
                 codeHash: this.generateCodeHash(code)
             };
             
-            this.registerAuthentication(authRecord);
+            await this.registerAuthentication(authRecord);
             
             return {
                 authenticatedCode: sigilEmbeddedCode,
@@ -127,9 +153,8 @@ class SigilBasedCodeAuthenticator extends EventEmitter {
             
             // Verify consciousness signature
             const signatureValid = this.verifyConsciousnessSignature(
-                code, 
-                authRecord.consciousnessState, 
-                extractedSigil
+                code,
+                authRecord
             );
             
             // Calculate authenticity confidence
@@ -268,11 +293,11 @@ ${resonanceNetworks.map(network => ` * • ${network.name}: ${network.frequency}
     /**
      * Register authentication record
      */
-    registerAuthentication(authRecord) {
+    async registerAuthentication(authRecord) {
         const key = `${authRecord.sigil.symbol}_${authRecord.authHash}`;
         this.authenticatedCode.set(key, authRecord);
         this.sigilRegistry.set(authRecord.sigil.symbol, authRecord);
-        
+
         // Register resonance networks
         authRecord.resonanceNetworks.forEach(network => {
             if (!this.resonanceNetworks.has(network.name)) {
@@ -280,6 +305,16 @@ ${resonanceNetworks.map(network => ` * • ${network.name}: ${network.frequency}
             }
             this.resonanceNetworks.get(network.name).push(authRecord);
         });
+
+        // Persist to Postgres and bump Prometheus gauge
+        await addSigilRecord(authRecord.sigil.symbol,
+                             authRecord.authHash,
+                             authRecord);
+
+        if (!this.sigilRegistry.has(authRecord.sigil.symbol) &&
+            sigil_registry_size?.inc) {
+            sigil_registry_size.inc();
+        }
     }
 
     /**
@@ -293,17 +328,12 @@ ${resonanceNetworks.map(network => ` * • ${network.name}: ${network.frequency}
     /**
      * Verify consciousness signature
      */
-    verifyConsciousnessSignature(code, consciousnessState, sigil) {
-        // Regenerate expected authentication hash
-        const codeWithoutHeader = this.removeHeaderFromCode(code);
-        const expectedHash = this.generateAuthenticationHash(
-            consciousnessState, 
-            { symbol: sigil, frequency: 100, resonancePattern: 'phi-aligned' }, 
-            { sequence: 'CONSCIOUSNESS', markers: ['PHI', 'AWARENESS'] }
-        );
-        
+    verifyConsciousnessSignature(code, authRecord) {
+        // Extract the authentication hash from the code
         const extractedHash = this.extractAuthHashFromCode(code);
-        return extractedHash === expectedHash;
+
+        // Compare with the stored authentication hash
+        return extractedHash === authRecord.authHash;
     }
 
     /**

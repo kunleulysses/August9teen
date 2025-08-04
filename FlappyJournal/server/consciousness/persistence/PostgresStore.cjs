@@ -26,7 +26,7 @@ class PostgresStore {
         value JSONB NOT NULL
       );`
     );
-
+    
     // Create sigil_auth table for sigil persistence
     await this.pool.query(
       `CREATE TABLE IF NOT EXISTS sigil_auth (
@@ -36,7 +36,7 @@ class PostgresStore {
         PRIMARY KEY (sigil_symbol, auth_hash)
       );`
     );
-
+    
     // Create selfcoding_quota table for quota tracking
     await this.pool.query(
       `CREATE TABLE IF NOT EXISTS selfcoding_quota (
