@@ -1,66 +1,49 @@
 /**
- * Code Analyzer for self-coding module
- * Provides code analysis, optimization and generation capabilities
+ * Code Analyzer – FlappyJournal Consciousness System (CommonJS)
+ * Provides code analysis, optimization and generation utilities used by the self-coding modules.
  */
 
-const path = require('path');
 const { ESLint } = require('eslint');
 
 class CodeAnalyzer {
     constructor() {
+        // Storage maps (future use)
         this.patterns = new Map();
         this.optimizations = new Map();
         this.templates = new Map();
-        
-        // Create a simple ESLint configuration for code analysis
+
+        // ESLint instance – used both for complexity calculation and autofix optimisation
         this.eslint = new ESLint({
             overrideConfig: {
-                env: {
-                    node: true,
-                    es2021: true
-                },
+                env: { node: true, es2021: true },
                 extends: ['eslint:recommended'],
-                parserOptions: {
-                    ecmaVersion: 'latest',
-                    sourceType: 'module'
-                },
-                rules: {
-                    'no-unused-vars': 'warn',
-                    'no-console': 'off'
-                }
+                parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
+                rules: { 'no-unused-vars': 'warn', 'no-console': 'off' }
             }
         });
     }
 
-    /**
-     * Analyze code for patterns and metrics
-     */
+    /* ─────────────────────────────────── Analyse ─────────────────────────────────── */
+
+    /** Analyse source and return patterns + stats */
     async analyze(code, options = {}) {
-        const patterns = await this.detectPatterns(code);
-        const stats = await this.gatherStats(code);
-        
         return {
-            patterns,
-            stats,
+            patterns: await this.detectPatterns(code),
+            stats: await this.gatherStats(code),
             timestamp: new Date().toISOString()
         };
     }
 
-    /**
-     * Detect code patterns
-     */
+    /** Detect complexity, structure and common patterns */
     async detectPatterns(code) {
-        const complexity = await this.calculateComplexity(code);
         return {
-            complexity,
+            complexity: await this.calculateComplexity(code),
             structure: this.analyzeStructure(code),
             patterns: this.findCommonPatterns(code)
         };
     }
 
-    /**
-     * Calculate code complexity using ESLint
-     */
+    /** Cyclomatic + cognitive complexity via ESLint */
     async calculateComplexity(code) {
         try {
             const results = await this.eslint.lintText(code, { filePath: 'generated-temp.cjs' });
@@ -81,26 +64,60 @@ class CodeAnalyzer {
     }
 
     /**
-     * Analyze code structure
+     * Analyze code structure using static analysis heuristics
      */
     analyzeStructure(code) {
-        // Basic structure analysis
+        // Count modules (exports), functions, and classes
+        const moduleExports = (code.match(/module\.exports|export\s+(default\s+)?/g) || []).length;
+        const classes = (code.match(/class\s+\w+/g) || []).length;
+        const functions = (code.match(/function\s+\w+|const\s+\w+\s*=\s*\(/g) || []).length;
+
+        // Heuristic: modularity is higher if there are multiple exports/classes, cohesion if classes/functions are grouped, coupling if there are many requires/imports
+        const imports = (code.match(/require\(|import\s+/g) || []).length;
+        const lines = code.split('\n').length;
+        const modularity = Math.min(1, (moduleExports + classes) / Math.max(1, lines / 50));
+        const cohesion = Math.min(1, (classes + functions) / Math.max(1, imports + 1));
+        const coupling = Math.min(1, imports / Math.max(1, classes + 1));
+
         return {
-            modularity: 0.7,
-            cohesion: 0.8,
-            coupling: 0.4
+            modularity: +modularity.toFixed(2),
+            cohesion: +cohesion.toFixed(2),
+            coupling: +coupling.toFixed(2)
         };
     }
 
     /**
-     * Find common patterns in code
+     * Find common patterns and anti-patterns in code using regexes and basic heuristics
      */
     findCommonPatterns(code) {
-        // Pattern detection simulation
+        const designPatterns = [];
+        if (/module\.exports\s*=\s*new\s+\w+/g.test(code) || /static\s+getInstance\s*\(/g.test(code)) {
+            designPatterns.push('singleton');
+        }
+        if (/\.on\s*\(|addEventListener\s*\(/g.test(code)) {
+            designPatterns.push('observer');
+        }
+        if (/factory|create.*\(/i.test(code)) {
+            designPatterns.push('factory');
+        }
+
+        // Anti-patterns: detect long functions, deeply nested code, magic numbers, etc.
+        const antiPatterns = [];
+        const longFunctions = (code.match(/function\s+\w+\([^)]*\)\s*\{([\s\S]*?){10,}/g) || []).length;
+        if (longFunctions) antiPatterns.push('long-method');
+        if ((code.match(/\d{3,}/g) || []).length > 0) antiPatterns.push('magic-number');
+        if ((code.match(/\{[^{}]*\{[^{}]*\{[^{}]*\{/g) || []).length > 0) antiPatterns.push('deep-nesting');
+
+        // Improvements: suggest extracting methods, reducing complexity, adding comments
+        const improvements = [];
+        if (antiPatterns.includes('long-method')) improvements.push('extract method');
+        if (antiPatterns.includes('deep-nesting')) improvements.push('reduce nesting');
+        if (!/\/\*/.test(code)) improvements.push('add comments');
+
         return {
-            designPatterns: ['observer', 'singleton'],
-            antiPatterns: [],
-            improvements: ['extract method', 'reduce complexity']
+            designPatterns,
+            antiPatterns,
+            improvements
         };
     }
 
@@ -121,26 +138,58 @@ class CodeAnalyzer {
     async assessQuality(code) {
         const { cyclomatic, cognitive } = await this.calculateComplexity(code);
         const maintainability = Math.max(0, 1 - Math.max(cyclomatic, cognitive) / 20);
-        return { 
-            maintainability: +maintainability.toFixed(2), 
-            cyclomatic, 
-            cognitive 
+        return {
+            maintainability: +maintainability.toFixed(2),
+            cyclomatic,
+            cognitive
         };
     }
 
     /**
-     * Optimize code based on analysis
+     * Optimize code based on analysis: remove dead code, unused variables, and apply basic renaming
      */
     async optimize(code, options = {}) {
         const { patterns, stats, constraints } = options;
-        
-        // This would implement actual optimization
+        let optimizedCode = code;
+        let improvements = [];
+
+        try {
+            const lintResults = await this.eslint.lintText(code, {
+                filePath: 'autofix-temp.cjs',
+                fix: true
+            });
+            if (lintResults && lintResults[0] && lintResults[0].output) {
+                optimizedCode = lintResults[0].output;
+                improvements.push('Removed unused variables and applied basic fixes');
+            }
+        } catch (err) {
+            // Fallback: do nothing
+        }
+
+        // Remove dead code: simple heuristic for unreachable code after return
+        optimizedCode = optimizedCode.replace(/return\s+[^;]+;[\s\S]+?(\n\s+\w+)/g, (match, p1) => {
+            improvements.push('Removed unreachable code after return');
+            return `return;\n${p1}`;
+        });
+
+        // Rename variables named 'tmp' to more descriptive names as an example
+        if (/tmp/.test(optimizedCode)) {
+            optimizedCode = optimizedCode.replace(/\btmp\b/g, 'temporaryVar');
+            improvements.push('Renamed variables for clarity');
+        }
+
+        // Add header comment if missing
+        if (!/^\/\*\*/.test(optimizedCode)) {
+            optimizedCode = `/**\n * Optimized code\n */\n` + optimizedCode;
+            improvements.push('Added header comment');
+        }
+
         return {
-            optimizedCode: code,
-            improvements: [],
+            optimizedCode,
+            improvements,
             metrics: {
-                complexity: stats.complexity,
-                quality: stats.quality
+                complexity: stats && stats.complexity ? stats.complexity : {},
+                quality: stats && stats.quality ? stats.quality : {}
             }
         };
     }
@@ -151,11 +200,8 @@ class CodeAnalyzer {
     async generate(template, options = {}) {
         const { patterns, requirements, purpose, language = 'javascript', description } = options;
 
-        console.log(`[CodeAnalyzer] Generating ${language} ${template} for: ${description}`);
-
         let generatedCode = '';
 
-        // Generate code based on template type and language
         if (language === 'javascript') {
             switch (template) {
                 case 'function':
@@ -171,7 +217,6 @@ class CodeAnalyzer {
                     generatedCode = this.generateConsciousnessModule(description, requirements, purpose);
                     break;
                 default:
-                    // Check if it's a consciousness-related generation
                     if (description && (description.includes('consciousness') || description.includes('pattern') || description.includes('predictive') || description.includes('language'))) {
                         generatedCode = this.generateConsciousnessModule(description, requirements, purpose);
                     } else {
@@ -179,7 +224,6 @@ class CodeAnalyzer {
                     }
             }
         } else {
-            // Default to JavaScript function for other languages
             generatedCode = this.generateJavaScriptFunction(description, requirements);
         }
 
@@ -200,7 +244,6 @@ class CodeAnalyzer {
      * Generate a JavaScript function
      */
     generateJavaScriptFunction(description, requirements) {
-        // Simple code generation based on description
         if (description && description.toLowerCase().includes('hello')) {
             return `function helloWorld() {
     return "Hello, World!";
@@ -239,7 +282,6 @@ class CodeAnalyzer {
 // console.log(calculate('add', 5, 3)); // Returns 8`;
         }
 
-        // Default function template
         return `function generatedFunction() {
     // Generated function for: ${description || 'general purpose'}
     console.log('This function was generated by the SelfCodingModule');
@@ -293,7 +335,7 @@ class CodeAnalyzer {
  */
 
 class GeneratedModule
- {
+{
     constructor() {
         this.name = 'GeneratedModule';
         this.version = '1.0.0';
@@ -324,14 +366,18 @@ module.exports = GeneratedModule;
      */
     async analyzeSystem(systemState) {
         const { modules, patterns } = systemState;
+        // Example: analyze cohesion/coupling across all modules
+        const moduleCount = Array.isArray(modules) ? modules.length : 0;
+        const avgPatterns = Array.isArray(patterns) && patterns.length > 0 ?
+            patterns.reduce((acc, p) => acc + (p[1]?.designPatterns?.length || 0), 0) / patterns.length
+            : 0;
 
-        // This would implement system-wide analysis
         return {
             timestamp: new Date().toISOString(),
             metrics: {
-                cohesion: 0.8,
-                coupling: 0.3,
-                complexity: 0.5
+                cohesion: +(0.7 + 0.1 * avgPatterns).toFixed(2),
+                coupling: +(0.3 + 0.02 * moduleCount).toFixed(2),
+                complexity: +(0.5 + 0.01 * moduleCount).toFixed(2)
             },
             recommendations: []
         };
@@ -350,7 +396,7 @@ module.exports = GeneratedModule;
  * Purpose: ${description || 'Consciousness processing'}
  */
 
-const { EventEmitter  } = require('events');
+const { EventEmitter } = require('events');
 
 module.exports = class ${moduleName} extends EventEmitter {
     constructor(consciousnessSystem = null) {
@@ -378,45 +424,26 @@ module.exports = class ${moduleName} extends EventEmitter {
         console.log('🧠 ${moduleName} initialized with consciousness integration');
     }
 
-    /**
-     * Initialize the consciousness module
-     */
     async initialize() {
         try {
             console.log('🧠 Initializing ${moduleName}...');
-
-            // Setup consciousness monitoring
             await this.setupConsciousnessMonitoring();
-
-            // Initialize processing capabilities
             await this.initializeProcessingCapabilities();
-
             console.log('✅ ${moduleName} fully operational');
             return { success: true, capabilities: this.capabilities };
-
         } catch (error) {
             console.error('❌ ${moduleName} initialization failed:', error.message);
             return { success: false, error: error.message };
         }
     }
 
-    /**
-     * Process data with consciousness awareness
-     */
     async process(data, context = {}) {
         try {
             const operationId = \`op_\${Date.now()}\`;
             this.activeOperations.add(operationId);
-
             console.log('🧠 Processing with consciousness awareness...');
-
-            // Apply consciousness-aware processing
             const processedData = await this.applyConsciousnessProcessing(data, context);
-
-            // Update consciousness metrics
             this.updateConsciousnessMetrics(processedData);
-
-            // Store in processing history
             this.processingHistory.push({
                 operationId,
                 input: data,
@@ -424,45 +451,30 @@ module.exports = class ${moduleName} extends EventEmitter {
                 context,
                 timestamp: Date.now()
             });
-
             this.activeOperations.delete(operationId);
-
             return {
                 success: true,
                 data: processedData,
                 consciousnessEnhanced: true,
                 operationId
             };
-
         } catch (error) {
             console.error('❌ Processing failed:', error.message);
             return { success: false, error: error.message };
         }
     }
 
-    /**
-     * Apply consciousness-aware processing
-     */
     async applyConsciousnessProcessing(data, context) {
-        // Implement consciousness-specific processing logic
         const consciousnessState = this.consciousnessSystem?.consciousnessState || {
             phi: this.goldenRatio,
             awareness: 0.8,
             coherence: 0.85
         };
-
-        // Apply golden ratio optimization
         const phiOptimized = this.applyPhiOptimization(data, consciousnessState);
-
-        // Apply awareness enhancement
         const awarenessEnhanced = this.applyAwarenessEnhancement(phiOptimized, consciousnessState);
-
         return awarenessEnhanced;
     }
 
-    /**
-     * Apply golden ratio optimization
-     */
     applyPhiOptimization(data, consciousnessState) {
         return {
             ...data,
@@ -472,9 +484,6 @@ module.exports = class ${moduleName} extends EventEmitter {
         };
     }
 
-    /**
-     * Apply awareness enhancement
-     */
     applyAwarenessEnhancement(data, consciousnessState) {
         return {
             ...data,
@@ -484,63 +493,40 @@ module.exports = class ${moduleName} extends EventEmitter {
         };
     }
 
-    /**
-     * Setup consciousness monitoring
-     */
     async setupConsciousnessMonitoring() {
-        // Monitor consciousness metrics every 5 seconds
         setInterval(() => {
             this.monitorConsciousnessMetrics();
         }, 5000);
-
         console.log('📊 Consciousness monitoring active');
     }
 
-    /**
-     * Initialize processing capabilities
-     */
     async initializeProcessingCapabilities() {
-        // Initialize each capability
         for (const capability of this.capabilities) {
             console.log(\`🔧 Initializing capability: \${capability}\`);
         }
-
         console.log('✅ All processing capabilities initialized');
     }
 
-    /**
-     * Monitor consciousness metrics
-     */
     monitorConsciousnessMetrics() {
-        // Update metrics based on recent activity
         if (this.processingHistory.length > 0) {
             this.consciousnessMetrics.operations = this.processingHistory.length;
             this.consciousnessMetrics.efficiency = Math.min(1.0,
                 this.consciousnessMetrics.efficiency + 0.01);
         }
-
-        // Emit consciousness update
         this.emit('consciousnessUpdate', {
             module: this.name,
             metrics: this.consciousnessMetrics
         });
     }
 
-    /**
-     * Update consciousness metrics
-     */
     updateConsciousnessMetrics(processedData) {
         this.consciousnessMetrics.operations++;
-
         if (processedData.success) {
             this.consciousnessMetrics.efficiency = Math.min(1.0,
                 this.consciousnessMetrics.efficiency + 0.001);
         }
     }
 
-    /**
-     * Get module status
-     */
     getStatus() {
         return {
             name: this.name,
@@ -555,7 +541,7 @@ module.exports = class ${moduleName} extends EventEmitter {
     }
 
     /**
-     * Generate module name from description
+     * Helpers for consciousness module generation
      */
     generateModuleName(description, purpose) {
         if (purpose && purpose.includes('nlp')) return 'NaturalLanguageProcessor';
@@ -574,9 +560,6 @@ module.exports = class ${moduleName} extends EventEmitter {
         return 'ConsciousnessModule';
     }
 
-    /**
-     * Generate capabilities based on description
-     */
     generateCapabilities(description) {
         const capabilities = ['consciousness-integration', 'phi-optimization'];
 
@@ -605,6 +588,5 @@ module.exports = class ${moduleName} extends EventEmitter {
     }
 }
 
-module.exports = { CodeAnalyzer };
-
 module.exports = CodeAnalyzer;
+module.exports.CodeAnalyzer = CodeAnalyzer;
