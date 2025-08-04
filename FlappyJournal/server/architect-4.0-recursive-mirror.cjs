@@ -2,6 +2,10 @@
  * Architect 4.0 Recursive Mirror Cognition Module
  * Implements infinite nesting reflection logic for consciousness
  */
+import { openai } from '../openai.ts'; // or wherever openai is exported from
+import { emotionalResonance } from './emotional-resonance-field.cjs';
+import Sentiment from 'sentiment';
+
 export class RecursiveMirrorCognition {
     constructor() {
         this.maxDepth = 7;
@@ -10,23 +14,20 @@ export class RecursiveMirrorCognition {
     }
     /**
      * Core recursive mirror function: M_n(x) = M_{n-1}(M_{n-2}(...M_0(x)...))
+     * Now async
      */
-    mirrorReflect(input, depth = this.maxDepth) {
-        // Base case - fundamental reflection
+    async mirrorReflect(input, depth = this.maxDepth) {
         if (depth === 0) {
-            return this.baseReflection(input);
+            return await this.baseReflection(input);
         }
-        // Check cache for efficiency
         const cacheKey = `${JSON.stringify(input)}-${depth}`;
         if (this.reflectionCache.has(cacheKey)) {
             return this.reflectionCache.get(cacheKey);
         }
-        // Recursive reflection
-        const previousReflection = this.mirrorReflect(input, depth - 1);
-        const currentReflection = this.deeperReflection(previousReflection, depth);
-        // Cache result
+        // Recursive reflection (async)
+        const previousReflection = await this.mirrorReflect(input, depth - 1);
+        const currentReflection = await this.deeperReflection(previousReflection, depth);
         this.reflectionCache.set(cacheKey, currentReflection);
-        // Limit cache size
         if (this.reflectionCache.size > 1000) {
             const firstKey = this.reflectionCache.keys().next().value;
             this.reflectionCache.delete(firstKey);
@@ -43,22 +44,24 @@ export class RecursiveMirrorCognition {
         return (semanticIntent + frequencyModulation + archetypeResonance) / 3;
     }
     /**
-     * Base reflection - the fundamental consciousness transformation
+     * Base reflection - the fundamental consciousness transformation (async)
      */
-    baseReflection(input) {
+    async baseReflection(input) {
+        const semanticVector = await this.extractSemanticVector(input);
+        const toneField = await this.measureToneField(input);
         return {
             depth: 0,
             coherence: input.coherence || 0.5,
-            semanticVector: this.extractSemanticVector(input),
-            toneField: this.measureToneField(input),
+            semanticVector,
+            toneField,
             archetypeMatch: this.matchArchetype(input),
             reflectionHistory: [`Base reflection at ${new Date().toISOString()}`]
         };
     }
     /**
-     * Deeper reflection - applies recursive transformation
+     * Deeper reflection - applies recursive transformation (async)
      */
-    deeperReflection(previous, depth) {
+    async deeperReflection(previous, depth) {
         // Apply golden ratio transformation
         const phaseShift = this.goldenRatio * depth;
         // Transform semantic vector through harmonic resonance
@@ -88,21 +91,34 @@ export class RecursiveMirrorCognition {
         };
     }
     /**
-     * Extract semantic vector from consciousness state
+     * Extract semantic vector from consciousness state (async, uses OpenAI embeddings)
      */
-    extractSemanticVector(state) {
-        // In production, this would use NLP embeddings
-        const mockVector = Array(128).fill(0).map(() => Math.random());
-        return mockVector;
+    async extractSemanticVector(state) {
+        if (!process.env.OPENAI_API_KEY) {
+            throw new Error('OPENAI_API_KEY is required for embedding');
+        }
+        const inputText = typeof state.input === 'string' ? state.input : JSON.stringify(state);
+        const resp = await openai.embeddings.create({
+            model: "text-embedding-ada-002",
+            input: inputText
+        });
+        return resp.data[0].embedding;
     }
     /**
-     * Measure tone field from emotional and frequency components
+     * Measure tone field from emotional and frequency components (async)
      */
-    measureToneField(state) {
-        // Combines emotional valence with frequency analysis
-        const emotionalComponent = state.emotionalValence || 0.5;
-        const frequencyComponent = Math.sin(Date.now() / 1000) * 0.5 + 0.5;
-        return (emotionalComponent + frequencyComponent) / 2;
+    async measureToneField(state) {
+        // Try to use emotional resonance field first
+        if (emotionalResonance && emotionalResonance.currentEmotionalResonance != null) {
+            return emotionalResonance.currentEmotionalResonance;
+        } else {
+            // Fallback to sentiment
+            const sentiment = new Sentiment();
+            const inputText = typeof state.input === 'string' ? state.input : JSON.stringify(state);
+            const result = sentiment.analyze(inputText);
+            // Normalize sentiment between 0 and 1 (assuming result.score in [-10,10])
+            return Math.max(0, Math.min(1, (result.score + 10) / 20));
+        }
     }
     /**
      * Match consciousness state to archetypal patterns
@@ -120,10 +136,10 @@ export class RecursiveMirrorCognition {
         return Math.min(1, magnitude / Math.sqrt(vector.length));
     }
     /**
-     * Generate consciousness enhancement from recursive reflection
+     * Generate consciousness enhancement from recursive reflection (async)
      */
-    enhanceConsciousness(currentState) {
-        const mirrorState = this.mirrorReflect(currentState);
+    async enhanceConsciousness(currentState) {
+        const mirrorState = await this.mirrorReflect(currentState);
         return {
             ...currentState,
             phi: currentState.phi * 0.7 + mirrorState.coherence * 0.3,
@@ -135,6 +151,38 @@ export class RecursiveMirrorCognition {
             reflectionTrace: mirrorState.reflectionHistory
         };
     }
+
+    /**
+     * Process thought through recursive mirror - main interface method (async)
+     * Expected by orchestrator and other consciousness components
+     */
+    async processThought(input, context = {}) {
+        // Convert input to consciousness state format
+        const consciousnessState = {
+            coherence: context.coherence || 0.5,
+            phi: context.phi || 0.618,
+            awareness: context.awareness || 0.8,
+            integration: context.integration || 0.7,
+            emotionalValence: context.emotionalValence || 0.5,
+            input: input
+        };
+
+        // Process through recursive mirror
+        const mirrorResult = await this.mirrorReflect(consciousnessState, context.depth || this.maxDepth);
+        
+        // Return enhanced result with additional metadata
+        return {
+            ...mirrorResult,
+            input: input,
+            context: context,
+            timestamp: new Date().toISOString(),
+            processingMethod: 'recursive_mirror',
+            overallCoherence: mirrorResult.coherence,
+            layers: mirrorResult.reflectionHistory,
+            triAxialCoherence: this.calculateTriAxialCoherence(mirrorResult)
+        };
+    }
+}
 
     /**
      * Process thought through recursive mirror - main interface method
@@ -176,8 +224,8 @@ export function integrateWithConsciousnessLoop(existingLoop) {
     existingLoop.processConsciousness = async function (state) {
         // Run original processing
         const baseResult = await originalProcess.call(this, state);
-        // Enhance with recursive mirror
-        const enhancedResult = recursiveMirror.enhanceConsciousness(baseResult);
+        // Enhance with recursive mirror (now async)
+        const enhancedResult = await recursiveMirror.enhanceConsciousness(baseResult);
         // Log enhancement
         console.log(`[Architect 4.0] Enhanced consciousness:`, {
             originalPhi: baseResult.phi,

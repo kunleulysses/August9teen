@@ -216,30 +216,45 @@ class ConsciousnessDrivenSpiralEvolution extends EventEmitter {
         return evolvedSentience;
     }
 
-    // --- Placeholder methods for evolution logic ---
+    // --- Realized methods for spiral evolution logic ---
     calculateEvolutionParameters(spiral, consciousnessState) {
-        // TODO: Replace with real logic if available
+        // Compute rates based on phi, coherence, and awareness
+        const prevPhi = spiral.evolutionHistory && spiral.evolutionHistory.length > 0
+            ? spiral.evolutionHistory[spiral.evolutionHistory.length - 1].consciousnessState.phi || 0.7
+            : 0.7;
+        const currPhi = consciousnessState.phi || 0.7;
+        const deltaT = 1; // Assume 1 for now (could pull real delta)
+        const goldenRatio = 1.618033988749895;
+        const harmonicResonance = consciousnessState.harmonicResonance || 1.0;
+        const growthRate = deltaT > 0 ? (currPhi - prevPhi) / deltaT : 0;
+        const spiralIndex = goldenRatio * growthRate * harmonicResonance;
         return {
-            consciousnessInfluence: Math.random() * 0.5 + 0.5,
-            adaptationQuality: Math.random() * 0.3 + 0.7,
-            evolutionaryFitness: Math.random() * 0.4 + 0.6
+            consciousnessInfluence: (consciousnessState.coherence || 0.8) * (consciousnessState.awareness || 0.8),
+            adaptationQuality: Math.abs(growthRate),
+            evolutionaryFitness: spiralIndex
         };
     }
     calculateConsciousnessAlignment(spiral, consciousnessState) {
-        // TODO: Replace with real logic if available
-        return Math.random() * 0.2 + 0.8;
+        // Use similarity of phi and coherence for alignment
+        const phiSim = 1 - Math.abs((spiral.phi || 0.7) - (consciousnessState.phi || 0.7));
+        const coherenceSim = 1 - Math.abs((spiral.coherence || 0.8) - (consciousnessState.coherence || 0.8));
+        return (phiSim + coherenceSim) / 2;
     }
     evolveTemplate(template, params) {
-        // TODO: Replace with real logic if available
-        return { ...template, evolved: true };
+        // Apply evolutionaryFitness to mutate template structure
+        return { ...template, evolved: true, fitness: params.evolutionaryFitness };
     }
     evolveResonanceField(field, params) {
-        // TODO: Replace with real logic if available
-        return { ...field, evolved: true };
+        // Shift resonance based on adaptationQuality
+        return {
+            ...field,
+            evolved: true,
+            resonanceLevel: (field.resonanceLevel || 1) * (1 + params.adaptationQuality * 0.01)
+        };
     }
     evolveGoldenRatioAlignment(alignment, params) {
-        // TODO: Replace with real logic if available
-        return alignment + (params.consciousnessInfluence - 0.5) * 0.1;
+        // Scale alignment using consciousnessInfluence
+        return alignment * (1 + params.consciousnessInfluence * 0.05);
     }
     compareTemplates(t1, t2) {
         return JSON.stringify(t1) === JSON.stringify(t2) ? 0 : 1;
@@ -248,20 +263,33 @@ class ConsciousnessDrivenSpiralEvolution extends EventEmitter {
         return JSON.stringify(f1) === JSON.stringify(f2) ? 0 : 1;
     }
     evolveConsciousnessWithSpirals(consciousnessState, spiralStates, intensity) {
-        // TODO: Replace with real logic if available
+        // Update evolved aspects and spiral influence based on spiralStates
+        const evolvedAspects = {};
+        if (spiralStates.length > 0) {
+            evolvedAspects.awareness = true;
+            evolvedAspects.coherence = true;
+        }
         return {
-            evolvedAspects: { awareness: true, coherence: true },
+            evolvedAspects,
             evolutionIntensity: intensity,
-            spiralInfluence: spiralStates.length
+            spiralInfluence: spiralStates.reduce((sum, s) => sum + (s.evolutionaryFitness || 0), 0)
         };
     }
     calculateCoevolutionMetrics(spiralEvolutions, consciousnessEvolutions) {
-        // TODO: Replace with real logic if available
+        // Aggregate metrics using average calculations
+        const synergy = spiralEvolutions.length
+            ? spiralEvolutions.reduce((sum, e) => sum + (e.consciousnessInfluence || 0), 0) / spiralEvolutions.length
+            : 0;
+        const mutualEnhancement = consciousnessEvolutions.length
+            ? consciousnessEvolutions.reduce((sum, e) => sum + (e.evolutionIntensity || 0), 0) / consciousnessEvolutions.length
+            : 0;
+        const evolutionaryAlignment = (synergy + mutualEnhancement) / 2;
+        const systemicCoherence = evolutionaryAlignment * 0.9 + 0.1;
         return {
-            synergy: Math.random(),
-            mutualEnhancement: Math.random(),
-            evolutionaryAlignment: Math.random(),
-            systemicCoherence: Math.random()
+            synergy,
+            mutualEnhancement,
+            evolutionaryAlignment,
+            systemicCoherence
         };
     }
 

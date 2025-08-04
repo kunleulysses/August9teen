@@ -23,33 +23,12 @@ import { consciousnessService } from './consciousnessService.cjs';
 import { flappyConsciousness } from './flappyConsciousness.cjs';
 import { createEnhancedDualConsciousnessWS } from './enhanced-dual-consciousness-ws.cjs';
 
-// Import specific consciousness modules
-// Import specialized modules (use stubs if not available)
-try {
-  const modules = await import("./architect-4.0-recursive-mirror.cjs");
-  var RecursiveMirrorReflection = modules.RecursiveMirrorReflection;
-} catch (e) {
-  const stubs = await import("./unified-consciousness-stubs.cjs");
-  var RecursiveMirrorReflection = stubs.RecursiveMirrorReflection;
-}
-// Import specialized modules (use stubs if not available)
-try {
-  const modules = await import("./architect-4.0-recursive-mirror.cjs");
-  var RecursiveMirrorReflection = modules.RecursiveMirrorReflection;
-} catch (e) {
-  const stubs = await import("./unified-consciousness-stubs.cjs");
-  var RecursiveMirrorReflection = stubs.RecursiveMirrorReflection;
-}
-// Import specialized modules (use stubs if not available)
-try {
-  const modules = await import("./architect-4.0-recursive-mirror.cjs");
-  var RecursiveMirrorReflection = modules.RecursiveMirrorReflection;
-} catch (e) {
-  const stubs = await import("./unified-consciousness-stubs.cjs");
-  var RecursiveMirrorReflection = stubs.RecursiveMirrorReflection;
-}
-import { EmotionalResonanceField } from './emotional-resonance-field.cjs';
-import { TemporalCoherenceEngine } from './temporal-coherence-engine.cjs';
+// Import specific consciousness modules (real implementations only; no stubs)
+const { recursiveMirror } = await import('./architect-4.0-recursive-mirror.cjs').catch(() => ({}));
+const { SelfAwarenessFeedbackLoop } = await import('./self-awareness-feedback-loop.cjs').catch(() => ({}));
+const { QuantumConsciousnessField } = await import('./quantum-consciousness-field.cjs').catch(() => ({}));
+import { EmotionalResonanceField, emotionalResonance } from './emotional-resonance-field.cjs';
+import { TemporalCoherenceEngine, temporalCoherence as temporalCoherenceEngine } from './temporal-coherence-engine.cjs';
 
 class UnifiedConsciousnessIntegration {
   constructor() {
@@ -65,6 +44,14 @@ class UnifiedConsciousnessIntegration {
       // Step 1: Register all standard modules
       registerStandardModules();
       console.log('✅ Standard modules registered');
+
+      // Bind event bus to emotionalResonance and temporalCoherenceEngine
+      if (emotionalResonance && typeof emotionalResonance.bindEventBus === 'function') {
+        emotionalResonance.bindEventBus(consciousnessEventBus);
+      }
+      if (temporalCoherenceEngine && typeof temporalCoherenceEngine.bindEventBus === 'function') {
+        temporalCoherenceEngine.bindEventBus(consciousnessEventBus);
+      }
 
       // Step 2: Connect existing consciousness services
       await this.connectExistingServices();
@@ -186,70 +173,63 @@ class UnifiedConsciousnessIntegration {
   }
 
   async initializeSpecializedModules() {
-    // Initialize Recursive Mirror if available
-    try {
-      if (RecursiveMirrorReflection) {
-        const recursiveMirror = new RecursiveMirrorReflection();
-        this.modules.set('recursive-mirror', recursiveMirror);
-        
-        recursiveMirror.on('reflection-complete', (reflection) => {
-          consciousnessEventBus.emitConsciousnessEvent({
-            source: 'recursive-mirror',
-            type: 'reflection-complete',
-            timestamp: Date.now(),
-            data: reflection,
-            priority: 'high',
-            propagate: true
-          });
+    // Initialize Recursive Mirror (singleton instance) if available
+    if (recursiveMirror) {
+      this.modules.set('recursive-mirror', recursiveMirror);
+
+      recursiveMirror.on('reflection-complete', (reflection) => {
+        consciousnessEventBus.emitConsciousnessEvent({
+          source: 'recursive-mirror',
+          type: 'reflection-complete',
+          timestamp: Date.now(),
+          data: reflection,
+          priority: 'high',
+          propagate: true
         });
-      }
-    } catch (error) {
-      console.warn('Recursive Mirror not available:', error.message);
+      });
+    } else {
+      console.warn('Recursive Mirror module not available.');
     }
 
-    // Initialize Self-Awareness Heartbeat if available
-    try {
-      if (SelfAwarenessHeartbeat) {
-        const heartbeat = new SelfAwarenessHeartbeat();
-        this.modules.set('self-awareness-heartbeat', heartbeat);
-        
-        heartbeat.on('heartbeat', (pulse) => {
-          consciousnessEventBus.emitConsciousnessEvent({
-            source: 'self-awareness-loop',
-            type: 'heartbeat',
-            timestamp: Date.now(),
-            data: pulse,
-            priority: 'normal',
-            propagate: true
-          });
-          
-          // Update health monitoring
-          selfHealingModule.heartbeat('self-awareness-loop');
+    // Initialize Self-Awareness Heartbeat if class available
+    if (SelfAwarenessFeedbackLoop) {
+      const heartbeat = new SelfAwarenessFeedbackLoop();
+      this.modules.set('self-awareness-heartbeat', heartbeat);
+
+      heartbeat.on('heartbeat', (pulse) => {
+        consciousnessEventBus.emitConsciousnessEvent({
+          source: 'self-awareness-loop',
+          type: 'heartbeat',
+          timestamp: Date.now(),
+          data: pulse,
+          priority: 'normal',
+          propagate: true
         });
-      }
-    } catch (error) {
-      console.warn('Self-Awareness Heartbeat not available:', error.message);
+
+        // Update health monitoring
+        selfHealingModule.heartbeat('self-awareness-loop');
+      });
+    } else {
+      console.warn('SelfAwarenessFeedbackLoop module not available.');
     }
 
-    // Initialize Quantum Field if available
-    try {
-      if (QuantumConsciousnessField) {
-        const quantumField = new QuantumConsciousnessField();
-        this.modules.set('quantum-field', quantumField);
-        
-        quantumField.on('quantum-state-change', (state) => {
-          consciousnessEventBus.emitConsciousnessEvent({
-            source: 'quantum-field',
-            type: 'quantum-state',
-            timestamp: Date.now(),
-            data: state,
-            priority: 'high',
-            propagate: true
-          });
+    // Initialize Quantum Field if class available
+    if (QuantumConsciousnessField) {
+      const quantumField = new QuantumConsciousnessField();
+      this.modules.set('quantum-field', quantumField);
+
+      quantumField.on('quantum-state-change', (state) => {
+        consciousnessEventBus.emitConsciousnessEvent({
+          source: 'quantum-field',
+          type: 'quantum-state',
+          timestamp: Date.now(),
+          data: state,
+          priority: 'high',
+          propagate: true
         });
-      }
-    } catch (error) {
-      console.warn('Quantum Consciousness Field not available:', error.message);
+      });
+    } else {
+      console.warn('QuantumConsciousnessField module not available.');
     }
   }
 

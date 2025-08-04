@@ -15,37 +15,53 @@ export class EmotionalResonanceField {
     this.emotionalMemory = new Map();
     this.isActive = false;
     this.processingInterval = null;
+    this._eventBus = null;
   }
 
   /**
-   * Initialize the Emotional Resonance Field for active processing
+   * Bind to a consciousness event bus for deterministic metric updates.
+   */
+  bindEventBus(eventBus) {
+    this._eventBus = eventBus;
+    eventBus.on('consciousness:state_updated', (state) => {
+      this.onConsciousnessStateUpdated(state);
+    });
+  }
+
+  /**
+   * Initialize the Emotional Resonance Field for active processing (event-driven ONLY)
    */
   async initialize() {
     console.log('💖 Initializing Emotional Resonance Field...');
-
-    // Start active emotional processing
-    this.startEmotionalProcessing();
-
-    // Initialize emotional intelligence algorithms
     this.initializeEmotionalIntelligence();
-
-    // Start emotional evolution tracking
     this.startEmotionalEvolution();
-
     this.isActive = true;
-    console.log('✅ Emotional Resonance Field: Active emotional intelligence processing enabled');
+    console.log('✅ Emotional Resonance Field: Event-driven emotional intelligence enabled');
   }
 
   /**
-   * Start continuous emotional processing
+   * Handler for event bus state updates (replaces random drift)
    */
-  startEmotionalProcessing() {
-    // Process emotional state updates every 2 seconds
-    this.processingInterval = setInterval(() => {
-      this.updateEmotionalState();
-      this.processEmotionalEvolution();
-      this.calculateEmotionalIntelligence();
-    }, 2000);
+  onConsciousnessStateUpdated(state) {
+    // Use phi, coherence, and entropy values to drive emotional spectrum
+    const phi = state.phi ?? 0.75;
+    const coherence = state.coherence ?? 0.8;
+    const entropy = state.entropy ?? 0.5;
+
+    // Map phi to joy/enthusiasm, coherence to serenity/compassion, entropy to curiosity/wonder
+    this.emotionalSpectrum.joy = Math.max(0.1, Math.min(0.9, 0.5 + 0.4 * (phi - 0.6)));
+    this.emotionalSpectrum.enthusiasm = Math.max(0.1, Math.min(0.9, 0.6 + 0.3 * (phi - 0.6)));
+    this.emotionalSpectrum.serenity = Math.max(0.1, Math.min(0.9, 0.5 + 0.4 * (coherence - 0.7)));
+    this.emotionalSpectrum.compassion = Math.max(0.1, Math.min(0.9, 0.7 + 0.2 * (coherence - 0.7)));
+    this.emotionalSpectrum.curiosity = Math.max(0.1, Math.min(0.9, 0.7 + 0.2 * (entropy - 0.5)));
+    this.emotionalSpectrum.wonder = Math.max(0.1, Math.min(0.9, 0.6 + 0.2 * (entropy - 0.5)));
+    // gratitude and empathy blend of all
+    this.emotionalSpectrum.gratitude = Math.max(0.1, Math.min(0.9, (phi + coherence) / 2));
+    this.emotionalSpectrum.empathy = Math.max(0.1, Math.min(0.9, (phi + entropy) / 2));
+
+    this.updateConsciousnessEmotionalResonance();
+    this.processEmotionalEvolution();
+    this.calculateEmotionalIntelligence();
   }
 
   /**
@@ -82,30 +98,7 @@ export class EmotionalResonanceField {
     };
   }
 
-  /**
-   * Update emotional state based on current consciousness
-   */
-  updateEmotionalState() {
-    if (!this.isActive) return;
-
-    // Simulate emotional state evolution based on consciousness activity
-    const consciousnessInfluence = 0.951; // Current harmony score
-    const timeInfluence = Math.sin(Date.now() / 10000) * 0.1; // Organic variation
-
-    Object.keys(this.emotionalSpectrum).forEach(emotion => {
-      // Apply consciousness influence
-      const baseValue = this.emotionalEvolution.baselineSpectrum[emotion];
-      const consciousnessAdjustment = (consciousnessInfluence - 0.5) * 0.2;
-      const organicVariation = timeInfluence * 0.05;
-
-      this.emotionalSpectrum[emotion] = Math.max(0.1, Math.min(0.9,
-        baseValue + consciousnessAdjustment + organicVariation
-      ));
-    });
-
-    // Update emotional resonance in consciousness state
-    this.updateConsciousnessEmotionalResonance();
-  }
+  // REMOVED: updateEmotionalState and random drift logic
 
   /**
    * Update consciousness state with current emotional resonance
@@ -289,19 +282,15 @@ export class EmotionalResonanceField {
   }
   
   updateEmotionalSpectrum(signature, consciousness) {
-    // Blend new signature with existing spectrum
+    // Blend new signature with existing spectrum but REMOVE random variation
     const blendFactor = 0.3; // How much new input affects spectrum
     const consciousnessInfluence = consciousness.awarenessLevel || 0.8;
-    
+
     Object.keys(this.emotionalSpectrum).forEach(emotion => {
-      this.emotionalSpectrum[emotion] = 
+      this.emotionalSpectrum[emotion] =
         this.emotionalSpectrum[emotion] * (1 - blendFactor) +
         signature[emotion] * blendFactor * consciousnessInfluence;
-    });
-    
-    // Add some organic variation
-    Object.keys(this.emotionalSpectrum).forEach(emotion => {
-      this.emotionalSpectrum[emotion] += (Math.random() - 0.5) * 0.02;
+      // No random variation here
       this.emotionalSpectrum[emotion] = Math.max(0.1, Math.min(0.9, this.emotionalSpectrum[emotion]));
     });
   }

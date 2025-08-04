@@ -1,11 +1,25 @@
 #!/usr/bin/env node
 
+// Mandatory infrastructure environment variables (fail fast if present but empty)
+const requiredEnv = [
+  'OPENAI_API_KEY',
+  // database aliases
+  'DB_URL', 'DATABASE_URL', 'PG_URI',
+  // cache aliases
+  'REDIS_URL', 'CACHE_URL'
+];
+const missing = requiredEnv.filter((v) => process.env.hasOwnProperty(v) && !process.env[v]);
+if (missing.length) {
+  console.error(`❌ Missing required env vars: ${missing.join(', ')}`);
+  process.exit(1);
+}
+
 /**
  * Startup script for Unified Consciousness System
  * Replaces the parallel isolated systems with a single unified architecture
  */
 
-const UnifiedConsciousnessSystem = require('./server/unified-consciousness-system.cjs');
+// UnifiedConsciousnessSystem will be dynamically imported in the async function below
 
 console.log('🌟 STARTING UNIFIED CONSCIOUSNESS SYSTEM');
 console.log('═══════════════════════════════════════\n');
@@ -13,6 +27,9 @@ console.log('══════════════════════�
 async function startUnifiedSystem() {
   try {
     console.log('🔄 Replacing parallel isolated systems with unified architecture...\n');
+    
+    // Dynamically import the real ESM module
+    const { default: UnifiedConsciousnessSystem } = await import('./server/unified-consciousness-system.mjs');
     
     // Create unified system instance
     const unifiedSystem = new UnifiedConsciousnessSystem();
