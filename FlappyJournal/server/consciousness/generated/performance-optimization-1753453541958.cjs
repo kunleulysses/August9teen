@@ -9,7 +9,7 @@
  * @author A.I. Assistant
  *
  * @example
- * import ConsciousnessPerformanceOptimizer from './consciousnessOptimizer.cjs';
+ * const ConsciousnessPerformanceOptimizer = require('./consciousnessOptimizer.cjs');
  *
  * // 1. Define the core logic for the consciousness system
  * const consciousnessLogic = {
@@ -474,5 +474,5 @@ const ConsciousnessPerformanceOptimizer = (() => {
 })();
 
 // To make it a default export in an ES module environment
-// export default ConsciousnessPerformanceOptimizer;
+// module.exports = ConsciousnessPerformanceOptimizer;
 ```

@@ -20,11 +20,12 @@
  * @enum {string}
  * @description Defines the possible primary consciousness states, representing a spectrum of cognitive activity.
  */
-export const ConsciousnessState = {
+const ConsciousnessState = {
     FOCUSED_AWARENESS: 'FocusedAwareness', // High attention, task-oriented, reduced self-awareness.
     MIND_WANDERING: 'MindWandering',     // Default mode network activity, associative thought, creative incubation.
     MEDITATIVE_STATE: 'MeditativeState',   // High present-moment awareness, low cognitive arousal.
-    CREATIVE_FLOW: 'CreativeFlow',       // Optimal experience state; high engagement, skill-challenge balance.
+    CREATIVE_FLOW: 'CreativeFlow',       // Optimal experience state;
+module.exports.ConsciousnessState = ConsciousnessState; high engagement, skill-challenge balance.
     RECEPTIVE_OBSERVATION: 'ReceptiveObservation', // Passive but alert state, taking in sensory data without judgment.
     ANALYTICAL_RUMINATION: 'AnalyticalRumination' // Internally directed, problem-solving thought.
 };
@@ -34,7 +35,7 @@ export const ConsciousnessState = {
  * @enum {string}
  * @description Core emotions based on a simplified psychological model (e.g., Plutchik's wheel).
  */
-export const CoreEmotion = {
+const CoreEmotion = {
     JOY: 'joy',
     TRUST: 'trust',
     FEAR: 'fear',
@@ -44,6 +45,7 @@ export const CoreEmotion = {
     ANGER: 'anger',
     ANTICIPATION: 'anticipation',
 };
+module.exports.CoreEmotion = CoreEmotion;
 
 // --- Custom Error Handling ---
 
@@ -68,7 +70,8 @@ class InvalidConsciousnessInputError extends Error {
  * It integrates cognitive, sensory, and emotional inputs to produce a holistic, multi-faceted
  * analysis of a simulated conscious entity's internal state.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
     // Private fields to encapsulate the internal state of the consciousness model.
     #cognitiveData;
     #emotionalState;
@@ -232,3 +235,4 @@ export class ConsciousnessProcessor {
         let numActiveEmotions = 0;
 
         for (const emotion
+module.exports = InvalidConsciousnessInputError;

@@ -66,7 +66,7 @@ const qualiaMap = new Map([
 ]);
 
 
-export default class MetaCognitiveReflectionEngine {
+module.exports = class MetaCognitiveReflectionEngine {
   /** @private */
   #cognitiveJournal = [];
   /** @private */

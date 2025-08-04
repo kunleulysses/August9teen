@@ -31,4 +31,5 @@ class InMemorySpiralAdapter extends SpiralStorageAdapter {
   }
 }
 
-export { SpiralStorageAdapter, InMemorySpiralAdapter };
+module.exports.SpiralStorageAdapter = SpiralStorageAdapter;
+module.exports.InMemorySpiralAdapter = InMemorySpiralAdapter;

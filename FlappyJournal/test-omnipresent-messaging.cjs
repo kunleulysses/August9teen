@@ -6,7 +6,7 @@
  * Ensures NO MODULE can escape real-time communication
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 console.log('🚨 OMNIPRESENT MESSAGING VERIFICATION TEST');
 console.log('==========================================');

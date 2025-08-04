@@ -126,7 +126,8 @@ const ConsciousnessSpectrum = {
  * The core class for processing and modeling consciousness.
  * Each instance represents a single conscious entity.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
   /**
    * Initializes a new ConsciousnessProcessor instance.
    * @param {object} [config={}] - Configuration options for the processor.
@@ -374,3 +375,4 @@ export class ConsciousnessProcessor {
   }
 }
 ```
+module.exports = for;

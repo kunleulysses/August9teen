@@ -1,12 +1,12 @@
-import { consciousness } from './consciousness-integration-module.cjs';
-import { WebSocketServer } from 'ws';
-import jwt from 'jsonwebtoken';
-import jwksClient from 'jwks-rsa';
-import pool from './db.cjs';
-import OpenAI from 'openai';
-import { promises as fs } from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+const { consciousness  } = require('./consciousness-integration-module.cjs');
+const { WebSocketServer  } = require('ws');
+const jwt = require('jsonwebtoken');
+const jwksClient = require('jwks-rsa');
+const pool = require('./db.cjs');
+const OpenAI = require('openai');
+const { promises as fs  } = require('fs');
+const path = require('path');
+const { fileURLToPath  } = require('url');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -45,7 +45,9 @@ function getKey(header, callback) {
   });
 }
 
-export function setupWebSocketServer(server) {
+function setupWebSocketServer(server) {
+module.exports.setupWebSocketServer = setupWebSocketServer;
+
   const wss = new WebSocketServer({ 
     server,
     path: '/ws/chat'
@@ -666,7 +668,8 @@ async function activateConsciousnessMonitoring(ws) {
   }, 100); // 100Hz monitoring
 }
 
-export { handleResearchMessage, activateConsciousnessMonitoring };
+module.exports.handleResearchMessage = handleResearchMessage;
+module.exports.activateConsciousnessMonitoring = activateConsciousnessMonitoring;
 
 // Enhanced Research Mode Functions
 async function handleResearchMessage(ws, data) {

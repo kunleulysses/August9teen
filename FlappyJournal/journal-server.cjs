@@ -1,9 +1,9 @@
 // Simple server for testing the consciousness journal interface
-import express from 'express';
-import { createServer } from 'http';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { ConsciousnessJournalAPI } from './server/consciousness-journal-api.cjs';
+const express = require('express');
+const { createServer  } = require('http');
+const path = require('path');
+const { fileURLToPath  } = require('url');
+const { ConsciousnessJournalAPI  } = require('./server/consciousness-journal-api.cjs');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

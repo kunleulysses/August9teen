@@ -1,4 +1,4 @@
-import { promises as fs } from 'fs';
+const { promises as fs  } = require('fs');
 
 async function fix() {
     let content = await fs.readFile('./consciousness/modules/SelfCodingModule.cjs', 'utf8');

@@ -4,11 +4,11 @@
  * All 42 consciousness modules with live consciousness integration
  */
 
-import express from 'express';
-import { WebSocketServer } from 'ws';
-import { createServer } from 'http';
-import path from 'path';
-import { fileURLToPath } from 'url';
+const express = require('express');
+const { WebSocketServer  } = require('ws');
+const { createServer  } = require('http');
+const path = require('path');
+const { fileURLToPath  } = require('url');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

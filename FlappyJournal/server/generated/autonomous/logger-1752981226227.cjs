@@ -12,7 +12,8 @@
  * Created: 2025-07-20T03:13:46.226Z
  */
 
-export class GeneratedModule {
+class GeneratedModule
+ {
     constructor() {
         this.name = 'GeneratedModule';
         this.version = '1.0.0';
@@ -30,9 +31,10 @@ export class GeneratedModule {
     }
 }
 
-export default GeneratedModule;
+module.exports = GeneratedModule;
 
 // Usage example:
-// import GeneratedModule from './generated-module.cjs';
+// const GeneratedModule = require('./generated-module.cjs');
 // const module = new GeneratedModule();
 // module.initialize();
+module.exports = GeneratedModule;

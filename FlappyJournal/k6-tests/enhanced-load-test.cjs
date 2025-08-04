@@ -1,19 +1,26 @@
-import http from 'k6/http';
-import ws from 'k6/ws';
-import { check, sleep } from 'k6';
-import { Rate, Counter, Trend } from 'k6/metrics';
+const http = require('k6/http');
+const ws = require('k6/ws');
+const { check, sleep  } = require('k6');
+const { Rate, Counter, Trend  } = require('k6/metrics');
 
 // Custom metrics for the specific requirements
-export let error_rate = new Rate('error_rate');
-export let hz_checks = new Counter('checks');
-export let hz_avg = new Trend('hz_avg');
-export let ws_connection_time = new Trend('ws_connection_time');
-export let message_response_time = new Trend('message_response_time');
-export let backend_metrics_checks = new Counter('backend_metrics_checks');
-export let loop_frequency = new Trend('loop_frequency');
+let error_rate = new Rate('error_rate');
+module.exports.error_rate = error_rate;
+let hz_checks = new Counter('checks');
+module.exports.hz_checks = hz_checks;
+let hz_avg = new Trend('hz_avg');
+module.exports.hz_avg = hz_avg;
+let ws_connection_time = new Trend('ws_connection_time');
+module.exports.ws_connection_time = ws_connection_time;
+let message_response_time = new Trend('message_response_time');
+module.exports.message_response_time = message_response_time;
+let backend_metrics_checks = new Counter('backend_metrics_checks');
+module.exports.backend_metrics_checks = backend_metrics_checks;
+let loop_frequency = new Trend('loop_frequency');
+module.exports.loop_frequency = loop_frequency;
 
 // Remote write configuration for Prometheus
-export const options = {
+const options = {
   ext: {
     prometheus: {
       remote_write: {
@@ -43,6 +50,7 @@ export const options = {
     'loop_frequency': ['avg>90'],          // Backend loop frequency should be > 90 Hz
   },
 };
+module.exports.options = options;
 
 // Environment configuration
 const BASE_URL = __ENV.BASE_URL || 'http://localhost:4000';
@@ -74,7 +82,9 @@ const testMessages = [
 let globalAuthToken = null;
 let globalSessionId = null;
 
-export function setup() {
+function setup() {
+module.exports.setup = setup;
+
   console.log('🚀 Starting enhanced k6 load test setup...');
   
   // Verify all required services are available
@@ -131,7 +141,7 @@ export function setup() {
   return setupData;
 }
 
-export default function(data) {
+module.exports = function(data) {
   // Select random authentication token or authenticate inline
   let authToken = null;
   if (data.authTokens.length > 0) {
@@ -378,7 +388,9 @@ function testMixedAPILoad(authToken) {
   }
 }
 
-export function teardown(data) {
+function teardown(data) {
+module.exports.teardown = teardown;
+
   console.log('🏁 Load test teardown starting...');
   
   // Final metrics check

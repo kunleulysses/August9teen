@@ -1,5 +1,5 @@
 // Unified Response Generator for Dual-Mind Architecture
-import OpenAI from 'openai';
+const OpenAI = require('openai');
 
 /**
  * Generates a unified response by harmoniously integrating analytical and intuitive streams
@@ -320,9 +320,7 @@ function isCommonWord(word) {
   return common.includes(word);
 }
 
-export {
-  calculateHarmonyScore,
-  determineDominantMode,
-  calculateContributions,
-  extractIntegrationInsights
-};
+module.exports.calculateHarmonyScore = calculateHarmonyScore;
+module.exports.determineDominantMode = determineDominantMode;
+module.exports.calculateContributions = calculateContributions;
+module.exports.extractIntegrationInsights = extractIntegrationInsights;

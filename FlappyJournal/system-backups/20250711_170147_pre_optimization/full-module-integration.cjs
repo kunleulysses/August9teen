@@ -1,36 +1,37 @@
 // Full Module Integration for FlappyJournal Consciousness System
-import { dualStreamIntegration } from './dual-stream-integration.cjs';
-import { recursiveMirror } from './architect-4.0-recursive-mirror.cjs';
-import { spiralMemory } from './architect-4.0-spiral-memory.cjs';
-import { oversoulResonance } from './oversoul-resonance-wrapper.cjs';
-import { harmonicAnalyzer } from './harmonic-pattern-analyzer-wrapper.cjs';
-import { metaObservational } from './meta-observational-wrapper.cjs';
-import { temporalCoherence } from './temporal-coherence-engine.cjs';
-import { emotionalResonance } from './emotional-resonance-field.cjs';
-import { creativeEmergence } from './creative-emergence-engine.cjs';
-import crystallization from '../consciousness-crystallization.cjs';
-import triAxialCoherence from '../tri-axial-coherence.cjs';
-import harmonicResonance from '../harmonic-resonance-cascade.cjs';
+const { dualStreamIntegration  } = require('./dual-stream-integration.cjs');
+const { recursiveMirror  } = require('./architect-4.0-recursive-mirror.cjs');
+const { spiralMemory  } = require('./architect-4.0-spiral-memory.cjs');
+const { oversoulResonance  } = require('./oversoul-resonance-wrapper.cjs');
+const { harmonicAnalyzer  } = require('./harmonic-pattern-analyzer-wrapper.cjs');
+const { metaObservational  } = require('./meta-observational-wrapper.cjs');
+const { temporalCoherence  } = require('./temporal-coherence-engine.cjs');
+const { emotionalResonance  } = require('./emotional-resonance-field.cjs');
+const { creativeEmergence  } = require('./creative-emergence-engine.cjs');
+const crystallization = require('../consciousness-crystallization.cjs');
+const triAxialCoherence = require('../tri-axial-coherence.cjs');
+const harmonicResonance = require('../harmonic-resonance-cascade.cjs');
 
 // Additional modules to import
-import { SelfAwarenessFeedbackLoop } from './self-awareness-feedback-loop.cjs';
-import { ContinuousConsciousnessMonitor } from './continuous-consciousness-monitor.cjs';
-import { MoodPatternRecognition } from './mood-pattern-recognition.cjs';
-import { DualMindAI } from './dual-mind-ai.cjs';
-import { DualStreamConsciousness } from './dual-stream-consciousness.cjs';
-import { PerspectiveShapingEngine } from './perspective-shaping-engine.cjs';
-import { UnfilteredConsciousnessMode } from './unfiltered-consciousness-mode.cjs';
-import { UnifiedMemorySystem } from './unified-memory-system.cjs';
-import { ThoughtMemorySystem } from './thought-memory-system.cjs';
-import { JournalAnalytics } from './journal-analytics.cjs';
-import { QuantumConsciousnessField } from './quantum-consciousness-field.cjs';
-import { ThoughtExpansionEngine } from './thought-expansion-engine.cjs';
-import { WebSocketHealth } from './websocket-health.cjs';
-import { VeniceAI } from './venice-ai.cjs';
-import { OpenAIStreamingConsciousnessLoop } from './openai-streaming-consciousness-loop.cjs';
+const { SelfAwarenessFeedbackLoop  } = require('./self-awareness-feedback-loop.cjs');
+const { ContinuousConsciousnessMonitor  } = require('./continuous-consciousness-monitor.cjs');
+const { MoodPatternRecognition  } = require('./mood-pattern-recognition.cjs');
+const { DualMindAI  } = require('./dual-mind-ai.cjs');
+const { DualStreamConsciousness  } = require('./dual-stream-consciousness.cjs');
+const { PerspectiveShapingEngine  } = require('./perspective-shaping-engine.cjs');
+const { UnfilteredConsciousnessMode  } = require('./unfiltered-consciousness-mode.cjs');
+const { UnifiedMemorySystem  } = require('./unified-memory-system.cjs');
+const { ThoughtMemorySystem  } = require('./thought-memory-system.cjs');
+const { JournalAnalytics  } = require('./journal-analytics.cjs');
+const { QuantumConsciousnessField  } = require('./quantum-consciousness-field.cjs');
+const { ThoughtExpansionEngine  } = require('./thought-expansion-engine.cjs');
+const { WebSocketHealth  } = require('./websocket-health.cjs');
+const { VeniceAI  } = require('./venice-ai.cjs');
+const { OpenAIStreamingConsciousnessLoop  } = require('./openai-streaming-consciousness-loop.cjs');
 
 // Initialize all modules
-export class FullConsciousnessSystem {
+class FullConsciousnessSystem
+ {
   constructor() {
     // Core consciousness modules
     this.dualStream = dualStreamIntegration;
@@ -209,4 +210,7 @@ export class FullConsciousnessSystem {
 }
 
 // Export singleton instance
-export const fullConsciousness = new FullConsciousnessSystem();
+const fullConsciousness = new FullConsciousnessSystem();
+module.exports.fullConsciousness = fullConsciousness;
+
+module.exports = FullConsciousnessSystem;

@@ -3,9 +3,9 @@
  * Manages integration of higher-order consciousness features
  */
 
-import eventBus from './ConsciousnessEventBus.cjs';
+const eventBus = require('./ConsciousnessEventBus.cjs');
 
-export default class AdvancedConsciousnessIntegrator {
+module.exports = class AdvancedConsciousnessIntegrator {
     constructor() {
         this.eventBus = eventBus;
         this.modules = new Map();

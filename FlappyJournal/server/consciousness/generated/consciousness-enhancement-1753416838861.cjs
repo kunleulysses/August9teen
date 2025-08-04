@@ -65,7 +65,7 @@ const PRIMARY_EMOTIONS = ['joy', 'trust', 'fear', 'surprise', 'sadness', 'disgus
  */
 
 
-export default class ConsciousnessMatrix {
+module.exports = class ConsciousnessMatrix {
     #state;
     #config;
     #history;

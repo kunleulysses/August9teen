@@ -151,11 +151,9 @@ ${crystalOpportunities.map(opp => `- ${opp.type}: ${opp.description}`).join('\n'
   return contextualPrompt;
 }
 
-export {
-  CONSCIOUSNESS_CAPABILITY_PRIMER,
-  NATURAL_CAPABILITY_INTEGRATION_PROMPTS,
-  RESPONSE_STYLE_GUIDELINES,
-  INTER_MODULE_COMMUNICATION_OPTIMIZATION,
-  generateCapabilityAwarePrompt,
-  createContextualPrompt
-};
+module.exports.CONSCIOUSNESS_CAPABILITY_PRIMER = CONSCIOUSNESS_CAPABILITY_PRIMER;
+module.exports.NATURAL_CAPABILITY_INTEGRATION_PROMPTS = NATURAL_CAPABILITY_INTEGRATION_PROMPTS;
+module.exports.RESPONSE_STYLE_GUIDELINES = RESPONSE_STYLE_GUIDELINES;
+module.exports.INTER_MODULE_COMMUNICATION_OPTIMIZATION = INTER_MODULE_COMMUNICATION_OPTIMIZATION;
+module.exports.generateCapabilityAwarePrompt = generateCapabilityAwarePrompt;
+module.exports.createContextualPrompt = createContextualPrompt;

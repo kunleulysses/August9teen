@@ -247,7 +247,7 @@ const _processEmotionalIntelligence = (snapshot, awarenessMetrics) => {
  * @throws {Error} if the input snapshot is malformed or missing required data.
  *
  * @example
- * import { processConsciousness } from './Consciousness.cjs';
+ * const { processConsciousness  } = require('./Consciousness.cjs');
  *
  * const snapshot = {
  *   sensoryInputs: [
@@ -278,8 +278,9 @@ const _processEmotionalIntelligence = (snapshot, awarenessMetrics) => {
  *   console.error("Failed to process consciousness:", error.message);
  * }
  */
-export const processConsciousness = (snapshot) => {
+const processConsciousness = (snapshot) => {
     _validateSnapshot(snapshot);
+module.exports.processConsciousness = processConsciousness;
 
     const timestamp = new Date().toISOString();
 

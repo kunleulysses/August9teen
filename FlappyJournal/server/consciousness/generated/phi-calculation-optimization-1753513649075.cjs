@@ -389,11 +389,14 @@ async function processRealTime(params) {
 // Module Exports
 //-----------------------------------------------------------------------------
 
-export {
-  optimizePhi,
-  processRealTime,
-  normalizeMatrix, // Exporting normalizeMatrix for external use (e.g., pre-processing)
-  DEFAULT_PHI_CALCULATION_THRESHOLD, // Exporting constants for external configuration
-  MAX_ITERATIONS,
-  CONVERGENCE_THRESHOLD
-};
+module.exports.optimizePhi = optimizePhi;
+module.exports.processRealTime = processRealTime;
+module.exports.normalizeMatrix = normalizeMatrix;
+module.exports.// Exporting normalizeMatrix for external use (e.g. = // Exporting normalizeMatrix for external use (e.g.;
+module.exports.pre-processing)
+  DEFAULT_PHI_CALCULATION_THRESHOLD = pre-processing)
+  DEFAULT_PHI_CALCULATION_THRESHOLD;
+module.exports.// Exporting constants for external configuration
+  MAX_ITERATIONS = // Exporting constants for external configuration
+  MAX_ITERATIONS;
+module.exports.CONVERGENCE_THRESHOLD = CONVERGENCE_THRESHOLD;

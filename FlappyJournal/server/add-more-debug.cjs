@@ -1,4 +1,4 @@
-import fs from 'fs';
+const fs = require('fs');
 
 const filePath = './enhanced-dual-consciousness-ws.cjs';
 let content = fs.readFileSync(filePath, 'utf8');

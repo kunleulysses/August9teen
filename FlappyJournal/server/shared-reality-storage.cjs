@@ -4,9 +4,9 @@
  * Deep integration with the FlappyJournal consciousness system.
  */
 
-import { EventEmitter } from 'events';
-import { promises as fs } from 'fs';
-import { dirname } from 'path';
+const { EventEmitter  } = require('events');
+const { promises as fs  } = require('fs');
+const { dirname  } = require('path');
 
 class SharedRealityStorage extends EventEmitter {
     constructor(options = {}) {
@@ -196,4 +196,4 @@ class SharedRealityStorage extends EventEmitter {
     }
 }
 
-export { SharedRealityStorage };
+module.exports.SharedRealityStorage = SharedRealityStorage;

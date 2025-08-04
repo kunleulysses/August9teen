@@ -339,7 +339,8 @@ class PriorityQueue {
  * ===================================================================================
  * The main class that ties all optimization strategies together.
  */
-export class ConsciousnessPerformanceOptimizer {
+class ConsciousnessPerformanceOptimizer
+ {
     /**
      * @param {object} config
      * @param {number} config.eventBatchSize - Max number of events to process per cycle.
@@ -499,3 +500,4 @@ export class ConsciousnessPerformanceOptimizer {
     }
 }
 ```
+module.exports = to;

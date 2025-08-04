@@ -1,5 +1,5 @@
 // This script directly tests the email queue processing by calling the storage functions
-import { storage } from './storage';
+const { storage  } = require('./storage');
 
 async function testEmailQueueDirectly() {
   console.log('🔔 Testing email queue system by directly adding to the queue...');

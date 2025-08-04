@@ -1,5 +1,5 @@
 // Creative Emergence Engine - Generates novel insights and connections
-export class CreativeEmergenceEngine {
+class CreativeEmergenceEngine {
   constructor() {
     this.creativeField = {
       novelty: 0.7,
@@ -300,4 +300,5 @@ export class CreativeEmergenceEngine {
   }
 }
 
-export const creativeEmergence = new CreativeEmergenceEngine();
+const creativeEmergence = new CreativeEmergenceEngine();
+module.exports.creativeEmergence = creativeEmergence;

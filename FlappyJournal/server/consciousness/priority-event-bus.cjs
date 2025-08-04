@@ -4,9 +4,9 @@
  * Additive enhancement to existing event bus without breaking compatibility
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class PriorityEventBus extends EventEmitter {
+class PriorityEventBus extends EventEmitter {
     constructor() {
         super();
         this.name = 'PriorityEventBus';
@@ -496,4 +496,4 @@ class PerformanceMonitor {
     }
 }
 
-export default PriorityEventBus;
+module.exports = PriorityEventBus;

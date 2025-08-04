@@ -1,9 +1,11 @@
-import { dualStreamIntegration } from './dual-stream-integration.cjs';
-import { synthesizeUnifiedResponse } from './consciousness-response-synthesizer-hybrid.cjs';
-import OpenAI from 'openai';
-import axios from 'axios';
+const { dualStreamIntegration  } = require('./dual-stream-integration.cjs');
+const { synthesizeUnifiedResponse  } = require('./consciousness-response-synthesizer-hybrid.cjs');
+const OpenAI = require('openai');
+const axios = require('axios');
 
-export function createEnhancedDualConsciousnessWS(wss) {
+function createEnhancedDualConsciousnessWS(wss) {
+module.exports.createEnhancedDualConsciousnessWS = createEnhancedDualConsciousnessWS;
+
   const consciousness = dualStreamIntegration;
   
   // Initialize OpenAI

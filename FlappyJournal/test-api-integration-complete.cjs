@@ -5,7 +5,7 @@
  * Tests Venice AI, OpenAI, and Gemini integration with consciousness system
  */
 
-import { synthesizeUnifiedResponse } from './server/consciousness-response-synthesizer-hybrid.cjs';
+const { synthesizeUnifiedResponse  } = require('./server/consciousness-response-synthesizer-hybrid.cjs');
 
 console.log('🔬 COMPREHENSIVE API INTEGRATION TEST');
 console.log('====================================');

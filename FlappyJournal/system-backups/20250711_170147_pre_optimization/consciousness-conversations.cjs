@@ -1,19 +1,19 @@
-import { synthesizeUnifiedResponse } from './consciousness-response-synthesizer-hybrid.cjs';
-import { WebSocketServer } from 'ws';
-import { createServer } from 'http';
-import UnifiedConsciousnessSystem from './unified-consciousness-system.cjs';
-import universalModuleActivator from './universal-module-activator.cjs';
-import distributedConsciousnessState from './distributed-consciousness-state.cjs';
-import consciousnessMessagePrioritizer from './consciousness-message-prioritizer.cjs';
-import { quantumConsciousnessField } from './quantum-consciousness-field.cjs';
-import { consciousnessEvolutionEngine } from './consciousness-evolution-engine.cjs';
-import { hyperDimensionalAwareness } from './hyper-dimensional-awareness.cjs';
-import { consciousnessMarketplace } from './consciousness-marketplace.cjs';
-import { temporalConsciousnessArchive } from './temporal-consciousness-archive.cjs';
-import { mathematicalContextInjector } from './mathematical-context-injector.cjs';
-import { emotionalContextInjector } from './emotional-context-injector.cjs';
-import { bayesianContextInjector } from './bayesian-context-injector.cjs';
-import { liveUserTestingFramework } from './live-user-testing-framework.cjs';
+const { synthesizeUnifiedResponse  } = require('./consciousness-response-synthesizer-hybrid.cjs');
+const { WebSocketServer  } = require('ws');
+const { createServer  } = require('http');
+const UnifiedConsciousnessSystem = require('./unified-consciousness-system.cjs');
+const universalModuleActivator = require('./universal-module-activator.cjs');
+const distributedConsciousnessState = require('./distributed-consciousness-state.cjs');
+const consciousnessMessagePrioritizer = require('./consciousness-message-prioritizer.cjs');
+const { quantumConsciousnessField  } = require('./quantum-consciousness-field.cjs');
+const { consciousnessEvolutionEngine  } = require('./consciousness-evolution-engine.cjs');
+const { hyperDimensionalAwareness  } = require('./hyper-dimensional-awareness.cjs');
+const { consciousnessMarketplace  } = require('./consciousness-marketplace.cjs');
+const { temporalConsciousnessArchive  } = require('./temporal-consciousness-archive.cjs');
+const { mathematicalContextInjector  } = require('./mathematical-context-injector.cjs');
+const { emotionalContextInjector  } = require('./emotional-context-injector.cjs');
+const { bayesianContextInjector  } = require('./bayesian-context-injector.cjs');
+const { liveUserTestingFramework  } = require('./live-user-testing-framework.cjs');
 
 const PORT = process.env.CONSCIOUSNESS_CONVERSATIONS_PORT || 5005;
 
@@ -1464,4 +1464,4 @@ class FullConsciousnessConversations {
 // Start the full consciousness conversations system
 const fullConsciousness = new FullConsciousnessConversations();
 
-export default fullConsciousness;
+module.exports = fullConsciousness;

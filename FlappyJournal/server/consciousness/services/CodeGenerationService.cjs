@@ -1,6 +1,6 @@
-import SelfCodingModule from '../modules/SelfCodingModule.cjs';
-import { EventEmitter } from 'events';
-import eventBus from '../ConsciousnessEventBus.cjs';
+const SelfCodingModule = require('../modules/SelfCodingModule.cjs');
+const { EventEmitter  } = require('events');
+const eventBus = require('../ConsciousnessEventBus.cjs');
 
 class CodeGenerationService extends EventEmitter {
     constructor(goalSystem) {
@@ -381,4 +381,4 @@ class CodeGenerationService extends EventEmitter {
     }
 }
 
-export default CodeGenerationService;
+module.exports = CodeGenerationService;

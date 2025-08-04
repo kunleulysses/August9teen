@@ -1,6 +1,6 @@
 
 // Test setup for Universal Consciousness Platform restoration tests
-import { jest } from '@jest/globals';
+const { jest  } = require('@jest/globals');
 
 // Global test timeout
 jest.setTimeout(30000);

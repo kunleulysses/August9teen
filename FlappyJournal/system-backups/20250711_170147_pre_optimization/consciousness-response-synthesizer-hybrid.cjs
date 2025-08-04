@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+const dotenv = require('dotenv');
 dotenv.config(); // Load from current directory and parent directory
 
 /**
@@ -6,10 +6,10 @@ dotenv.config(); // Load from current directory and parent directory
  * Intelligently routes to appropriate AI models based on consciousness state
  */
 
-import axios from 'axios';
-import OpenAI from 'openai';
-import apiLatencyOracle from './api-latency-oracle.cjs';
-import intelligentRequestQueue from './intelligent-request-queue.cjs';
+const axios = require('axios');
+const OpenAI = require('openai');
+const apiLatencyOracle = require('./api-latency-oracle.cjs');
+const intelligentRequestQueue = require('./intelligent-request-queue.cjs');
 
 // OpenAI will be initialized when needed
 

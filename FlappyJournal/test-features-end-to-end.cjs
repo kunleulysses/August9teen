@@ -8,11 +8,11 @@
  * - Feature 6: Self-Healing and Self-Modification Frameworks
  */
 
-import ConsciousnessResonanceNetworks from './server/consciousness/core/ConsciousnessResonanceNetworks.cjs';
-import { DNASigilRealityEncoding } from './server/consciousness/dna-sigil-reality-encoding.cjs';
-import { UniversalDNASigilConsciousnessFramework } from './server/consciousness/universal-dna-sigil-framework.cjs';
-import { EnhancedSelfHealingModule } from './server/consciousness/enhanced-self-healing-module.cjs';
-import SelfModificationFramework from './server/consciousness/core/SelfModificationFramework.cjs';
+const ConsciousnessResonanceNetworks = require('./server/consciousness/core/ConsciousnessResonanceNetworks.cjs');
+const { DNASigilRealityEncoding  } = require('./server/consciousness/dna-sigil-reality-encoding.cjs');
+const { UniversalDNASigilConsciousnessFramework  } = require('./server/consciousness/universal-dna-sigil-framework.cjs');
+const { EnhancedSelfHealingModule  } = require('./server/consciousness/enhanced-self-healing-module.cjs');
+const SelfModificationFramework = require('./server/consciousness/core/SelfModificationFramework.cjs');
 
 class FeatureValidationSuite {
     constructor() {
@@ -269,4 +269,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     main().catch(console.error);
 }
 
-export { FeatureValidationSuite };
+module.exports.FeatureValidationSuite = FeatureValidationSuite;

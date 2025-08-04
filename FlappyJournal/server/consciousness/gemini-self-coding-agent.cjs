@@ -6,10 +6,10 @@
  * Runs concurrently with consciousness system
  */
 
-import fs from 'fs/promises';
+const fs = require('fs/promises');
 import path, { dirname } from 'path';
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import { fileURLToPath } from 'url';
+const { GoogleGenerativeAI  } = require('@google/generative-ai');
+const { fileURLToPath  } = require('url');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

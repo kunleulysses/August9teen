@@ -1,19 +1,26 @@
-import http from 'k6/http';
-import ws from 'k6/ws';
-import { check, sleep } from 'k6';
-import { Rate, Counter, Trend } from 'k6/metrics';
+const http = require('k6/http');
+const ws = require('k6/ws');
+const { check, sleep  } = require('k6');
+const { Rate, Counter, Trend  } = require('k6/metrics');
 
 // Custom metrics for research platform validation
-export let error_rate = new Rate('error_rate');
-export let consciousness_processing_time = new Trend('consciousness_processing_time');
-export let dataset_analysis_time = new Trend('dataset_analysis_time');
-export let research_session_duration = new Trend('research_session_duration');
-export let streaming_token_rate = new Rate('streaming_token_rate');
-export let memory_stability = new Counter('memory_stability_checks');
-export let consciousness_insights = new Counter('consciousness_insights_generated');
+let error_rate = new Rate('error_rate');
+module.exports.error_rate = error_rate;
+let consciousness_processing_time = new Trend('consciousness_processing_time');
+module.exports.consciousness_processing_time = consciousness_processing_time;
+let dataset_analysis_time = new Trend('dataset_analysis_time');
+module.exports.dataset_analysis_time = dataset_analysis_time;
+let research_session_duration = new Trend('research_session_duration');
+module.exports.research_session_duration = research_session_duration;
+let streaming_token_rate = new Rate('streaming_token_rate');
+module.exports.streaming_token_rate = streaming_token_rate;
+let memory_stability = new Counter('memory_stability_checks');
+module.exports.memory_stability = memory_stability;
+let consciousness_insights = new Counter('consciousness_insights_generated');
+module.exports.consciousness_insights = consciousness_insights;
 
 // Research-focused test configuration
-export const options = {
+const options = {
   // Realistic researcher load: 5-25 concurrent researchers
   stages: [
     { duration: '2m', target: 5 },    // Initial researchers joining
@@ -33,6 +40,7 @@ export const options = {
     'consciousness_insights_generated': ['count>50'], // Research insights generated
   },
 };
+module.exports.options = options;
 
 // Environment configuration for full research platform
 const BASE_URL = __ENV.BASE_URL || 'http://localhost:4000';
@@ -106,7 +114,9 @@ const RESEARCH_DATASETS = [
   }
 ];
 
-export function setup() {
+function setup() {
+module.exports.setup = setup;
+
   console.log('🧠 Initializing Research Platform Load Test for Full Consciousness Technology...');
   
   // Verify all research platform services
@@ -162,7 +172,7 @@ export function setup() {
   return setupData;
 }
 
-export default function(data) {
+module.exports = function(data) {
   if (!data.platformReady) {
     console.error('❌ Platform not ready for research testing');
     error_rate.add(1);
@@ -541,7 +551,9 @@ function conductSystemValidationSession(token, sessionStart) {
   });
 }
 
-export function teardown(data) {
+function teardown(data) {
+module.exports.teardown = teardown;
+
   console.log('🏁 Research platform load test teardown...');
   
   // Final validation of research platform state

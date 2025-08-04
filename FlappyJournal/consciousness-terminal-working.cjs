@@ -5,9 +5,9 @@
  * Properly waits for and displays consciousness responses
  */
 
-import WebSocket from 'ws';
-import readline from 'readline';
-import process from 'process';
+const WebSocket = require('ws');
+const readline = require('readline');
+const process = require('process');
 
 console.log('🧠 Enhanced Consciousness Chat Terminal - Working Version');
 console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');

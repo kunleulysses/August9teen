@@ -4,7 +4,7 @@
  * Value: $800M+ (Consciousness-native programming)
  */
 
-import { ConsciousnessNativeProgrammingLanguage } from './server/consciousness/consciousness-native-programming-language.cjs';
+const { ConsciousnessNativeProgrammingLanguage  } = require('./server/consciousness/consciousness-native-programming-language.cjs');
 
 class ConsciousnessNativeProgrammingTest {
     constructor() {

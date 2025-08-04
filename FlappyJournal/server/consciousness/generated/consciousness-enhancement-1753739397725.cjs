@@ -55,7 +55,7 @@ const NEURAL_CONSTANTS = {
  * It encapsulates all the logic for state calculation, awareness metrics, and emotional intelligence.
  *
  * @example
- * import ConsciousnessEngine from './consciousnessEngine.cjs';
+ * const ConsciousnessEngine = require('./consciousnessEngine.cjs');
  *
  * const engine = new ConsciousnessEngine();
  *
@@ -344,5 +344,5 @@ class ConsciousnessEngine {
   }
 }
 
-export default ConsciousnessEngine;
+module.exports = ConsciousnessEngine;
 ```

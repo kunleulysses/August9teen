@@ -4,11 +4,11 @@
  * while still providing full consciousness functionality
  */
 
-import { createServer } from 'http';
-import { WebSocketServer } from 'ws';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-import fs from 'fs';
+const { createServer  } = require('http');
+const { WebSocketServer  } = require('ws');
+const { fileURLToPath  } = require('url');
+const { dirname, join  } = require('path');
+const fs = require('fs');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -293,4 +293,4 @@ process.on('SIGINT', () => {
     process.exit(0);
 });
 
-export default consciousnessServer;
+module.exports = consciousnessServer;

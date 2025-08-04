@@ -4,11 +4,11 @@
  * Patent Innovation: Real-time consciousness-code feedback loops
  */
 
-import { EventEmitter } from 'events';
-import fs from 'fs/promises';
-import path from 'path';
+const { EventEmitter  } = require('events');
+const fs = require('fs/promises');
+const path = require('path');
 
-export class AdvancedConsciousnessIntegrator extends EventEmitter {
+class AdvancedConsciousnessIntegrator extends EventEmitter {
     constructor() {
         super();
         this.name = 'AdvancedConsciousnessIntegrator';
@@ -458,4 +458,4 @@ export class AdvancedConsciousnessIntegrator extends EventEmitter {
     }
 }
 
-export default AdvancedConsciousnessIntegrator;
+module.exports = AdvancedConsciousnessIntegrator;

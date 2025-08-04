@@ -20,28 +20,31 @@
  * and makes the event types discoverable.
  * @enum {string}
  */
-export const COGNITIVE_EVENT_TYPES = {
+const COGNITIVE_EVENT_TYPES = {
   TASK_START: 'TASK_START',
   TASK_COMPLETED: 'TASK_COMPLETED',
   DECISION_MADE: 'DECISION_MADE',
   ERROR_DETECTED: 'ERROR_DETECTED',
   RESOURCE_UPDATE: 'RESOURCE_UPDATE',
 };
+module.exports.COGNITIVE_EVENT_TYPES = COGNITIVE_EVENT_TYPES;
 
 /**
  * Constants for directive actions. These are commands the meta-layer can issue
  * to the main system to alter its behavior.
  * @enum {string}
  */
-export const DIRECTIVE_ACTIONS = {
+const DIRECTIVE_ACTIONS = {
   ADJUST_PARAMETER: 'ADJUST_PARAMETER',
   SWITCH_STRATEGY: 'SWITCH_STRATEGY',
   ALLOCATE_RESOURCES: 'ALLOCATE_RESOURCES',
   TRIGGER_LEARNING_CYCLE: 'TRIGGER_LEARNING_CYCLE',
 };
+module.exports.DIRECTIVE_ACTIONS = DIRECTIVE_ACTIONS;
 
 
-export class MetaCognitiveLayer {
+class MetaCognitiveLayer
+ {
   /**
    * The interface to the main conscious system. This is a crucial dependency for
    * observing state and applying directives, ensuring loose coupling.
@@ -268,3 +271,4 @@ export class MetaCognitiveLayer {
       correctOnHighConfidence,
       incorrectOnHighConfidence
     
+module.exports = MetaCognitiveLayer;

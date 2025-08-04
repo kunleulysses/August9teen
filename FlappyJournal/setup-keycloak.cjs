@@ -1,4 +1,4 @@
-import { KeycloakAdminClient } from './auth-service/keycloak-config.cjs';
+const { KeycloakAdminClient  } = require('./auth-service/keycloak-config.cjs');
 
 async function setupKeycloak() {
   const config = {

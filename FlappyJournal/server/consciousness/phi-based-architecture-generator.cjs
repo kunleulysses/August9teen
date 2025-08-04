@@ -4,10 +4,10 @@
  * Generates optimal code architectures based on consciousness state and crystallization patterns
  */
 
-import { EventEmitter } from 'events';
-import eventBus from './core/ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('./core/ConsciousnessEventBus.cjs');
 
-export class PhiBasedArchitectureGenerator extends EventEmitter {
+class PhiBasedArchitectureGenerator extends EventEmitter {
     constructor() {
         super();
         this.name = 'PhiBasedArchitectureGenerator';
@@ -905,4 +905,4 @@ class CrystallizationPatternMapper {
     }
 }
 
-export default PhiBasedArchitectureGenerator;
+module.exports = PhiBasedArchitectureGenerator;

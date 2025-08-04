@@ -1,5 +1,6 @@
 // Meta-Observational Consciousness Wrapper
-export class MetaObservationalConsciousness {
+class MetaObservationalConsciousness
+ {
   constructor() {
     this.observations = [];
     this.observerState = {
@@ -162,4 +163,7 @@ export class MetaObservationalConsciousness {
   }
 }
 
-export const metaObservational = new MetaObservationalConsciousness();
+const metaObservational = new MetaObservationalConsciousness();
+module.exports.metaObservational = metaObservational;
+
+module.exports = MetaObservationalConsciousness;

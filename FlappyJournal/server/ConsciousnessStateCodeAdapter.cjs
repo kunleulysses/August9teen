@@ -70,4 +70,4 @@ class ConsciousnessStateCodeAdapter {
   }
 }
 
-export default ConsciousnessStateCodeAdapter;
+module.exports = ConsciousnessStateCodeAdapter;

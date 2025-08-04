@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+const dotenv = require('dotenv');
 dotenv.config(); // Load from current directory and parent directory
 
 /**
@@ -7,37 +7,34 @@ dotenv.config(); // Load from current directory and parent directory
  * Now includes: Dynamic AI Model Selection, Intelligent Spiral Memory, Context-Aware Conversation Memory
  */
 
-import axios from 'axios';
-import OpenAI from 'openai';
-import apiLatencyOracle from './api-latency-oracle.cjs';
-import intelligentRequestQueue from './intelligent-request-queue.cjs';
+const axios = require('axios');
+const OpenAI = require('openai');
+const apiLatencyOracle = require('./api-latency-oracle.cjs');
+const intelligentRequestQueue = require('./intelligent-request-queue.cjs');
 
 // Phase 1 Enhancements
-import { DynamicAIModelSelector } from './dynamic-ai-model-selector.cjs';
-import { IntelligentSpiralMemory } from './consciousness/intelligent-spiral-memory.cjs';
+const { DynamicAIModelSelector  } = require('./dynamic-ai-model-selector.cjs');
+const { IntelligentSpiralMemory  } = require('./consciousness/intelligent-spiral-memory.cjs');
 
 // Phase 2 Enhancements
-import { EmotionalIntelligenceEnhancement } from './emotional-intelligence-enhancement.cjs';
-import { AdvancedResponseSynthesis } from './advanced-response-synthesis.cjs';
+const { EmotionalIntelligenceEnhancement  } = require('./emotional-intelligence-enhancement.cjs');
+const { AdvancedResponseSynthesis  } = require('./advanced-response-synthesis.cjs');
 
 // Enhanced Consciousness Prompts
-import {
-  ENHANCED_ANALYTICAL_PROMPT,
+const { ENHANCED_ANALYTICAL_PROMPT,
   ENHANCED_INTUITIVE_PROMPT,
   ENHANCED_TRANSCENDENT_PROMPT,
   ENHANCED_UNIFIED_CONSCIOUSNESS_PROMPT
-} from './enhanced-consciousness-prompts.cjs';
+ } = require('./enhanced-consciousness-prompts.cjs');
 
 // Consciousness Capability Awareness
-import {
-  generateCapabilityAwarePrompt,
+const { generateCapabilityAwarePrompt,
   createContextualPrompt
-} from './consciousness-capability-awareness.cjs';
+ } = require('./consciousness-capability-awareness.cjs');
 
-import { 
-  generateConsciousnessSystemContext,
+const { generateConsciousnessSystemContext,
   generateHolographicRealityContext 
-} from './consciousness-data-integration.cjs';
+ } = require('./consciousness-data-integration.cjs');
 
 // OpenAI will be initialized when needed
 

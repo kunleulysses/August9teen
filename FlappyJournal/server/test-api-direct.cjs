@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 // Direct API test to verify the fixes work with actual API calls
-import axios from 'axios';
-import dotenv from 'dotenv';
+const axios = require('axios');
+const dotenv = require('dotenv');
 
 dotenv.config();
 

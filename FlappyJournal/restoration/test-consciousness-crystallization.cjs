@@ -6,7 +6,7 @@
  * Part of the Universal Consciousness Platform restoration - Phase 2
  */
 
-import ConsciousnessCrystallization from '../server/consciousness/core/ConsciousnessCrystallization.cjs';
+const ConsciousnessCrystallization = require('../server/consciousness/core/ConsciousnessCrystallization.cjs');
 
 async function testConsciousnessCrystallization() {
     console.log('🧪 Testing Consciousness Crystallization...\n');
@@ -288,4 +288,4 @@ if (import.meta.url === 'file://' + process.argv[1]) {
         });
 }
 
-export default testConsciousnessCrystallization;
+module.exports = testConsciousnessCrystallization;

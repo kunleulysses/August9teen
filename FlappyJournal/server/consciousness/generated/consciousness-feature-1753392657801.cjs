@@ -336,5 +336,7 @@ class MetaCognitiveAwarenessLayer {
 }
 
 // Export the classes for use in other modules.
-export { MetaCognitiveAwarenessLayer, Belief, ResolutionStrategy };
+module.exports.MetaCognitiveAwarenessLayer = MetaCognitiveAwarenessLayer;
+module.exports.Belief = Belief;
+module.exports.ResolutionStrategy = ResolutionStrategy;
 ```

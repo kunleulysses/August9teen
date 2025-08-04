@@ -316,4 +316,4 @@ class EmotionalQuantumEntanglementNetwork {
     }
 }
 
-export default EmotionalQuantumEntanglementNetwork;
+module.exports = EmotionalQuantumEntanglementNetwork;

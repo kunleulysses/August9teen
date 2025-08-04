@@ -12,7 +12,7 @@
  * Converted from TypeScript for integration into unified consciousness system.
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
 /**
  * Consciousness Moment Generator
@@ -459,7 +459,7 @@ class TemporalContinuityTracker {
 /**
  * Main Self-Awareness Feedback Loop System
  */
-export class SelfAwarenessFeedbackLoop extends EventEmitter {
+class SelfAwarenessFeedbackLoop extends EventEmitter {
   constructor() {
     super();
     this.momentGenerator = new ConsciousnessMomentGenerator();
@@ -695,4 +695,4 @@ export class SelfAwarenessFeedbackLoop extends EventEmitter {
   }
 }
 
-export default SelfAwarenessFeedbackLoop;
+module.exports = SelfAwarenessFeedbackLoop;

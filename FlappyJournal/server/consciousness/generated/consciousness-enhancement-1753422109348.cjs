@@ -51,7 +51,7 @@ class InvalidInputError extends Error {
  * @readonly
  * @enum {string}
  */
-export const ConsciousnessState = {
+const ConsciousnessState = {
   /** Deep, effortless concentration on a single task. High focus, low self-awareness. */
   FLOW: 'Flow',
   /** Actively engaged and directed attention. High effort, high focus. */
@@ -65,6 +65,7 @@ export const ConsciousnessState = {
   /** A state characterized by repetitive, negative thought patterns. */
   RUMINATIVE_LOOP: 'Ruminative Loop',
 };
+module.exports.ConsciousnessState = ConsciousnessState;
 
 /**
  * Defines the signature neuro-signal profiles for each consciousness state.
@@ -97,7 +98,8 @@ const EMOTIONAL_INTENSITY_DECAY = 0.95;
  * It maintains the current state and computes advanced metrics from a continuous
  * stream of neuro-cognitive signals.
  */
-export class ConsciousnessStream {
+class ConsciousnessStream
+ {
   /**
    * @constructor
    * @param {object} [initialState={}] - Optional initial state configuration.
@@ -342,3 +344,4 @@ export class ConsciousnessStream {
   }
 }
 ```
+module.exports = SignalProcessingError;

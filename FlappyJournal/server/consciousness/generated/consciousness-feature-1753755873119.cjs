@@ -51,7 +51,7 @@ class EventEmitter {
     }
 }
 
-export class MetaCognitiveNode extends EventEmitter {
+class MetaCognitiveNode extends EventEmitter {
 
     /**
      * Represents a single conscious node within a potential network.

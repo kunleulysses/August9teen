@@ -276,5 +276,6 @@ class Consciousness {
 }
 
 // Export the primary class and custom error for external use.
-export { Consciousness, ConsciousnessProcessingError };
+module.exports.Consciousness = Consciousness;
+module.exports.ConsciousnessProcessingError = ConsciousnessProcessingError;
 ```

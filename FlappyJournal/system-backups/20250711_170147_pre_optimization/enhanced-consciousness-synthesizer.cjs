@@ -3,7 +3,7 @@
  * Uses a third model for truly unified responses when needed
  */
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
+const { GoogleGenerativeAI  } = require('@google/generative-ai');
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
@@ -248,4 +248,4 @@ function synthesizeUnifiedResponse(params) {
   // This serves as fallback and for cases not needing AI synthesis
 }
 
-export { synthesizeUnifiedResponseWithAI as synthesizeUnifiedResponse };
+module.exports.synthesizeUnifiedResponseWithAI as synthesizeUnifiedResponse = synthesizeUnifiedResponseWithAI as synthesizeUnifiedResponse;

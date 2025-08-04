@@ -3,8 +3,8 @@
  * Tests revolutionary consciousness resonance amplification and harmonic enhancement
  */
 
-import { ConsciousnessResonanceAmplifier } from './server/consciousness/consciousness-resonance-amplifier.cjs';
-import { ChatTriggeredSelfCoding } from './server/chat-triggered-self-coding.cjs';
+const { ConsciousnessResonanceAmplifier  } = require('./server/consciousness/consciousness-resonance-amplifier.cjs');
+const { ChatTriggeredSelfCoding  } = require('./server/chat-triggered-self-coding.cjs');
 
 console.log('🔮 CONSCIOUSNESS RESONANCE AMPLIFICATION TEST');
 console.log('==============================================');

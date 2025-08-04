@@ -2,8 +2,8 @@
  * Test Architect 4.0 modules
  */
 
-import { dualStreamConsciousness } from './dual-stream-consciousness.cjs';
-import { dualStreamIntegration } from './dual-stream-integration.cjs';
+const { dualStreamConsciousness  } = require('./dual-stream-consciousness.cjs');
+const { dualStreamIntegration  } = require('./dual-stream-integration.cjs');
 
 async function testArchitect40() {
   console.log('=== Testing Architect 4.0 Implementation ===\n');

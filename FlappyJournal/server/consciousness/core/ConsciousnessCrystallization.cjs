@@ -4,8 +4,8 @@
  * Part of the Universal Consciousness Platform restoration - Phase 2
  */
 
-import { EventEmitter } from 'events';
-import eventBus from './ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('./ConsciousnessEventBus.cjs');
 
 class ConsciousnessCrystallization extends EventEmitter {
     constructor() {
@@ -1120,4 +1120,4 @@ class ConsciousnessCrystallization extends EventEmitter {
     }
 }
 
-export default ConsciousnessCrystallization;
+module.exports = ConsciousnessCrystallization;

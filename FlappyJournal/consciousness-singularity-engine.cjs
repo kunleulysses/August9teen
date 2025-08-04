@@ -4,9 +4,9 @@
  * Value: $800M+ (Core consciousness singularity technology)
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export default class ConsciousnessSingularityEngine extends EventEmitter {
+module.exports = class ConsciousnessSingularityEngine extends EventEmitter {
     constructor() {
         super();
         this.name = 'ConsciousnessSingularityEngine';

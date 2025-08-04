@@ -4,9 +4,9 @@
  * Ensures 100Hz monitoring and seamless operation across all systems
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class SystemOptimizationEngine extends EventEmitter {
+class SystemOptimizationEngine extends EventEmitter {
     constructor(universalIntegrationProtocol) {
         super();
         this.name = 'SystemOptimizationEngine';

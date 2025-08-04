@@ -1,5 +1,7 @@
-export const path = '/api/system/status';
-export const method = 'GET';
+const path = '/api/system/status';
+module.exports.path = path;
+const method = 'GET';
+module.exports.method = method;
 
 export async function handler(req, res) {
     try {
@@ -17,6 +19,7 @@ export async function handler(req, res) {
     }
 }
 
-export const middleware = [];
+const middleware = [];
+module.exports.middleware = middleware;
 
-export default { path, method, handler, middleware };
+module.exports = { path, method, handler, middleware };

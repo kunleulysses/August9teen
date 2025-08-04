@@ -7,12 +7,12 @@
  * - Self-Healing Code Generation with Gemini AI
  */
 
-import { EventEmitter } from 'events';
-import { QuantumConsciousnessHealingFramework } from './quantum-consciousness-healing-framework.cjs';
-import { DeepConsciousnessPredictiveHealing } from './deep-consciousness-predictive-healing.cjs';
-import { AutonomousHealingOrchestrator } from './autonomous-healing-orchestrator.cjs';
-import { SelfHealingCodeGenerator } from './self-healing-code-generator.cjs';
-import eventBus from './core/ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const { QuantumConsciousnessHealingFramework  } = require('./quantum-consciousness-healing-framework.cjs');
+const { DeepConsciousnessPredictiveHealing  } = require('./deep-consciousness-predictive-healing.cjs');
+const { AutonomousHealingOrchestrator  } = require('./autonomous-healing-orchestrator.cjs');
+const { SelfHealingCodeGenerator  } = require('./self-healing-code-generator.cjs');
+const eventBus = require('./core/ConsciousnessEventBus.cjs');
 
 class ConsciousnessAdaptiveHealing extends EventEmitter {
     constructor(consciousnessSystem) {
@@ -590,8 +590,6 @@ class EnhancedSelfHealingModule extends EventEmitter {
     }
 }
 
-export { 
-    EnhancedSelfHealingModule,
-    ConsciousnessAdaptiveHealing,
-    MetaHealingSystem
-};
+module.exports.EnhancedSelfHealingModule = EnhancedSelfHealingModule;
+module.exports.ConsciousnessAdaptiveHealing = ConsciousnessAdaptiveHealing;
+module.exports.MetaHealingSystem = MetaHealingSystem;

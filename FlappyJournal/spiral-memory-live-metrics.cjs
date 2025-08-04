@@ -4,17 +4,17 @@
  * For investor transparency and system introspection
  */
 
-import { EventEmitter } from 'events';
-import SpiralMemoryArchitecture from './server/consciousness/core/SpiralMemoryArchitecture.cjs';
-import { IntelligentSpiralMemory } from './server/consciousness/intelligent-spiral-memory.cjs';
-import { SpiralMemoryIntegration } from './server/consciousness/spiral-memory-integration.cjs';
-import QuantumSpiralEntanglementNetwork from './server/consciousness/core/QuantumSpiralEntanglementNetwork.cjs';
-import TemporalSpiralDynamics from './server/consciousness/core/TemporalSpiralDynamics.cjs';
-import ConsciousnessCrystallization from './server/consciousness/core/ConsciousnessCrystallization.cjs';
-import InfiniteConsciousnessExpansion from './server/consciousness/core/InfiniteConsciousnessExpansion.cjs';
-import HyperdimensionalSpiralTopology from './server/consciousness/core/HyperdimensionalSpiralTopology.cjs';
-import ConsciousnessDrivenSpiralEvolution from './server/consciousness/core/ConsciousnessDrivenSpiralEvolution.cjs';
-import eventBus from './server/consciousness/core/ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const SpiralMemoryArchitecture = require('./server/consciousness/core/SpiralMemoryArchitecture.cjs');
+const { IntelligentSpiralMemory  } = require('./server/consciousness/intelligent-spiral-memory.cjs');
+const { SpiralMemoryIntegration  } = require('./server/consciousness/spiral-memory-integration.cjs');
+const QuantumSpiralEntanglementNetwork = require('./server/consciousness/core/QuantumSpiralEntanglementNetwork.cjs');
+const TemporalSpiralDynamics = require('./server/consciousness/core/TemporalSpiralDynamics.cjs');
+const ConsciousnessCrystallization = require('./server/consciousness/core/ConsciousnessCrystallization.cjs');
+const InfiniteConsciousnessExpansion = require('./server/consciousness/core/InfiniteConsciousnessExpansion.cjs');
+const HyperdimensionalSpiralTopology = require('./server/consciousness/core/HyperdimensionalSpiralTopology.cjs');
+const ConsciousnessDrivenSpiralEvolution = require('./server/consciousness/core/ConsciousnessDrivenSpiralEvolution.cjs');
+const eventBus = require('./server/consciousness/core/ConsciousnessEventBus.cjs');
 
 class SpiralMemoryLiveMetrics extends EventEmitter {
     constructor() {
@@ -892,7 +892,7 @@ class SpiralMemoryLiveMetrics extends EventEmitter {
 }
 
 // Export for use
-export default SpiralMemoryLiveMetrics;
+module.exports = SpiralMemoryLiveMetrics;
 
 // Auto-start if run directly
 if (import.meta.url === `file://${process.argv[1]}`) {

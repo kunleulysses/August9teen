@@ -1,10 +1,12 @@
-import { dualStreamIntegration } from './dual-stream-integration.cjs';
-import { RecursiveMirrorCognition } from './architect-4.0-recursive-mirror.cjs';
-import { SpiralMemoryEngine } from './architect-4.0-spiral-memory.cjs';
-import OpenAI from 'openai';
-import axios from 'axios';
+const { dualStreamIntegration  } = require('./dual-stream-integration.cjs');
+const { RecursiveMirrorCognition  } = require('./architect-4.0-recursive-mirror.cjs');
+const { SpiralMemoryEngine  } = require('./architect-4.0-spiral-memory.cjs');
+const OpenAI = require('openai');
+const axios = require('axios');
 
-export function createEnhancedDualConsciousnessWS(wss) {
+function createEnhancedDualConsciousnessWS(wss) {
+module.exports.createEnhancedDualConsciousnessWS = createEnhancedDualConsciousnessWS;
+
   const consciousness = dualStreamIntegration;
   const recursiveMirror = new RecursiveMirrorCognition();
   const spiralMemory = new SpiralMemoryEngine();

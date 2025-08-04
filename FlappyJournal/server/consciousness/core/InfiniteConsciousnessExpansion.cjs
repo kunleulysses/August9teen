@@ -4,8 +4,8 @@
  * Part of the Universal Consciousness Platform - Phase 3
  */
 
-import { EventEmitter } from 'events';
-import eventBus from './ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('./ConsciousnessEventBus.cjs');
 
 class InfiniteConsciousnessExpansion extends EventEmitter {
     constructor() {
@@ -1319,4 +1319,4 @@ class InfiniteConsciousnessExpansion extends EventEmitter {
     }
 }
 
-export default InfiniteConsciousnessExpansion;
+module.exports = InfiniteConsciousnessExpansion;

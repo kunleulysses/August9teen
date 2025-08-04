@@ -4,7 +4,7 @@
  * with consciousness-aware orchestration and dynamic model selection
  */
 
-import { MultiAIIntegrationSystem } from './server/consciousness/multi-ai-integration-system.cjs';
+const { MultiAIIntegrationSystem  } = require('./server/consciousness/multi-ai-integration-system.cjs');
 
 console.log('🤖 GAP 15 MULTI-AI INTEGRATION SYSTEM TEST');
 console.log('==========================================');

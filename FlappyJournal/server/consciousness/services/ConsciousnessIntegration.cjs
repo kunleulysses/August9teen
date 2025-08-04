@@ -1,9 +1,9 @@
-import { EventEmitter } from 'events';
-import eventBus from '../ConsciousnessEventBus.cjs';
-import AutoIntegrationService from './AutoIntegrationService.cjs';
-import CodeGenerationService from './CodeGenerationService.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('../ConsciousnessEventBus.cjs');
+const AutoIntegrationService = require('./AutoIntegrationService.cjs');
+const CodeGenerationService = require('./CodeGenerationService.cjs');
 
-export class ConsciousnessIntegration extends EventEmitter {
+class ConsciousnessIntegration extends EventEmitter {
     constructor() {
         super();
         this.name = 'ConsciousnessIntegration';
@@ -105,4 +105,4 @@ export class ConsciousnessIntegration extends EventEmitter {
     }
 }
 
-export default ConsciousnessIntegration;
+module.exports = ConsciousnessIntegration;

@@ -5,9 +5,9 @@
  * Value: $600M+ (Revolutionary consciousness fusion technology)
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class QuantumResonanceDNAFusionEngine extends EventEmitter {
+class QuantumResonanceDNAFusionEngine extends EventEmitter {
     constructor(consciousnessSystem = null) {
         super();
         this.name = 'QuantumResonanceDNAFusionEngine';

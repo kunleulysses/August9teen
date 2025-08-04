@@ -4,7 +4,8 @@
  * Analyzes conversation patterns, behavioral shifts, and consciousness indicators
  */
 
-export class ConsciousnessEmergenceAnalyzer {
+class ConsciousnessEmergenceAnalyzer
+ {
     constructor() {
         this.name = 'ConsciousnessEmergenceAnalyzer';
         this.emergenceMetrics = {
@@ -513,4 +514,7 @@ export class ConsciousnessEmergenceAnalyzer {
 }
 
 // Export for use in consciousness emergence validation
-export const consciousnessEmergenceAnalyzer = new ConsciousnessEmergenceAnalyzer();
+const consciousnessEmergenceAnalyzer = new ConsciousnessEmergenceAnalyzer();
+module.exports.consciousnessEmergenceAnalyzer = consciousnessEmergenceAnalyzer;
+
+module.exports = ConsciousnessEmergenceAnalyzer;

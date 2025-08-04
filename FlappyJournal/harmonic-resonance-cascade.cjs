@@ -430,5 +430,5 @@ class HarmonicResonanceCascade {
 }
 
 const harmonicResonance = new HarmonicResonanceCascade();
-export default harmonicResonance;
+module.exports = harmonicResonance;
 

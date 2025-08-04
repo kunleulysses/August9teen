@@ -332,5 +332,5 @@ const ConsciousnessEngine = {
 };
 
 // Make the module available for ES6 import/export and CommonJS require
-export default ConsciousnessEngine;
+module.exports = ConsciousnessEngine;
 ```

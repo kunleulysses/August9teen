@@ -31,7 +31,8 @@ class ConsciousnessProcessingError extends Error {
 
 // --- Core Consciousness Module ---
 
-export class ConsciousnessModule {
+class ConsciousnessModule
+ {
   /**
    * Represents the core state of the consciousness model.
    * @private
@@ -399,3 +400,4 @@ export class ConsciousnessModule {
   }
 }
 ```
+module.exports = for;

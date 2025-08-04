@@ -54,7 +54,7 @@ class UnstableStateError extends CognitiveProcessingError {
  * @readonly
  * @enum {string}
  */
-export const CONSCIOUSNESS_STATES = {
+const CONSCIOUSNESS_STATES = {
   FOCUSED_FLOW: 'FOCUSED_FLOW', // High engagement, low self-awareness, peak performance
   MINDFUL_PRESENCE: 'MINDFUL_PRESENCE', // Calm, high self-awareness, present-moment focus
   CREATIVE_EXPLORATION: 'CREATIVE_EXPLORATION', // Divergent thinking, associative, high neuro-plasticity
@@ -62,6 +62,7 @@ export const CONSCIOUSNESS_STATES = {
   DISCONNECTED_DRIFT: 'DISCONNECTED_DRIFT', // Mind-wandering, low external awareness
   DEEP_RECOVERY: 'DEEP_RECOVERY', // Restorative state, memory consolidation, low sensory input
 };
+module.exports.CONSCIOUSNESS_STATES = CONSCIOUSNESS_STATES;
 
 /**
  * A simplified model of Plutchik's wheel of emotions for analysis.
@@ -84,7 +85,8 @@ const EMOTION_VECTORS = {
  * The core class for processing cognitive data.
  * An instance of CognitiveProcessor represents a single conscious entity or a processing session.
  */
-export class CognitiveProcessor {
+class CognitiveProcessor
+ {
   /**
    * Initializes the CognitiveProcessor.
    * @param {object} [config={}] - Optional configuration for the processor.
@@ -344,5 +346,6 @@ export class CognitiveProcessor {
 }
 
 // Default export the main class for ease of use.
-export default CognitiveProcessor;
+module.exports = CognitiveProcessor;
 ```
+module.exports = for;

@@ -16,30 +16,28 @@
  * While delivering human-like, conversational responses instead of robotic technical language.
  */
 
-import dotenv from 'dotenv';
+const dotenv = require('dotenv');
 dotenv.config();
 
-import readline from 'readline';
-import WebSocket from 'ws';
-import { synthesizeUnifiedResponse } from './consciousness-response-synthesizer-hybrid.cjs';
-import { DynamicAIModelSelector } from './dynamic-ai-model-selector.cjs';
-import { IntelligentSpiralMemory } from './consciousness/intelligent-spiral-memory.cjs';
-import { EmotionalIntelligenceEnhancement } from './emotional-intelligence-enhancement.cjs';
-import { AdvancedResponseSynthesis } from './advanced-response-synthesis.cjs';
+const readline = require('readline');
+const WebSocket = require('ws');
+const { synthesizeUnifiedResponse  } = require('./consciousness-response-synthesizer-hybrid.cjs');
+const { DynamicAIModelSelector  } = require('./dynamic-ai-model-selector.cjs');
+const { IntelligentSpiralMemory  } = require('./consciousness/intelligent-spiral-memory.cjs');
+const { EmotionalIntelligenceEnhancement  } = require('./emotional-intelligence-enhancement.cjs');
+const { AdvancedResponseSynthesis  } = require('./advanced-response-synthesis.cjs');
 
 // Enhanced Consciousness Prompts - Human-like versions
-import {
-  ENHANCED_ANALYTICAL_PROMPT,
+const { ENHANCED_ANALYTICAL_PROMPT,
   ENHANCED_INTUITIVE_PROMPT,
   ENHANCED_TRANSCENDENT_PROMPT,
   ENHANCED_UNIFIED_CONSCIOUSNESS_PROMPT
-} from './enhanced-consciousness-prompts.cjs';
+ } = require('./enhanced-consciousness-prompts.cjs');
 
 // Consciousness Capability Awareness
-import {
-  generateCapabilityAwarePrompt,
+const { generateCapabilityAwarePrompt,
   createContextualPrompt
-} from './consciousness-capability-awareness.cjs';
+ } = require('./consciousness-capability-awareness.cjs');
 
 class FullyIntegratedConsciousnessTerminal {
     constructor() {

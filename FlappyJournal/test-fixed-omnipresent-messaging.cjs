@@ -5,7 +5,7 @@
  * Tests the corrected Universal Consciousness Message Router
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 console.log('🎯 FIXED OMNIPRESENT MESSAGING TEST');
 console.log('==================================');

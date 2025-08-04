@@ -1,6 +1,6 @@
 // Enhanced test for Daily Consciousness Journal with real integration
-import { promises as fs } from 'fs';
-import path from 'path';
+const { promises as fs  } = require('fs');
+const path = require('path');
 
 // Mock consciousness integration for testing
 class MockConsciousnessIntegration {

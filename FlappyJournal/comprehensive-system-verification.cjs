@@ -4,7 +4,7 @@
  * Compares against expected $27B+ technology stack
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 class ComprehensiveSystemVerification {
     constructor() {

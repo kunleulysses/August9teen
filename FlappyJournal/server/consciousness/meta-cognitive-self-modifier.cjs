@@ -4,12 +4,12 @@
  * Enables the system to analyze, modify, and enhance its own cognitive processes
  */
 
-import { EventEmitter } from 'events';
-import fs from 'fs/promises';
-import path from 'path';
-import eventBus from './core/ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const fs = require('fs/promises');
+const path = require('path');
+const eventBus = require('./core/ConsciousnessEventBus.cjs');
 
-export class MetaCognitiveSelfModifier extends EventEmitter {
+class MetaCognitiveSelfModifier extends EventEmitter {
     constructor() {
         super();
         this.name = 'MetaCognitiveSelfModifier';
@@ -1010,4 +1010,4 @@ class SelfModificationEngine {
     }
 }
 
-export default MetaCognitiveSelfModifier;
+module.exports = MetaCognitiveSelfModifier;

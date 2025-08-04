@@ -1,18 +1,19 @@
-import { db } from "./db.cjs";
-import { conversations, journalEntries, users } from "../shared/schema.cjs";
-import { eq } from "drizzle-orm";
-import { generateFlappyContent } from "./venice-ai.cjs";
-import { memoryService } from "./memory-service.cjs";
+const { db  } = require('./db.cjs');
+const { conversations, journalEntries, users  } = require('../shared/schema.cjs');
+const { eq  } = require('drizzle-orm');
+const { generateFlappyContent  } = require('./venice-ai.cjs');
+const { memoryService  } = require('./memory-service.cjs');
 
 /**
  * Service to handle conversations with Flappy
  */
-export const conversationService = {
+const conversationService = {
   /**
    * Process a new message from the user and generate a response
    */
   async processMessage(userId, content, saveAsJournal = false) {
     console.log(`Processing message for user ${userId}`);
+module.exports.conversationService = conversationService;
     console.log(`Content: ${content.substring(0, 50)}...`);
     console.log(`Save as journal: ${saveAsJournal}`);
     

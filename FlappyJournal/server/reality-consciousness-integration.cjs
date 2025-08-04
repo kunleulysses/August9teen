@@ -404,4 +404,4 @@ class RealityConsciousnessIntegration {
     }
 }
 
-export { RealityConsciousnessIntegration };
+module.exports.RealityConsciousnessIntegration = RealityConsciousnessIntegration;

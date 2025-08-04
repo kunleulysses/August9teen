@@ -3,9 +3,9 @@
  * Testing exact same imports and structure as holographic-reality-live-metrics.js
  */
 
-import { EventEmitter } from 'events';
-import { HolographicConsciousnessMemorySystem } from './server/consciousness/holographic-consciousness-memory-system.cjs';
-import eventBus from './server/consciousness/core/ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const { HolographicConsciousnessMemorySystem  } = require('./server/consciousness/holographic-consciousness-memory-system.cjs');
+const eventBus = require('./server/consciousness/core/ConsciousnessEventBus.cjs');
 
 class MinimalMetrics extends EventEmitter {
     constructor() {

@@ -5,7 +5,7 @@
  * Simple test to verify WebSocket connectivity and message handling
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 console.log('🔍 Debug Self-Coding WebSocket Connection');
 console.log('🎯 Testing basic connectivity and message handling');

@@ -1,4 +1,4 @@
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 const ws = new WebSocket('wss://app.featherweight.world/metrics-ws');
 

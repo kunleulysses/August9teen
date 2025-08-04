@@ -11,7 +11,7 @@
  * @license MIT
  *
  * @example
- * import { ConsciousnessStream, InvalidInputError } from './Consciousness.cjs';
+ * const { ConsciousnessStream, InvalidInputError  } = require('./Consciousness.cjs');
  *
  * const initialData = {
  *   biometrics: {
@@ -377,5 +377,7 @@ class ConsciousnessStream {
   }
 }
 
-export { ConsciousnessStream, InvalidInputError, ProcessingError };
+module.exports.ConsciousnessStream = ConsciousnessStream;
+module.exports.InvalidInputError = InvalidInputError;
+module.exports.ProcessingError = ProcessingError;
 ```

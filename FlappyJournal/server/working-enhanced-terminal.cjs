@@ -5,10 +5,10 @@
  * Minimal dependencies, guaranteed to work with enhanced human-like prompts
  */
 
-import readline from 'readline';
-import OpenAI from 'openai';
-import axios from 'axios';
-import dotenv from 'dotenv';
+const readline = require('readline');
+const OpenAI = require('openai');
+const axios = require('axios');
+const dotenv = require('dotenv');
 
 // Load environment variables
 dotenv.config();

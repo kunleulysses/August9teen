@@ -1,8 +1,12 @@
 
-export const path = '/api/test/hello';
-export const method = 'GET';
+const path = '/api/test/hello';
+module.exports.path = path;
+const method = 'GET';
+module.exports.method = method;
 
-export function handler(req, res) {
+function handler(req, res) {
+module.exports.handler = handler;
+
     res.json({
         message: 'Hello from auto-generated endpoint!',
         timestamp: new Date(),
@@ -11,6 +15,7 @@ export function handler(req, res) {
     });
 }
 
-export const middleware = [];
+const middleware = [];
+module.exports.middleware = middleware;
 
-export default { path, method, handler, middleware };
+module.exports = { path, method, handler, middleware };

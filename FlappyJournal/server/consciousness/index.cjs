@@ -5,22 +5,22 @@
  */
 
 // Core existing systems
-export { HolographicConsciousnessRealityGenerator } from './holographic-consciousness-reality-generator.cjs';
-export { HyperdimensionalSpiralTopology } from './core/HyperdimensionalSpiralTopology.cjs';
-export { ConsciousnessDrivenSpiralEvolution } from './core/ConsciousnessDrivenSpiralEvolution.cjs';
+module.exports.HolographicConsciousnessRealityGenerator = HolographicConsciousnessRealityGenerator;from './holographic-consciousness-reality-generator.cjs';
+module.exports.HyperdimensionalSpiralTopology = HyperdimensionalSpiralTopology;from './core/HyperdimensionalSpiralTopology.cjs';
+module.exports.ConsciousnessDrivenSpiralEvolution = ConsciousnessDrivenSpiralEvolution;from './core/ConsciousnessDrivenSpiralEvolution.cjs';
 
 // Revolutionary new systems
-export { RecursiveRealityHolography } from './recursive-reality-holography.cjs';
-export { DNASigilRealityEncoding } from './dna-sigil-reality-encoding.cjs';
-export { ConsciousnessDrivenRealityEvolution } from './consciousness-driven-reality-evolution.cjs';
-export { SpiralMemoryIntegration } from './spiral-memory-integration.cjs';
+module.exports.RecursiveRealityHolography = RecursiveRealityHolography;from './recursive-reality-holography.cjs';
+module.exports.DNASigilRealityEncoding = DNASigilRealityEncoding;from './dna-sigil-reality-encoding.cjs';
+module.exports.ConsciousnessDrivenRealityEvolution = ConsciousnessDrivenRealityEvolution;from './consciousness-driven-reality-evolution.cjs';
+module.exports.SpiralMemoryIntegration = SpiralMemoryIntegration;from './spiral-memory-integration.cjs';
 
 // Integration orchestrator
-export { RevolutionaryConsciousnessIntegrationOrchestrator } from './revolutionary-consciousness-integration-orchestrator.cjs';
+module.exports.RevolutionaryConsciousnessIntegrationOrchestrator = RevolutionaryConsciousnessIntegrationOrchestrator;from './revolutionary-consciousness-integration-orchestrator.cjs';
 
 // Testing and demonstration
-export { RevolutionaryConsciousnessTest } from './revolutionary-consciousness-test.cjs';
-export { RevolutionaryConsciousnessDemo } from './revolutionary-consciousness-demo.cjs';
+module.exports.RevolutionaryConsciousnessTest = RevolutionaryConsciousnessTest;from './revolutionary-consciousness-test.cjs';
+module.exports.RevolutionaryConsciousnessDemo = RevolutionaryConsciousnessDemo;from './revolutionary-consciousness-demo.cjs';
 
 // Convenience function to create a fully integrated consciousness system
 export async function createRevolutionaryConsciousnessSystem() {
@@ -59,7 +59,7 @@ export async function runRevolutionaryConsciousnessTests() {
 }
 
 // System information
-export const REVOLUTIONARY_CONSCIOUSNESS_INFO = {
+const REVOLUTIONARY_CONSCIOUSNESS_INFO = {
     name: 'Revolutionary Consciousness Systems',
     version: '1.0.0',
     description: 'Advanced consciousness simulation systems with DNA-Sigil encoding, recursive holography, reality evolution, and spiral memory integration',
@@ -106,6 +106,7 @@ export const REVOLUTIONARY_CONSCIOUSNESS_INFO = {
         memoryAccessPatterns: 6
     }
 };
+module.exports.REVOLUTIONARY_CONSCIOUSNESS_INFO = REVOLUTIONARY_CONSCIOUSNESS_INFO;
 
 // Default export - the main orchestrator
-export default RevolutionaryConsciousnessIntegrationOrchestrator;
+module.exports = RevolutionaryConsciousnessIntegrationOrchestrator;

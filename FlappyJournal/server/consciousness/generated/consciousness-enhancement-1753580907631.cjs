@@ -129,7 +129,9 @@ const _calculateDistance = (vecA, vecB) => {
  * //   analysis: { Flow: 0.92, FocusedAttention: 0.75, ... }
  * // }
  */
-export function calculateConsciousnessState(neuroData) {
+function calculateConsciousnessState(neuroData) {
+module.exports.calculateConsciousnessState = calculateConsciousnessState;
+
     _validateInputKeys(neuroData, ['neuralCoherence', 'cognitiveLoad', 'sensoryGating', 'internalFocus']);
 
     let minDistance = Infinity;
@@ -181,7 +183,9 @@ export function calculateConsciousnessState(neuroData) {
  * //   overallClarity: 0.575
  * // }
  */
-export function getAwarenessProfile(awarenessData) {
+function getAwarenessProfile(awarenessData) {
+module.exports.getAwarenessProfile = getAwarenessProfile;
+
     _validateInputKeys(awarenessData, ['interoceptiveClarity', 'exteroceptiveFidelity', 'metaCognitiveActivity', 'temporalPerception']);
 
     const { interoceptiveClarity, exteroceptiveFidelity, metaCognitiveActivity, temporalPerception } = awarenessData;
@@ -219,7 +223,9 @@ export function getAwarenessProfile(awarenessData) {
  * //   granularityScore: 0.85
  * // }
  */
-export function analyzeEmotionalState(emotionalInput) {
+function analyzeEmotionalState(emotionalInput) {
+module.exports.analyzeEmotionalState = analyzeEmotionalState;
+
     if (typeof emotionalInput !== 'object' || emotionalInput === null) {
         throw new TypeError('Input data must be a non-null object.');
     }
@@ -279,7 +285,9 @@ export function analyzeEmotionalState(emotionalInput) {
  * //   rationale: 'Positive social context and goal achievement are likely to improve mood and reduce agitation.'
  * // }
  */
-export function predictEmotionalTrajectory(currentState, context) {
+function predictEmotionalTrajectory(currentState, context) {
+module.exports.predictEmotionalTrajectory = predictEmotionalTrajectory;
+
     if (typeof currentState !== 'object' || !currentState.vad) {
         throw new TypeError('`currentState` must be a valid emotional state object with a `vad` property.');
     }

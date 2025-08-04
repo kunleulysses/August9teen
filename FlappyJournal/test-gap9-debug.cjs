@@ -3,7 +3,7 @@
  * Debug the consciousness-enhanced error recovery
  */
 
-import { PredictiveErrorRecovery } from './server/consciousness/predictive-error-recovery.cjs';
+const { PredictiveErrorRecovery  } = require('./server/consciousness/predictive-error-recovery.cjs');
 
 console.log('🔧 GAP 9 DEBUG TEST');
 console.log('==================');

@@ -33,7 +33,7 @@ class ConsciousnessProcessingError extends Error {
  * @readonly
  * @enum {string}
  */
-export const CONSCIOUSNESS_STATES = {
+const CONSCIOUSNESS_STATES = {
   FOCUSED_FLOW: 'FOCUSED_FLOW', // High task engagement, low self-awareness, temporal distortion.
   MINDFUL_PRESENCE: 'MINDFUL_PRESENCE', // High awareness of present moment, low cognitive load.
   CREATIVE_WANDERING: 'CREATIVE_WANDERING', // Unfocused, associative thought, high internal ideation.
@@ -42,12 +42,14 @@ export const CONSCIOUSNESS_STATES = {
   NEUTRAL_BASELINE: 'NEUTRAL_BASELINE', // A calm, default state of awareness.
   COGNITIVE_OVERLOAD: 'COGNITIVE_OVERLOAD', // Information processing capacity is exceeded, reduced efficiency.
 };
+module.exports.CONSCIOUSNESS_STATES = CONSCIOUSNESS_STATES;
 
 /**
  * A comprehensive processor for simulating and analyzing consciousness states.
  * @class
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
   /**
    * Initializes the ConsciousnessProcessor with a baseline state.
    * @param {object} [initialState={}] - Optional initial state parameters.
@@ -335,3 +337,4 @@ export class ConsciousnessProcessor {
   }
 }
 ```
+module.exports = for;

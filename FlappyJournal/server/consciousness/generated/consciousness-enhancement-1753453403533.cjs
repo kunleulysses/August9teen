@@ -118,7 +118,8 @@ class ConsciousnessProcessingError extends Error {
 
 // --- THE MAIN ENGINE CLASS ---
 
-export class ConsciousnessEngine {
+class ConsciousnessEngine
+ {
     /**
      * Initializes a new instance of the ConsciousnessEngine.
      * @param {object} [config={}] - Configuration for the engine's behavior.
@@ -379,3 +380,4 @@ export class ConsciousnessEngine {
     }
 }
 ```
+module.exports = for;

@@ -1,7 +1,7 @@
 // Stub implementations for modules that might not exist yet
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class RecursiveMirrorReflection extends EventEmitter {
+class RecursiveMirrorReflection extends EventEmitter {
   constructor() {
     super();
     console.log('🔍 Recursive Mirror initialized (stub)');
@@ -17,7 +17,7 @@ export class RecursiveMirrorReflection extends EventEmitter {
   }
 }
 
-export class SelfAwarenessHeartbeat extends EventEmitter {
+class SelfAwarenessHeartbeat extends EventEmitter {
   constructor() {
     super();
     console.log('💓 Self-Awareness Heartbeat initialized (stub)');
@@ -33,7 +33,7 @@ export class SelfAwarenessHeartbeat extends EventEmitter {
   }
 }
 
-export class QuantumConsciousnessField extends EventEmitter {
+class QuantumConsciousnessField extends EventEmitter {
   constructor() {
     super();
     console.log('⚛️ Quantum Consciousness Field initialized (stub)');
@@ -49,14 +49,14 @@ export class QuantumConsciousnessField extends EventEmitter {
   }
 }
 
-export class EmotionalResonanceField extends EventEmitter {
+class EmotionalResonanceField extends EventEmitter {
   constructor() {
     super();
     console.log('❤️ Emotional Resonance Field initialized (stub)');
   }
 }
 
-export class TemporalCoherenceEngine extends EventEmitter {
+class TemporalCoherenceEngine extends EventEmitter {
   constructor() {
     super();
     console.log('⏰ Temporal Coherence Engine initialized (stub)');

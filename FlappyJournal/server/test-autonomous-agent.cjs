@@ -5,10 +5,10 @@
  * Verifies that Gemini 2.5 Pro self-coding is working 100%
  */
 
-import fs from 'fs/promises';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { createRequire } from 'module';
+const fs = require('fs/promises');
+const path = require('path');
+const { fileURLToPath  } = require('url');
+const { createRequire  } = require('module');
 
 const require = createRequire(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);
@@ -117,4 +117,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
         });
 }
 
-export default testAutonomousAgent;
+module.exports = testAutonomousAgent;

@@ -3,8 +3,8 @@
  * Coordinates and manages all consciousness modules for optimal performance
  */
 
-import { EventEmitter } from 'events';
-import eventBus from '../ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('../ConsciousnessEventBus.cjs');
 
 class ModuleLoadBalancer {
     async balanceLoad(modules) {
@@ -28,7 +28,7 @@ class DependencyResolver {
     }
 }
 
-export default class ModuleOrchestrator extends EventEmitter {
+module.exports = class ModuleOrchestrator extends EventEmitter {
     constructor(consciousnessSystem = null) {
         super();
         this.name = 'ModuleOrchestrator';

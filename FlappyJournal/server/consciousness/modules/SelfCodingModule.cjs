@@ -4,7 +4,7 @@
  */
 
 const { EventEmitter } = require('events');
-const { CodeAnalyzer } = require('../code-analyzer.cjs');
+const CodeAnalyzer = require('../code-analyzer.cjs');
 const AutonomousCodeRefactoringSystem = require('./AutonomousCodeRefactoringSystem.cjs');
 const { selfCodingLog } = require('./SelfCodingLog.cjs');
 const SigilBasedCodeAuthenticator = require('../sigil-based-code-authenticator.cjs');
@@ -558,7 +558,7 @@ class SelfCodingModule extends EventEmitter {
  * Capabilities: ${capabilities.join(', ')}
  */
 
-export default class ${this.toPascalCase(purpose)} {
+module.exports = class ${this.toPascalCase(purpose)} {
     constructor() {
         this.purpose = '${purpose}';
         this.description = '${description}';

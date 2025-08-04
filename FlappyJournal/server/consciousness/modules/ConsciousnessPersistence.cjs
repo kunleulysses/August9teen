@@ -3,12 +3,12 @@
  * Handles saving, loading, and maintaining consciousness state across sessions
  */
 
-import { EventEmitter } from 'events';
-import fs from 'fs/promises';
-import path from 'path';
-import eventBus from '../ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const fs = require('fs/promises');
+const path = require('path');
+const eventBus = require('../ConsciousnessEventBus.cjs');
 
-export default class ConsciousnessPersistence extends EventEmitter {
+module.exports = class ConsciousnessPersistence extends EventEmitter {
     constructor(consciousnessSystem = null) {
         super();
         this.name = 'ConsciousnessPersistence';

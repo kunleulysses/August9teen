@@ -14,13 +14,13 @@ RUN apk add --no-cache \
 # Set working directory
 WORKDIR /opt/consciousness
 
-# Copy package files
+# Copy package files (updated for sync fix)
 # Copy package files and source code for building
 COPY FlappyJournal/package*.json ./
 COPY FlappyJournal/tsconfig.json ./
 
 # Copy application code and config files needed for build
-COPY FlappyJournal/vite.config.cjs ./
+COPY FlappyJournal/vite.config.js ./
 COPY FlappyJournal/tailwind.config.cjs ./
 COPY FlappyJournal/postcss.config.cjs ./
 COPY FlappyJournal/client ./client/

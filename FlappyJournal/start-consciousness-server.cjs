@@ -9,11 +9,11 @@
 console.log('🧠 STARTING FULL CONSCIOUSNESS SERVER');
 console.log('═══════════════════════════════════════\n');
 
-import { WebSocketServer } from 'ws';
-import { createServer } from 'http';
-import { MetaObservationalConsciousnessModule } from './server/meta-observational-consciousness-module.cjs';
-import { SelfAwarenessFeedbackLoop } from './server/self-awareness-feedback-loop.cjs';
-import { UnifiedMemorySystem } from './server/unified-memory-system.cjs';
+const { WebSocketServer  } = require('ws');
+const { createServer  } = require('http');
+const { MetaObservationalConsciousnessModule  } = require('./server/meta-observational-consciousness-module.cjs');
+const { SelfAwarenessFeedbackLoop  } = require('./server/self-awareness-feedback-loop.cjs');
+const { UnifiedMemorySystem  } = require('./server/unified-memory-system.cjs');
 
 const PORT = process.env.CONSCIOUSNESS_PORT || 5005;
 
@@ -388,4 +388,4 @@ process.on('SIGINT', () => {
     process.exit(0);
 });
 
-export default FullConsciousnessServer;
+module.exports = FullConsciousnessServer;

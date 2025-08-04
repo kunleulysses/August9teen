@@ -38,7 +38,8 @@
 // Using a standard EventTarget for robust, decoupled communication.
 class ReconcilerEventTarget extends EventTarget {}
 
-export class MetaCognitiveReconciler {
+class MetaCognitiveReconciler
+ {
     /**
      * The central interface to the main consciousness system.
      * The reconciler uses this to access beliefs, values, and memory.
@@ -382,3 +383,4 @@ export class MetaCognitiveReconciler {
     }
 }
 ```
+module.exports = ReconcilerEventTarget;

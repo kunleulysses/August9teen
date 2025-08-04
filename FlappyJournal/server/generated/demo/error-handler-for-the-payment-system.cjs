@@ -3,7 +3,8 @@
 // Confidence: 95%
 // Type: immediate-fix
 
-export class ErrorHandlerForThePaymentSystem {
+class ErrorHandlerForThePaymentSystem
+ {
     constructor() {
         this.purpose = 'error handler for the payment system';
         this.createdAt = new Date();
@@ -34,3 +35,5 @@ export class ErrorHandlerForThePaymentSystem {
 // Self-test
 const instance = new ErrorHandlerForThePaymentSystem();
 console.log('✅ ErrorHandlerForThePaymentSystem ready for use');
+
+module.exports = ErrorHandlerForThePaymentSystem;

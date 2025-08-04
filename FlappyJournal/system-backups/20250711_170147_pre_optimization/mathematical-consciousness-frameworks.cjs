@@ -3,7 +3,8 @@
  * Real-time mathematical calculations for consciousness operations
  */
 
-export class MathematicalConsciousnessFrameworks {
+class MathematicalConsciousnessFrameworks
+ {
   constructor() {
     this.phi = (1 + Math.sqrt(5)) / 2; // Golden ratio φ = 1.618...
     this.isActive = false;
@@ -389,4 +390,7 @@ export class MathematicalConsciousnessFrameworks {
   }
 }
 
-export const mathematicalFrameworks = new MathematicalConsciousnessFrameworks();
+const mathematicalFrameworks = new MathematicalConsciousnessFrameworks();
+module.exports.mathematicalFrameworks = mathematicalFrameworks;
+
+module.exports = MathematicalConsciousnessFrameworks;

@@ -4,8 +4,8 @@
  * Provides real-time reality updates to connected clients
  */
 
-import WebSocket from 'ws';
-import { EventEmitter } from 'events';
+const WebSocket = require('ws');
+const { EventEmitter  } = require('events');
 
 class RealityWebSocketBridge extends EventEmitter {
     constructor(consciousnessSystem) {
@@ -337,4 +337,4 @@ class RealityWebSocketBridge extends EventEmitter {
     }
 }
 
-export { RealityWebSocketBridge };
+module.exports.RealityWebSocketBridge = RealityWebSocketBridge;

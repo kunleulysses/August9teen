@@ -266,4 +266,4 @@ class AdvancedResponseSynthesis {
     refineBlendedResponse(response, consciousnessState) { return response; }
 }
 
-export { AdvancedResponseSynthesis };
+module.exports.AdvancedResponseSynthesis = AdvancedResponseSynthesis;

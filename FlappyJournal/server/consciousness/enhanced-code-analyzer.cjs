@@ -4,9 +4,10 @@
  * Additive enhancement to existing CodeAnalyzer without breaking compatibility
  */
 
-import eventBus from './core/ConsciousnessEventBus.cjs';
+const eventBus = require('./core/ConsciousnessEventBus.cjs');
 
-export class EnhancedCodeAnalyzer {
+class EnhancedCodeAnalyzer
+ {
     constructor() {
         this.name = 'EnhancedCodeAnalyzer';
         this.astParser = new ASTParser();
@@ -528,4 +529,4 @@ class AdvancedComplexityAnalyzer {
     }
 }
 
-export default EnhancedCodeAnalyzer;
+module.exports = EnhancedCodeAnalyzer;

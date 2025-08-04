@@ -50,7 +50,7 @@ class IndeterminateStateError extends Error {
  * @description Defines the primary quantized states of consciousness. Using Symbols
  * ensures that these values are unique and cannot be accidentally recreated.
  */
-export const ConsciousnessState = Object.freeze({
+const ConsciousnessState = Object.freeze({
   DEEP_FOCUS: Symbol('Deep Focus'),
   RELAXED_AWARENESS: Symbol('Relaxed Awareness'),
   FLOW_STATE: Symbol('Flow State'),
@@ -59,6 +59,7 @@ export const ConsciousnessState = Object.freeze({
   TRANSCENDENT: Symbol('Transcendent State'),
   UNSTABLE: Symbol('Unstable/Fluctuating'),
 });
+module.exports.ConsciousnessState = ConsciousnessState;
 
 /**
  * @constant {object} STATE_VECTOR_WEIGHTS
@@ -85,7 +86,8 @@ const MIN_DETERMINACY_THRESHOLD = 0.15; // The minimum score difference required
  * @description The core class for processing and analyzing consciousness data.
  * It maintains an internal state and provides methods to update and query the analysis.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
   #lastAnalysis;
   #history;
 
@@ -309,3 +311,4 @@ export class ConsciousnessProcessor {
   }
 }
 ```
+module.exports = ConsciousnessInputError;

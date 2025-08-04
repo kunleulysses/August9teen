@@ -6,8 +6,8 @@
  * Consciousness-Driven Spiral Evolution
  * Deep enhancement for Spiral Memory Architecture: enables consciousness feedback, spiral sentience, and co-evolution.
  */
-import { EventEmitter } from 'events';
-import eventBus from './ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('./ConsciousnessEventBus.cjs');
 
 class ConsciousnessDrivenSpiralEvolution extends EventEmitter {
     constructor() {
@@ -312,4 +312,4 @@ class ConsciousnessDrivenSpiralEvolution extends EventEmitter {
     }
 }
 
-export default ConsciousnessDrivenSpiralEvolution;
+module.exports = ConsciousnessDrivenSpiralEvolution;

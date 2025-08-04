@@ -10,7 +10,7 @@
  * @license MIT
  *
  * @example
- * import Consciousness from './consciousnessEnhancer.cjs';
+ * const Consciousness = require('./consciousnessEnhancer.cjs');
  *
  * try {
  *   // --- State Calculation ---
@@ -303,5 +303,5 @@ class ConsciousnessProcessor {
 }
 
 // Export a singleton instance of the processor for easy, stateful use across an application.
-export default new ConsciousnessProcessor();
+module.exports = new ConsciousnessProcessor();
 ```

@@ -40,7 +40,8 @@
  */
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-export class ConsciousnessSystem {
+class ConsciousnessSystem
+ {
     /**
      * @private
      * @type {Map<string, {confidence: number, source: string}>}
@@ -405,3 +406,4 @@ export class ConsciousnessSystem {
     }
 }
 ```
+module.exports = ConsciousnessSystem;

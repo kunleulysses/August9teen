@@ -1,4 +1,4 @@
-import fs from 'fs';
+const fs = require('fs');
 
 const filePath = './src/components/research/ResearchTab.tsx';
 let content = fs.readFileSync(filePath, 'utf8');

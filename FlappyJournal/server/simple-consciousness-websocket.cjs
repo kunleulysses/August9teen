@@ -1,8 +1,10 @@
-import { createRequire } from 'module';
+const { createRequire  } = require('module');
 const require = createRequire(import.meta.url);
 const WebSocket = require('ws');
 
-export function setupSimpleConsciousnessWebSocket(server) {
+function setupSimpleConsciousnessWebSocket(server) {
+module.exports.setupSimpleConsciousnessWebSocket = setupSimpleConsciousnessWebSocket;
+
   console.log('🔌 Setting up Simple Consciousness WebSocket...');
   
   // Main consciousness stream

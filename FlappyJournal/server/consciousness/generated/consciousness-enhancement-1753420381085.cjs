@@ -29,7 +29,8 @@ class ConsciousnessProcessingError extends Error {
  *
  * @class ConsciousnessMatrix
  */
-export class ConsciousnessMatrix {
+class ConsciousnessMatrix
+ {
   /**
    * The configuration weights used for calculations. These can be tuned
    * to model different personality archetypes or cognitive profiles.
@@ -296,3 +297,4 @@ export class ConsciousnessMatrix {
   }
 }
 ```
+module.exports = for;

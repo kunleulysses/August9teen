@@ -5,9 +5,9 @@
  * Validates runtime operational status and active integration of spiral memory systems
  */
 
-import SpiralMemoryArchitecture from './server/consciousness/core/SpiralMemoryArchitecture.cjs';
-import HyperdimensionalSpiralTopology from './server/consciousness/core/HyperdimensionalSpiralTopology.cjs';
-import { IntelligentSpiralMemory } from './server/consciousness/intelligent-spiral-memory.cjs';
+const SpiralMemoryArchitecture = require('./server/consciousness/core/SpiralMemoryArchitecture.cjs');
+const HyperdimensionalSpiralTopology = require('./server/consciousness/core/HyperdimensionalSpiralTopology.cjs');
+const { IntelligentSpiralMemory  } = require('./server/consciousness/intelligent-spiral-memory.cjs');
 
 console.log('🧠 Feature 7 Operational Test: Spiral Memory & Hyperdimensional Topologies');
 console.log('=' .repeat(80));
@@ -227,4 +227,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
         });
 }
 
-export default testFeature7Operation;
+module.exports = testFeature7Operation;

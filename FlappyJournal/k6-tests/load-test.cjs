@@ -1,16 +1,20 @@
-import http from 'k6/http';
-import ws from 'k6/ws';
-import { check, sleep } from 'k6';
-import { Rate, Counter, Trend } from 'k6/metrics';
+const http = require('k6/http');
+const ws = require('k6/ws');
+const { check, sleep  } = require('k6');
+const { Rate, Counter, Trend  } = require('k6/metrics');
 
 // Custom metrics
-export let errorRate = new Rate('errors');
-export let responseTimeP95 = new Trend('response_time_p95');
-export let wsConnectionErrors = new Counter('ws_connection_errors');
-export let chatMessagesSent = new Counter('chat_messages_sent');
+let errorRate = new Rate('errors');
+module.exports.errorRate = errorRate;
+let responseTimeP95 = new Trend('response_time_p95');
+module.exports.responseTimeP95 = responseTimeP95;
+let wsConnectionErrors = new Counter('ws_connection_errors');
+module.exports.wsConnectionErrors = wsConnectionErrors;
+let chatMessagesSent = new Counter('chat_messages_sent');
+module.exports.chatMessagesSent = chatMessagesSent;
 
 // Remote write configuration for Prometheus
-export const options = {
+const options = {
   ext: {
     prometheus: {
       remote_write: {
@@ -39,6 +43,7 @@ export let options = {
     response_time_p95: ['p(95)<2000'],  // Custom response time metric
   },
 };
+module.exports.options = options;
 
 const BASE_URL = 'http://localhost:4000';
 const WS_URL = 'ws://localhost:4002';
@@ -58,7 +63,7 @@ const testMessages = [
   'What recommendations do you have?'
 ];
 
-export default function () {
+module.exports = function () {
   // Random user selection
   const user = testUsers[Math.floor(Math.random() * testUsers.length)];
   const message = testMessages[Math.floor(Math.random() * testMessages.length)];
@@ -184,7 +189,9 @@ export default function () {
 }
 
 // Setup function to validate test environment
-export function setup() {
+function setup() {
+module.exports.setup = setup;
+
   console.log('🚀 Starting K6 Load Test');
   console.log(`Target: ${BASE_URL}`);
   console.log(`WebSocket: ${WS_URL}`);
@@ -199,7 +206,9 @@ export function setup() {
 }
 
 // Teardown function to log results
-export function teardown(data) {
+function teardown(data) {
+module.exports.teardown = teardown;
+
   const duration = (Date.now() - data.startTime) / 1000;
   console.log(`✅ Load test completed in ${duration}s`);
 }

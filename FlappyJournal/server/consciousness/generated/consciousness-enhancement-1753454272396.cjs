@@ -29,7 +29,7 @@ class ConsciousnessProcessingError extends Error {
  * The main class for processing consciousness data.
  * It takes snapshots of cognitive and sensory data to produce a detailed analysis.
  */
-export default class ConsciousnessProcessor {
+module.exports = class ConsciousnessProcessor {
   /**
    * Initializes the ConsciousnessProcessor with optional configuration.
    * @param {object} [config={}] - Configuration object.
@@ -261,7 +261,7 @@ export default class ConsciousnessProcessor {
 // --- USAGE EXAMPLE ---
 
 // 1. Import the module
-// import ConsciousnessProcessor from './ConsciousnessProcessor.cjs';
+// const ConsciousnessProcessor = require('./ConsciousnessProcessor.cjs');
 
 // 2. Create an instance
 const processor = new ConsciousnessProcessor({

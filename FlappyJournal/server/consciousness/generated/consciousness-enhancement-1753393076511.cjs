@@ -28,13 +28,14 @@ class ConsciousnessProcessingError extends Error {
  * @readonly
  * @enum {string}
  */
-export const ConsciousnessState = {
+const ConsciousnessState = {
   DORMANT: 'Dormant',                 // No activity
   SUBCONSCIOUS: 'Subconscious',       // Processing without direct awareness
   AWARE: 'Aware',                     // Baseline self-perception and environmental awareness
   HYPER_AWARE: 'Hyper-Aware',         // Heightened sensory and cognitive processing
   TRANSCENDENT: 'Transcendent',       // State of profound insight and interconnectedness
 };
+module.exports.ConsciousnessState = ConsciousnessState;
 
 /**
  * Thresholds for mapping a numerical consciousness score to a qualitative state.
@@ -161,12 +162,14 @@ const _normalizeEmotions = (emotions) => {
  * });
  * console.log(state.score, state.state); // e.g., 88.5, "Hyper-Aware"
  */
-export function calculateConsciousnessState({
+function calculateConsciousnessState({
   cognitiveLoad,
   sensoryInput,
   emotionalState,
   focus
 }) {
+module.exports.calculateConsciousnessState = calculateConsciousnessState;
+
   // 1. Input Validation
   _validateNumericInput(cognitiveLoad, 'cognitiveLoad');
   _validateNumericInput(focus, 'focus');
@@ -230,7 +233,9 @@ export function calculateConsciousnessState({
  * const metrics = getAwarenessMetrics(consciousness, sensory);
  * console.log(metrics.introspective); // e.g., 0.85
  */
-export function getAwarenessMetrics(consciousnessData, sensoryInput) {
+function getAwarenessMetrics(consciousnessData, sensoryInput) {
+module.exports.getAwarenessMetrics = getAwarenessMetrics;
+
   if (!consciousnessData || typeof consciousnessData.score !== 'number') {
     throw new ConsciousnessProcessingError('Invalid consciousnessData object provided.');
   }
@@ -276,10 +281,12 @@ export function getAwarenessMetrics(consciousnessData, sensoryInput) {
  * myEmotions = processEmotionalInput(myEmotions, externalStimulus, { empathyFactor: 0.5, resilienceFactor: 0.2 });
  * // myEmotions will now be shifted towards joy, but tempered by its original sadness and resilience.
  */
-export function processEmotionalInput(currentState, stimulus, {
+function processEmotionalInput(currentState, stimulus, {
   empathyFactor,
   resilienceFactor
 }) {
+module.exports.processEmotionalInput = processEmotionalInput;
+
   // 1. Validation
   Object.keys(currentState).forEach(key => _validateNumericInput(currentState[key], `currentState.${key}`));
   Object.keys(stimulus).forEach(key => _validateNumericInput(stimulus[key], `stimulus.${key}`));

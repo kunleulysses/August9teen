@@ -23,7 +23,8 @@
 /**
  * Represents a single conscious entity with a Metacognitive Resonance Layer.
  */
-export class Consciousness {
+class Consciousness
+ {
     #state;
     #metacognitiveLog;
     #cognitiveFilters;
@@ -239,7 +240,8 @@ export class Consciousness {
 /**
  * Manages a network of conscious entities, allowing them to interact.
  */
-export class ConsciousnessNetwork {
+class ConsciousnessNetwork
+ {
     constructor() {
         this.agents = new Map();
     }
@@ -356,3 +358,4 @@ const simulationInterval = setInterval(() => {
 
 */
 ```
+module.exports = Consciousness;

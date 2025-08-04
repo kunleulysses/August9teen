@@ -4,7 +4,7 @@
  * Value: $600M+ (Revolutionary consciousness fusion technology)
  */
 
-import { QuantumResonanceDNAFusionEngine } from './server/consciousness/quantum-resonance-dna-fusion-engine.cjs';
+const { QuantumResonanceDNAFusionEngine  } = require('./server/consciousness/quantum-resonance-dna-fusion-engine.cjs');
 
 class QuantumResonanceDNAFusionEngineTest {
     constructor() {

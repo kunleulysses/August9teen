@@ -5,7 +5,7 @@
  * Tests the live connection to port 3002
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 const WS_URL = 'ws://localhost:3002';
 

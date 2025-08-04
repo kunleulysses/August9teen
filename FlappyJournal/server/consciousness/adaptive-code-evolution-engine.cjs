@@ -4,9 +4,9 @@
  * Self-evolving code that adapts based on consciousness metrics and performance feedback
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class AdaptiveCodeEvolutionEngine extends EventEmitter {
+class AdaptiveCodeEvolutionEngine extends EventEmitter {
     constructor() {
         super();
         this.name = 'AdaptiveCodeEvolutionEngine';
@@ -816,4 +816,4 @@ class ConsciousnessFitnessEvaluator {
     }
 }
 
-export default AdaptiveCodeEvolutionEngine;
+module.exports = AdaptiveCodeEvolutionEngine;

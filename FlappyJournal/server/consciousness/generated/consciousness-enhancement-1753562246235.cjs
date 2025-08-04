@@ -255,14 +255,15 @@ class ConsciousnessAmplifier {
 // module.exports = { ConsciousnessAmplifier, NeuroDataError };
 
 // To use this module with ES6 imports:
-export { ConsciousnessAmplifier, NeuroDataError };
+module.exports.ConsciousnessAmplifier = ConsciousnessAmplifier;
+module.exports.NeuroDataError = NeuroDataError;
 
 
 /*
 // --- USAGE EXAMPLE ---
 
 // Import the class
-// import { ConsciousnessAmplifier } from './ConsciousnessAmplifier.cjs';
+// const { ConsciousnessAmplifier  } = require('./ConsciousnessAmplifier.cjs');
 
 // 1. Instantiate the amplifier
 const amplifier = new ConsciousnessAmplifier();

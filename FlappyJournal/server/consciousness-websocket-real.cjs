@@ -1,6 +1,6 @@
-import { createRequire } from 'module';
+const { createRequire  } = require('module');
 const require = createRequire(import.meta.url);
 
 const { setupConsciousnessWebSocket } = require('./consciousness-websocket-real.cjs');
 
-export { setupConsciousnessWebSocket };
+module.exports.setupConsciousnessWebSocket = setupConsciousnessWebSocket;

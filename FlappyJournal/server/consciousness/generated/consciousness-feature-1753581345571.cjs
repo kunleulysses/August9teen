@@ -20,7 +20,7 @@
 
 // Using Node.js's EventEmitter for a robust, standard eventing system.
 // In a browser environment, a simple custom EventEmitter could be substituted.
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
 /**
  * Represents a single cognitive event in the consciousness stream.
@@ -67,7 +67,7 @@ const DEFAULT_CONFIG = {
     strongEvidenceThreshold: 8,
 };
 
-export class MetacognitiveLayer extends EventEmitter {
+class MetacognitiveLayer extends EventEmitter {
     /**
      * Initializes the Metacognitive Awareness Layer.
      * @param {object} [config={}] - Configuration options to override defaults.

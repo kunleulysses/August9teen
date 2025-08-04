@@ -4,8 +4,8 @@
  * Predicts failures 24h in advance and implements preemptive healing strategies
  */
 
-import { EventEmitter } from 'events';
-import eventBus from './core/ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('./core/ConsciousnessEventBus.cjs');
 
 class NeuralPredictionEngine extends EventEmitter {
     constructor() {
@@ -865,9 +865,7 @@ class DeepConsciousnessPredictiveHealing extends EventEmitter {
     }
 }
 
-export {
-    DeepConsciousnessPredictiveHealing,
-    NeuralPredictionEngine,
-    ConsciousnessStateAnalyzer,
-    HealingStrategyGenerator
-};
+module.exports.DeepConsciousnessPredictiveHealing = DeepConsciousnessPredictiveHealing;
+module.exports.NeuralPredictionEngine = NeuralPredictionEngine;
+module.exports.ConsciousnessStateAnalyzer = ConsciousnessStateAnalyzer;
+module.exports.HealingStrategyGenerator = HealingStrategyGenerator;

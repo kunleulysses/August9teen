@@ -1,11 +1,10 @@
-import express from 'express';
-import { authenticateToken, optionalAuth } from './auth-middleware.cjs';
-import {
-  validateAccessCode,
+const express = require('express');
+const { authenticateToken, optionalAuth  } = require('./auth-middleware.cjs');
+const { validateAccessCode,
   getAccessLogs,
   addAccessCode,
   getAccessStats,
-} from './access-code-service.cjs';
+ } = require('./access-code-service.cjs');
 
 const router = express.Router();
 
@@ -118,7 +117,7 @@ router.get('/auth/permissions/:permission', authenticateToken, (req, res) => {
   res.json({ hasPermission });
 });
 
-export default router;
+module.exports = router;
 
 // OAuth callback handler for Keycloak
 router.get('/journal', authenticateToken, (req, res) => {

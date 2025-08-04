@@ -1,7 +1,9 @@
 // WebSocket Metrics Integration
-import ConsciousnessMetricsStream from './consciousness-metrics-stream.cjs';
+const ConsciousnessMetricsStream = require('./consciousness-metrics-stream.cjs');
 
-export function setupMetricsStreaming(wss, consciousnessSystem) {
+function setupMetricsStreaming(wss, consciousnessSystem) {
+module.exports.setupMetricsStreaming = setupMetricsStreaming;
+
     console.log('🔌 Setting up metrics streaming integration...');
     
     const metricsStream = new ConsciousnessMetricsStream(consciousnessSystem);

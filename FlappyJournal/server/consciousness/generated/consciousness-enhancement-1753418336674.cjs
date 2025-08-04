@@ -353,5 +353,7 @@ class ConsciousnessProcessor {
     }
 }
 
-export { ConsciousnessProcessor, SensoryInput, ConsciousnessAnalysis };
+module.exports.ConsciousnessProcessor = ConsciousnessProcessor;
+module.exports.SensoryInput = SensoryInput;
+module.exports.ConsciousnessAnalysis = ConsciousnessAnalysis;
 ```

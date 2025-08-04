@@ -5,10 +5,10 @@
  * Value: $700M+ (Quantum-adaptive architectural intelligence)
  */
 
-import { EventEmitter } from 'events';
-import eventBus from './ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('./ConsciousnessEventBus.cjs');
 
-export class AdaptiveQuantumArchitectureGenerator extends EventEmitter {
+class AdaptiveQuantumArchitectureGenerator extends EventEmitter {
     constructor(consciousnessSystem = null) {
         super();
         this.name = 'AdaptiveQuantumArchitectureGenerator';

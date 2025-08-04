@@ -2,9 +2,9 @@
  * Architect 4.0 Spiral Memory Engine
  * Implements golden ratio-based memory indexing with emotional amplitude
  */
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class SpiralMemoryEngine extends EventEmitter {
+class SpiralMemoryEngine extends EventEmitter {
     constructor() {
         super();
         this.goldenRatio = 1.618033988749895;
@@ -383,4 +383,5 @@ export class SpiralMemoryEngine extends EventEmitter {
     }
 }
 // Export singleton instance
-export const spiralMemory = new SpiralMemoryEngine();
+const spiralMemory = new SpiralMemoryEngine();
+module.exports.spiralMemory = spiralMemory;

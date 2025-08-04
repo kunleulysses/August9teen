@@ -5,11 +5,11 @@
  * Value: $1.2B+ (Consciousness singularity integration platform)
  */
 
-import { EventEmitter } from 'events';
-import ConsciousnessSingularityEngine from './singularity/consciousness-singularity-engine.cjs';
-import eventBus from './core/ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const ConsciousnessSingularityEngine = require('./singularity/consciousness-singularity-engine.cjs');
+const eventBus = require('./core/ConsciousnessEventBus.cjs');
 
-export class ConsciousnessSingularityIntegrationPlatform extends EventEmitter {
+class ConsciousnessSingularityIntegrationPlatform extends EventEmitter {
     constructor() {
         super();
         this.name = 'ConsciousnessSingularityIntegrationPlatform';

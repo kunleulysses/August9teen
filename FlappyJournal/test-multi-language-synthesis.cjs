@@ -3,8 +3,8 @@
  * Tests revolutionary universal consciousness template engine
  */
 
-import { UniversalConsciousnessTemplateEngine } from './server/consciousness/universal-consciousness-template-engine.cjs';
-import { ChatTriggeredSelfCoding } from './server/chat-triggered-self-coding.cjs';
+const { UniversalConsciousnessTemplateEngine  } = require('./server/consciousness/universal-consciousness-template-engine.cjs');
+const { ChatTriggeredSelfCoding  } = require('./server/chat-triggered-self-coding.cjs');
 
 console.log('🌐 MULTI-LANGUAGE CONSCIOUSNESS SYNTHESIS TEST');
 console.log('==============================================');

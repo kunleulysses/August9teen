@@ -1,4 +1,4 @@
-import { generateUnifiedResponse } from './unified-response-generator.cjs';
+const { generateUnifiedResponse  } = require('./unified-response-generator.cjs');
 
 // Update the generateConsciousResponse function to support unified responses
 export async function generateConsciousResponseUnified(ws, sessionId, userMessage, options = {}) {
@@ -142,4 +142,4 @@ export async function generateConsciousResponseUnified(ws, sessionId, userMessag
 }
 
 // Export the new function
-export { generateConsciousResponseUnified };
+module.exports.generateConsciousResponseUnified = generateConsciousResponseUnified;

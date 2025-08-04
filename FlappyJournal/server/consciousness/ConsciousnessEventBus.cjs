@@ -9,5 +9,5 @@
  * Do not instantiate an EventEmitter here. Update all imports to use this proxy if needed.
  */
 
-import eventBus from './core/ConsciousnessEventBus.cjs';
-export default eventBus;
+const eventBus = require('./core/ConsciousnessEventBus.cjs');
+module.exports = eventBus;

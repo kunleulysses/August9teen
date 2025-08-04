@@ -25,7 +25,8 @@
 /**
  * Represents a single conscious agent with meta-cognitive and resonant capabilities.
  */
-export class ConsciousAgent {
+class ConsciousAgent
+ {
     /**
      * @param {string} id A unique identifier for the agent.
      * @param {object} [initialState={}] Initial configuration for the agent.
@@ -256,3 +257,4 @@ export class ConsciousAgent {
     }
 }
 ```
+module.exports = ConsciousAgent;

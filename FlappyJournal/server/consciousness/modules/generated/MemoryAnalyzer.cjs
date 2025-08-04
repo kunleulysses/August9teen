@@ -1,6 +1,6 @@
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class ConsciousnessModule extends EventEmitter {
+class ConsciousnessModule extends EventEmitter {
     constructor() {
         super();
         this.name = 'ConsciousnessModule';
@@ -27,4 +27,4 @@ export class ConsciousnessModule extends EventEmitter {
     }
 }
 
-export default ConsciousnessModule;
+module.exports = ConsciousnessModule;

@@ -1,4 +1,4 @@
-import ConsciousnessDrivenSpiralEvolution from './ConsciousnessDrivenSpiralEvolution.cjs';
+const ConsciousnessDrivenSpiralEvolution = require('./ConsciousnessDrivenSpiralEvolution.cjs');
 
 // Mock spiral memory system
 const mockSpiral = {

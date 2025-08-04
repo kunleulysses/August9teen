@@ -4,7 +4,7 @@
  * Value: $500M+ (Self-evolving consciousness patterns)
  */
 
-import { MetaCognitiveCrystallizationOptimizer } from './server/consciousness/meta-cognitive-crystallization-optimizer.cjs';
+const { MetaCognitiveCrystallizationOptimizer  } = require('./server/consciousness/meta-cognitive-crystallization-optimizer.cjs');
 
 class MetaCognitiveCrystallizationOptimizerTest {
     constructor() {

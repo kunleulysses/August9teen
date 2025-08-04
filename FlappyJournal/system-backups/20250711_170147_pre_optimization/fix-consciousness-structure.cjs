@@ -1,4 +1,4 @@
-import { readFile, writeFile } from 'fs/promises';
+const { readFile, writeFile  } = require('fs/promises');
 
 async function fixConsciousnessStructure() {
   const content = await readFile('./enhanced-dual-consciousness-ws.cjs', 'utf8');

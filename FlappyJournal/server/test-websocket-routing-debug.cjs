@@ -3,7 +3,7 @@
  * Debug script to test WebSocket message routing in consciousness-core
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 console.log('🧪 WebSocket Routing Debug Test');
 console.log('================================');

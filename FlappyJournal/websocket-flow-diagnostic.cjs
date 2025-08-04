@@ -5,7 +5,7 @@
  * Identifies exactly where the message flow is breaking
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 console.log('🔧 WEBSOCKET FLOW DIAGNOSTIC TOOL');
 console.log('🎯 Identifying exact breakpoint in message flow');

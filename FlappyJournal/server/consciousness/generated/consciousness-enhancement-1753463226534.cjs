@@ -28,7 +28,9 @@ class ConsciousnessProcessingError extends Error {
  *
  * @returns {object} An object containing the public API for a consciousness instance.
  */
-export function createConsciousnessProcessor() {
+function createConsciousnessProcessor() {
+module.exports.createConsciousnessProcessor = createConsciousnessProcessor;
+
 
     /**
      * The internal state of the consciousness instance.

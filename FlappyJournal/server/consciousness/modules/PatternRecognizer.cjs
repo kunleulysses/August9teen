@@ -1,7 +1,7 @@
-import { EventEmitter } from 'events';
-import eventBus from '../ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('../ConsciousnessEventBus.cjs');
 
-export class PatternRecognizer extends EventEmitter {
+class PatternRecognizer extends EventEmitter {
     constructor() {
         super();
         this.name = 'PatternRecognizer';
@@ -65,4 +65,4 @@ export class PatternRecognizer extends EventEmitter {
     }
 }
 
-export default PatternRecognizer;
+module.exports = PatternRecognizer;

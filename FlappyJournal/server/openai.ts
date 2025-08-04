@@ -623,3 +623,6 @@ P.S. Feel free to reply anytime - I love our chats!`,
 function getRandomItem<T>(array: T[]): T {
   return array[Math.floor(Math.random() * array.length)];
 }
+
+// Export the openai client for use in other modules
+export { openai };

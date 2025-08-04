@@ -20,7 +20,7 @@
  * @readonly
  * @enum {string}
  */
-export const ConsciousnessState = {
+const ConsciousnessState = {
   DEEP_SLEEP: 'DEEP_SLEEP', // Non-lucid, minimal activity
   DREAMING: 'DREAMING',     // High internal activity, low external awareness
   DIFFUSE: 'DIFFUSE',       // Wakeful but unfocused, mind-wandering state
@@ -28,6 +28,7 @@ export const ConsciousnessState = {
   REFLECTIVE: 'REFLECTIVE', // Metacognitive state, focused on internal thoughts and self-analysis
   TRANSCENDENT: 'TRANSCENDENT', // Peak experience state, low self-awareness, high integration
 };
+module.exports.ConsciousnessState = ConsciousnessState;
 
 /**
  * A custom error class for issues related to consciousness processing.
@@ -170,7 +171,7 @@ const _determineConsciousnessState = (metrics) => {
  * @throws {ConsciousnessProcessingError} If the input data is invalid.
  *
  * @example
- * import { processConsciousness } from './Consciousness.cjs';
+ * const { processConsciousness  } = require('./Consciousness.cjs');
  *
  * const cognitiveSnapshot = {
  *   neuralActivity: 0.85,
@@ -192,8 +193,9 @@ const _determineConsciousnessState = (metrics) => {
  *   console.error('Failed to process consciousness:', error.message, error.details);
  * }
  */
-export const processConsciousness = (inputData) => {
+const processConsciousness = (inputData) => {
   _validateInput(inputData);
+module.exports.processConsciousness = processConsciousness;
 
   const {
     neuralActivity,

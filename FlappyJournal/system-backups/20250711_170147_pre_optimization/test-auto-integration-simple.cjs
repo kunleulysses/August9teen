@@ -1,6 +1,6 @@
-import AutoIntegrationService from './consciousness/services/AutoIntegrationService.cjs';
-import { EventEmitter } from 'events';
-import { promises as fs } from 'fs';
+const AutoIntegrationService = require('./consciousness/services/AutoIntegrationService.cjs');
+const { EventEmitter  } = require('events');
+const { promises as fs  } = require('fs');
 
 async function testAutoIntegration() {
     console.log('🧪 Testing Auto-Integration System (Simple Test)...\n');
@@ -21,9 +21,9 @@ async function testAutoIntegration() {
     console.log('Test 1: Creating and integrating a simple module...');
     
     const testModuleCode = `
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class TestModule extends EventEmitter {
+class TestModule extends EventEmitter {
     constructor() {
         super();
         this.name = 'TestModule';
@@ -43,15 +43,19 @@ export class TestModule extends EventEmitter {
     }
 }
 
-export function capitalize(str) {
+function capitalize(str) {
+module.exports.capitalize = capitalize;
+
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-export function reverse(str) {
+function reverse(str) {
+module.exports.reverse = reverse;
+
     return str.split('').reverse().join('');
 }
 
-export default TestModule;
+module.exports = TestModule;
 `;
 
     // Write the test module
@@ -101,10 +105,14 @@ export default TestModule;
     console.log('\nTest 4: Creating an API endpoint module...');
     
     const apiModuleCode = `
-export const path = '/api/test/hello';
-export const method = 'GET';
+const path = '/api/test/hello';
+module.exports.path = path;
+const method = 'GET';
+module.exports.method = method;
 
-export function handler(req, res) {
+function handler(req, res) {
+module.exports.handler = handler;
+
     res.json({
         message: 'Hello from auto-generated endpoint!',
         timestamp: new Date(),
@@ -113,9 +121,10 @@ export function handler(req, res) {
     });
 }
 
-export const middleware = [];
+const middleware = [];
+module.exports.middleware = middleware;
 
-export default { path, method, handler, middleware };
+module.exports = { path, method, handler, middleware };
 `;
 
     const apiFilePath = './api/generated/test-hello-endpoint.cjs';

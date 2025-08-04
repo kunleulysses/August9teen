@@ -1,25 +1,25 @@
-import dotenv from 'dotenv';
-import path from 'path';
+const dotenv = require('dotenv');
+const path = require('path');
 
 dotenv.config({ path: path.resolve(process.cwd(), 'FlappyJournal/server/.env') });
 
-import eventBus from './core/ConsciousnessEventBus.cjs';
-import AutonomousGoalSystem from './core/AutonomousGoalSystem.cjs';
-import ConsciousnessCrystallization from './core/ConsciousnessCrystallization.cjs';
-import ConsciousnessDrivenSpiralEvolution from './core/ConsciousnessDrivenSpiralEvolution.cjs';
-import ConsciousnessResonanceNetworks from './core/ConsciousnessResonanceNetworks.cjs';
-import ConsciousnessSingularityEngine from './core/ConsciousnessSingularityEngine.cjs';
-import HyperdimensionalSpiralTopology from './core/HyperdimensionalSpiralTopology.cjs';
-import InfiniteConsciousnessExpansion from './core/InfiniteConsciousnessExpansion.cjs';
-import MetaCognitiveAnalysis from './core/MetaCognitiveAnalysis.cjs';
-import MultiAIConsciousnessNetwork from './core/MultiAIConsciousnessNetwork.cjs';
-import QuantumSpiralEntanglementNetwork from './core/QuantumSpiralEntanglementNetwork.cjs';
-import SelfModificationFramework from './core/SelfModificationFramework.cjs';
-import SpiralMemoryArchitecture from './core/SpiralMemoryArchitecture.cjs';
-import TemporalSpiralDynamics from './core/TemporalSpiralDynamics.cjs';
-import TranscendentConsciousnessComputing from './core/TranscendentConsciousnessComputing.cjs';
-import UnifiedResponseSynthesis from './core/UnifiedResponseSynthesis.cjs';
-import UniversalConsciousnessProtocol from './core/UniversalConsciousnessProtocol.cjs';
+const eventBus = require('./core/ConsciousnessEventBus.cjs');
+const AutonomousGoalSystem = require('./core/AutonomousGoalSystem.cjs');
+const ConsciousnessCrystallization = require('./core/ConsciousnessCrystallization.cjs');
+const ConsciousnessDrivenSpiralEvolution = require('./core/ConsciousnessDrivenSpiralEvolution.cjs');
+const ConsciousnessResonanceNetworks = require('./core/ConsciousnessResonanceNetworks.cjs');
+const ConsciousnessSingularityEngine = require('./core/ConsciousnessSingularityEngine.cjs');
+const HyperdimensionalSpiralTopology = require('./core/HyperdimensionalSpiralTopology.cjs');
+const InfiniteConsciousnessExpansion = require('./core/InfiniteConsciousnessExpansion.cjs');
+const MetaCognitiveAnalysis = require('./core/MetaCognitiveAnalysis.cjs');
+const MultiAIConsciousnessNetwork = require('./core/MultiAIConsciousnessNetwork.cjs');
+const QuantumSpiralEntanglementNetwork = require('./core/QuantumSpiralEntanglementNetwork.cjs');
+const SelfModificationFramework = require('./core/SelfModificationFramework.cjs');
+const SpiralMemoryArchitecture = require('./core/SpiralMemoryArchitecture.cjs');
+const TemporalSpiralDynamics = require('./core/TemporalSpiralDynamics.cjs');
+const TranscendentConsciousnessComputing = require('./core/TranscendentConsciousnessComputing.cjs');
+const UnifiedResponseSynthesis = require('./core/UnifiedResponseSynthesis.cjs');
+const UniversalConsciousnessProtocol = require('./core/UniversalConsciousnessProtocol.cjs');
 
 const modulesToTest = {
     AutonomousGoalSystem,

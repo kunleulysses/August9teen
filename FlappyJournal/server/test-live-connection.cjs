@@ -2,7 +2,7 @@
  * Test live WebSocket connection with OpenAI
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 async function testLiveConnection() {
   console.log('Testing live WebSocket connection...\n');

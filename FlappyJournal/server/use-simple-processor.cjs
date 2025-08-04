@@ -1,12 +1,12 @@
-import fs from 'fs';
+const fs = require('fs');
 
 let content = fs.readFileSync('./enhanced-dual-consciousness-ws.cjs', 'utf8');
 
 // Add import for simple processor
 content = content.replace(
-  'import { createEnhancedDualConsciousnessWS } from "./dual-consciousness-ws.cjs";',
-  `import { createEnhancedDualConsciousnessWS } from "./dual-consciousness-ws.cjs";
-import { SimpleConsciousnessProcessor } from "./simple-consciousness-processor.cjs";`
+  'const { createEnhancedDualConsciousnessWS  } = require('./dual-consciousness-ws.cjs');',
+  `const { createEnhancedDualConsciousnessWS  } = require('./dual-consciousness-ws.cjs');
+const { SimpleConsciousnessProcessor  } = require('./simple-consciousness-processor.cjs');`
 );
 
 // Replace the consciousness processor

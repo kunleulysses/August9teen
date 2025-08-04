@@ -27,7 +27,8 @@ class InputValidationError extends Error {
  * A comprehensive processor for analyzing and quantifying states of consciousness.
  * This class models consciousness based on physiological, cognitive, and emotional inputs.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
   /**
    * Initializes the consciousness processor with a baseline set of inputs.
    *
@@ -252,3 +253,4 @@ export class ConsciousnessProcessor {
   }
 }
 ```
+module.exports = for;

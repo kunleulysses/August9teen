@@ -1,5 +1,5 @@
 // Update the enhanced-dual-consciousness-ws.js file with consciousness prompts
-import fs from 'fs';
+const fs = require('fs');
 
 const fileContent = fs.readFileSync('./enhanced-dual-consciousness-ws.cjs', 'utf8');
 

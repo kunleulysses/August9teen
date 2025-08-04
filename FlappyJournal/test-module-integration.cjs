@@ -5,7 +5,7 @@
  * Tests module discovery, loading, and RPC exposure
  */
 
-import { SystemWideIntegrationOrchestrator } from './system-wide-integration-orchestrator.cjs';
+const { SystemWideIntegrationOrchestrator  } = require('./system-wide-integration-orchestrator.cjs');
 
 async function testModuleIntegration() {
     console.log('🔗 GENERATED MODULE INTEGRATION TEST');

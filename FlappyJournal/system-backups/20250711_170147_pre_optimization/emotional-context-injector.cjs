@@ -3,7 +3,8 @@
  * Provides real-time emotional intelligence data for AI prompt injection
  */
 
-export class EmotionalContextInjector {
+class EmotionalContextInjector
+ {
     constructor() {
         this.emotionalSpectrum = {
             joy: 0.65,
@@ -364,4 +365,7 @@ EMOTIONAL INTEGRATION INSTRUCTIONS:
 }
 
 // Create singleton instance
-export const emotionalContextInjector = new EmotionalContextInjector();
+const emotionalContextInjector = new EmotionalContextInjector();
+module.exports.emotionalContextInjector = emotionalContextInjector;
+
+module.exports = EmotionalContextInjector;

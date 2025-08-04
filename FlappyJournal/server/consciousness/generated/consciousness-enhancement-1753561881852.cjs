@@ -113,7 +113,8 @@ const EMOTION_PROFILES = {
 };
 
 
-export class ConsciousnessEngine {
+class ConsciousnessEngine
+ {
     #state;
     #config;
     #stateHistory;
@@ -339,5 +340,6 @@ export class ConsciousnessEngine {
     }
 }
 
-export default ConsciousnessEngine;
+module.exports = ConsciousnessEngine;
 ```
+module.exports = ConsciousnessEngine;

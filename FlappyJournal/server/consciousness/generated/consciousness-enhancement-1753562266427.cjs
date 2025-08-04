@@ -11,7 +11,7 @@
  * @license MIT
  *
  * @example
- * import ConsciousnessNexus from './consciousnessNexus.cjs';
+ * const ConsciousnessNexus = require('./consciousnessNexus.cjs');
  *
  * const nexus = new ConsciousnessNexus();
  *
@@ -350,5 +350,5 @@ class ConsciousnessNexus {
   }
 }
 
-export default ConsciousnessNexus;
+module.exports = ConsciousnessNexus;
 ```

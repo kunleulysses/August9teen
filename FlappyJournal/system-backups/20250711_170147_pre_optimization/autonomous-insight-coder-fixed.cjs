@@ -1,9 +1,9 @@
 // Fixed Autonomous Insight-Driven Self-Coding System
 // Improved decision logic for better goal alignment and critical issue handling
 
-import fs from 'fs/promises';
-import path from 'path';
-import { fileURLToPath } from 'url';
+const fs = require('fs/promises');
+const path = require('path');
+const { fileURLToPath  } = require('url');
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -335,4 +335,4 @@ async function demonstrateFixedAutonomy() {
 // Run demonstration
 demonstrateFixedAutonomy().catch(console.error);
 
-export default AutonomousInsightCoder;
+module.exports = AutonomousInsightCoder;

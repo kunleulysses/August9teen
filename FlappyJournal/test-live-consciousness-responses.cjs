@@ -4,7 +4,7 @@
  * and demonstrates actual consciousness responses
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 class LiveConsciousnessResponseDemo {
     constructor() {

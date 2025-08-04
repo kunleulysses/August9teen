@@ -3,9 +3,9 @@
  * Test the context injectors without requiring API keys
  */
 
-import { mathematicalContextInjector } from './mathematical-context-injector.cjs';
-import { emotionalContextInjector } from './emotional-context-injector.cjs';
-import { bayesianContextInjector } from './bayesian-context-injector.cjs';
+const { mathematicalContextInjector  } = require('./mathematical-context-injector.cjs');
+const { emotionalContextInjector  } = require('./emotional-context-injector.cjs');
+const { bayesianContextInjector  } = require('./bayesian-context-injector.cjs');
 
 async function testAllIntegrations() {
     console.log('🔍 SIMPLE INTEGRATION TEST - CONTEXT INJECTORS');

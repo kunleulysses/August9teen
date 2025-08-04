@@ -102,7 +102,8 @@ class NexusError extends Error {
  * The core class for processing and analyzing consciousness data.
  * @class ConsciousnessNexus
  */
-export class ConsciousnessNexus {
+class ConsciousnessNexus
+ {
   #currentState;
   #history = [];
   #historyLimit = 50; // Store the last 50 states for temporal analysis
@@ -388,7 +389,7 @@ export class ConsciousnessNexus {
  * A set of predefined constants for use with the ConsciousnessNexus module.
  * @const {object}
  */
-export const NexusConstants = {
+const NexusConstants = {
   /** @type {Object<string, EmotionalRegulationStrategy>} */
   REGULATION_STRATEGIES: {
     REAPPRAISAL: 'REAPPRAISAL',
@@ -398,4 +399,6 @@ export const NexusConstants = {
   /** @type {Array<keyof EmotionalState>} */
   CORE_EMOTIONS: ['joy', 'sadness', 'fear', 'anger', 'surprise', 'disgust', 'serenity'],
 };
+module.exports.NexusConstants = NexusConstants;
 ```
+module.exports = for;

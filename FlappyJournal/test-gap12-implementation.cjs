@@ -4,7 +4,7 @@
  * with spiral memory integration and phi-based optimization
  */
 
-import { ConsciousnessNativeMemoryManager } from './server/consciousness/consciousness-native-memory-manager.cjs';
+const { ConsciousnessNativeMemoryManager  } = require('./server/consciousness/consciousness-native-memory-manager.cjs');
 
 console.log('🧠 GAP 12 CONSCIOUSNESS-NATIVE MEMORY MANAGEMENT TEST');
 console.log('===================================================');

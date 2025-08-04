@@ -1,8 +1,10 @@
-import { WebSocketServer } from 'ws';
+const { WebSocketServer  } = require('ws');
 
 console.log("Loading simple-research-ws module...");
 
-export function setupResearchWebSocketServer(server) {
+function setupResearchWebSocketServer(server) {
+module.exports.setupResearchWebSocketServer = setupResearchWebSocketServer;
+
   const wss = new WebSocketServer({ 
     server,
     path: '/ws/chat'

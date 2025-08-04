@@ -76,7 +76,8 @@ const DEFAULT_CONFIG = {
   regulationBaseline: 0.0,
 };
 
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
   #currentState;
   #config;
   #history = [];
@@ -300,3 +301,4 @@ export class ConsciousnessProcessor {
   }
 }
 ```
+module.exports = for;

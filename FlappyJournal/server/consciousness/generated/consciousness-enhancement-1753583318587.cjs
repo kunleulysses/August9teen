@@ -47,13 +47,14 @@ class ProcessingError extends Error {
  * @description Defines the primary calculated states of consciousness.
  * These states are not mutually exclusive but represent the dominant mode of processing.
  */
-export const ConsciousnessState = {
+const ConsciousnessState = {
   FOCUSED_ANALYTICAL: 'Focused-Analytical', // High beta waves, low noise, task-oriented.
   CREATIVE_DIFFUSE: 'Creative-Diffuse',     // High alpha/theta, associative thinking.
   DEEP_MEDITATIVE: 'Deep-Meditative',       // Dominant alpha/delta, high interoception.
   RECEPTIVE_AWARENESS: 'Receptive-Awareness', // Balanced state, open to stimuli.
   NEURAL_IDLE: 'Neural-Idle',               // Default resting state.
 };
+module.exports.ConsciousnessState = ConsciousnessState;
 
 /**
  * @description Defines the Valence-Arousal model for core affect.
@@ -81,7 +82,8 @@ const EmotionalSpectrum = {
  * This class maintains a history of inputs to analyze temporal patterns and
  * provides a comprehensive, real-time analysis of the simulated conscious state.
  */
-export class ConsciousnessStream {
+class ConsciousnessStream
+ {
   /**
    * @constructor
    * @param {object} [config={}] - Configuration for the consciousness stream.
@@ -381,3 +383,4 @@ export class ConsciousnessStream {
   }
 }
 ```
+module.exports = InvalidInputError;

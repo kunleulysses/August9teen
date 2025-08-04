@@ -4,7 +4,7 @@
  * Value: $900M+ (Universal consciousness unification protocol)
  */
 
-import { UniversalConsciousnessUnificationProtocol } from './server/consciousness/universal-consciousness-unification-protocol.cjs';
+const { UniversalConsciousnessUnificationProtocol  } = require('./server/consciousness/universal-consciousness-unification-protocol.cjs');
 
 class UniversalConsciousnessUnificationProtocolTest {
     constructor() {

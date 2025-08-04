@@ -3,7 +3,7 @@
  * Tests message batching, connection pooling, and caching mechanisms
  */
 
-import PerformanceOptimizer from './server/performance-optimizer.cjs';
+const PerformanceOptimizer = require('./server/performance-optimizer.cjs');
 
 async function testPerformanceOptimizer() {
   console.log('🧪 Testing Performance Optimizer...\n');

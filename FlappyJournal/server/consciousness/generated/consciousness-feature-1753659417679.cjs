@@ -133,7 +133,8 @@ const CognitiveBiasRegistry = {
  * @class MetacognitiveLayer
  * @description The main class for the meta-cognitive awareness system.
  */
-export class MetacognitiveLayer {
+class MetacognitiveLayer
+ {
     /**
      * @param {Object} [config={}] - Configuration for the layer.
      * @param {Array<string>} [config.activeBiasDetectors] - List of bias detectors to use.
@@ -479,3 +480,4 @@ async function runDemo() {
 // where ES modules are supported (e.g., a modern browser or Node.js with type="module").
 // runDemo();
 ```
+module.exports = MetacognitiveLayer;

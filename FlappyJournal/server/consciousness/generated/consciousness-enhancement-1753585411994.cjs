@@ -136,7 +136,8 @@ const normalize = (value, min, max) => {
  * The core class for processing and enhancing consciousness states.
  * Manages a stream of consciousness to provide temporal context to its calculations.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
     /**
      * @private
      * @type {CognitiveSnapshot[]}
@@ -338,3 +339,4 @@ export class ConsciousnessProcessor {
     }
 }
 ```
+module.exports = for;

@@ -61,7 +61,7 @@ class DataStreamUnstableError extends ConsciousnessProcessingError {
  * The state is determined by the final 'Qualia Resonance Score'.
  * @const {object} CONSCIOUSNESS_STATES
  */
-export const CONSCIOUSNESS_STATES = Object.freeze({
+const CONSCIOUSNESS_STATES = Object.freeze({
     SUBCONSCIOUS: { min: 0, max: 20, description: "Automatic processing, minimal self-awareness." },
     DREAMING: { min: 21, max: 40, description: "High internal activity, detached from sensory reality." },
     DEFAULT_MODE: { min: 41, max: 65, description: "Wakeful rest, mind-wandering, passive awareness." },
@@ -69,6 +69,7 @@ export const CONSCIOUSNESS_STATES = Object.freeze({
     FLOW_STATE: { min: 86, max: 95, description: "Effortless action, full immersion, temporal distortion." },
     LUCID_CLARITY: { min: 96, max: 100, description: "Peak experience, profound insight, high metacognition." },
 });
+module.exports.CONSCIOUSNESS_STATES = CONSCIOUSNESS_STATES;
 
 /**
  * Weighting factors for consciousness state calculation.
@@ -88,7 +89,7 @@ const CALCULATION_WEIGHTS = Object.freeze({
  * Inspired by Plutchik's wheel, but enhanced for computational analysis.
  * @const {object} EMOTIONAL_VECTORS
  */
-export const EMOTIONAL_VECTORS = Object.freeze({
+const EMOTIONAL_VECTORS = Object.freeze({
     JOY: [0.9, 0.4, 0.1],
     TRUST: [0.7, 0.7, 0.2],
     FEAR: [-0.8, 0.5, 0.3],
@@ -98,6 +99,7 @@ export const EMOTIONAL_VECTORS = Object.freeze({
     ANGER: [-0.7, 0.6, 0.6],
     ANTICIPATION: [0.5, 0.7, -0.4],
 });
+module.exports.EMOTIONAL_VECTORS = EMOTIONAL_VECTORS;
 
 
 // --- Private Helper Functions ---
@@ -155,7 +157,9 @@ const _normalize = (value, min, max) => {
  * @throws {InvalidInputDataError} If input data is malformed.
  * @throws {DataStreamUnstableError} If sensory data is too noisy.
  */
-export function calculateConsciousnessState(neuroData, sensoryData) {
+function calculateConsciousnessState(neuroData, sensoryData) {
+module.exports.calculateConsciousnessState = calculateConsciousnessState;
+
     _validateInput(neuroData, ['gammaSync', 'alphaSuppression', 'neuralEntropy']);
     _validateInput(sensoryData, ['integrationFidelity', 'signalToNoiseRatio']);
 
@@ -206,7 +210,9 @@ export function calculateConsciousnessState(neuroData, sensoryData) {
  * @returns {object} An object containing the Metacognitive Index and Temporal Perception Skew.
  * @throws {InvalidInputDataError} If input data is malformed.
  */
-export function analyzeAwarenessMetrics(cognitiveStream) {
+function analyzeAwarenessMetrics(cognitiveStream) {
+module.exports.analyzeAwarenessMetrics = analyzeAwarenessMetrics;
+
     _validateInput(cognitiveStream, ['selfReflectionCycles', 'thoughtPatternEntropy', 'temporalFocus']);
 
     // 1. Metacognitive Index (MI): A measure of self-awareness.
@@ -243,7 +249,9 @@ export function analyzeAwarenessMetrics(cognitiveStream) {
  * @returns {object} A detailed emotional profile.
  * @throws {InvalidInputDataError} If input data is malformed.
  */
-export function processEmotionalSpectrum(bioSignalData, context) {
+function processEmotionalSpectrum(bioSignalData, context) {
+module.exports.processEmotionalSpectrum = processEmotionalSpectrum;
+
     _validateInput(bioSignalData, ['heartRateVariability', 'electrodermalActivity', 'dominantEmotionVector']);
     _validateInput(context, ['socialEngagementLevel', 'environmentalStress']);
 

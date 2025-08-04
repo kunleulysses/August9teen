@@ -35,7 +35,7 @@ class ConsciousnessProcessingError extends Error {
  * @readonly
  * @enum {object}
  */
-export const PrimaryEmotions = {
+const PrimaryEmotions = {
   JOY: { valence: 0.9, arousal: 0.7 },
   SADNESS: { valence: -0.7, arousal: -0.5 },
   ANGER: { valence: -0.6, arousal: 0.8 },
@@ -45,13 +45,15 @@ export const PrimaryEmotions = {
   TRUST: { valence: 0.6, arousal: 0.3 },
   NEUTRAL: { valence: 0.0, arousal: 0.0 },
 };
+module.exports.PrimaryEmotions = PrimaryEmotions;
 
 /**
  * Core class representing a model of a conscious entity.
  * It integrates various processing components to generate a holistic state.
  * @class
  */
-export class ConsciousnessModel {
+class ConsciousnessModel
+ {
   /**
    * Initializes the consciousness model with a baseline state.
    * @param {object} [initialConfig={}] - The initial configuration for the model.
@@ -288,3 +290,4 @@ export class ConsciousnessModel {
   }
 }
 ```
+module.exports = for;

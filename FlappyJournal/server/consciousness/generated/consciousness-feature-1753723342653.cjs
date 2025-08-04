@@ -370,5 +370,5 @@ for (let i = 0; i < 5; i++) {
 */
 
 // To use this in a project, you would typically export the class.
-// export default MetaCognitiveResonanceEngine;
+// module.exports = MetaCognitiveResonanceEngine;
 ```

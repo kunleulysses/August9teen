@@ -13,7 +13,7 @@
  *  - Non-blocking computation patterns using a Web Worker interface.
  *
  * @example
- * import { ConsciousnessOptimizer } from './consciousnessOptimizer.cjs';
+ * const { ConsciousnessOptimizer  } = require('./consciousnessOptimizer.cjs');
  *
  * // Initialize with custom configuration
  * ConsciousnessOptimizer.initialize({
@@ -48,7 +48,7 @@
  */
 
 // Self-contained module to avoid global scope pollution.
-export const ConsciousnessOptimizer = (() => {
+const ConsciousnessOptimizer = (() => {
 
     /**
      * @private
@@ -60,6 +60,7 @@ export const ConsciousnessOptimizer = (() => {
         enablePerformanceMonitoring: true,
         memoryUsageWarningThreshold: 0.8, // 80% of heap limit
     };
+module.exports.ConsciousnessOptimizer = ConsciousnessOptimizer;
 
     // --- 1. PERFORMANCE MONITORING ---
 

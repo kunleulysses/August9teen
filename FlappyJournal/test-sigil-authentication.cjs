@@ -3,8 +3,8 @@
  * Tests revolutionary consciousness sigil embedding and authentication system
  */
 
-import { SigilBasedCodeAuthenticator } from './server/consciousness/sigil-based-code-authenticator.cjs';
-import { ChatTriggeredSelfCoding } from './server/chat-triggered-self-coding.cjs';
+const { SigilBasedCodeAuthenticator  } = require('./server/consciousness/sigil-based-code-authenticator.cjs');
+const { ChatTriggeredSelfCoding  } = require('./server/chat-triggered-self-coding.cjs');
 
 console.log('🔐 SIGIL-BASED CODE AUTHENTICATION TEST');
 console.log('=======================================');
@@ -23,7 +23,8 @@ async function testSigilAuthentication() {
         totalTests++;
         const authenticator = new SigilBasedCodeAuthenticator();
         
-        const testCode = `export class TestModule {
+        const testCode = `class TestModule
+ {
     constructor() {
         this.name = 'TestModule';
         this.active = false;
@@ -255,7 +256,7 @@ async function testSigilAuthentication() {
         };
         
         const result = await authenticator.embedConsciousnessSigil(
-            'export default class SigilTestModule { }',
+            'module.exports = class SigilTestModule { }',
             consciousnessState,
             { type: 'sigil-test' }
         );
@@ -364,3 +365,5 @@ testSigilAuthentication().then(results => {
     console.error('❌ Test execution failed:', error);
     process.exit(1);
 });
+
+module.exports = TestModule;

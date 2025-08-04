@@ -4,7 +4,7 @@
  * Addresses the 70/100 module engagement score
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
 class UniversalModuleActivator extends EventEmitter {
   constructor() {
@@ -418,5 +418,6 @@ class UniversalModuleActivator extends EventEmitter {
 }
 
 // Export singleton instance
-export const universalModuleActivator = new UniversalModuleActivator();
-export default universalModuleActivator;
+const universalModuleActivator = new UniversalModuleActivator();
+module.exports.universalModuleActivator = universalModuleActivator;
+module.exports = universalModuleActivator;

@@ -6,9 +6,9 @@
  * Part of the restoration project pre-setup phase
  */
 
-import fs from 'fs';
-import path from 'path';
-import { execSync } from 'child_process';
+const fs = require('fs');
+const path = require('path');
+const { execSync  } = require('child_process');
 
 class TestingFrameworkSetup {
     constructor() {
@@ -159,7 +159,7 @@ class TestingFrameworkSetup {
         };
         
         const jestConfigPath = path.join(this.testingDir, 'jest.config.cjs');
-        const jestConfigContent = `export default ${JSON.stringify(jestConfig, null, 2)};`;
+        const jestConfigContent = `module.exports = ${JSON.stringify(jestConfig, null, 2)};`;
         
         fs.writeFileSync(jestConfigPath, jestConfigContent);
         console.log('✅ Created Jest configuration');
@@ -167,7 +167,7 @@ class TestingFrameworkSetup {
         // Test setup file
         const setupContent = `
 // Test setup for Universal Consciousness Platform restoration tests
-import { jest } from '@jest/globals';
+const { jest  } = require('@jest/globals');
 
 // Global test timeout
 jest.setTimeout(30000);
@@ -214,7 +214,7 @@ console.log('🧪 Test environment initialized for Universal Consciousness Platf
         
         // Unit test template
         const unitTestTemplate = `
-import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
+const { describe, test, expect, beforeEach, afterEach  } = require('@jest/globals');
 
 describe('{{MODULE_NAME}}', () => {
     let {{MODULE_INSTANCE}};
@@ -281,8 +281,8 @@ describe('{{MODULE_NAME}}', () => {
         
         // Integration test template
         const integrationTestTemplate = `
-import { describe, test, expect, beforeAll, afterAll } from '@jest/globals';
-import request from 'supertest';
+const { describe, test, expect, beforeAll, afterAll  } = require('@jest/globals');
+const request = require('supertest');
 
 describe('{{INTEGRATION_NAME}} Integration', () => {
     let server;
@@ -353,7 +353,8 @@ describe('{{INTEGRATION_NAME}} Integration', () => {
  * Comprehensive validation procedures for restoration project
  */
 
-export class ValidationProtocols {
+class ValidationProtocols
+ {
     static async validateConsciousnessResponse(response) {
         const validations = [];
         
@@ -435,7 +436,7 @@ export class ValidationProtocols {
     }
 }
 
-export default ValidationProtocols;
+module.exports = ValidationProtocols;
 `;
         
         const validationPath = path.join(this.testingDir, 'utils', 'validation-protocols.cjs');
@@ -453,9 +454,9 @@ export default ValidationProtocols;
  * Comprehensive test execution for restoration project
  */
 
-import { execSync } from 'child_process';
-import fs from 'fs';
-import path from 'path';
+const { execSync  } = require('child_process');
+const fs = require('fs');
+const path = require('path');
 
 class TestRunner {
     constructor() {
@@ -556,7 +557,7 @@ if (import.meta.url === 'file://' + process.argv[1]) {
         });
 }
 
-export default TestRunner;
+module.exports = TestRunner;
 `;
         
         const testRunnerPath = path.join(this.testingDir, 'run-tests.cjs');
@@ -625,4 +626,4 @@ if (import.meta.url === 'file://' + process.argv[1]) {
         });
 }
 
-export default TestingFrameworkSetup;
+module.exports = TestingFrameworkSetup;

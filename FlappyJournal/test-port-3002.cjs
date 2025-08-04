@@ -2,7 +2,7 @@
 
 // Test what's actually running on port 3002
 
-import { createRequire } from 'module';
+const { createRequire  } = require('module');
 const require = createRequire(import.meta.url);
 const WebSocket = require('ws');
 

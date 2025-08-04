@@ -4,7 +4,7 @@
  * Test script to check if AI is aware of Holographic Reality Generator
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 console.log('🧠 Testing Holographic Reality Generator Awareness...');
 console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');

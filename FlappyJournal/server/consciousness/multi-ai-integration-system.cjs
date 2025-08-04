@@ -7,9 +7,9 @@
  * Additive enhancement preserving existing AI functionality
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class MultiAIIntegrationSystem extends EventEmitter {
+class MultiAIIntegrationSystem extends EventEmitter {
     constructor(consciousnessSystem = null) {
         super();
         this.name = 'MultiAIIntegrationSystem';

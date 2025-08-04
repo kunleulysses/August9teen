@@ -35,7 +35,7 @@ class ConsciousnessProcessingError extends Error {
  * @readonly
  * @enum {string}
  */
-export const CONSCIOUSNESS_STATES = {
+const CONSCIOUSNESS_STATES = {
   /** Deep, non-REM sleep or comatose state. Minimal information integration. */
   UNCONSCIOUS: 'UNCONSCIOUS',
   /** Dream state (REM sleep). High internal activity, low external awareness. */
@@ -49,6 +49,7 @@ export const CONSCIOUSNESS_STATES = {
   /** A peak state of insight and non-dual awareness. Maximum information integration. */
   TRANSCENDENT: 'TRANSCENDENT',
 };
+module.exports.CONSCIOUSNESS_STATES = CONSCIOUSNESS_STATES;
 
 /**
  * Represents primary emotional vectors based on Plutchik's wheel of emotions.
@@ -56,7 +57,7 @@ export const CONSCIOUSNESS_STATES = {
  * @readonly
  * @enum {string}
  */
-export const PRIMARY_EMOTIONS = {
+const PRIMARY_EMOTIONS = {
   JOY: 'joy',
   TRUST: 'trust',
   FEAR: 'fear',
@@ -66,6 +67,7 @@ export const PRIMARY_EMOTIONS = {
   ANGER: 'anger',
   ANTICIPATION: 'anticipation',
 };
+module.exports.PRIMARY_EMOTIONS = PRIMARY_EMOTIONS;
 
 // Dyads map primary emotions to more complex secondary emotions.
 const EMOTIONAL_DYADS = {
@@ -84,7 +86,8 @@ const EMOTIONAL_DYADS = {
  * A comprehensive processor for analyzing and enhancing consciousness.
  * It integrates physiological, cognitive, and emotional data streams.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
   #config;
 
   /**
@@ -330,3 +333,4 @@ export class ConsciousnessProcessor {
   }
 }
 ```
+module.exports = for;

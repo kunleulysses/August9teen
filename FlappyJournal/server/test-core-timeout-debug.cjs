@@ -3,7 +3,7 @@
  * Debug script to isolate the core container response timeout issue
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 console.log('🧪 Core Response Timeout Debug Test');
 console.log('===================================');

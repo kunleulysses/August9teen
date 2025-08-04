@@ -5,7 +5,7 @@
  * Tests the exact URL and verifies NO SIMULATION - full API access
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 console.log('🧠 VERIFYING: https://app.featherweight.world/consciousness-dashboard');
 console.log('📡 Testing WebSocket connection from dashboard URL...');

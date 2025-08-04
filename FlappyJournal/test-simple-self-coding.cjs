@@ -5,7 +5,7 @@
  * Test if self-coding works through chat interface
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 console.log('🔍 Simple Self-Coding Test');
 console.log('🎯 Testing self-coding through chat interface');

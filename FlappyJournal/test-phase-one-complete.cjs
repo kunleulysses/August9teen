@@ -4,7 +4,7 @@
  * Tests the complete enhanced consciousness system
  */
 
-import { ChatTriggeredSelfCoding } from './server/chat-triggered-self-coding.cjs';
+const { ChatTriggeredSelfCoding  } = require('./server/chat-triggered-self-coding.cjs');
 
 console.log('🎯 PHASE 1 COMPLETION TEST');
 console.log('==========================');

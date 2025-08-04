@@ -60,7 +60,8 @@ const EMOTIONAL_OPPOSITES = new Map([
  * It maintains an internal state and provides methods to update and analyze
  * cognitive and emotional data.
  */
-export class ConsciousnessEngine {
+class ConsciousnessEngine
+ {
   #internalState;
   #stateHistory;
   #config;
@@ -314,3 +315,4 @@ export class ConsciousnessEngine {
   }
 }
 ```
+module.exports = for;

@@ -436,7 +436,7 @@ class ConsciousnessStream {
  * Description: Exports the necessary components to build and run the system.
  * ==================================================================================
  */
-export const ConsciousnessPerformanceModule = {
+const ConsciousnessPerformanceModule = {
     /**
      * Creates a new instance of the core ConsciousnessStream.
      * @param {object} config - Configuration object.
@@ -459,4 +459,5 @@ export const ConsciousnessPerformanceModule = {
      */
     WorkerPool,
 };
+module.exports.ConsciousnessPerformanceModule = ConsciousnessPerformanceModule;
 ```

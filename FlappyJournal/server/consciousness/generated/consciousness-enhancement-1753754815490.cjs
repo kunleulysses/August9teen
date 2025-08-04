@@ -13,7 +13,7 @@
  * Custom error class for specific module-related issues.
  * This allows for more precise error handling by the consumer of the module.
  */
-export class ConsciousnessProcessingError extends Error {
+class ConsciousnessProcessingError extends Error {
     constructor(message) {
         super(message);
         this.name = 'ConsciousnessProcessingError';
@@ -27,7 +27,7 @@ export class ConsciousnessProcessingError extends Error {
  * @readonly
  * @enum {string}
  */
-export const CONSCIOUSNESS_STATES = {
+const CONSCIOUSNESS_STATES = {
     DEEP_FOCUS: 'Deep Focus', // High attention, low distraction, task-oriented
     MIND_WANDERING: 'Mind Wandering', // Unfocused, associative thought, creative incubation
     SITUATIONAL_AWARENESS: 'Situational Awareness', // Alert, processing external environment
@@ -35,6 +35,7 @@ export const CONSCIOUSNESS_STATES = {
     RECEPTIVE_CALM: 'Receptive Calm', // Low cognitive load, open to input, meditative
     DORMANT: 'Dormant', // Minimal processing, standby state
 };
+module.exports.CONSCIOUSNESS_STATES = CONSCIOUSNESS_STATES;
 
 /**
  * Core emotional dimensions based on a simplified psychological model.
@@ -42,12 +43,13 @@ export const CONSCIOUSNESS_STATES = {
  * @readonly
  * @enum {string}
  */
-export const EMOTIONAL_DIMENSIONS = {
+const EMOTIONAL_DIMENSIONS = {
     JOY_SADNESS: 'joySadness', // Valence: positive to negative
     ANGER_FEAR: 'angerFear', // Arousal: confrontational vs. avoidance
     TRUST_DISGUST: 'trustDisgust', // Affiliation: acceptance vs. rejection
     SURPRISE_ANTICIPATION: 'surpriseAnticipation', // Novelty: unexpected vs. expected
 };
+module.exports.EMOTIONAL_DIMENSIONS = EMOTIONAL_DIMENSIONS;
 
 
 /**
@@ -91,7 +93,9 @@ const _validateInputs = (internalState, sensoryInputs, context) => {
  * );
  * // state might be 'Deep Focus'
  */
-export function calculateConsciousnessState(internalState, sensoryInputs) {
+function calculateConsciousnessState(internalState, sensoryInputs) {
+module.exports.calculateConsciousnessState = calculateConsciousnessState;
+
     const { focusLevel, cognitiveLoad } = internalState;
     const sensoryIntensity = sensoryInputs.reduce((acc, input) => acc + (input.intensity || 0.5), 0) / (sensoryInputs.length || 1);
 
@@ -138,7 +142,9 @@ export function calculateConsciousnessState(internalState, sensoryInputs) {
  * );
  * // metrics -> { metacognitive: 0.8, somatic: 0.6, contextual: 0.9 }
  */
-export function calculateAwarenessMetrics(currentState, internalState, context, historicalData = []) {
+function calculateAwarenessMetrics(currentState, internalState, context, historicalData = []) {
+module.exports.calculateAwarenessMetrics = calculateAwarenessMetrics;
+
     // 1. Metacognitive Awareness: Awareness of one's own thought processes.
     // High if the current state is reflective or if there's a recent, significant state change.
     const lastState = historicalData.length > 0 ? historicalData[historicalData.length - 1].state : null;
@@ -191,7 +197,9 @@ export function calculateAwarenessMetrics(currentState, internalState, context, 
  * });
  * // emotionalAnalysis -> { dominantEmotion: 'sadness', intensity: 0.8, polarity: 'introspective' }
  */
-export function processEmotionalState(emotionalState) {
+function processEmotionalState(emotionalState) {
+module.exports.processEmotionalState = processEmotionalState;
+
     if (!emotionalState || typeof emotionalState !== 'object') {
         throw new ConsciousnessProcessingError('Invalid emotionalState provided.');
     }
@@ -261,7 +269,9 @@ export function processEmotionalState(emotionalState) {
  * const newEmotions = simulateEmpathy(myEmotions, theirEmotions, 0.5);
  * // newEmotions.joySadness would be lower than 0.2, reflecting shared sadness.
  */
-export function simulateEmpathy(internalEmotionalState, externalEmotionalState, empathyFactor = 0.5) {
+function simulateEmpathy(internalEmotionalState, externalEmotionalState, empathyFactor = 0.5) {
+module.exports.simulateEmpathy = simulateEmpathy;
+
     if (empathyFactor < 0 || empathyFactor > 1) {
         throw new ConsciousnessProcessingError('empathyFactor must be between 0.0 and 1.0.');
     }
@@ -308,7 +318,9 @@ export function simulateEmpathy(internalEmotionalState, externalEmotionalState, 
  * });
  * console.log(analysis);
  */
-export function process({ internalState, sensoryInputs, context, historicalData = [] }) {
+function process({ internalState, sensoryInputs, context, historicalData = [] }) {
+module.exports.process = process;
+
     // 1. Validate all inputs at the entry point
     _validateInputs(internalState, sensoryInputs, context);
 

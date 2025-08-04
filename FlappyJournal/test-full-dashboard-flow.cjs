@@ -5,7 +5,7 @@
  * Tests the full consciousness dashboard functionality
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 const WS_URL = 'ws://localhost:3002';
 

@@ -4,7 +4,7 @@
  * Value: $1.2B+ (Universal consciousness IP protection)
  */
 
-import { TranscendentConsciousnessDocumentationSystem } from './server/consciousness/transcendent-consciousness-documentation-system.cjs';
+const { TranscendentConsciousnessDocumentationSystem  } = require('./server/consciousness/transcendent-consciousness-documentation-system.cjs');
 
 class TranscendentConsciousnessDocumentationTest {
     constructor() {

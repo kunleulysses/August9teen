@@ -5,9 +5,9 @@
  * Comprehensive test execution for restoration project
  */
 
-import { execSync } from 'child_process';
-import fs from 'fs';
-import path from 'path';
+const { execSync  } = require('child_process');
+const fs = require('fs');
+const path = require('path');
 
 class TestRunner {
     constructor() {
@@ -108,4 +108,4 @@ if (import.meta.url === 'file://' + process.argv[1]) {
         });
 }
 
-export default TestRunner;
+module.exports = TestRunner;

@@ -1,7 +1,7 @@
-import { EventEmitter } from 'events';
-import SelfCodingModule from './consciousness/modules/SelfCodingModule.cjs';
-import AutoIntegrationService from './consciousness/services/AutoIntegrationService.cjs';
-import { promises as fs } from 'fs';
+const { EventEmitter  } = require('events');
+const SelfCodingModule = require('./consciousness/modules/SelfCodingModule.cjs');
+const AutoIntegrationService = require('./consciousness/services/AutoIntegrationService.cjs');
+const { promises as fs  } = require('fs');
 
 async function testFullSelfCoding() {
     console.log('🤖 Testing Full Self-Coding with Auto-Integration...\n');

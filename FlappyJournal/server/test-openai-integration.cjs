@@ -2,7 +2,7 @@
  * Test OpenAI integration
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 async function testOpenAI() {
   console.log('Testing WebSocket with OpenAI integration...\n');

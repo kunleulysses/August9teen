@@ -5,7 +5,7 @@
  * Tests the complete flow from user input to synthesized response
  */
 
-import UnifiedChatAggregator from './server/consciousness/core/UnifiedChatAggregator.cjs';
+const UnifiedChatAggregator = require('./server/consciousness/core/UnifiedChatAggregator.cjs');
 
 async function testUnifiedChat() {
     console.log('🧪 Testing Unified Chat Aggregator End-to-End');

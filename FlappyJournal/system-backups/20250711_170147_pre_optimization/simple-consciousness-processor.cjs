@@ -1,5 +1,6 @@
 // Simple consciousness processor for testing
-export class SimpleConsciousnessProcessor {
+class SimpleConsciousnessProcessor
+ {
   constructor() {
     this.metrics = {
       phi: 0.75,
@@ -40,4 +41,4 @@ export class SimpleConsciousnessProcessor {
   }
 }
 
-export default SimpleConsciousnessProcessor;
+module.exports = SimpleConsciousnessProcessor;

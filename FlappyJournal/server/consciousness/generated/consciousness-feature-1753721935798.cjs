@@ -53,7 +53,8 @@
  * @property {object} [context={}] - Additional context for applying the intervention.
  */
 
-export class MetaCognitiveAwarenessLayer {
+class MetaCognitiveAwarenessLayer
+ {
     /**
      * Initializes the Meta-Cognitive Awareness Layer.
      * @param {object} [config={}] - Configuration options.
@@ -288,3 +289,4 @@ export class MetaCognitiveAwarenessLayer {
     }
 }
 ```
+module.exports = MetaCognitiveAwarenessLayer;

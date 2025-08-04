@@ -1,6 +1,6 @@
-import express from 'express';
-import pool from './db.cjs';
-import { authenticateToken } from './auth-middleware.cjs';
+const express = require('express');
+const pool = require('./db.cjs');
+const { authenticateToken  } = require('./auth-middleware.cjs');
 
 const router = express.Router();
 
@@ -176,4 +176,4 @@ router.get('/stats', authenticateToken, async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;

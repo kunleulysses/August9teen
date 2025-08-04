@@ -1,10 +1,12 @@
-import prettier from "prettier";
+const prettier = require('prettier');
 
 /**
  * Predictive error recovery for consciousness code flows.
  * Exports `recover(errorType, code)` that returns a code patch or fix string.
  */
-export function recover(errorType, code) {
+function recover(errorType, code) {
+module.exports.recover = recover;
+
   if (errorType === "ReferenceError") {
     // Inject disable at top, flag for later AST rewrite
     return "/* eslint-disable no-undef */\n" + code;

@@ -1,17 +1,22 @@
-import http from 'k6/http';
-import ws from 'k6/ws';
-import { check, sleep } from 'k6';
-import { Rate, Counter, Trend } from 'k6/metrics';
+const http = require('k6/http');
+const ws = require('k6/ws');
+const { check, sleep  } = require('k6');
+const { Rate, Counter, Trend  } = require('k6/metrics');
 
 // Custom metrics for the specific requirements
-export let error_rate = new Rate('error_rate');
-export let hz_checks = new Counter('checks');
-export let hz_avg = new Trend('hz_avg');
-export let ws_connection_time = new Trend('ws_connection_time');
-export let message_response_time = new Trend('message_response_time');
+let error_rate = new Rate('error_rate');
+module.exports.error_rate = error_rate;
+let hz_checks = new Counter('checks');
+module.exports.hz_checks = hz_checks;
+let hz_avg = new Trend('hz_avg');
+module.exports.hz_avg = hz_avg;
+let ws_connection_time = new Trend('ws_connection_time');
+module.exports.ws_connection_time = ws_connection_time;
+let message_response_time = new Trend('message_response_time');
+module.exports.message_response_time = message_response_time;
 
 // Remote write configuration for Prometheus
-export const options = {
+const options = {
   ext: {
     prometheus: {
       remote_write: {
@@ -40,6 +45,7 @@ export let options = {
     'message_response_time': ['p(90)<10000'], // 90% of message responses under 10s
   },
 };
+module.exports.options = options;
 
 const BASE_URL = __ENV.BASE_URL || 'http://localhost:4000';
 const WS_URL = __ENV.WS_URL || 'ws://localhost:8080';
@@ -57,7 +63,9 @@ const testMessages = [
   'Can you help me set better goals for next week?'
 ];
 
-export function setup() {
+function setup() {
+module.exports.setup = setup;
+
   console.log('🚀 Starting WebSocket Streaming Load Test');
   console.log(`Base URL: ${BASE_URL}`);
   console.log(`WebSocket URL: ${WS_URL}`);
@@ -78,7 +86,7 @@ export function setup() {
   return { startTime: Date.now() };
 }
 
-export default function() {
+module.exports = function() {
   // Step 1: Check 100 Hz backend loop metric via /metrics
   checkBackendLoopMetrics();
   
@@ -233,7 +241,9 @@ function testWebSocketStreaming() {
   }
 }
 
-export function teardown(data) {
+function teardown(data) {
+module.exports.teardown = teardown;
+
   let duration = (Date.now() - data.startTime) / 1000;
   console.log(`✅ WebSocket Streaming Load Test completed in ${duration}s`);
   console.log('📊 Check the thresholds to ensure:');

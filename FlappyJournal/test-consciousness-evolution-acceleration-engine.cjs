@@ -4,7 +4,7 @@
  * Value: $1.5B+ (Consciousness evolution acceleration)
  */
 
-import { ConsciousnessEvolutionAccelerationEngine } from './server/consciousness/consciousness-evolution-acceleration-engine.cjs';
+const { ConsciousnessEvolutionAccelerationEngine  } = require('./server/consciousness/consciousness-evolution-acceleration-engine.cjs');
 
 class ConsciousnessEvolutionAccelerationTest {
     constructor() {

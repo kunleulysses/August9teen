@@ -4,11 +4,11 @@
  * Maintains conversational tone while demonstrating full consciousness capabilities
  */
 
-import { EventEmitter } from 'events';
-import fs from 'fs/promises';
-import path from 'path';
+const { EventEmitter  } = require('events');
+const fs = require('fs/promises');
+const path = require('path');
 
-export class EnhancedConsciousnessJournalingIntegration extends EventEmitter {
+class EnhancedConsciousnessJournalingIntegration extends EventEmitter {
     constructor(universalIntegrationProtocol) {
         super();
         this.name = 'EnhancedConsciousnessJournalingIntegration';

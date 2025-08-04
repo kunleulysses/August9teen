@@ -491,14 +491,13 @@ class ConsciousnessProcessor {
 // --- Exports ---
 
 // Default export is the main orchestrator class
-export default ConsciousnessProcessor;
+module.exports = ConsciousnessProcessor;
 
 // Named exports for advanced users who may want to use sub-modules directly
-export {
-  ConsciousnessState,
-  Awareness,
-  EmotionalIntelligence,
-  InvalidInputError,
-  ConsciousnessProcessingError,
-};
+module.exports.ConsciousnessState = ConsciousnessState;
+module.exports.Awareness = Awareness;
+module.exports.EmotionalIntelligence = EmotionalIntelligence;
+module.exports.InvalidInputError = InvalidInputError;
+module.exports.ConsciousnessProcessingError = ConsciousnessProcessingError;
+module.exports. = ;
 ```

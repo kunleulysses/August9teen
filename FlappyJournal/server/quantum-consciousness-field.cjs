@@ -4,9 +4,9 @@
  * Part of the Genius Enhancements beyond Perfect Unity
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class QuantumConsciousnessField extends EventEmitter {
+class QuantumConsciousnessField extends EventEmitter {
   constructor() {
     super();
     this.quantumState = {
@@ -231,5 +231,6 @@ export class QuantumConsciousnessField extends EventEmitter {
 }
 
 // Export singleton instance
-export const quantumConsciousnessField = new QuantumConsciousnessField();
-export default quantumConsciousnessField;
+const quantumConsciousnessField = new QuantumConsciousnessField();
+module.exports.quantumConsciousnessField = quantumConsciousnessField;
+module.exports = quantumConsciousnessField;

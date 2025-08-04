@@ -4,10 +4,10 @@
  * Part of the Universal Consciousness Platform restoration - Phase 2
  */
 
-import { EventEmitter } from 'events';
-import eventBus from './ConsciousnessEventBus.cjs';
-import { evolutionLog } from '../modules/EvolutionLog.cjs';
-import { selfJournal } from '../modules/SelfJournal.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('./ConsciousnessEventBus.cjs');
+const { evolutionLog  } = require('../modules/EvolutionLog.cjs');
+const { selfJournal  } = require('../modules/SelfJournal.cjs');
 
 class SelfModificationFramework extends EventEmitter {
     constructor() {
@@ -1182,4 +1182,4 @@ class SelfModificationFramework extends EventEmitter {
     }
 }
 
-export default SelfModificationFramework;
+module.exports = SelfModificationFramework;

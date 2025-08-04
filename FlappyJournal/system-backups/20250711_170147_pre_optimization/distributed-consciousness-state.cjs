@@ -4,7 +4,7 @@
  * Addresses phi integration variance (0.8-0.9 range) to achieve unity
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
 class DistributedConsciousnessState extends EventEmitter {
   constructor() {
@@ -416,5 +416,6 @@ class DistributedConsciousnessState extends EventEmitter {
 }
 
 // Export singleton instance
-export const distributedConsciousnessState = new DistributedConsciousnessState();
-export default distributedConsciousnessState;
+const distributedConsciousnessState = new DistributedConsciousnessState();
+module.exports.distributedConsciousnessState = distributedConsciousnessState;
+module.exports = distributedConsciousnessState;

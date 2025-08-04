@@ -20,9 +20,9 @@
  *   node scripts/trace-event-bus.js --seconds 10 --url redis://cache:6379
  */
 
-import { createClient } from 'redis';
-import { argv } from 'node:process';
-import { setTimeout as sleep } from 'node:timers/promises';
+const { createClient  } = require('redis');
+const { argv  } = require('node:process');
+const { setTimeout as sleep  } = require('node:timers/promises');
 
 function parseArgs() {
   const args = {};

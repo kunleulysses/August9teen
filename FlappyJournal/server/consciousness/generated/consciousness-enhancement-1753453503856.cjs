@@ -60,7 +60,8 @@ const DEFAULTS = {
  * @description The main class for processing and enhancing consciousness states.
  *              It maintains an internal state to model temporal continuity.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
   /**
    * @constructor
    * @param {object} [config={}] - Initial configuration for the consciousness model.
@@ -431,3 +432,4 @@ try {
 }
 */
 ```
+module.exports = ConsciousnessProcessingError;

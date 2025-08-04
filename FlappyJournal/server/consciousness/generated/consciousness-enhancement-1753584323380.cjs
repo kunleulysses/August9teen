@@ -80,11 +80,13 @@ const _entityStates = new WeakMap();
  * @param {number} [initialState.cognitiveLoad=0.1] - Initial cognitive load (0 to 1).
  * @returns {boolean} True if initialization was successful.
  */
-export function initializeConsciousEntity(entity, {
+function initializeConsciousEntity(entity, {
   neuralActivity,
   sensoryInput,
   cognitiveLoad = 0.1
 }) {
+module.exports.initializeConsciousEntity = initializeConsciousEntity;
+
   if (!entity || typeof entity !== 'object') {
     throw new InvalidInputError('Entity must be a non-null object.', {
       got: typeof entity
@@ -126,7 +128,9 @@ export function initializeConsciousEntity(entity, {
  * @param {number} latestData.cognitiveLoad - Current cognitive load.
  * @returns {string} The calculated consciousness state (e.g., 'Deep-Meditative', 'Flow', 'Hyper-Alert', 'REM-Dreaming', 'Baseline').
  */
-export function calculateConsciousnessState(entity, latestData) {
+function calculateConsciousnessState(entity, latestData) {
+module.exports.calculateConsciousnessState = calculateConsciousnessState;
+
   const state = _getEntityState(entity);
 
   // Update state with latest data
@@ -177,7 +181,9 @@ export function calculateConsciousnessState(entity, latestData) {
  * @property {number} temporalCohesion - (0-1) The perceived continuity and coherence of self across time.
  * @property {number} proprioceptiveFidelity - (0-1) The accuracy of the internal model of its own state/body.
  */
-export function getAwarenessMetrics(entity) {
+function getAwarenessMetrics(entity) {
+module.exports.getAwarenessMetrics = getAwarenessMetrics;
+
   const state = _getEntityState(entity);
 
   // Metacognitive Clarity: higher with low load and high integration.
@@ -220,7 +226,9 @@ export function getAwarenessMetrics(entity) {
  * @property {number} empathyResonance - (0-1) A measure of the entity's capacity to mirror the stimulus's emotion.
  * @property {string[]} regulationSuggestions - AI-driven advice for emotional management.
  */
-export function processEmotionalSpectrum(entity, emotionalStimulus) {
+function processEmotionalSpectrum(entity, emotionalStimulus) {
+module.exports.processEmotionalSpectrum = processEmotionalSpectrum;
+
   const state = _getEntityState(entity);
 
   // Smoothly update the internal emotional state based on the new stimulus

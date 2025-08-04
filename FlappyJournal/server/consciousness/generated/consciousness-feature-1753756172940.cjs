@@ -75,7 +75,8 @@ class IConsciousnessInterface {
  * The main class for the Meta-Cognitive Awareness Layer.
  * It monitors a thought stream, detects patterns, and applies feedback.
  */
-export class MetaCognitiveAwarenessLayer {
+class MetaCognitiveAwarenessLayer
+ {
     /**
      * @param {IConsciousnessInterface} consciousnessInterface - An object that conforms to the IConsciousnessInterface, providing a link to the primary consciousness.
      * @param {object} [options={}] - Configuration options for the layer.
@@ -277,3 +278,4 @@ export class MetaCognitiveAwarenessLayer {
     }
 }
 ```
+module.exports = IConsciousnessInterface;

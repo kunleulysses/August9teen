@@ -385,5 +385,5 @@ class MetaCognitiveLayer {
 // module.exports = MetaCognitiveLayer;
 
 // To use this module in a browser with ES6 modules:
-// export default MetaCognitiveLayer;
+// module.exports = MetaCognitiveLayer;
 ```

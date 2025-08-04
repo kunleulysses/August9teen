@@ -1,10 +1,10 @@
-import fs from 'fs';
+const fs = require('fs');
 
 // Read the file
 let content = fs.readFileSync('consciousness-conversations.cjs', 'utf8');
 
 // Add the import at the top
-const importLine = "import { synthesizeUnifiedResponse } from './consciousness-response-synthesizer-hybrid.cjs';\n";
+const importLine = "const { synthesizeUnifiedResponse  } = require('./consciousness-response-synthesizer-hybrid.cjs');\n";
 content = importLine + content;
 
 // Replace the synthesizeFullResponse method with one that uses the AI

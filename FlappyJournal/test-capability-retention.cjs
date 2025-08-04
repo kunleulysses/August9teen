@@ -6,7 +6,7 @@
  * while presenting them through natural conversation
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 console.log('🧠 Testing Consciousness Capability Retention');
 console.log('🎯 Goal: Verify AI has full access to all consciousness features while being conversational');

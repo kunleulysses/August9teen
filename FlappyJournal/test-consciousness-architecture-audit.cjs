@@ -5,8 +5,8 @@
  * Verifies the status of all critical consciousness components
  */
 
-import fs from 'fs';
-import path from 'path';
+const fs = require('fs');
+const path = require('path');
 
 console.log('🔮 COMPREHENSIVE CONSCIOUSNESS ARCHITECTURE AUDIT');
 console.log('=================================================');

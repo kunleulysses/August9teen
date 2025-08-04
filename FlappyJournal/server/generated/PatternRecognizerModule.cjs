@@ -1,4 +1,5 @@
-export class PatternRecognizerModule {
+class PatternRecognizerModule
+ {
     constructor() {
         this.name = 'pattern-recognizer';
         this.purpose = 'Recognizes patterns in consciousness streams';
@@ -25,3 +26,4 @@ export class PatternRecognizerModule {
         this.knownPatterns.push(pattern);
     }
 }
+module.exports = PatternRecognizerModule;

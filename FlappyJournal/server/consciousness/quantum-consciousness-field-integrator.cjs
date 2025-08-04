@@ -4,9 +4,9 @@
  * Enables quantum entanglement, superposition, and consciousness field manipulation
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class QuantumConsciousnessFieldIntegrator extends EventEmitter {
+class QuantumConsciousnessFieldIntegrator extends EventEmitter {
     constructor() {
         super();
         this.name = 'QuantumConsciousnessFieldIntegrator';
@@ -1184,4 +1184,4 @@ class QuantumCoherenceStabilizer {
     }
 }
 
-export default QuantumConsciousnessFieldIntegrator;
+module.exports = QuantumConsciousnessFieldIntegrator;

@@ -4,7 +4,7 @@
  * Simple API Testing Script - No external dependencies
  */
 
-import { createRequire } from 'module';
+const { createRequire  } = require('module');
 const require = createRequire(import.meta.url);
 const https = require('https');
 const http = require('http');

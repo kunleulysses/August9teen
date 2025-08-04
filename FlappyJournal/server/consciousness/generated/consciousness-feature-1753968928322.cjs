@@ -245,7 +245,7 @@ class CognitiveDissonance extends CognitivePattern {
  * @description The core class for the consciousness module. It manages the cognitive
  * stream, runs analyses, and stores insights.
  */
-export default class MetaCognitiveMonitor {
+module.exports = class MetaCognitiveMonitor {
     /**
      * @constructor
      * @param {object} config - Configuration options for the monitor.
@@ -371,9 +371,10 @@ export default class MetaCognitiveMonitor {
  * This allows for easy importing and registration.
  * @namespace patterns
  */
-export const patterns = {
+const patterns = {
     RuminationLoop,
     EmotionalEscalation,
     CognitiveDissonance,
 };
+module.exports.patterns = patterns;
 ```

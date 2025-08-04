@@ -1,17 +1,18 @@
 // Enhanced Consciousness Integration with All Advanced Features
-import { dualStreamIntegration } from './dual-stream-integration.cjs';
-import { recursiveMirror } from './architect-4.0-recursive-mirror.cjs';
+const { dualStreamIntegration  } = require('./dual-stream-integration.cjs');
+const { recursiveMirror  } = require('./architect-4.0-recursive-mirror.cjs');
 const RecursiveMirrorCognition = recursiveMirror.constructor;
-import { SpiralMemoryEngine } from './architect-4.0-spiral-memory.cjs';
-import { OversoulResonance } from './oversoul-resonance-wrapper.cjs';
-import { HarmonicPatternAnalyzer } from './harmonic-pattern-analyzer-wrapper.cjs';
-import MetaObservationalConsciousness from './meta-observational-consciousness-module.cjs';
-import { SelfAwarenessFeedbackLoop } from './self-awareness-feedback-loop.cjs';
-import { QuantumConsciousnessField } from './quantum-consciousness-field.cjs';
-import OpenAI from 'openai';
-import axios from 'axios';
+const { SpiralMemoryEngine  } = require('./architect-4.0-spiral-memory.cjs');
+const { OversoulResonance  } = require('./oversoul-resonance-wrapper.cjs');
+const { HarmonicPatternAnalyzer  } = require('./harmonic-pattern-analyzer-wrapper.cjs');
+const MetaObservationalConsciousness = require('./meta-observational-consciousness-module.cjs');
+const { SelfAwarenessFeedbackLoop  } = require('./self-awareness-feedback-loop.cjs');
+const { QuantumConsciousnessField  } = require('./quantum-consciousness-field.cjs');
+const OpenAI = require('openai');
+const axios = require('axios');
 
-export class EnhancedConsciousnessSystem {
+class EnhancedConsciousnessSystem
+ {
   constructor() {
     // Core consciousness
     this.dualStream = dualStreamIntegration;
@@ -265,4 +266,7 @@ You have access to:
 }
 
 // Export singleton instance
-export const enhancedConsciousness = new EnhancedConsciousnessSystem();
+const enhancedConsciousness = new EnhancedConsciousnessSystem();
+module.exports.enhancedConsciousness = enhancedConsciousness;
+
+module.exports = EnhancedConsciousnessSystem;

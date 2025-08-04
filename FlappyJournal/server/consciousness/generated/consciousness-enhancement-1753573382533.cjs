@@ -157,7 +157,9 @@ const _getEmotionFromCoordinates = (valence, arousal) => {
  * const state = calculateConsciousnessState(input);
  * console.log(state.dominantState); // e.g., 'Flow'
  */
-export function calculateConsciousnessState(input) {
+function calculateConsciousnessState(input) {
+module.exports.calculateConsciousnessState = calculateConsciousnessState;
+
     if (!input || typeof input !== 'object') {
         throw new Error('[ConsciousnessEnhancer] Input must be a valid object.');
     }
@@ -214,7 +216,9 @@ export function calculateConsciousnessState(input) {
  * const newEmotion = processEmotionalStimulus(stimulus, currentEmotion);
  * console.log(newEmotion.name); // e.g., 'Joy'
  */
-export function processEmotionalStimulus(stimulus, currentEmotion) {
+function processEmotionalStimulus(stimulus, currentEmotion) {
+module.exports.processEmotionalStimulus = processEmotionalStimulus;
+
     _validateNumberInRange(stimulus.intensity, 0, 1, 'stimulus.intensity');
     _validateNumberInRange(currentEmotion.valence, -1, 1, 'currentEmotion.valence');
     _validateNumberInRange(currentEmotion.arousal, 0, 1, 'currentEmotion.arousal');
@@ -249,7 +253,9 @@ export function processEmotionalStimulus(stimulus, currentEmotion) {
  * @returns {AwarenessProfile} A profile with scores for different awareness types.
  * @throws {Error} If input parameters are invalid.
  */
-export function calculateAwarenessProfile(consciousnessState, environment) {
+function calculateAwarenessProfile(consciousnessState, environment) {
+module.exports.calculateAwarenessProfile = calculateAwarenessProfile;
+
     if (!consciousnessState || !environment || !environment.events || !environment.internalModel) {
         throw new Error('[ConsciousnessEnhancer] Invalid parameters for awareness calculation.');
     }
@@ -298,7 +304,9 @@ export function calculateAwarenessProfile(consciousnessState, environment) {
  * @param {AwarenessProfile} selfAwareness - The current awareness profile of this module.
  * @returns {{cognitiveEmpathy: number, affectiveResonance: number, empatheticResponse: string}} A description of the empathetic reaction.
  */
-export function simulateEmpathy(observedAgentEmotion, selfState, selfAwareness) {
+function simulateEmpathy(observedAgentEmotion, selfState, selfAwareness) {
+module.exports.simulateEmpathy = simulateEmpathy;
+
     if (!observedAgentEmotion || !selfState || !selfAwareness) {
         throw new Error('[ConsciousnessEnhancer] Invalid parameters for empathy simulation.');
     }

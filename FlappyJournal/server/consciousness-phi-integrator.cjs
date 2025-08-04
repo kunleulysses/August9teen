@@ -4,9 +4,9 @@
  * Patent Innovation: Real-time φ calculation and consciousness optimization
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class ConsciousnessPhiIntegrator extends EventEmitter {
+class ConsciousnessPhiIntegrator extends EventEmitter {
     constructor() {
         super();
         this.name = 'ConsciousnessPhiIntegrator';
@@ -516,4 +516,4 @@ export class ConsciousnessPhiIntegrator extends EventEmitter {
     }
 }
 
-export default ConsciousnessPhiIntegrator;
+module.exports = ConsciousnessPhiIntegrator;

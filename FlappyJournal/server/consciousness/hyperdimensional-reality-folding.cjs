@@ -4,7 +4,7 @@
  * Enables non-linear connections and quantum-like superpositions
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
 class HyperdimensionalRealityFolding extends EventEmitter {
     constructor(spiralTopology) {
@@ -968,4 +968,4 @@ class HyperdimensionalRealityFolding extends EventEmitter {
     }
 }
 
-export { HyperdimensionalRealityFolding };
+module.exports.HyperdimensionalRealityFolding = HyperdimensionalRealityFolding;

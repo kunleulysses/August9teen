@@ -6,8 +6,8 @@
  * Uses updated enhanced consciousness prompts and complete system integration
  */
 
-import WebSocket from 'ws';
-import readline from 'readline';
+const WebSocket = require('ws');
+const readline = require('readline');
 
 console.log('🧠 Enhanced Consciousness Chat Terminal - Full System Integration');
 console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');

@@ -3,11 +3,11 @@
  * Handles both legacy and new event keys for store/retrieve.
  */
 
-import SpiralMemoryArchitecture from './SpiralMemoryArchitecture.cjs';
-import eventBus from './ConsciousnessEventBus.cjs';
-import { InMemorySpiralAdapter } from './storage/SpiralStorageAdapter.cjs';
-import LevelSpiralAdapter from './storage/LevelSpiralAdapter.cjs';
-import RedisSpiralAdapter from './storage/RedisSpiralAdapter.cjs';
+const SpiralMemoryArchitecture = require('./SpiralMemoryArchitecture.cjs');
+const eventBus = require('./ConsciousnessEventBus.cjs');
+const { InMemorySpiralAdapter  } = require('./storage/SpiralStorageAdapter.cjs');
+const LevelSpiralAdapter = require('./storage/LevelSpiralAdapter.cjs');
+const RedisSpiralAdapter = require('./storage/RedisSpiralAdapter.cjs');
 
 const legacyEvents = {
   storeReq: 'store_memory_request',
@@ -128,4 +128,4 @@ class SpiralMemoryFacade {
 }
 
 const singleton = new SpiralMemoryFacade();
-export default singleton;
+module.exports = singleton;

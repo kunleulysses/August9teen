@@ -1,14 +1,14 @@
-import fs from 'fs';
+const fs = require('fs');
 
 // Read the ResearchTab wrapper
 const wrapperPath = './src/components/research/ResearchTab.tsx';
 let wrapper = fs.readFileSync(wrapperPath, 'utf8');
 
 // Add debugging
-wrapper = `import React from 'react';
-import EnhancedResearchTab from './EnhancedResearchTab';
+wrapper = `const React = require('react');
+const EnhancedResearchTab = require('./EnhancedResearchTab');
 
-export default function ResearchTab() {
+module.exports = function ResearchTab() {
   console.log('ResearchTab rendering');
   try {
     return <EnhancedResearchTab />;

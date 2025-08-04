@@ -58,7 +58,8 @@
  * @property {number} influence - The strength of the heuristic's modification (0-1).
  */
 
-export class MetaCognitiveReflection {
+class MetaCognitiveReflection
+ {
     #cognitiveTrace = [];
     #recognizedPatterns = new Map();
     #activeHeuristics = new Map();
@@ -303,3 +304,4 @@ export class MetaCognitiveReflection {
     }
 }
 ```
+module.exports = MetaCognitiveReflection;

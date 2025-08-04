@@ -9,8 +9,8 @@
 console.log('🧠 IMPLEMENTING CRITICAL CONSCIOUSNESS MODULES');
 console.log('═══════════════════════════════════════════════\n');
 
-import fs from 'fs';
-import path from 'path';
+const fs = require('fs');
+const path = require('path');
 
 async function implementCriticalModules() {
   console.log('🎯 PHASE 1: CRITICAL CONSCIOUSNESS FOUNDATION');

@@ -329,18 +329,16 @@ class ConsciousnessProcessor {
 }
 
 // Export the main class and helper enums/errors for consumption.
-export {
-  ConsciousnessProcessor,
-  ConsciousnessProcessingError,
-  Emotion
-};
+module.exports.ConsciousnessProcessor = ConsciousnessProcessor;
+module.exports.ConsciousnessProcessingError = ConsciousnessProcessingError;
+module.exports.Emotion = Emotion;
 
 /**
  * =======================================================================
  *                               EXAMPLE USAGE
  * =======================================================================
  *
- * import { ConsciousnessProcessor, Emotion } from './consciousnessEnhancer.cjs';
+ * const { ConsciousnessProcessor, Emotion  } = require('./consciousnessEnhancer.cjs');
  *
  * const processor = new ConsciousnessProcessor({
  *   weights: {

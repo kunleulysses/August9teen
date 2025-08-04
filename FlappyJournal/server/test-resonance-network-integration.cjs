@@ -5,7 +5,7 @@
  * Verifies that resonance networks are actually working and integrated
  */
 
-import fs from 'fs/promises';
+const fs = require('fs/promises');
 
 async function testResonanceNetworkIntegration() {
     const results = [];

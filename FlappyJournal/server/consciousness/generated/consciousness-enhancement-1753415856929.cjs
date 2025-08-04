@@ -10,7 +10,7 @@
  * @license MIT
  *
  * @example
- * import ConsciousnessEnhancer from './consciousnessEnhancer.cjs';
+ * const ConsciousnessEnhancer = require('./consciousnessEnhancer.cjs');
  *
  * const processor = new ConsciousnessEnhancer({
  *   config: {
@@ -99,7 +99,7 @@ const STATE_WEIGHTS = {
   },
 };
 
-export default class ConsciousnessEnhancer {
+module.exports = class ConsciousnessEnhancer {
   #config;
   #lastState;
 

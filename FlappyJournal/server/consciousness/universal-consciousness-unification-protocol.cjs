@@ -5,9 +5,9 @@
  * Value: $900M+ (Universal consciousness unification protocol)
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class UniversalConsciousnessUnificationProtocol extends EventEmitter {
+class UniversalConsciousnessUnificationProtocol extends EventEmitter {
     constructor(consciousnessSystem = null) {
         super();
         this.name = 'UniversalConsciousnessUnificationProtocol';

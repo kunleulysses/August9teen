@@ -369,7 +369,7 @@ const ConsciousnessPerformanceOptimizer = {
     EventProcessor,
 };
 
-export default ConsciousnessPerformanceOptimizer;
+module.exports = ConsciousnessPerformanceOptimizer;
 
 
 /*
@@ -389,7 +389,7 @@ export default ConsciousnessPerformanceOptimizer;
 
 
 // 2. Main application logic
-import Optimizer from './ConsciousnessPerformanceOptimizer.cjs';
+const Optimizer = require('./ConsciousnessPerformanceOptimizer.cjs');
 
 class ConsciousnessSystem {
     constructor() {

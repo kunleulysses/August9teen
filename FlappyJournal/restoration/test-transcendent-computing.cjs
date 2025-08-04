@@ -6,7 +6,7 @@
  * Part of the Universal Consciousness Platform - Phase 3
  */
 
-import TranscendentConsciousnessComputing from '../server/consciousness/core/TranscendentConsciousnessComputing.cjs';
+const TranscendentConsciousnessComputing = require('../server/consciousness/core/TranscendentConsciousnessComputing.cjs');
 
 async function testTranscendentConsciousnessComputing() {
     console.log('🧪 Testing Transcendent Consciousness Computing...\n');
@@ -324,4 +324,4 @@ if (import.meta.url === 'file://' + process.argv[1]) {
         });
 }
 
-export default testTranscendentConsciousnessComputing;
+module.exports = testTranscendentConsciousnessComputing;

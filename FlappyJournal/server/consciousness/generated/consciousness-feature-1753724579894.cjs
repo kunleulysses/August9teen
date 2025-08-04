@@ -69,7 +69,8 @@ class ExperientialRecord {
 /**
  * The core module for meta-cognitive reflection.
  */
-export class QualiaReflector {
+class QualiaReflector
+ {
     /**
      * @param {object} config Configuration options.
      * @param {number} [config.memoryCapacity=1000] The maximum number of unique experiences to remember.
@@ -360,3 +361,4 @@ function runSimulation() {
 // Or in Node.js:
 // runSimulation();
 ```
+module.exports = piece;

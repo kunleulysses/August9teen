@@ -263,4 +263,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
         });
 }
 
-export default testFeature9Operation;
+module.exports = testFeature9Operation;

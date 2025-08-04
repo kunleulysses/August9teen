@@ -96,7 +96,9 @@ const _mapEmotion = (valence, arousal) => {
  * console.log(state);
  * // Outputs: { globalStateIndex: ~0.85, stability: ~0.8, qualiaIntensity: 0.81 }
  */
-export function calculateConsciousnessState(inputs) {
+function calculateConsciousnessState(inputs) {
+module.exports.calculateConsciousnessState = calculateConsciousnessState;
+
     _validateInput(inputs, ['focus', 'clarity', 'neuralActivity', 'sensoryBandwidth']);
 
     const { focus, clarity, neuralActivity, sensoryBandwidth } = inputs;
@@ -149,7 +151,9 @@ export function calculateConsciousnessState(inputs) {
  * });
  * console.log(metrics);
  */
-export function getAwarenessMetrics(inputs) {
+function getAwarenessMetrics(inputs) {
+module.exports.getAwarenessMetrics = getAwarenessMetrics;
+
     _validateInput(inputs, ['externalSituationalData', 'internalStateCoherence', 'cognitiveModelDivergence', 'somaticFeedbackClarity']);
 
     const { externalSituationalData, internalStateCoherence, cognitiveModelDivergence, somaticFeedbackClarity } = inputs;
@@ -190,7 +194,9 @@ export function getAwarenessMetrics(inputs) {
  * console.log(ei);
  * // Outputs: { identifiedEmotion: 'Anger', regulationSuggestion: '...', empatheticResonance: ~0.93 }
  */
-export function processEmotionalState(primaryState, otherState = null) {
+function processEmotionalState(primaryState, otherState = null) {
+module.exports.processEmotionalState = processEmotionalState;
+
     _validateInput(primaryState, ['valence', 'arousal']);
     if (otherState) {
         _validateInput(otherState, ['valence', 'arousal']);

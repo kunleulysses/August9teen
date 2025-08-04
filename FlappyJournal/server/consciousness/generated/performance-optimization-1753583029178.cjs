@@ -10,7 +10,7 @@
  * @version 1.0.0
  * @author AI Architect
  */
-export const ConsciousnessPerformanceOptimizer = (() => {
+const ConsciousnessPerformanceOptimizer = (() => {
 
     // --- Private State & Configuration ---
 
@@ -40,6 +40,7 @@ export const ConsciousnessPerformanceOptimizer = (() => {
         isRunning: false,
         tickId: null,
     };
+module.exports.ConsciousnessPerformanceOptimizer = ConsciousnessPerformanceOptimizer;
 
     const config = {
         // Max number of events to process per tick to prevent blocking the event loop

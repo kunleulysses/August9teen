@@ -5,7 +5,7 @@
  * Comprehensive test of 100% functional self-coding system
  */
 
-import fs from 'fs/promises';
+const fs = require('fs/promises');
 
 console.log('🚀 Testing Fixed Self-Coding Module');
 console.log('===================================\n');

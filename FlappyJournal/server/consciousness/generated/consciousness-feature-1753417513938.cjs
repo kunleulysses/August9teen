@@ -162,7 +162,7 @@ const COGNITIVE_SCHEMATA = {
  * This class represents the meta-cognitive awareness layer. It is designed to be
  * integrated with a primary consciousness simulation.
  */
-export default class MetaCognitiveLayer {
+module.exports = class MetaCognitiveLayer {
   /**
    * @typedef {object} StateObject
    * @property {string} id - A unique identifier for the state snapshot.

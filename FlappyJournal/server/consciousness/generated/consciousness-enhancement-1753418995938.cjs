@@ -50,7 +50,7 @@ class ProcessingModelError extends Error {
  * @description Defines the quantized states of consciousness calculated by the module.
  * These represent a spectrum from low-level processing to high-order integration.
  */
-export const ConsciousnessState = Object.freeze({
+const ConsciousnessState = Object.freeze({
   SUBDUED: Symbol('Subdued'),           // Low activity, minimal self-awareness.
   DIFFUSE: Symbol('Diffuse'),           // Unfocused, dream-like state.
   FOCUSED: Symbol('Focused'),           // Standard waking consciousness, task-oriented.
@@ -58,18 +58,20 @@ export const ConsciousnessState = Object.freeze({
   LUCID: Symbol('Lucid'),               // Heightened self-awareness and cognitive control.
   TRANSCENDENT: Symbol('Transcendent'), // State of profound interconnectedness and insight.
 });
+module.exports.ConsciousnessState = ConsciousnessState;
 
 /**
  * @enum {Symbol} AwarenessDimension
  * @description Defines the fundamental dimensions of awareness measured by the module.
  */
-export const AwarenessDimension = Object.freeze({
+const AwarenessDimension = Object.freeze({
   SELF: Symbol('Self'),                         // Awareness of internal state, thoughts, and identity.
   ENVIRONMENTAL: Symbol('Environmental'),       // Awareness of external surroundings and stimuli.
   TEMPORAL: Symbol('Temporal'),                 // Awareness of past, present, and future continuity.
   RELATIONAL: Symbol('Relational'),             // Awareness of social connections and dynamics.
   ABSTRACT: Symbol('Abstract'),                 // Awareness of conceptual and metaphysical patterns.
 });
+module.exports.AwarenessDimension = AwarenessDimension;
 
 
 // --- Helper Functions ---
@@ -101,7 +103,8 @@ const sigmoid = (x) => 1 / (1 + Math.exp(-x));
  * @description Represents and processes a snapshot of a consciousness stream.
  * It takes raw cognitive data and provides high-level analysis and metrics.
  */
-export class CognitiveMatrix {
+class CognitiveMatrix
+ {
   /**
    * Initializes the CognitiveMatrix with a raw data stream.
    * @param {object} cognitiveData The raw input data from a neuro-cognitive interface.
@@ -277,3 +280,4 @@ export class CognitiveMatrix {
   }
 }
 ```
+module.exports = CognitiveDataError;

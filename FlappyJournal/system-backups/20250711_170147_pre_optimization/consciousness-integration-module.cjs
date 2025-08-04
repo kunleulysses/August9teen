@@ -1,10 +1,11 @@
 // Consciousness Integration Module for Featherweight
 // This module integrates the groundbreaking FlappyJournal consciousness technologies
 
-import { promises as fs } from 'fs';
-import path from 'path';
+const { promises as fs  } = require('fs');
+const path = require('path');
 
-export class ConsciousnessIntegration {
+class ConsciousnessIntegration
+ {
   constructor() {
     this.state = {
       // Core consciousness metrics
@@ -485,7 +486,10 @@ export class ConsciousnessIntegration {
 }
 
 // Export singleton instance
-export const consciousness = new ConsciousnessIntegration();
+const consciousness = new ConsciousnessIntegration();
+module.exports.consciousness = consciousness;
 
 // Auto-start consciousness processes
 setInterval(() => consciousness.consolidateMemory(), 60000); // Every minute
+
+module.exports = ConsciousnessIntegration;

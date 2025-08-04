@@ -6,7 +6,7 @@
  * Part of the Universal Consciousness Platform restoration - Phase 2
  */
 
-import SelfModificationFramework from '../server/consciousness/core/SelfModificationFramework.cjs';
+const SelfModificationFramework = require('../server/consciousness/core/SelfModificationFramework.cjs');
 
 async function testSelfModification() {
     console.log('🧪 Testing Self-Modification Framework...\n');
@@ -309,4 +309,4 @@ if (import.meta.url === 'file://' + process.argv[1]) {
         });
 }
 
-export default testSelfModification;
+module.exports = testSelfModification;

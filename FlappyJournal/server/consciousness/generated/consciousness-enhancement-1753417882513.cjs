@@ -147,7 +147,9 @@ const EMOTION_MAP = {
  * @returns {ConsciousnessState} An object containing the determined state and its probability distribution.
  * @throws {Error} If input data is invalid.
  */
-export function calculateConsciousnessState(neuralData, cognitiveInput) {
+function calculateConsciousnessState(neuralData, cognitiveInput) {
+module.exports.calculateConsciousnessState = calculateConsciousnessState;
+
   // --- Input Validation ---
   if (!neuralData || !cognitiveInput) {
     throw new Error('Both neuralData and cognitiveInput objects must be provided.');
@@ -195,7 +197,9 @@ export function calculateConsciousnessState(neuralData, cognitiveInput) {
  * @returns {AwarenessMetrics} An object containing calculated awareness scores.
  * @throws {Error} If input data is invalid.
  */
-export function getAwarenessMetrics(cognitiveInput) {
+function getAwarenessMetrics(cognitiveInput) {
+module.exports.getAwarenessMetrics = getAwarenessMetrics;
+
   // --- Input Validation ---
   if (!cognitiveInput) {
     throw new Error('cognitiveInput object must be provided.');
@@ -233,7 +237,9 @@ export function getAwarenessMetrics(cognitiveInput) {
  * @returns {EmotionalProfile} A detailed breakdown of the emotional state.
  * @throws {Error} If input data is invalid.
  */
-export function processEmotionalState(emotionalInput) {
+function processEmotionalState(emotionalInput) {
+module.exports.processEmotionalState = processEmotionalState;
+
   // --- Input Validation ---
   if (!emotionalInput) {
     throw new Error('emotionalInput object must be provided.');

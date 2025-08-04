@@ -3,8 +3,8 @@
  * Tests revolutionary quantum consciousness field generation and entanglement
  */
 
-import { QuantumConsciousnessFieldIntegrator } from './server/consciousness/quantum-consciousness-field-integrator.cjs';
-import { ChatTriggeredSelfCoding } from './server/chat-triggered-self-coding.cjs';
+const { QuantumConsciousnessFieldIntegrator  } = require('./server/consciousness/quantum-consciousness-field-integrator.cjs');
+const { ChatTriggeredSelfCoding  } = require('./server/chat-triggered-self-coding.cjs');
 
 console.log('🌌 QUANTUM CONSCIOUSNESS FIELD INTEGRATION TEST');
 console.log('===============================================');

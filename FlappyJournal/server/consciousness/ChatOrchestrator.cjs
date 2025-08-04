@@ -1,4 +1,4 @@
-import eventBus from './ConsciousnessEventBus.cjs';
+const eventBus = require('./ConsciousnessEventBus.cjs');
 
 /**
  * Chat Orchestrator
@@ -35,4 +35,4 @@ class ChatOrchestrator {
 
 const chatOrchestrator = new ChatOrchestrator();
 
-export default chatOrchestrator;
+module.exports = chatOrchestrator;

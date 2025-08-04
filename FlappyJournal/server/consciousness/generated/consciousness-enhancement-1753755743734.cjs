@@ -136,7 +136,8 @@ const STATE_PROFILES = {
  * It takes sensory, internal, and emotional inputs to produce a rich analysis
  * of the entity's cognitive state.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
     /**
      * Initializes the ConsciousnessProcessor.
      * @param {object} [options={}] - Configuration options.
@@ -332,3 +333,4 @@ export class ConsciousnessProcessor {
     }
 }
 ```
+module.exports = for;

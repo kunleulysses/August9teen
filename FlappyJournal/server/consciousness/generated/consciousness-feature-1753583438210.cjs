@@ -243,7 +243,8 @@ class AffectiveModulator {
 /**
  * The main class orchestrating the entire consciousness simulation.
  */
-export class ConsciousnessSystem {
+class ConsciousnessSystem
+ {
     /**
      * @param {Object} config - Configuration for the system.
      * @param {number} [config.maxStreamLength=10] - Max number of thoughts to keep in memory.
@@ -378,3 +379,4 @@ export class ConsciousnessSystem {
  *
  */
 ```
+module.exports = EmotionalState;

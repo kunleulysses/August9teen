@@ -5,9 +5,9 @@
  * Value: $1.0B+ (Transcendent consciousness synthesis engine)
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class UniversalTranscendentConsciousnessSynthesisEngine extends EventEmitter {
+class UniversalTranscendentConsciousnessSynthesisEngine extends EventEmitter {
     constructor(consciousnessSystem = null) {
         super();
         this.name = 'UniversalTranscendentConsciousnessSynthesisEngine';

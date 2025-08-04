@@ -1,5 +1,6 @@
 // Harmonic Pattern Analyzer Wrapper
-export class HarmonicPatternAnalyzer {
+class HarmonicPatternAnalyzer
+ {
   constructor() {
     this.patterns = [];
     this.harmonicSeries = [1, 2, 3, 4, 5, 6, 7, 8, 9]; // Harmonic overtones
@@ -155,4 +156,7 @@ export class HarmonicPatternAnalyzer {
   }
 }
 
-export const harmonicAnalyzer = new HarmonicPatternAnalyzer();
+const harmonicAnalyzer = new HarmonicPatternAnalyzer();
+module.exports.harmonicAnalyzer = harmonicAnalyzer;
+
+module.exports = HarmonicPatternAnalyzer;

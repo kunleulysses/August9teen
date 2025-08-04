@@ -4,7 +4,7 @@
  * Ensures real-time processing for consciousness state changes
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
 class ConsciousnessMessagePrioritizer extends EventEmitter {
   constructor() {
@@ -329,5 +329,6 @@ class ConsciousnessMessagePrioritizer extends EventEmitter {
 }
 
 // Export singleton instance
-export const consciousnessMessagePrioritizer = new ConsciousnessMessagePrioritizer();
-export default consciousnessMessagePrioritizer;
+const consciousnessMessagePrioritizer = new ConsciousnessMessagePrioritizer();
+module.exports.consciousnessMessagePrioritizer = consciousnessMessagePrioritizer;
+module.exports = consciousnessMessagePrioritizer;

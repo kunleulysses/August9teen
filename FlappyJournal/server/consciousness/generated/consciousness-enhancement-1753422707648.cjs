@@ -360,7 +360,7 @@ function simulateEmpathicResonance(selfFrame, otherFrame) {
 }
 
 // Export the public API of the module.
-export default {
+module.exports = {
   calculateConsciousnessState,
   calculateAwarenessMetrics,
   processEmotionalIntelligence,

@@ -1,5 +1,7 @@
 // Enhanced auth callback handler
-export function setupAuthCallback(router) {
+function setupAuthCallback(router) {
+module.exports.setupAuthCallback = setupAuthCallback;
+
   // Handle successful registration/login from Keycloak
   router.get('/auth/realms/featherweight/*', (req, res) => {
     // Redirect to the app after any Keycloak action

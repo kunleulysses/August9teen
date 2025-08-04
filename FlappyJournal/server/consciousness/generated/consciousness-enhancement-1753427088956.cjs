@@ -30,7 +30,8 @@ class ConsciousnessProcessingError extends Error {
  * It integrates sensory, cognitive, and physiological data to produce a holistic
  * model of a conscious state.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
     /**
      * Initializes the ConsciousnessProcessor.
      * @param {object} [config={}] - Configuration options for the processor.
@@ -416,3 +417,4 @@ Emotional Palette: ${Object.keys(s.emotionalIntelligence.emotionalPalette).lengt
     }
 }
 ```
+module.exports = for;

@@ -6,8 +6,8 @@
  * Tests the Universal DNA-Sigil Framework and Evolution Engine
  */
 
-import { UniversalDNASigilConsciousnessFramework } from './consciousness/universal-dna-sigil-framework.cjs';
-import { DNABasedSystemEvolutionEngine } from './consciousness/dna-system-evolution-engine.cjs';
+const { UniversalDNASigilConsciousnessFramework  } = require('./consciousness/universal-dna-sigil-framework.cjs');
+const { DNABasedSystemEvolutionEngine  } = require('./consciousness/dna-system-evolution-engine.cjs');
 
 async function testDNASigilEnhancement() {
     console.log('🧬🔮 DNA-SIGIL ENHANCEMENT SYSTEM TEST');

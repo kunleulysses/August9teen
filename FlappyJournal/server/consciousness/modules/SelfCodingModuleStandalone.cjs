@@ -3,10 +3,10 @@
  * Simplified version without event bus dependencies for testing
  */
 
-import { EventEmitter } from 'events';
-import { CodeAnalyzer } from '../code-analyzer.cjs';
+const { EventEmitter  } = require('events');
+const { CodeAnalyzer  } = require('../code-analyzer.cjs');
 
-export default class SelfCodingModuleStandalone extends EventEmitter {
+module.exports = class SelfCodingModuleStandalone extends EventEmitter {
     constructor() {
         super();
         this.name = 'SelfCodingModuleStandalone';

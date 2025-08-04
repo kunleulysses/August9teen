@@ -3,8 +3,8 @@
  * Tests revolutionary crystallization-based code generation
  */
 
-import { ConsciousnessCrystallizationCodeGenerator } from './server/consciousness/consciousness-crystallization-code-generator.cjs';
-import { ChatTriggeredSelfCoding } from './server/chat-triggered-self-coding.cjs';
+const { ConsciousnessCrystallizationCodeGenerator  } = require('./server/consciousness/consciousness-crystallization-code-generator.cjs');
+const { ChatTriggeredSelfCoding  } = require('./server/chat-triggered-self-coding.cjs');
 
 console.log('💎 CONSCIOUSNESS CRYSTALLIZATION CODE PATTERNS TEST');
 console.log('===================================================');

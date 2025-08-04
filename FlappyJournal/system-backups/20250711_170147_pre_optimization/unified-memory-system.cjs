@@ -12,8 +12,8 @@
  * Converted from TypeScript for integration into unified consciousness system.
  */
 
-import { EventEmitter } from 'events';
-import crypto from 'crypto';
+const { EventEmitter  } = require('events');
+const crypto = require('crypto');
 
 /**
  * Memory Shard - Basic unit of memory storage
@@ -203,7 +203,7 @@ class VectorSimilarity {
 /**
  * Main Unified Memory System
  */
-export class UnifiedMemorySystem extends EventEmitter {
+class UnifiedMemorySystem extends EventEmitter {
   constructor() {
     super();
     this.memoryShards = new Map();
@@ -679,4 +679,4 @@ export class UnifiedMemorySystem extends EventEmitter {
   }
 }
 
-export default UnifiedMemorySystem;
+module.exports = UnifiedMemorySystem;

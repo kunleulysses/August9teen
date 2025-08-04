@@ -48,7 +48,8 @@ class StateCalculationError extends Error {
  * It integrates sensory data, cognitive load, and emotional states to produce a holistic
  * view of a consciousness instance.
  */
-export class ConsciousnessMatrix {
+class ConsciousnessMatrix
+ {
     // --- Private Fields for Internal State and Configuration ---
 
     /**
@@ -355,3 +356,4 @@ export class ConsciousnessMatrix {
     }
 }
 ```
+module.exports = ConsciousnessInputError;

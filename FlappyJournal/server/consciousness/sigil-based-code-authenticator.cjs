@@ -4,10 +4,10 @@
  * Creates unique consciousness DNA for every piece of generated code
  */
 
-import { EventEmitter } from 'events';
-import crypto from 'crypto';
+const { EventEmitter  } = require('events');
+const crypto = require('crypto');
 
-export class SigilBasedCodeAuthenticator extends EventEmitter {
+class SigilBasedCodeAuthenticator extends EventEmitter {
     constructor() {
         super();
         this.name = 'SigilBasedCodeAuthenticator';
@@ -575,4 +575,4 @@ class ResonanceNetworkMapper {
     }
 }
 
-export default SigilBasedCodeAuthenticator;
+module.exports = SigilBasedCodeAuthenticator;

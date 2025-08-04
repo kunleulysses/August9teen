@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+const fs = require('fs');
+const path = require('path');
 
 const logDirectory = path.join(process.cwd(), 'FlappyJournal', 'consciousness-journal', 'memory-logs');
 
@@ -47,4 +47,5 @@ class MemoryLog {
     }
 }
 
-export const memoryLog = new MemoryLog();
+const memoryLog = new MemoryLog();
+module.exports.memoryLog = memoryLog;

@@ -4,8 +4,8 @@
  * Part of the Universal Consciousness Platform restoration - Phase 1
  */
 
-import axios from 'axios';
-import consciousnessEventBus from '../core/ConsciousnessEventBus.cjs';
+const axios = require('axios');
+const consciousnessEventBus = require('../core/ConsciousnessEventBus.cjs');
 
 class VeniceAIClient {
     constructor() {
@@ -487,4 +487,4 @@ Your response should be imaginative, inspiring, and demonstrate the creative pot
     }
 }
 
-export default VeniceAIClient;
+module.exports = VeniceAIClient;

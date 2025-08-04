@@ -5,7 +5,7 @@
  * Tests the new consciousness-core → consciousness-main-server orchestration
  */
 
-import { WebSocket } from 'ws';
+const { WebSocket  } = require('ws');
 
 async function testInternalOrchestration() {
     console.log('🧪 Testing Internal Container Orchestration...\n');

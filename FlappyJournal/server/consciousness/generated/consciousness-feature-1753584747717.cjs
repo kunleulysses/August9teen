@@ -29,7 +29,7 @@ const CognitiveTraps = {
  * The MetaCognitiveLayer class.
  * It observes a host "consciousness" process and injects cognitive stimuli when needed.
  */
-export default class MetaCognitiveLayer {
+module.exports = class MetaCognitiveLayer {
     /**
      * Creates an instance of the MetaCognitiveLayer.
      * @param {object} hostProcess - The primary cognitive process to monitor.

@@ -3,9 +3,9 @@
  * Activates Gemini-powered autonomous code enhancement with simplified integration
  */
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import fs from 'fs/promises';
-import path from 'path';
+const { GoogleGenerativeAI  } = require('@google/generative-ai');
+const fs = require('fs/promises');
+const path = require('path');
 
 class SimpleAutonomousCodingAgent {
     constructor(geminiApiKey) {
@@ -260,4 +260,5 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     main().catch(console.error);
 }
 
-export { SimpleAutonomousCodingAgent, activateSimpleAutonomousCodingAgent };
+module.exports.SimpleAutonomousCodingAgent = SimpleAutonomousCodingAgent;
+module.exports.activateSimpleAutonomousCodingAgent = activateSimpleAutonomousCodingAgent;

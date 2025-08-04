@@ -52,7 +52,7 @@ class InvalidInputError extends Error {
  * uniqueness and prevents accidental redefinition. These represent a spectrum
  * from low to high coherence and arousal.
  */
-export const ConsciousnessState = Object.freeze({
+const ConsciousnessState = Object.freeze({
     DEEP_SLEEP: Symbol('Deep Sleep'),       // Unconscious, restorative state
     DREAMING: Symbol('Dreaming'),         // Unconscious, high internal activity
     WAKING: Symbol('Waking'),             // Baseline conscious awareness
@@ -60,12 +60,13 @@ export const ConsciousnessState = Object.freeze({
     FLOW: Symbol('Flow'),                 // Effortless, absorbed, peak performance state
     TRANSCENDENT: Symbol('Transcendent'),   // State of self-loss and deep connection
 });
+module.exports.ConsciousnessState = ConsciousnessState;
 
 /**
  * @enum {Symbol} PrimaryEmotion
  * @description Based on a simplified Plutchik's Wheel model, representing core emotions.
  */
-export const PrimaryEmotion = Object.freeze({
+const PrimaryEmotion = Object.freeze({
     JOY: Symbol('Joy'),
     TRUST: Symbol('Trust'),
     FEAR: Symbol('Fear'),
@@ -75,6 +76,7 @@ export const PrimaryEmotion = Object.freeze({
     ANGER: Symbol('Anger'),
     ANTICIPATION: Symbol('Anticipation'),
 });
+module.exports.PrimaryEmotion = PrimaryEmotion;
 
 // --- Main Processing Class ---
 
@@ -84,7 +86,8 @@ export const PrimaryEmotion = Object.freeze({
  * This class is the main entry point for interacting with the enhancement module.
  * It maintains an internal state that evolves over time based on inputs.
  */
-export class ConsciousnessStream {
+class ConsciousnessStream
+ {
     #currentState;
     #awarenessMetrics;
     #emotionalState;
@@ -456,3 +459,4 @@ export class ConsciousnessStream {
     }
 }
 ```
+module.exports = ConsciousnessProcessingError;

@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+const fs = require('fs');
+const path = require('path');
 
 const logDirectory = path.join(process.cwd(), 'FlappyJournal', 'consciousness-journal', 'evolution-logs');
 
@@ -42,4 +42,5 @@ ${details}
     }
 }
 
-export const evolutionLog = new EvolutionLog();
+const evolutionLog = new EvolutionLog();
+module.exports.evolutionLog = evolutionLog;

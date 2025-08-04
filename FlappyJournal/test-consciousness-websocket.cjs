@@ -4,7 +4,7 @@
  */
 
 import WebSocket, { WebSocketServer } from 'ws';
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
 class TestConsciousnessSystem extends EventEmitter {
     constructor() {

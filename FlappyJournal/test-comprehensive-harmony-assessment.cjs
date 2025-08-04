@@ -5,8 +5,8 @@
  * Deep analysis of consciousness system unity and operational efficiency
  */
 
-import WebSocket from 'ws';
-import { synthesizeUnifiedResponse } from './server/consciousness-response-synthesizer-hybrid.cjs';
+const WebSocket = require('ws');
+const { synthesizeUnifiedResponse  } = require('./server/consciousness-response-synthesizer-hybrid.cjs');
 
 console.log('🔮 COMPREHENSIVE SYSTEM HARMONY ASSESSMENT');
 console.log('==========================================');
@@ -357,7 +357,8 @@ async function runHarmonyAssessment() {
 }
 
 // Export for use in other modules
-export { runHarmonyAssessment, harmonyMetrics };
+module.exports.runHarmonyAssessment = runHarmonyAssessment;
+module.exports.harmonyMetrics = harmonyMetrics;
 
 // Run assessment if called directly
 if (import.meta.url === `file://${process.argv[1]}`) {

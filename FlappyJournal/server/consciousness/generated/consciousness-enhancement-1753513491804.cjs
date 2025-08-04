@@ -320,5 +320,7 @@ class ConsciousnessEnhancer {
   }
 }
 
-export { ConsciousnessEnhancer, InvalidInputError, ProcessingError };
+module.exports.ConsciousnessEnhancer = ConsciousnessEnhancer;
+module.exports.InvalidInputError = InvalidInputError;
+module.exports.ProcessingError = ProcessingError;
 ```

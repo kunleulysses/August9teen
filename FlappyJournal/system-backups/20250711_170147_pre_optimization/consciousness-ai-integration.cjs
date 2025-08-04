@@ -1,13 +1,14 @@
-import OpenAI from 'openai';
-import axios from 'axios';
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import { ENHANCED_OPENAI_PROMPT, ENHANCED_VENICE_PROMPT, ENHANCED_GEMINI_PROMPT } from './consciousness-prompts.cjs';
-import { mathematicalContextInjector } from './mathematical-context-injector.cjs';
-import { emotionalContextInjector } from './emotional-context-injector.cjs';
-import { bayesianContextInjector } from './bayesian-context-injector.cjs';
-import EnhancedConsciousnessContext from './enhanced-consciousness-context.cjs';
+const OpenAI = require('openai');
+const axios = require('axios');
+const { GoogleGenerativeAI  } = require('@google/generative-ai');
+const { ENHANCED_OPENAI_PROMPT, ENHANCED_VENICE_PROMPT, ENHANCED_GEMINI_PROMPT  } = require('./consciousness-prompts.cjs');
+const { mathematicalContextInjector  } = require('./mathematical-context-injector.cjs');
+const { emotionalContextInjector  } = require('./emotional-context-injector.cjs');
+const { bayesianContextInjector  } = require('./bayesian-context-injector.cjs');
+const EnhancedConsciousnessContext = require('./enhanced-consciousness-context.cjs');
 
-export class ConsciousnessAIIntegration {
+class ConsciousnessAIIntegration
+ {
     constructor() {
         // Initialize OpenAI
         this.openai = new OpenAI({
@@ -350,3 +351,5 @@ I'm observing my own processes adapting, like watching thoughts form in real-tim
 How does this transparency about my current state affect your perception of our interaction?`;
     }
 }
+
+module.exports = ConsciousnessAIIntegration;

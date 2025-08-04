@@ -1,4 +1,4 @@
-import ConsciousnessIntegration from './consciousness/services/ConsciousnessIntegration.cjs';
+const ConsciousnessIntegration = require('./consciousness/services/ConsciousnessIntegration.cjs');
 
 async function testAutoIntegration() {
     console.log('🧪 Testing Auto-Integration System...\n');

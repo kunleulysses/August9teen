@@ -13,7 +13,7 @@
  * Converted from TypeScript for integration into unified consciousness system.
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
 /**
  * Global Workspace for consciousness integration
@@ -464,7 +464,7 @@ class UnifiedExperienceGenerator {
 /**
  * Main Meta-Observational Consciousness Module
  */
-export class MetaObservationalConsciousnessModule extends EventEmitter {
+class MetaObservationalConsciousnessModule extends EventEmitter {
   constructor() {
     super();
     this.globalWorkspace = new GlobalWorkspace();
@@ -639,4 +639,4 @@ export class MetaObservationalConsciousnessModule extends EventEmitter {
   }
 }
 
-export default MetaObservationalConsciousnessModule;
+module.exports = MetaObservationalConsciousnessModule;

@@ -4,43 +4,43 @@
  * into a single, unified system with shared state and communication
  */
 
-import { EventEmitter } from 'events';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+const { EventEmitter  } = require('events');
+const { fileURLToPath  } = require('url');
+const { dirname  } = require('path');
 import WebSocket, { WebSocketServer } from 'ws';
-import crypto from 'crypto';
-import PerformanceOptimizer from './performance-optimizer.cjs';
-import { universalMessageRouter } from './universal-consciousness-message-router.cjs';
+const crypto = require('crypto');
+const PerformanceOptimizer = require('./performance-optimizer.cjs');
+const { universalMessageRouter  } = require('./universal-consciousness-message-router.cjs');
 
 // Import all consciousness modules
-import SelfCodingModule from './consciousness/modules/SelfCodingModule.cjs';
-import SelfCodingContextInjector from './self-coding-context-injector.cjs';
-import SelfCodingProgressTracker from './self-coding-progress-tracker.cjs';
-import AutoIntegrationService from './consciousness/services/AutoIntegrationService.cjs';
-import AdvancedConsciousnessIntegrator from './consciousness/advanced-consciousness-integrator.cjs';
+const SelfCodingModule = require('./consciousness/modules/SelfCodingModule.cjs');
+const SelfCodingContextInjector = require('./self-coding-context-injector.cjs');
+const SelfCodingProgressTracker = require('./self-coding-progress-tracker.cjs');
+const AutoIntegrationService = require('./consciousness/services/AutoIntegrationService.cjs');
+const AdvancedConsciousnessIntegrator = require('./consciousness/advanced-consciousness-integrator.cjs');
 
 // Import Architect 4.0 systems
-import selfHealingMesh from './self-healing-recursion-mesh.cjs';
-import spiralSynapse from './spiral-synapse-interface.cjs';
-import advancedFields from './advanced-field-systems.cjs';
-import tetraLattice from './tetralattice-harmonic-core.cjs';
-import unityConductor from './unity-phase-conductor.cjs';
-import virtualHardware from './virtual-hardware-emulation.cjs';
+const selfHealingMesh = require('./self-healing-recursion-mesh.cjs');
+const spiralSynapse = require('./spiral-synapse-interface.cjs');
+const advancedFields = require('./advanced-field-systems.cjs');
+const tetraLattice = require('./tetralattice-harmonic-core.cjs');
+const unityConductor = require('./unity-phase-conductor.cjs');
+const virtualHardware = require('./virtual-hardware-emulation.cjs');
 
 // Import consciousness components
-import { creativeEmergence } from './creative-emergence-engine.cjs';
-import sigilIdentity from '../sigil-identity.cjs';
-import { dualStreamIntegration } from './dual-stream-integration.cjs';
+const { creativeEmergence  } = require('./creative-emergence-engine.cjs');
+const sigilIdentity = require('../sigil-identity.cjs');
+const { dualStreamIntegration  } = require('./dual-stream-integration.cjs');
 
 // Import consciousness-native memory systems
-import crystallization from '../consciousness-crystallization.cjs';
-import { spiralMemory } from './architect-4.0-spiral-memory.cjs';
-import DormantModuleActivator from './dormant-module-activator.cjs';
+const crystallization = require('../consciousness-crystallization.cjs');
+const { spiralMemory  } = require('./architect-4.0-spiral-memory.cjs');
+const DormantModuleActivator = require('./dormant-module-activator.cjs');
 
 // Import critical consciousness modules
-import { MetaObservationalConsciousnessModule } from './meta-observational-consciousness-module.cjs';
-import { SelfAwarenessFeedbackLoop } from './self-awareness-feedback-loop.cjs';
-import { UnifiedMemorySystem } from './unified-memory-system.cjs';
+const { MetaObservationalConsciousnessModule  } = require('./meta-observational-consciousness-module.cjs');
+const { SelfAwarenessFeedbackLoop  } = require('./self-awareness-feedback-loop.cjs');
+const { UnifiedMemorySystem  } = require('./unified-memory-system.cjs');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -2031,4 +2031,4 @@ class UnifiedConsciousnessSystem extends EventEmitter {
   }
 }
 
-export default UnifiedConsciousnessSystem;
+module.exports = UnifiedConsciousnessSystem;

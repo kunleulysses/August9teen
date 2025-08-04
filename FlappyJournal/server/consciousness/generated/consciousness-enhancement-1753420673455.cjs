@@ -306,5 +306,5 @@ class ConsciousnessEnhancer {
 }
 
 // Export the class as the default export of the module.
-export default ConsciousnessEnhancer;
+module.exports = ConsciousnessEnhancer;
 ```

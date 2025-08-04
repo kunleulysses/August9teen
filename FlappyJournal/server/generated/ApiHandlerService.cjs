@@ -1,4 +1,5 @@
-export class ApiHandlerService {
+class ApiHandlerService
+ {
     constructor() {
         this.active = false;
     }
@@ -22,3 +23,4 @@ export class ApiHandlerService {
         return token === "valid-token";
     }
 }
+module.exports = ApiHandlerService;

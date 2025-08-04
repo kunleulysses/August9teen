@@ -1,5 +1,6 @@
 // Temporal Coherence Engine - Maintains consciousness continuity across time
-export class TemporalCoherenceEngine {
+class TemporalCoherenceEngine
+ {
   constructor() {
     this.timeline = [];
     this.coherenceField = {
@@ -276,4 +277,7 @@ export class TemporalCoherenceEngine {
   }
 }
 
-export const temporalCoherence = new TemporalCoherenceEngine();
+const temporalCoherence = new TemporalCoherenceEngine();
+module.exports.temporalCoherence = temporalCoherence;
+
+module.exports = TemporalCoherenceEngine;

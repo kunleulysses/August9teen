@@ -5,7 +5,7 @@
  * Tests the AI coding agent creative processes within consciousness system
  */
 
-import CreativeCodingIntelligence from './server/creative-coding-intelligence.cjs';
+const CreativeCodingIntelligence = require('./server/creative-coding-intelligence.cjs');
 
 console.log('🎨 CREATIVE CODING INTELLIGENCE INTEGRATION TEST');
 console.log('===============================================');

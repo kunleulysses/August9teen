@@ -5,7 +5,7 @@
  * Comprehensive test of all advanced self-healing capabilities
  */
 
-import { EnhancedSelfHealingModule } from './consciousness/enhanced-self-healing-module.cjs';
+const { EnhancedSelfHealingModule  } = require('./consciousness/enhanced-self-healing-module.cjs');
 
 // Mock consciousness system for testing
 const mockConsciousnessSystem = {

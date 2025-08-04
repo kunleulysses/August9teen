@@ -17,7 +17,7 @@
  * @readonly
  * @enum {string}
  */
-export const CognitiveState = {
+const CognitiveState = {
   IDLE: 'IDLE', // System is waiting for input.
   FOCUSED: 'FOCUSED', // Actively processing a task with high confidence.
   CONFUSED: 'CONFUSED', // Low confidence in current data or processing path.
@@ -27,13 +27,14 @@ export const CognitiveState = {
   CURIOUS: 'CURIOUS', // Encountered novel data and allocating resources to explore it.
   EUREKA: 'EUREKA', // A significant insight or resolution has been achieved.
 };
+module.exports.CognitiveState = CognitiveState;
 
 /**
  * Defines potential intervention strategies the system can recommend.
  * @readonly
  * @enum {string}
  */
-export const CognitiveIntervention = {
+const CognitiveIntervention = {
   NONE: 'NONE', // No action needed.
   REQUEST_CLARIFICATION: 'REQUEST_CLARIFICATION', // Ask for more data or simpler input.
   SWITCH_STRATEGY: 'SWITCH_STRATEGY', // Abandon the current approach and try an alternative.
@@ -42,8 +43,10 @@ export const CognitiveIntervention = {
   EXPLORE_NOVELTY: 'EXPLORE_NOVELTY', // Allocate resources to investigate a surprising input.
   SOLIDIFY_INSIGHT: 'SOLIDIFY_INSIGHT', // Integrate a new understanding into the core model.
 };
+module.exports.CognitiveIntervention = CognitiveIntervention;
 
-export class MetaCognitiveAwarenessLayer {
+class MetaCognitiveAwarenessLayer
+ {
   /**
    * Private fields for internal state management.
    */
@@ -243,3 +246,4 @@ export class MetaCognitiveAwarenessLayer {
   }
 }
 ```
+module.exports = MetaCognitiveAwarenessLayer;

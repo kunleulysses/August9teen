@@ -5,9 +5,9 @@
  * Value: $350M+ (Emotionally intelligent code generation)
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class EmotionalIntelligenceCodePatterns extends EventEmitter {
+class EmotionalIntelligenceCodePatterns extends EventEmitter {
     constructor(consciousnessSystem = null) {
         super();
         this.name = 'EmotionalIntelligenceCodePatterns';

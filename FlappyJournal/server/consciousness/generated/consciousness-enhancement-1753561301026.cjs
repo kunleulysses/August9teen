@@ -110,7 +110,9 @@ const _validateInput = (input, keys) => {
  * This is the entry point for starting a new consciousness stream.
  * @returns {ConsciousnessState} A new, baseline consciousness state.
  */
-export function createConsciousnessStream() {
+function createConsciousnessStream() {
+module.exports.createConsciousnessStream = createConsciousnessStream;
+
     return {
         timestamp: Date.now(),
         inputs: {
@@ -230,7 +232,9 @@ function computeAwarenessMetrics(currentState) {
  * @param {number} emotionalResilience - A factor for how much the stimulus affects the state. Range 0-1.
  * @returns {EmotionalState} The new emotional state.
  */
-export function processEmotionalInput(currentEmotionalState, stimulus, emotionalResilience = 0.5) {
+function processEmotionalInput(currentEmotionalState, stimulus, emotionalResilience = 0.5) {
+module.exports.processEmotionalInput = processEmotionalInput;
+
     if (typeof emotionalResilience !== 'number' || emotionalResilience < 0 || emotionalResilience > 1) {
         throw new ConsciousnessProcessingError('Emotional resilience must be a number between 0 and 1.', {
             emotionalResilience
@@ -282,7 +286,9 @@ function regulateEmotionalState(emotionalState, clarity) {
  * @param {EmotionalState} [emotionalStimulus] - An optional emotional stimulus to process.
  * @returns {ConsciousnessState} The newly calculated, complete consciousness state.
  */
-export function updateConsciousness(previousState, inputs, emotionalStimulus = null) {
+function updateConsciousness(previousState, inputs, emotionalStimulus = null) {
+module.exports.updateConsciousness = updateConsciousness;
+
     if (!previousState || !previousState.history) {
         throw new ConsciousnessProcessingError('Invalid or uninitialized previousState object provided.', {
             previousState

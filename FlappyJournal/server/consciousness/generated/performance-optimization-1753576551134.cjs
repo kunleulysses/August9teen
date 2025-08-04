@@ -86,8 +86,9 @@ class ObjectPool {
 }
 
 
-export const CognitiveOptimizer = (function() {
+const CognitiveOptimizer = (function() {
     'use strict';
+module.exports.CognitiveOptimizer = CognitiveOptimizer;
 
     // --- Private State & Configuration ---
 

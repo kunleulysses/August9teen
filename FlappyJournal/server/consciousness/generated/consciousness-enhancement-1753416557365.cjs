@@ -31,7 +31,7 @@ class ConsciousnessProcessingError extends Error {
  * @readonly
  * @enum {string}
  */
-export const CONSCIOUSNESS_STATES = {
+const CONSCIOUSNESS_STATES = {
     DEEP_SLEEP: 'Deep Sleep (Non-REM)',
     DREAMING: 'Dreaming (REM)',
     HYPNAGOGIC: 'Hypnagogic State',
@@ -41,13 +41,14 @@ export const CONSCIOUSNESS_STATES = {
     HEIGHTENED_CONSCIOUSNESS: 'Heightened Consciousness (Peak Experience)',
     DISSOCIATED: 'Dissociated State',
 };
+module.exports.CONSCIOUSNESS_STATES = CONSCIOUSNESS_STATES;
 
 /**
  * Core class for processing and enhancing consciousness data.
  * It maintains an internal state, including neuroplasticity weights,
  * allowing it to adapt and refine its calculations over time.
  */
-export default class ConsciousnessProcessor {
+module.exports = class ConsciousnessProcessor {
     #config;
     #neuroplasticityWeights;
 

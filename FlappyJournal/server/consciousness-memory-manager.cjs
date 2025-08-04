@@ -4,9 +4,9 @@
  * Patent Innovation: Consciousness-based memory decay (not time-based)
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class ConsciousnessMemoryManager extends EventEmitter {
+class ConsciousnessMemoryManager extends EventEmitter {
     constructor() {
         super();
         this.name = 'ConsciousnessMemoryManager';
@@ -316,4 +316,4 @@ export class ConsciousnessMemoryManager extends EventEmitter {
     }
 }
 
-export default ConsciousnessMemoryManager;
+module.exports = ConsciousnessMemoryManager;

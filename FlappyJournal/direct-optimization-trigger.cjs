@@ -5,8 +5,8 @@
  * Directly calls the optimization method to achieve 100% system harmony
  */
 
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+const { fileURLToPath  } = require('url');
+const { dirname, join  } = require('path');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

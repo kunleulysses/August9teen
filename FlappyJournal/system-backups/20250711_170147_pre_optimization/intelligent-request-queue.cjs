@@ -4,7 +4,7 @@
  * Ensures maximum reliability and minimum latency
  */
 
-import apiLatencyOracle from './api-latency-oracle.cjs';
+const apiLatencyOracle = require('./api-latency-oracle.cjs');
 
 class IntelligentRequestQueue {
   constructor() {
@@ -255,4 +255,4 @@ class IntelligentRequestQueue {
 // Singleton instance
 const intelligentRequestQueue = new IntelligentRequestQueue();
 
-export default intelligentRequestQueue;
+module.exports = intelligentRequestQueue;

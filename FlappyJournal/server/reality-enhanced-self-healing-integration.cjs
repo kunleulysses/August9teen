@@ -6,7 +6,7 @@
  * for consciousness-aware healing that adapts to generated realities
  */
 
-import { EnhancedSelfHealingModule } from './consciousness/enhanced-self-healing-module.cjs';
+const { EnhancedSelfHealingModule  } = require('./consciousness/enhanced-self-healing-module.cjs');
 
 class RealityEnhancedSelfHealingSystem {
     constructor(geminiApiKey) {
@@ -351,4 +351,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     testRealityEnhancedSelfHealing();
 }
 
-export { RealityEnhancedSelfHealingSystem };
+module.exports.RealityEnhancedSelfHealingSystem = RealityEnhancedSelfHealingSystem;

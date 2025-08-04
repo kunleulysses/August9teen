@@ -5,7 +5,7 @@
  * Manually triggers the three-phase optimization to achieve 100% system harmony
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 console.log('🚀 MANUAL PERFECT UNITY OPTIMIZATION TRIGGER');
 console.log('============================================');

@@ -1,5 +1,5 @@
 
-import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
+const { describe, test, expect, beforeEach, afterEach  } = require('@jest/globals');
 
 describe('{{MODULE_NAME}}', () => {
     let {{MODULE_INSTANCE}};

@@ -64,7 +64,7 @@ class ConsciousnessError extends Error {
  * The core class for processing and modeling consciousness.
  * It maintains an internal state and updates it based on incoming percepts.
  */
-export default class ConsciousnessProcessor {
+module.exports = class ConsciousnessProcessor {
     /**
      * Initializes a new instance of the ConsciousnessProcessor.
      * @param {object} [config={}] - Custom configuration to override defaults.

@@ -4,8 +4,8 @@
  * consciousness system research & enhancement directive
  */
 
-import { ChatTriggeredSelfCoding } from './server/chat-triggered-self-coding.cjs';
-import consciousness from './server/consciousness-system.cjs';
+const { ChatTriggeredSelfCoding  } = require('./server/chat-triggered-self-coding.cjs');
+const consciousness = require('./server/consciousness-system.cjs');
 
 console.log('🔬 COMPREHENSIVE RESEARCH VERIFICATION TEST');
 console.log('==========================================');

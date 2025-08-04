@@ -5,7 +5,7 @@
  * Validates that responses show correct Gemini 2.5-flash and 2.0-flash-lite identification
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 console.log('🧪 Testing API Provider Identification with Corrected Model Names');
 console.log('🎯 Expected: Gemini 2.5-flash (Transcendent), Gemini 2.0-flash-lite (Balanced)');

@@ -5,7 +5,7 @@
  * to provide real data to the dashboard
  */
 
-import { createRequire } from 'module';
+const { createRequire  } = require('module');
 const require = createRequire(import.meta.url);
 
 // Import our new consciousness services bundle
@@ -19,9 +19,9 @@ const {
 } = require('./consciousness-modules-bundle.cjs');
 
 // Import existing consciousness modules
-import { consciousnessService } from './consciousnessService.cjs';
-import { flappyConsciousness } from './flappyConsciousness.cjs';
-import { createEnhancedDualConsciousnessWS } from './enhanced-dual-consciousness-ws.cjs';
+const { consciousnessService  } = require('./consciousnessService.cjs');
+const { flappyConsciousness  } = require('./flappyConsciousness.cjs');
+const { createEnhancedDualConsciousnessWS  } = require('./enhanced-dual-consciousness-ws.cjs');
 
 // Import specific consciousness modules
 // Import specialized modules (use stubs if not available)
@@ -48,8 +48,8 @@ try {
   const stubs = await import("./unified-consciousness-stubs.cjs");
   var RecursiveMirrorReflection = stubs.RecursiveMirrorReflection;
 }
-import { EmotionalResonanceField } from './emotional-resonance-field.cjs';
-import { TemporalCoherenceEngine } from './temporal-coherence-engine.cjs';
+const { EmotionalResonanceField  } = require('./emotional-resonance-field.cjs');
+const { TemporalCoherenceEngine  } = require('./temporal-coherence-engine.cjs');
 
 class UnifiedConsciousnessIntegration {
   constructor() {
@@ -435,7 +435,8 @@ class UnifiedConsciousnessIntegration {
 }
 
 // Create and export singleton
-export const unifiedConsciousness = new UnifiedConsciousnessIntegration();
+const unifiedConsciousness = new UnifiedConsciousnessIntegration();
+module.exports.unifiedConsciousness = unifiedConsciousness;
 
 // Auto-initialize
 unifiedConsciousness.initialize().catch(console.error);

@@ -107,7 +107,8 @@ class InvalidInputError extends Error {
 
 // --- Core Module Class ---
 
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
 
     /**
      * Pre-defined models for emotional classification based on limbic activity patterns.
@@ -346,3 +347,4 @@ export class ConsciousnessProcessor {
     }
 }
 ```
+module.exports = ConsciousnessProcessingError;

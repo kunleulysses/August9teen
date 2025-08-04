@@ -3,12 +3,12 @@
  * Standalone service for autonomous reality generation using dedicated CPU cores
  */
 
-import express from 'express';
-import { createServer } from 'http';
-import { Server } from 'socket.io';
-import AutonomousImaginationEngine from './consciousness/autonomous-imagination-engine.cjs';
-import { HolographicConsciousnessRealityGenerator } from './consciousness/holographic-consciousness-reality-generator.cjs';
-import os from 'os';
+const express = require('express');
+const { createServer  } = require('http');
+const { Server  } = require('socket.io');
+const AutonomousImaginationEngine = require('./consciousness/autonomous-imagination-engine.cjs');
+const { HolographicConsciousnessRealityGenerator  } = require('./consciousness/holographic-consciousness-reality-generator.cjs');
+const os = require('os');
 
 // Initialize Express app
 const app = express();
@@ -298,4 +298,6 @@ process.on('unhandledRejection', (reason, promise) => {
 initializeServices();
 
 // Export for testing
-export { app, imaginationEngine, realityGenerator };
+module.exports.app = app;
+module.exports.imaginationEngine = imaginationEngine;
+module.exports.realityGenerator = realityGenerator;

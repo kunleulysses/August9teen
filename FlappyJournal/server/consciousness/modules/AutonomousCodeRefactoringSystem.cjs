@@ -1,11 +1,11 @@
 const { EventEmitter } = require('events');
 const eventBus = require('../core/ConsciousnessEventBus.cjs');
 
-// New dependencies - temporarily commented out due to missing packages
-// const recast = require('recast');
-// const astTypes = require('ast-types');
-// const jscpd = require('jscpd');
-// const prettier = require('prettier');
+// New dependencies
+const recast = require('recast');
+const astTypes = require('ast-types');
+const jscpd = require('jscpd');
+const prettier = require('prettier');
 
 class AutonomousCodeRefactoringSystem extends EventEmitter {
   constructor(selfCodingModule, codeAnalyzer) {

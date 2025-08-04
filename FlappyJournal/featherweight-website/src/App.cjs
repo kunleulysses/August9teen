@@ -1,16 +1,16 @@
 import React, { useEffect } from 'react';
-import styled from 'styled-components';
-import { GlobalStyles } from './styles/GlobalStyles';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import HomePage from './pages/HomePage';
-import ArchitecturePage from './pages/ArchitecturePage';
-import ApplicationsPage from './pages/ApplicationsPage';
-import ResearchPage from './pages/ResearchPage';
-import EthicsPage from './pages/EthicsPage';
-import AboutPage from './pages/AboutPage';
-import AccessPage from './pages/AccessPage';
-import ContactPage from './pages/ContactPage';
+const styled = require('styled-components');
+const { GlobalStyles  } = require('./styles/GlobalStyles');
+const Header = require('./components/Header');
+const Footer = require('./components/Footer');
+const HomePage = require('./pages/HomePage');
+const ArchitecturePage = require('./pages/ArchitecturePage');
+const ApplicationsPage = require('./pages/ApplicationsPage');
+const ResearchPage = require('./pages/ResearchPage');
+const EthicsPage = require('./pages/EthicsPage');
+const AboutPage = require('./pages/AboutPage');
+const AccessPage = require('./pages/AccessPage');
+const ContactPage = require('./pages/ContactPage');
 
 const AppContainer = styled.div`
   position: relative;
@@ -67,4 +67,4 @@ function App() {
   );
 }
 
-export default App;
+module.exports = App;

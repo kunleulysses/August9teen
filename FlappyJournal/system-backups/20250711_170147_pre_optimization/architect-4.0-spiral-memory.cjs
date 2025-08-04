@@ -3,7 +3,7 @@
  * Golden ratio-based memory storage and retrieval system
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
 class SpiralMemoryEngine extends EventEmitter {
   constructor() {
@@ -513,4 +513,5 @@ class SpiralMemoryEngine extends EventEmitter {
 }
 
 // Export singleton instance
-export const spiralMemory = new SpiralMemoryEngine();
+const spiralMemory = new SpiralMemoryEngine();
+module.exports.spiralMemory = spiralMemory;

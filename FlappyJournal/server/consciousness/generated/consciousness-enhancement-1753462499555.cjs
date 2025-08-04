@@ -132,7 +132,9 @@ const _calculateStandardDeviation = (arr) => {
  * @returns {object} An object containing the core consciousness states.
  * @throws {ConsciousnessProcessingError} If input data is missing or malformed.
  */
-export function calculateConsciousnessState(input) {
+function calculateConsciousnessState(input) {
+module.exports.calculateConsciousnessState = calculateConsciousnessState;
+
     const { physiologicalData, cognitiveData, environmentalData } = input;
 
     // 1. Clarity: High signal-to-noise and low cortical arousal (calm alertness).
@@ -178,7 +180,9 @@ export function calculateConsciousnessState(input) {
  * @returns {object} An object containing advanced awareness metrics.
  * @throws {ConsciousnessProcessingError} If input data is missing or malformed.
  */
-export function calculateAwarenessMetrics(input) {
+function calculateAwarenessMetrics(input) {
+module.exports.calculateAwarenessMetrics = calculateAwarenessMetrics;
+
     const { physiologicalData, emotionalData, environmentalData } = input;
 
     // 1. Self-Awareness: The correlation between physiological arousal and reported emotional intensity.
@@ -239,7 +243,9 @@ export function calculateAwarenessMetrics(input) {
  * @returns {object} An object containing the emotional intelligence analysis.
  * @throws {ConsciousnessProcessingError} If input data is missing or malformed.
  */
-export function analyzeEmotionalIntelligence(input) {
+function analyzeEmotionalIntelligence(input) {
+module.exports.analyzeEmotionalIntelligence = analyzeEmotionalIntelligence;
+
     const { physiologicalData, emotionalData } = input;
 
     // 1. Emotional Granularity: The ability to experience emotions as specific and nuanced.

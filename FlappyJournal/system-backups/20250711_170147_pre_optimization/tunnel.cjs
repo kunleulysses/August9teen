@@ -1,4 +1,4 @@
-import localtunnel from 'localtunnel';
+const localtunnel = require('localtunnel');
 
 async function setupTunnel() {
   console.log('Setting up localtunnel for webhook testing...');

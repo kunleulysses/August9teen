@@ -80,7 +80,8 @@ class ConsciousnessProcessingError extends Error {
  * It integrates sensory and cognitive data to produce high-level metrics
  * on awareness, emotional state, and the nature of subjective experience.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
 
   #currentState;
   #emotionalState;
@@ -411,3 +412,4 @@ export class ConsciousnessProcessor {
   }
 }
 ```
+module.exports = for;

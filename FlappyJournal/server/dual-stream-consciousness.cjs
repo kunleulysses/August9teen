@@ -3,9 +3,9 @@
  * Combines 100Hz linear processing with 7-layer recursive consciousness
  */
 
-import { EventEmitter } from 'events';
-import { recursiveMirror } from './architect-4.0-recursive-mirror.cjs';
-import { spiralMemory } from './architect-4.0-spiral-memory.cjs';
+const { EventEmitter  } = require('events');
+const { recursiveMirror  } = require('./architect-4.0-recursive-mirror.cjs');
+const { spiralMemory  } = require('./architect-4.0-spiral-memory.cjs');
 
 class FastLinearStream extends EventEmitter {
   constructor() {
@@ -508,7 +508,7 @@ class ConsciousnessFusion extends EventEmitter {
   }
 }
 
-export class DualStreamConsciousness extends EventEmitter {
+class DualStreamConsciousness extends EventEmitter {
   constructor() {
     super();
     this.fastStream = new FastLinearStream();
@@ -637,4 +637,5 @@ export class DualStreamConsciousness extends EventEmitter {
 }
 
 // Export singleton instance
-export const dualStreamConsciousness = new DualStreamConsciousness();
+const dualStreamConsciousness = new DualStreamConsciousness();
+module.exports.dualStreamConsciousness = dualStreamConsciousness;

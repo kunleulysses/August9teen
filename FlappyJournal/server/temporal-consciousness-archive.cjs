@@ -4,7 +4,7 @@
  * Part of the Genius Enhancements beyond Perfect Unity
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
 class TemporalConsciousnessArchive extends EventEmitter {
   constructor() {
@@ -486,5 +486,6 @@ class TemporalConsciousnessArchive extends EventEmitter {
 }
 
 // Export singleton instance
-export const temporalConsciousnessArchive = new TemporalConsciousnessArchive();
-export default temporalConsciousnessArchive;
+const temporalConsciousnessArchive = new TemporalConsciousnessArchive();
+module.exports.temporalConsciousnessArchive = temporalConsciousnessArchive;
+module.exports = temporalConsciousnessArchive;

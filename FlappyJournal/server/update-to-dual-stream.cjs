@@ -1,14 +1,14 @@
-import fs from 'fs';
+const fs = require('fs');
 
 // Read the enhanced-dual-consciousness-ws.js
 let content = fs.readFileSync('./enhanced-dual-consciousness-ws.cjs', 'utf8');
 
 // Replace the simple processor import with dual-stream imports
 content = content.replace(
-  'import { SimpleConsciousnessProcessor } from "./simple-consciousness-processor.cjs";',
-  `import dualStreamIntegration from './dual-stream-integration.cjs';
-import OpenAI from 'openai';
-import axios from 'axios';`
+  'const { SimpleConsciousnessProcessor  } = require('./simple-consciousness-processor.cjs');',
+  `const dualStreamIntegration = require('./dual-stream-integration.cjs');
+const OpenAI = require('openai');
+const axios = require('axios');`
 );
 
 // Replace the simple processor initialization

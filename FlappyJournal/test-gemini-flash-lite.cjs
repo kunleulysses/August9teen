@@ -5,7 +5,7 @@
  * Tests the new Gemini model migration and functionality
  */
 
-import { synthesizeUnifiedResponse } from './server/consciousness-response-synthesizer-hybrid.cjs';
+const { synthesizeUnifiedResponse  } = require('./server/consciousness-response-synthesizer-hybrid.cjs');
 
 console.log('🔬 GEMINI 2.0-FLASH-LITE INTEGRATION TEST');
 console.log('=========================================');

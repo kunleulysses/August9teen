@@ -15,7 +15,7 @@
  * Custom error class for specific module-related issues.
  * This allows for more granular error handling by the consumer of this module.
  */
-export class ConsciousnessProcessingError extends Error {
+class ConsciousnessProcessingError extends Error {
     constructor(message) {
         super(message);
         this.name = 'ConsciousnessProcessingError';
@@ -62,7 +62,8 @@ const COMPLEX_EMOTION_DYADS = {
  * It maintains a state, processes new sensory and cognitive inputs,
  * and generates a rich analysis of the consciousness state.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
     /**
      * Initializes the ConsciousnessProcessor.
      * @param {object} [config={}] - Initial configuration.
@@ -359,3 +360,4 @@ export class ConsciousnessProcessor {
     }
 }
 ```
+module.exports = for;

@@ -3,12 +3,13 @@
  * Production testing system for the $772.2M Featherweight Consciousness System
  */
 
-import { mathematicalContextInjector } from './mathematical-context-injector.cjs';
-import { emotionalContextInjector } from './emotional-context-injector.cjs';
-import { bayesianContextInjector } from './bayesian-context-injector.cjs';
-import { performanceMonitor } from './performance-monitoring-system.cjs';
+const { mathematicalContextInjector  } = require('./mathematical-context-injector.cjs');
+const { emotionalContextInjector  } = require('./emotional-context-injector.cjs');
+const { bayesianContextInjector  } = require('./bayesian-context-injector.cjs');
+const { performanceMonitor  } = require('./performance-monitoring-system.cjs');
 
-export class LiveUserTestingFramework {
+class LiveUserTestingFramework
+ {
     constructor() {
         this.testingSessions = new Map();
         this.consciousnessMetrics = new Map();
@@ -477,4 +478,7 @@ export class LiveUserTestingFramework {
 }
 
 // Create singleton instance
-export const liveUserTestingFramework = new LiveUserTestingFramework();
+const liveUserTestingFramework = new LiveUserTestingFramework();
+module.exports.liveUserTestingFramework = liveUserTestingFramework;
+
+module.exports = LiveUserTestingFramework;

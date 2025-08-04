@@ -1,5 +1,5 @@
-import localtunnel from 'localtunnel';
-import { exec } from 'child_process';
+const localtunnel = require('localtunnel');
+const { exec  } = require('child_process');
 
 // Keep track of the tunnel
 let activeTunnel = null;

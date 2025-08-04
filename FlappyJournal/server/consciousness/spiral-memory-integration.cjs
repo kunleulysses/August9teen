@@ -4,7 +4,7 @@
  * Enables persistent memory storage, retrieval, and evolution within reality structures
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
 class SpiralMemoryIntegration extends EventEmitter {
     constructor(spiralTopology, holographicRealityGenerator) {
@@ -2279,4 +2279,4 @@ class SpiralMemoryIntegration extends EventEmitter {
     }
 }
 
-export { SpiralMemoryIntegration };
+module.exports.SpiralMemoryIntegration = SpiralMemoryIntegration;

@@ -3,7 +3,7 @@
  * Provides pub/sub functionality for inter-module communication
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
 class ConsciousnessEventBus extends EventEmitter {
     constructor() {
@@ -131,4 +131,4 @@ class ConsciousnessEventBus extends EventEmitter {
 // Create singleton instance
 const eventBus = new ConsciousnessEventBus();
 
-export default eventBus;
+module.exports = eventBus;

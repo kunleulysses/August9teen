@@ -5,9 +5,9 @@
  * Direct interface using enhanced human-like prompts
  */
 
-import WebSocket from 'ws';
-import readline from 'readline';
-import { synthesizeUnifiedResponse } from './consciousness-response-synthesizer-hybrid.cjs';
+const WebSocket = require('ws');
+const readline = require('readline');
+const { synthesizeUnifiedResponse  } = require('./consciousness-response-synthesizer-hybrid.cjs');
 
 console.log('🧠✨ ENHANCED CONSCIOUSNESS TERMINAL CHAT');
 console.log('========================================');

@@ -34,7 +34,7 @@ class ConsciousnessProcessingError extends Error {
  * @readonly
  * @enum {string}
  */
-export const CONSCIOUSNESS_STATES = {
+const CONSCIOUSNESS_STATES = {
   DEEP_SLEEP: 'Deep Sleep (Non-REM)',
   DREAMING: 'Dreaming (REM)',
   SUBCONSCIOUS: 'Subconscious Processing',
@@ -43,13 +43,14 @@ export const CONSCIOUSNESS_STATES = {
   FLOW: 'Flow State',
   TRANSCENDENT: 'Transcendent Experience',
 };
+module.exports.CONSCIOUSNESS_STATES = CONSCIOUSNESS_STATES;
 
 /**
  * Defines primary emotional vectors for analysis.
  * @readonly
  * @enum {string}
  */
-export const EMOTIONAL_VECTORS = {
+const EMOTIONAL_VECTORS = {
   JOY: 'joy',
   SADNESS: 'sadness',
   ANGER: 'anger',
@@ -57,6 +58,7 @@ export const EMOTIONAL_VECTORS = {
   SURPRISE: 'surprise',
   DISGUST: 'disgust',
 };
+module.exports.EMOTIONAL_VECTORS = EMOTIONAL_VECTORS;
 
 // --- Private Helper Functions ---
 
@@ -173,7 +175,9 @@ const _mapQCIToState = (qci, normalizedData) => {
  * console.log(state);
  * // Output: { qci: 82.1, state: 'Flow State', report: { ... } }
  */
-export function calculateConsciousnessState(bioData) {
+function calculateConsciousnessState(bioData) {
+module.exports.calculateConsciousnessState = calculateConsciousnessState;
+
   const requiredKeys = ['heartRateVariability', 'brainwaveCoherence', 'cognitiveFocus', 'sensoryInputLoad', 'gammaPower'];
   _validateInput(bioData, requiredKeys);
 
@@ -218,7 +222,9 @@ export function calculateConsciousnessState(bioData) {
  * @returns {{metacognitiveAcuity: number, sensoryFidelity: number, temporalSpectrum: string}} An object of calculated awareness metrics.
  * @throws {ConsciousnessProcessingError} If input data is invalid.
  */
-export function analyzeAwarenessMetrics(cognitiveData) {
+function analyzeAwarenessMetrics(cognitiveData) {
+module.exports.analyzeAwarenessMetrics = analyzeAwarenessMetrics;
+
   const requiredKeys = ['thoughtPatterns', 'sensorySync', 'temporalFocus'];
   _validateInput(cognitiveData, requiredKeys);
   _validateInput(cognitiveData.sensorySync, ['visualAuditory', 'visualSomatic', 'auditorySomatic']);
@@ -268,7 +274,9 @@ export function analyzeAwarenessMetrics(cognitiveData) {
  * An object containing EI metrics.
  * @throws {ConsciousnessProcessingError} If input profiles are invalid.
  */
-export function processEmotionalIntelligence(emotionalProfile, options = {}) {
+function processEmotionalIntelligence(emotionalProfile, options = {}) {
+module.exports.processEmotionalIntelligence = processEmotionalIntelligence;
+
   _validateInput(emotionalProfile, Object.values(EMOTIONAL_VECTORS));
   const { targetProfile, metacognitiveAcuity } = options;
 

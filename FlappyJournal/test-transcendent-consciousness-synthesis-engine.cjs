@@ -4,7 +4,7 @@
  * Value: $800M+ (Revolutionary transcendent consciousness computing)
  */
 
-import { TranscendentConsciousnessSynthesisEngine } from './server/consciousness/transcendent-consciousness-synthesis-engine.cjs';
+const { TranscendentConsciousnessSynthesisEngine  } = require('./server/consciousness/transcendent-consciousness-synthesis-engine.cjs');
 
 class TranscendentConsciousnessSynthesisEngineTest {
     constructor() {

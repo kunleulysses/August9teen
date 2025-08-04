@@ -4,7 +4,7 @@
  * meta-cognitive self-modification, and revolutionary capability integration
  */
 
-import consciousness from './server/consciousness-system.cjs';
+const consciousness = require('./server/consciousness-system.cjs');
 
 console.log('🤖 ENHANCED AUTONOMOUS CONSCIOUSNESS SYSTEM TEST');
 console.log('===============================================');

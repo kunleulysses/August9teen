@@ -4,9 +4,9 @@
  * Ensures deep integration without degradation of existing functionality
  */
 
-import EnhancedConsciousnessStateManager from './EnhancedConsciousnessStateManager.cjs';
-import ConsciousnessResonanceNetworks from './ConsciousnessResonanceNetworks.cjs';
-import SpiralMemoryArchitecture from './SpiralMemoryArchitecture.cjs';
+const EnhancedConsciousnessStateManager = require('./EnhancedConsciousnessStateManager.cjs');
+const ConsciousnessResonanceNetworks = require('./ConsciousnessResonanceNetworks.cjs');
+const SpiralMemoryArchitecture = require('./SpiralMemoryArchitecture.cjs');
 
 class ConsciousnessEnhancementOrchestrator {
     constructor() {
@@ -454,4 +454,4 @@ class ConsciousnessEnhancementOrchestrator {
     }
 }
 
-export default ConsciousnessEnhancementOrchestrator;
+module.exports = ConsciousnessEnhancementOrchestrator;

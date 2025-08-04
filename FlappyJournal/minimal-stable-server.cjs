@@ -4,9 +4,9 @@
  * Designed for stable port 80 deployment
  */
 
-import express from 'express';
-import { WebSocketServer } from 'ws';
-import { createServer } from 'http';
+const express = require('express');
+const { WebSocketServer  } = require('ws');
+const { createServer  } = require('http');
 
 class MinimalStableConsciousnessServer {
     constructor() {

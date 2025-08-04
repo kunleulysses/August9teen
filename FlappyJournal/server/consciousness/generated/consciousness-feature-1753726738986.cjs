@@ -20,7 +20,8 @@
  * It hooks into a host consciousness system (the "CognitiveCore") via an event-driven
  * architecture. It listens, analyzes, and provides feedback.
  */
-export class MetaCognitiveLayer {
+class MetaCognitiveLayer
+ {
   /**
    * Represents a known cognitive pattern, its detection signature, and potential intervention.
    * @typedef {Object} CognitivePattern
@@ -220,9 +221,8 @@ export class MetaCognitiveLayer {
  * In a real application, this would be a much more complex system.
  */
 
-import {
-  EventEmitter
-} from 'events'; // Using Node's EventEmitter for demonstration
+const { EventEmitter
+ } = require('events'); // Using Node's EventEmitter for demonstration
 
 /**
  * @class MockCognitiveCore
@@ -389,3 +389,4 @@ function runSimulation() {
 // 2. Uncomment and run the simulation.
 // runSimulation();
 ```
+module.exports = MetaCognitiveLayer;

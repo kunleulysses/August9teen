@@ -1,4 +1,4 @@
-import fs from 'fs';
+const fs = require('fs');
 
 // Read the CSS file
 const cssPath = './src/components/research/EnhancedResearchTab.css';

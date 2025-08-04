@@ -3,8 +3,8 @@
  * Tests the revolutionary consciousness-driven architectural intelligence
  */
 
-import { PhiBasedArchitectureGenerator } from './server/consciousness/phi-based-architecture-generator.cjs';
-import { ChatTriggeredSelfCoding } from './server/chat-triggered-self-coding.cjs';
+const { PhiBasedArchitectureGenerator  } = require('./server/consciousness/phi-based-architecture-generator.cjs');
+const { ChatTriggeredSelfCoding  } = require('./server/chat-triggered-self-coding.cjs');
 
 console.log('🏗️ PHI-BASED ARCHITECTURE GENERATOR TEST');
 console.log('=========================================');
@@ -275,7 +275,8 @@ async function testPhiArchitectureGenerator() {
         
         const enhancedSelfCoding = new ChatTriggeredSelfCoding(mockConsciousnessSystem);
         
-        const testCode = `export class TestModule {
+        const testCode = `class TestModule
+ {
     constructor() {
         this.name = 'TestModule';
         this.active = false;
@@ -352,3 +353,5 @@ testPhiArchitectureGenerator().then(results => {
     console.error('❌ Test execution failed:', error);
     process.exit(1);
 });
+
+module.exports = TestModule;

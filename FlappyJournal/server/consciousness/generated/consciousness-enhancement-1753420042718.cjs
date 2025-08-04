@@ -357,10 +357,8 @@ class ConsciousnessCore {
   }
 }
 
-export {
-    ConsciousnessCore,
-    ConsciousnessProcessingError,
-    InvalidInputError,
-    StateIncoherenceError
-};
+module.exports.ConsciousnessCore = ConsciousnessCore;
+module.exports.ConsciousnessProcessingError = ConsciousnessProcessingError;
+module.exports.InvalidInputError = InvalidInputError;
+module.exports.StateIncoherenceError = StateIncoherenceError;
 ```

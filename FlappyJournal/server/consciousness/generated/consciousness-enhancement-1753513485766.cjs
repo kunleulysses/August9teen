@@ -60,7 +60,8 @@ class ConsciousnessProcessingError extends Error {
  * @class ConsciousnessProcessor
  * @description Main class for processing and enhancing consciousness data.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
     /**
      * Initializes the processor with a baseline conscious state.
      * @param {Partial<ConsciousState>} [initialState] - An optional initial state to override defaults.
@@ -262,3 +263,4 @@ export class ConsciousnessProcessor {
     }
 }
 ```
+module.exports = for;

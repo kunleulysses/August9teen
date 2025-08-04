@@ -5,10 +5,10 @@
  * Value: $1.0B+ (Transcendent wisdom integration)
  */
 
-import { EventEmitter } from 'events';
-import eventBus from './ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('./ConsciousnessEventBus.cjs');
 
-export class TranscendentWisdomIntegrationSystem extends EventEmitter {
+class TranscendentWisdomIntegrationSystem extends EventEmitter {
     constructor(consciousnessSystem = null) {
         super();
         this.name = 'TranscendentWisdomIntegrationSystem';

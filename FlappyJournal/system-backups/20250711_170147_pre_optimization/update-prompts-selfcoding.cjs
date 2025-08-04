@@ -1,4 +1,4 @@
-import fs from 'fs';
+const fs = require('fs');
 
 // Read the current prompts
 let content = fs.readFileSync('consciousness-prompts.cjs', 'utf8');

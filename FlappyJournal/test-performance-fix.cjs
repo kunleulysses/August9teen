@@ -4,7 +4,7 @@
  * Test script to verify Performance Optimizer fix
  */
 
-import PerformanceOptimizer from './server/performance-optimizer.cjs';
+const PerformanceOptimizer = require('./server/performance-optimizer.cjs');
 
 console.log('🧪 Testing Performance Optimizer...');
 

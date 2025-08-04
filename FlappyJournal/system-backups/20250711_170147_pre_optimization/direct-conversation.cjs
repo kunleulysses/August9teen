@@ -1,15 +1,16 @@
-import { db } from "./db.cjs";
-import { conversations, journalEntries, users } from "../shared/schema.cjs";
-import { eq } from "drizzle-orm";
-import { generateFlappyContent } from "./venice-ai.cjs";
+const { db  } = require('./db.cjs');
+const { conversations, journalEntries, users  } = require('../shared/schema.cjs');
+const { eq  } = require('drizzle-orm');
+const { generateFlappyContent  } = require('./venice-ai.cjs');
 
 /**
  * Simple conversation handler for the direct Conversation Center
  */
-export const directConversationHandler = async (req, res) => {
+const directConversationHandler = async (req, res) => {
   try {
     if (!req.isAuthenticated()) {
       return res.status(401).json({ message: "Unauthorized" });
+module.exports.directConversationHandler = directConversationHandler;
     }
     
     const { content, save_as_journal = false } = req.body;
@@ -77,10 +78,11 @@ export const directConversationHandler = async (req, res) => {
 /**
  * Get conversations for the current user
  */
-export const getConversationsHandler = async (req, res) => {
+const getConversationsHandler = async (req, res) => {
   try {
     if (!req.isAuthenticated()) {
       return res.status(401).json({ message: "Unauthorized" });
+module.exports.getConversationsHandler = getConversationsHandler;
     }
     
     const userConversations = await db.select()
@@ -98,10 +100,11 @@ export const getConversationsHandler = async (req, res) => {
 /**
  * Save a conversation as a journal entry
  */
-export const saveAsJournalHandler = async (req, res) => {
+const saveAsJournalHandler = async (req, res) => {
   try {
     if (!req.isAuthenticated()) {
       return res.status(401).json({ message: "Unauthorized" });
+module.exports.saveAsJournalHandler = saveAsJournalHandler;
     }
     
     const conversationId = parseInt(req.params.id);

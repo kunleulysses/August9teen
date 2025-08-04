@@ -286,7 +286,7 @@ class MetaCognitiveLayer {
   }
 }
 
-export default MetaCognitiveLayer;
+module.exports = MetaCognitiveLayer;
 
 /*
 // =========================

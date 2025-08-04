@@ -1,7 +1,7 @@
-import { EventEmitter } from 'events';
-import eventBus from '../ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('../ConsciousnessEventBus.cjs');
 
-export class NlpProcessor extends EventEmitter {
+class NlpProcessor extends EventEmitter {
     constructor() {
         super();
         this.name = 'NlpProcessor';
@@ -65,4 +65,4 @@ export class NlpProcessor extends EventEmitter {
     }
 }
 
-export default NlpProcessor;
+module.exports = NlpProcessor;

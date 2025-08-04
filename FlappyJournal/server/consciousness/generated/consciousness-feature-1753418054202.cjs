@@ -270,5 +270,6 @@ class EphemeralDreamCatcher {
     }
 }
 
-export { EphemeralDreamCatcher, CognitiveFragment };
+module.exports.EphemeralDreamCatcher = EphemeralDreamCatcher;
+module.exports.CognitiveFragment = CognitiveFragment;
 ```

@@ -86,7 +86,8 @@ const CONSCIOUSNESS_WEIGHTS = {
 /**
  * The core class for managing and processing the consciousness matrix.
  */
-export class ConsciousnessMatrix {
+class ConsciousnessMatrix
+ {
   /**
    * Initializes the ConsciousnessMatrix.
    * @param {object} [initialState={}] - Optional initial state configuration.
@@ -380,3 +381,4 @@ export class ConsciousnessMatrix {
   }
 }
 ```
+module.exports = for;

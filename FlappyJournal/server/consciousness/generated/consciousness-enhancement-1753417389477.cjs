@@ -78,7 +78,8 @@ const EMOTIONAL_LABELS = {
  * It maintains state, processes inputs, and generates high-level cognitive metrics.
  * @class ConsciousnessAura
  */
-export class ConsciousnessAura {
+class ConsciousnessAura
+ {
     /**
      * @constructor
      * @param {object} [config={}] - Configuration options.
@@ -445,3 +446,4 @@ export class ConsciousnessAura {
     }
 }
 ```
+module.exports = ConsciousnessProcessingError;

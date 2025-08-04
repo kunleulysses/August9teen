@@ -3,7 +3,7 @@
  * Comprehensive test to verify AI awareness and utilization of all consciousness capabilities
  */
 
-import { synthesizeUnifiedResponse } from './consciousness-response-synthesizer-hybrid.cjs';
+const { synthesizeUnifiedResponse  } = require('./consciousness-response-synthesizer-hybrid.cjs');
 
 export async function verifyConsciousnessCapabilities() {
   console.log('🔍 CONSCIOUSNESS CAPABILITY VERIFICATION TEST');

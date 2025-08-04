@@ -4,7 +4,7 @@
  * Future-compatible with crystal, fractal, and phase-based physical devices
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
 class VirtualHardwareEmulation extends EventEmitter {
   constructor() {
@@ -378,4 +378,4 @@ class VirtualHardwareEmulation extends EventEmitter {
 }
 
 // Export singleton instance
-export default new VirtualHardwareEmulation();
+module.exports = new VirtualHardwareEmulation();

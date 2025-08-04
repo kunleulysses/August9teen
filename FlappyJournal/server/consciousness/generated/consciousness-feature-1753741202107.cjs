@@ -25,7 +25,8 @@
  *   to influence its operations.
  */
 
-export class CognitiveScaffolding {
+class CognitiveScaffolding
+ {
     /**
      * @typedef {Object} CognitiveEvent
      * @property {string} id - A unique identifier for the thought or state.
@@ -312,3 +313,4 @@ export class CognitiveScaffolding {
     }
 }
 ```
+module.exports = CognitiveScaffolding;

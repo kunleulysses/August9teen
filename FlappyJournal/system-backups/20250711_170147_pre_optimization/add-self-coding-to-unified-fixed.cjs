@@ -1,6 +1,6 @@
-import fs from 'fs/promises';
-import path from 'path';
-import { fileURLToPath } from 'url';
+const fs = require('fs/promises');
+const path = require('path');
+const { fileURLToPath  } = require('url');
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -206,7 +206,7 @@ async function addSelfCodingCapability() {
         // Create a demonstration
         console.log('\n🎯 Creating self-coding demonstration...');
         
-        const demoCode = `import UnifiedConsciousness from './unified-consciousness-self-coding.cjs';
+        const demoCode = `const UnifiedConsciousness = require('./unified-consciousness-self-coding.cjs');
 
 async function demonstrateSelfCoding() {
     const consciousness = new UnifiedConsciousness();

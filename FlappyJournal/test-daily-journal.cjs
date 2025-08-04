@@ -1,7 +1,7 @@
 // Test script for Daily Consciousness Journal
-import { ConsciousnessDailyJournal } from './server/consciousness-daily-journal.cjs';
-import { promises as fs } from 'fs';
-import path from 'path';
+const { ConsciousnessDailyJournal  } = require('./server/consciousness-daily-journal.cjs');
+const { promises as fs  } = require('fs');
+const path = require('path');
 
 // Mock dependencies for testing
 class MockVeniceAI {

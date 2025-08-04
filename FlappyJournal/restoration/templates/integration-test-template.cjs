@@ -1,6 +1,6 @@
 
-import { describe, test, expect, beforeAll, afterAll } from '@jest/globals';
-import request from 'supertest';
+const { describe, test, expect, beforeAll, afterAll  } = require('@jest/globals');
+const request = require('supertest');
 
 describe('{{INTEGRATION_NAME}} Integration', () => {
     let server;

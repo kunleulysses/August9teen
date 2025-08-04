@@ -72,7 +72,8 @@ class ConsciousnessError extends Error {
  * It takes simulated sensory, cognitive, and emotional data to produce
  * a detailed analysis of a modeled conscious state.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
   /**
    * Initializes the ConsciousnessProcessor.
    * @param {object} [config={}] - Configuration options.
@@ -352,3 +353,4 @@ export class ConsciousnessProcessor {
   }
 }
 ```
+module.exports = for;

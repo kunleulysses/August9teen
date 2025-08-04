@@ -1,7 +1,7 @@
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class TestModule extends EventEmitter {
+class TestModule extends EventEmitter {
     constructor() {
         super();
         this.name = 'TestModule';
@@ -21,12 +21,16 @@ export class TestModule extends EventEmitter {
     }
 }
 
-export function capitalize(str) {
+function capitalize(str) {
+module.exports.capitalize = capitalize;
+
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-export function reverse(str) {
+function reverse(str) {
+module.exports.reverse = reverse;
+
     return str.split('').reverse().join('');
 }
 
-export default TestModule;
+module.exports = TestModule;

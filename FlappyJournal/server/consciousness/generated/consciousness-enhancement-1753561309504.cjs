@@ -58,7 +58,8 @@
  * @property {Stimulus} lastProcessedStimulus - The stimulus that led to this state.
  */
 
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
     /**
      * Creates an instance of the ConsciousnessProcessor.
      * @param {object} [config={}] - Initial configuration for the processor.
@@ -411,3 +412,4 @@ export class ConsciousnessProcessor {
     }
 }
 ```
+module.exports = ConsciousnessProcessor;

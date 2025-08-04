@@ -3,7 +3,7 @@
  * Tunable settings for message batching, connection pooling, and caching
  */
 
-export const PerformanceConfig = {
+const PerformanceConfig = {
   // Message Batching Configuration
   batching: {
     // Maximum number of messages in a batch
@@ -167,9 +167,12 @@ export const PerformanceConfig = {
     }
   }
 };
+module.exports.PerformanceConfig = PerformanceConfig;
 
 // Get configuration for current environment
-export function getPerformanceConfig(environment = process.env.NODE_ENV || 'development') {
+function getPerformanceConfig(environment = process.env.NODE_ENV || 'development') {
+module.exports.getPerformanceConfig = getPerformanceConfig;
+
   const baseConfig = PerformanceConfig;
   const envConfig = PerformanceConfig.environments[environment] || {};
   
@@ -193,4 +196,4 @@ function deepMerge(target, source) {
 }
 
 // Export default configuration
-export default getPerformanceConfig(); 
+module.exports = getPerformanceConfig(); 

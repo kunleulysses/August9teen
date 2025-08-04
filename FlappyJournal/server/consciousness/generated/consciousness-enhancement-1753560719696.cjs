@@ -43,7 +43,8 @@ const STATE_DECAY_RATE = 0.05;
  * @class ConsciousnessProcessor
  * @description The main class for processing and analyzing consciousness states.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
     // --- Private Fields ---
     #currentState;
     #awarenessMetrics;
@@ -344,3 +345,4 @@ export class ConsciousnessProcessor {
     }
 }
 ```
+module.exports = ConsciousnessProcessor;

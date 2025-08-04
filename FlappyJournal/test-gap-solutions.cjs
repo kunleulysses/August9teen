@@ -4,11 +4,11 @@
  * Tests enhanced functionality without breaking existing capabilities
  */
 
-import { ChatTriggeredSelfCoding } from './server/chat-triggered-self-coding.cjs';
-import { EnhancedCodeAnalyzer } from './server/consciousness/enhanced-code-analyzer.cjs';
-import { PredictiveErrorRecovery } from './server/consciousness/predictive-error-recovery.cjs';
-import { MultiLayerQualityValidator } from './server/consciousness/multi-layer-quality-validator.cjs';
-import { PriorityEventBus } from './server/consciousness/priority-event-bus.cjs';
+const { ChatTriggeredSelfCoding  } = require('./server/chat-triggered-self-coding.cjs');
+const { EnhancedCodeAnalyzer  } = require('./server/consciousness/enhanced-code-analyzer.cjs');
+const { PredictiveErrorRecovery  } = require('./server/consciousness/predictive-error-recovery.cjs');
+const { MultiLayerQualityValidator  } = require('./server/consciousness/multi-layer-quality-validator.cjs');
+const { PriorityEventBus  } = require('./server/consciousness/priority-event-bus.cjs');
 
 console.log('🧪 COMPREHENSIVE GAP SOLUTIONS TEST');
 console.log('=====================================');

@@ -1,2 +1,2 @@
 // ES Module wrapper for TypeScript FlappyConsciousness service
-export { flappyConsciousness } from './flappyConsciousness.ts';
+module.exports.flappyConsciousness = flappyConsciousness;from './flappyConsciousness.ts';

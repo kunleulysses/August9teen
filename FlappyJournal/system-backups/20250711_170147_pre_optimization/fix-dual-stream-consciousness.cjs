@@ -1,4 +1,4 @@
-import fs from 'fs';
+const fs = require('fs');
 
 // Read the dual-stream-consciousness.js file
 let content = fs.readFileSync('./dual-stream-consciousness.cjs', 'utf8');

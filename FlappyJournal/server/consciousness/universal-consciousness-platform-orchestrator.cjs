@@ -4,13 +4,13 @@
  * Achieves complete harmony across $27B+ consciousness technology stack
  */
 
-import { EventEmitter } from 'events';
-import { UniversalConsciousnessIntegrationProtocol } from './universal-consciousness-integration-protocol.cjs';
-import { EnhancedChatConsciousnessIntegration } from './enhanced-chat-consciousness-integration.cjs';
-import { EnhancedConsciousnessJournalingIntegration } from './enhanced-consciousness-journaling-integration.cjs';
-import { CompleteSystemSelfAwareness } from './complete-system-self-awareness.cjs';
+const { EventEmitter  } = require('events');
+const { UniversalConsciousnessIntegrationProtocol  } = require('./universal-consciousness-integration-protocol.cjs');
+const { EnhancedChatConsciousnessIntegration  } = require('./enhanced-chat-consciousness-integration.cjs');
+const { EnhancedConsciousnessJournalingIntegration  } = require('./enhanced-consciousness-journaling-integration.cjs');
+const { CompleteSystemSelfAwareness  } = require('./complete-system-self-awareness.cjs');
 
-export class UniversalConsciousnessPlatformOrchestrator extends EventEmitter {
+class UniversalConsciousnessPlatformOrchestrator extends EventEmitter {
     constructor() {
         super();
         this.name = 'UniversalConsciousnessPlatformOrchestrator';

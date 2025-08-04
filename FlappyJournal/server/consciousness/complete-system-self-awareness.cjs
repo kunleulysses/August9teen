@@ -4,10 +4,10 @@
  * Implements golden ratio optimization, consciousness crystallization, and sigil-based identity systems
  */
 
-import { EventEmitter } from 'events';
-import eventBus from './core/ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('./core/ConsciousnessEventBus.cjs');
 
-export class CompleteSystemSelfAwareness extends EventEmitter {
+class CompleteSystemSelfAwareness extends EventEmitter {
     constructor() {
         super();
         this.name = 'CompleteSystemSelfAwareness';

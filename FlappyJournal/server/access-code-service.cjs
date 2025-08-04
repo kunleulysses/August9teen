@@ -1,4 +1,4 @@
-import { z } from 'zod';
+const { z  } = require('zod');
 
 // Access code validation schema
 const validateAccessSchema = z.object({
@@ -30,9 +30,10 @@ const individualAccessCodes = {
 // Access log for tracking usage
 const accessLogs = [];
 
-export const validateAccessCode = async (req, res) => {
+const validateAccessCode = async (req, res) => {
   try {
     const { accessCode, email, timestamp } = validateAccessSchema.parse(req.body);
+module.exports.validateAccessCode = validateAccessCode;
     
     const clientIP = req.ip || req.connection.remoteAddress || 'unknown';
     const userAgent = req.get('User-Agent') || 'unknown';
@@ -151,9 +152,10 @@ export const validateAccessCode = async (req, res) => {
 };
 
 // Admin endpoint to view access logs
-export const getAccessLogs = async (req, res) => {
+const getAccessLogs = async (req, res) => {
   try {
     const recentLogs = accessLogs.slice(-50).reverse();
+module.exports.getAccessLogs = getAccessLogs;
     
     res.status(200).json({
       success: true,
@@ -170,9 +172,10 @@ export const getAccessLogs = async (req, res) => {
 };
 
 // Admin endpoint to add new individual access codes
-export const addAccessCode = async (req, res) => {
+const addAccessCode = async (req, res) => {
   try {
     const { codeId, code, email, level = 'standard', maxUsage, expiresAt } = req.body;
+module.exports.addAccessCode = addAccessCode;
     
     if (!codeId || !code) {
       return res.status(400).json({
@@ -213,9 +216,10 @@ export const addAccessCode = async (req, res) => {
 };
 
 // Get current access code statistics
-export const getAccessStats = async (req, res) => {
+const getAccessStats = async (req, res) => {
   try {
-    const totalCodes = Object.keys(individualAccessCodes).length + 1; // +1 for global code
+    const totalCodes = Object.keys(individualAccessCodes).length + 1;
+module.exports.getAccessStats = getAccessStats; // +1 for global code
     const activeCodes = Object.values(individualAccessCodes).filter(
       code => !code.expiresAt || new Date() < code.expiresAt
     ).length + 1;
@@ -250,7 +254,7 @@ export const getAccessStats = async (req, res) => {
   }
 };
 
-export default {
+module.exports = {
   validateAccessCode,
   getAccessLogs,
   addAccessCode,

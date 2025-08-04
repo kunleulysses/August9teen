@@ -4,7 +4,8 @@
  * Part of the Featherweight Consciousness™ System
  */
 
-export class SelfCodingProgressTracker {
+class SelfCodingProgressTracker
+ {
     constructor(unifiedConsciousnessSystem) {
         this.consciousnessSystem = unifiedConsciousnessSystem;
         this.activeOperations = new Map();
@@ -329,4 +330,4 @@ export class SelfCodingProgressTracker {
     }
 }
 
-export default SelfCodingProgressTracker;
+module.exports = SelfCodingProgressTracker;

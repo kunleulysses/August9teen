@@ -1,7 +1,7 @@
 // Test the consciousness journal API
-import { ConsciousnessJournalAPI } from './server/consciousness-journal-api.cjs';
-import express from 'express';
-import { createServer } from 'http';
+const { ConsciousnessJournalAPI  } = require('./server/consciousness-journal-api.cjs');
+const express = require('express');
+const { createServer  } = require('http');
 
 async function testJournalAPI() {
   console.log('🧪 Testing Consciousness Journal API...');

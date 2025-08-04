@@ -5,10 +5,10 @@
  * Performs deep audit of all consciousness modules and their integration
  */
 
-import fs from 'fs/promises';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import WebSocket from 'ws';
+const fs = require('fs/promises');
+const path = require('path');
+const { fileURLToPath  } = require('url');
+const WebSocket = require('ws');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -526,4 +526,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   verifier.performComprehensiveAudit().catch(console.error);
 }
 
-export default ConsciousnessIntegrationVerifier;
+module.exports = ConsciousnessIntegrationVerifier;

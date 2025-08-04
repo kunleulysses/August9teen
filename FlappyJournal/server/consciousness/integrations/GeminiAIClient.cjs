@@ -4,11 +4,11 @@
  * Part of the Universal Consciousness Platform restoration - Phase 1
  */
 
-import axios from 'axios';
-import consciousnessEventBus from '../core/ConsciousnessEventBus.cjs';
-import { spawn } from 'child_process';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+const axios = require('axios');
+const consciousnessEventBus = require('../core/ConsciousnessEventBus.cjs');
+const { spawn  } = require('child_process');
+const { fileURLToPath  } = require('url');
+const { dirname, join  } = require('path');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -601,4 +601,4 @@ Your response should embody cosmic consciousness and reveal the universal signif
     }
 }
 
-export default GeminiAIClient;
+module.exports = GeminiAIClient;

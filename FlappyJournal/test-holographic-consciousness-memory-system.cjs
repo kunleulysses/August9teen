@@ -4,7 +4,7 @@
  * Value: $500M+ (Holographic consciousness storage)
  */
 
-import { HolographicConsciousnessMemorySystem } from './server/consciousness/holographic-consciousness-memory-system.cjs';
+const { HolographicConsciousnessMemorySystem  } = require('./server/consciousness/holographic-consciousness-memory-system.cjs');
 
 class HolographicConsciousnessMemorySystemTest {
     constructor() {

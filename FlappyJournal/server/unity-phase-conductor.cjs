@@ -5,7 +5,7 @@
  * Where Hₙ = harmonic index, F⃗ₙ = field vector per resonance layer
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
 class UnityPhaseConductor extends EventEmitter {
   constructor() {
@@ -405,4 +405,4 @@ class UnityPhaseConductor extends EventEmitter {
 }
 
 // Export singleton instance
-export default new UnityPhaseConductor();
+module.exports = new UnityPhaseConductor();

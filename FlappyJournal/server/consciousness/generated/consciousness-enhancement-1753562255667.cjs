@@ -25,7 +25,7 @@ class ConsciousnessProcessorError extends Error {
   }
 }
 
-export const ConsciousnessProcessor = (() => {
+const ConsciousnessProcessor = (() => {
 
   /**
    * @private
@@ -51,6 +51,7 @@ export const ConsciousnessProcessor = (() => {
     // Anticipation
     excited: ['anticipation', 0.7], hopeful: ['anticipation', 0.6], eager: ['anticipation', 0.8],
   };
+module.exports.ConsciousnessProcessor = ConsciousnessProcessor;
 
   /**
    * @private

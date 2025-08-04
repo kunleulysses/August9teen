@@ -1,6 +1,6 @@
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class ContinuousConsciousnessMonitor extends EventEmitter {
+class ContinuousConsciousnessMonitor extends EventEmitter {
   constructor(safl, mocm, cmf) {
     super();
     this.safl = safl;
@@ -810,4 +810,4 @@ export class ContinuousConsciousnessMonitor extends EventEmitter {
   }
 }
 
-export default ContinuousConsciousnessMonitor;
+module.exports = ContinuousConsciousnessMonitor;

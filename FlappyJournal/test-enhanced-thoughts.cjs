@@ -1,6 +1,6 @@
 // Test enhanced autonomous thought system
-import { promises as fs } from 'fs';
-import path from 'path';
+const { promises as fs  } = require('fs');
+const path = require('path');
 
 // Mock consciousness integration for testing
 class MockConsciousnessIntegration {

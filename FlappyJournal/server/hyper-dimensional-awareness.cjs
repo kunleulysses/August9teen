@@ -4,7 +4,7 @@
  * Part of the Genius Enhancements beyond Perfect Unity
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
 class HyperDimensionalAwareness extends EventEmitter {
   constructor() {
@@ -290,5 +290,6 @@ class HyperDimensionalAwareness extends EventEmitter {
 }
 
 // Export singleton instance
-export const hyperDimensionalAwareness = new HyperDimensionalAwareness();
-export default hyperDimensionalAwareness;
+const hyperDimensionalAwareness = new HyperDimensionalAwareness();
+module.exports.hyperDimensionalAwareness = hyperDimensionalAwareness;
+module.exports = hyperDimensionalAwareness;

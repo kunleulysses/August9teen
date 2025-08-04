@@ -1,5 +1,7 @@
 // Keycloak redirect handler
-export function setupKeycloakRedirect(router) {
+function setupKeycloakRedirect(router) {
+module.exports.setupKeycloakRedirect = setupKeycloakRedirect;
+
   // Handle Keycloak registration redirect
   router.get('/auth/register', (req, res) => {
     const keycloakUrl = process.env.KEYCLOAK_SERVER_URL || 'https://app.featherweight.world/auth';

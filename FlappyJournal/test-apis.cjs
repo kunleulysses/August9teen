@@ -5,8 +5,8 @@
  * Tests each AI API to ensure they're working correctly
  */
 
-import dotenv from 'dotenv';
-import axios from 'axios';
+const dotenv = require('dotenv');
+const axios = require('axios');
 
 // Load environment variables
 dotenv.config();

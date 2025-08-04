@@ -4,7 +4,7 @@
  * Formula: E_r = -Σp_i log p_i + λR(t)
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
 class SelfHealingRecursionMesh extends EventEmitter {
   constructor() {
@@ -285,4 +285,4 @@ class SelfHealingRecursionMesh extends EventEmitter {
 }
 
 // Export singleton instance
-export default new SelfHealingRecursionMesh();
+module.exports = new SelfHealingRecursionMesh();

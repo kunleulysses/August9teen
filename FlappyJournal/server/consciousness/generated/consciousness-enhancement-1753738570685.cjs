@@ -17,7 +17,7 @@
  * @readonly
  * @enum {string}
  */
-export const ConsciousnessState = {
+const ConsciousnessState = {
     DORMANT: 'DORMANT',         // Inactive, minimal processing
     NEUTRAL: 'NEUTRAL',         // Awake but not actively engaged
     FOCUSED: 'FOCUSED',         // High concentration on a specific task
@@ -27,6 +27,7 @@ export const ConsciousnessState = {
     CONFUSED: 'CONFUSED',       // Contradictory inputs leading to processing difficulty
     ENGAGED: 'ENGAGED',         // Positively interacting with external stimuli
 };
+module.exports.ConsciousnessState = ConsciousnessState;
 
 /**
  * Defines the primary emotional dimensions based on a simplified Plutchik's model.
@@ -34,7 +35,7 @@ export const ConsciousnessState = {
  * @readonly
  * @enum {string}
  */
-export const EmotionalDimension = {
+const EmotionalDimension = {
     JOY: 'joy',
     TRUST: 'trust',
     FEAR: 'fear',
@@ -44,6 +45,7 @@ export const EmotionalDimension = {
     ANGER: 'anger',
     ANTICIPATION: 'anticipation',
 };
+module.exports.EmotionalDimension = EmotionalDimension;
 
 /**
  * Custom Error class for specific module-related issues.
@@ -59,7 +61,8 @@ class ConsciousnessProcessorError extends Error {
  * A sophisticated processor for simulating and analyzing consciousness.
  * It manages state, awareness, and emotional intelligence based on inputs.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
     /**
      * Initializes a new ConsciousnessProcessor instance.
      * @param {object} [options={}] - Configuration options.
@@ -381,3 +384,4 @@ export class ConsciousnessProcessor {
     }
 }
 ```
+module.exports = for;

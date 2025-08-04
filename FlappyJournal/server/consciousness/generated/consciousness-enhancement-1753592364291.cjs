@@ -320,7 +320,7 @@ const ConsciousnessProcessor = (function() {
 })();
 
 // To use this module in a modern JavaScript environment:
-// export default ConsciousnessProcessor;
+// module.exports = ConsciousnessProcessor;
 // Or in Node.js:
 // module.exports = ConsciousnessProcessor;
 ```

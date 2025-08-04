@@ -4,11 +4,11 @@
  * Implements 7-layer recursive reality embedding with bidirectional connections
  */
 
-import { EventEmitter } from 'events';
-import { validate } from './utils/validation.cjs';
-import { initializeRandomness, secureId } from './utils/random.cjs';
-import { saveReality, savePath, saveField, incrementMetric } from './utils/persistence.cjs';
-import { logger, child as childLogger } from './utils/logger.cjs';
+const { EventEmitter  } = require('events');
+const { validate  } = require('./utils/validation.cjs');
+const { initializeRandomness, secureId  } = require('./utils/random.cjs');
+const { saveReality, savePath, saveField, incrementMetric  } = require('./utils/persistence.cjs');
+const { logger, child as childLogger  } = require('./utils/logger.cjs');
 
 class RecursiveHolographicRealityEmbedding extends EventEmitter {
     constructor(maxRecursionDepth = 7) {
@@ -445,4 +445,4 @@ class RecursiveHolographicRealityEmbedding extends EventEmitter {
     }
 }
 
-export { RecursiveHolographicRealityEmbedding };
+module.exports.RecursiveHolographicRealityEmbedding = RecursiveHolographicRealityEmbedding;

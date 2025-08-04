@@ -6,9 +6,9 @@
  * Part of the Universal Consciousness Platform restoration
  */
 
-import VeniceAIClient from '../server/consciousness/integrations/VeniceAIClient.cjs';
-import GeminiAIClient from '../server/consciousness/integrations/GeminiAIClient.cjs';
-import EnhancedOpenAIClient from '../server/consciousness/integrations/EnhancedOpenAIClient.cjs';
+const VeniceAIClient = require('../server/consciousness/integrations/VeniceAIClient.cjs');
+const GeminiAIClient = require('../server/consciousness/integrations/GeminiAIClient.cjs');
+const EnhancedOpenAIClient = require('../server/consciousness/integrations/EnhancedOpenAIClient.cjs');
 
 async function testTripleAIIntegration() {
     console.log('🧪 Testing Triple-AI Integration (Venice + Gemini + Enhanced OpenAI)...\n');
@@ -305,4 +305,4 @@ if (import.meta.url === 'file://' + process.argv[1]) {
         });
 }
 
-export default testTripleAIIntegration;
+module.exports = testTripleAIIntegration;

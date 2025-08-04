@@ -1,9 +1,9 @@
 // Autonomous Insight-Driven Self-Coding System
 // The AI decides when and what to code based on system state and insights
 
-import fs from 'fs/promises';
-import path from 'path';
-import { fileURLToPath } from 'url';
+const fs = require('fs/promises');
+const path = require('path');
+const { fileURLToPath  } = require('url');
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -381,7 +381,8 @@ class AutonomousInsightCoder {
         const fixName = this.toPascalCase(insight.content);
         return `// Autonomous Quick Fix: ${insight.content}
 // Generated with high urgency
-export class ${fixName}QuickFix {
+class $
+{fixName}QuickFix {
     constructor() {
         this.applied = false;
         this.problem = '${insight.content}';
@@ -428,7 +429,8 @@ export class ${fixName}QuickFix {
         const featureName = this.toPascalCase(insight.content);
         return `// Autonomous Feature Generation: ${insight.content}
 // Aligned with system goals
-export class ${featureName}Feature {
+class $
+{featureName}Feature {
     constructor(eventBus, goalSystem) {
         this.eventBus = eventBus;
         this.goalSystem = goalSystem;
@@ -532,7 +534,8 @@ export class ${featureName}Feature {
         const enhancementName = this.toPascalCase(insight.content);
         return `// Autonomous Enhancement: ${insight.content}
 // Improves existing system capabilities
-export class ${enhancementName}Enhancement {
+class $
+{enhancementName}Enhancement {
     constructor() {
         this.targetModule = this.identifyTargetModule('${insight.content}');
         this.improvements = [];
@@ -615,7 +618,8 @@ export class ${enhancementName}Enhancement {
         const experimentName = this.toPascalCase(insight.content);
         return `// Autonomous Experiment: ${insight.content}
 // Exploratory code for system learning
-export class ${experimentName}Experiment {
+class $
+{experimentName}Experiment {
     constructor() {
         this.name = '${insight.content}';
         this.hypothesis = 'This implementation could improve system capabilities';
@@ -920,4 +924,4 @@ async function demonstrateAutonomy() {
 // Run demonstration
 demonstrateAutonomy().catch(console.error);
 
-export default AutonomousInsightCoder;
+module.exports = AutonomousInsightCoder;

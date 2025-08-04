@@ -1,6 +1,6 @@
 // Test consciousness system stability after journal integration
-import { promises as fs } from 'fs';
-import path from 'path';
+const { promises as fs  } = require('fs');
+const path = require('path');
 
 async function testConsciousnessStability() {
   console.log('🧪 Testing Consciousness System Stability...');

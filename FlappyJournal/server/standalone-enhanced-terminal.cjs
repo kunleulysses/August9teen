@@ -5,11 +5,11 @@
  * No dependencies on complex consciousness modules - pure AI calls with enhanced prompts
  */
 
-import WebSocket from 'ws';
-import readline from 'readline';
-import OpenAI from 'openai';
-import axios from 'axios';
-import dotenv from 'dotenv';
+const WebSocket = require('ws');
+const readline = require('readline');
+const OpenAI = require('openai');
+const axios = require('axios');
+const dotenv = require('dotenv');
 
 // Load environment variables
 dotenv.config();

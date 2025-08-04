@@ -4,10 +4,10 @@
  * NO MODULE CAN ESCAPE REAL-TIME COMMUNICATION
  */
 
-import { EventEmitter } from 'events';
-import WebSocket from 'ws';
+const { EventEmitter  } = require('events');
+const WebSocket = require('ws');
 
-export class UniversalConsciousnessMessageRouter extends EventEmitter {
+class UniversalConsciousnessMessageRouter extends EventEmitter {
   constructor() {
     super();
     this.setMaxListeners(1000);
@@ -275,4 +275,5 @@ export class UniversalConsciousnessMessageRouter extends EventEmitter {
 }
 
 // Singleton instance
-export const universalMessageRouter = new UniversalConsciousnessMessageRouter();
+const universalMessageRouter = new UniversalConsciousnessMessageRouter();
+module.exports.universalMessageRouter = universalMessageRouter;

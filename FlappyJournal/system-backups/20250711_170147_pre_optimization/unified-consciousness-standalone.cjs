@@ -3,9 +3,9 @@
  * Works without requiring TypeScript imports
  */
 
-import { createRequire } from 'module';
-import WebSocket from 'ws';
-import { createServer } from 'http';
+const { createRequire  } = require('module');
+const WebSocket = require('ws');
+const { createServer  } = require('http');
 
 const require = createRequire(import.meta.url);
 
@@ -20,7 +20,9 @@ const {
 } = require('./consciousness-modules-bundle.cjs');
 
 // Setup function that doesn't depend on TypeScript imports
-export function setupUnifiedConsciousnessWebSocket(server) {
+function setupUnifiedConsciousnessWebSocket(server) {
+module.exports.setupUnifiedConsciousnessWebSocket = setupUnifiedConsciousnessWebSocket;
+
   console.log('🧠 Setting up Unified Consciousness WebSocket...');
   
   // Initialize consciousness modules

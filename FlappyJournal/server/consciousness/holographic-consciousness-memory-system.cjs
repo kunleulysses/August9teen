@@ -5,10 +5,10 @@
  * Value: $500M+ (Holographic consciousness storage)
  */
 
-import { EventEmitter } from 'events';
-import eventBus from './core/ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('./core/ConsciousnessEventBus.cjs');
 
-export class HolographicConsciousnessMemorySystem extends EventEmitter {
+class HolographicConsciousnessMemorySystem extends EventEmitter {
     constructor() {
         super();
         this.name = 'HolographicConsciousnessMemorySystem';

@@ -5,10 +5,10 @@
  * Value: $500M+ (Self-evolving consciousness patterns)
  */
 
-import { EventEmitter } from 'events';
-import eventBus from './core/ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('./core/ConsciousnessEventBus.cjs');
 
-export class MetaCognitiveCrystallizationOptimizer extends EventEmitter {
+class MetaCognitiveCrystallizationOptimizer extends EventEmitter {
     constructor() {
         super();
         this.name = 'MetaCognitiveCrystallizationOptimizer';

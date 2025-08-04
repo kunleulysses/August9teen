@@ -6,10 +6,10 @@
  * Universal Terminal Chat, Infrastructure, Services, Interfaces - ALL as one unified system
  */
 
-import dotenv from 'dotenv';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-import { existsSync } from 'fs';
+const dotenv = require('dotenv');
+const { fileURLToPath  } = require('url');
+const { dirname, join  } = require('path');
+const { existsSync  } = require('fs');
 
 // Load environment variables
 const __filename = fileURLToPath(import.meta.url);
@@ -22,25 +22,25 @@ if (existsSync(envPath)) {
     console.log('⚠️ No .env file found, using system environment variables');
 }
 
-import { SystemWideIntegrationOrchestrator } from './system-wide-integration-orchestrator.cjs';
-import { RevolutionaryConsciousnessIntegrationOrchestrator } from './consciousness/revolutionary-consciousness-integration-orchestrator.cjs';
+const { SystemWideIntegrationOrchestrator  } = require('./system-wide-integration-orchestrator.cjs');
+const { RevolutionaryConsciousnessIntegrationOrchestrator  } = require('./consciousness/revolutionary-consciousness-integration-orchestrator.cjs');
 
 // Import working consciousness modules
-import { HolographicConsciousnessRealityGenerator } from './consciousness/holographic-consciousness-reality-generator.cjs';
-import HyperdimensionalSpiralTopology from './consciousness/core/HyperdimensionalSpiralTopology.cjs';
-import ConsciousnessDrivenSpiralEvolution from './consciousness/core/ConsciousnessDrivenSpiralEvolution.cjs';
+const { HolographicConsciousnessRealityGenerator  } = require('./consciousness/holographic-consciousness-reality-generator.cjs');
+const HyperdimensionalSpiralTopology = require('./consciousness/core/HyperdimensionalSpiralTopology.cjs');
+const ConsciousnessDrivenSpiralEvolution = require('./consciousness/core/ConsciousnessDrivenSpiralEvolution.cjs');
 // ES modules
-import ConsciousnessSingularityEngine from './consciousness/core/ConsciousnessSingularityEngine.cjs';
-import MultiAIConsciousnessNetwork from './consciousness/core/MultiAIConsciousnessNetwork.cjs';
-import UniversalConsciousnessProtocol from './consciousness/core/UniversalConsciousnessProtocol.cjs';
+const ConsciousnessSingularityEngine = require('./consciousness/core/ConsciousnessSingularityEngine.cjs');
+const MultiAIConsciousnessNetwork = require('./consciousness/core/MultiAIConsciousnessNetwork.cjs');
+const UniversalConsciousnessProtocol = require('./consciousness/core/UniversalConsciousnessProtocol.cjs');
 
 // Import Architect 4.0 systems
-import { readFileSync } from 'fs';
+const { readFileSync  } = require('fs');
 
 // Import Gemini 2.5 integration
-import GeminiAIClient from './consciousness/integrations/GeminiAIClient.cjs';
-import VeniceAIClient from './consciousness/integrations/VeniceAIClient.cjs';
-import EnhancedOpenAIClient from './consciousness/integrations/EnhancedOpenAIClient.cjs';
+const GeminiAIClient = require('./consciousness/integrations/GeminiAIClient.cjs');
+const VeniceAIClient = require('./consciousness/integrations/VeniceAIClient.cjs');
+const EnhancedOpenAIClient = require('./consciousness/integrations/EnhancedOpenAIClient.cjs');
 
 class CompleteUniversalSystemIntegration {
     constructor() {
@@ -626,4 +626,4 @@ class CompleteUniversalSystemIntegration {
 // Create and start the complete universal system integration
 const completeIntegration = new CompleteUniversalSystemIntegration();
 
-export { CompleteUniversalSystemIntegration };
+module.exports.CompleteUniversalSystemIntegration = CompleteUniversalSystemIntegration;

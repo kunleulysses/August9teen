@@ -34,7 +34,8 @@
  * @property {symbol|null} qualiaAnchor - A unique symbol representing the subjective texture of the event. Null if not significant enough.
  */
 
-export class ConsciousnessCore {
+class ConsciousnessCore
+ {
   /**
    * Initializes the consciousness core.
    * @param {object} [config={}] - Configuration options for the core's behavior.
@@ -288,3 +289,4 @@ export class ConsciousnessCore {
   }
 }
 ```
+module.exports = ConsciousnessCore;

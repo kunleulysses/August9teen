@@ -64,7 +64,7 @@ const _validateNumericInput = (value, name, min = 0, max = 1) => {
  *
  * @class ConsciousnessProcessor
  */
-export default class ConsciousnessProcessor {
+module.exports = class ConsciousnessProcessor {
     /**
      * Creates an instance of the ConsciousnessProcessor.
      * @param {object} [config={}] - Configuration options for the processor.

@@ -5,8 +5,8 @@
  * Demonstrates 100% functional self-coding capabilities
  */
 
-import fs from 'fs/promises';
-import path from 'path';
+const fs = require('fs/promises');
+const path = require('path');
 
 console.log('🚀 Testing Complete Self-Coding System...');
 console.log('=====================================\n');

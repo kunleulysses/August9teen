@@ -4,7 +4,8 @@
  * Part of the Featherweight Consciousness™ System
  */
 
-export class SelfCodingContextInjector {
+class SelfCodingContextInjector
+ {
     constructor(unifiedConsciousnessSystem) {
         this.consciousnessSystem = unifiedConsciousnessSystem;
         this.name = 'SelfCodingContextInjector';
@@ -190,11 +191,12 @@ Parameters: ${JSON.stringify(parameters)}`,
             module_generation: {
                 request: "Build a utility module for string operations",
                 response: "Generating a string utilities module with my SelfCodingModule...",
-                code: `export const StringUtils = {
+                code: `const StringUtils = {
     capitalize: (str) => str.charAt(0).toUpperCase() + str.slice(1),
     reverse: (str) => str.split('').reverse().join(''),
     truncate: (str, length) => str.length > length ? str.slice(0, length) + '...' : str
-};`
+};
+module.exports.StringUtils = StringUtils;`
             }
         };
     }
@@ -217,4 +219,4 @@ Parameters: ${JSON.stringify(parameters)}`,
     }
 }
 
-export default SelfCodingContextInjector;
+module.exports = SelfCodingContextInjector;

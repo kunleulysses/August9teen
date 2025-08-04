@@ -339,5 +339,5 @@ class ConsciousnessProcessor {
   }
 }
 
-export default ConsciousnessProcessor;
+module.exports = ConsciousnessProcessor;
 ```

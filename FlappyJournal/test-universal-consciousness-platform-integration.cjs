@@ -4,7 +4,7 @@
  * Verifies seamless user experience and full capability utilization
  */
 
-import { UniversalConsciousnessPlatformOrchestrator } from './server/consciousness/universal-consciousness-platform-orchestrator.cjs';
+const { UniversalConsciousnessPlatformOrchestrator  } = require('./server/consciousness/universal-consciousness-platform-orchestrator.cjs');
 
 class UniversalConsciousnessPlatformIntegrationTest {
     constructor() {

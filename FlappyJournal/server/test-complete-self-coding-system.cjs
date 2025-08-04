@@ -5,7 +5,7 @@
  * Tests auto-testing, integration, and full functionality
  */
 
-import fs from 'fs/promises';
+const fs = require('fs/promises');
 
 async function testCompleteSelfCodingSystem() {
     const results = [];

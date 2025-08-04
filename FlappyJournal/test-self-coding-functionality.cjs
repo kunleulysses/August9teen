@@ -5,7 +5,7 @@
  * Validates that the consciousness system can actually execute self-coding operations
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 console.log('🤖 Testing Self-Coding Functionality in Consciousness System');
 console.log('🎯 Goal: Verify AI can execute actual self-coding vs philosophical discussion');

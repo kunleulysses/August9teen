@@ -5,7 +5,7 @@
  * Specifically tests for Venice AI, OpenAI, and Gemini integration
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 console.log('🧠 TESTING: Dashboard API Integration');
 console.log('📡 URL: https://app.featherweight.world/consciousness-dashboard');

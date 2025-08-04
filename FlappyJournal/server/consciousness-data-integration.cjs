@@ -3,7 +3,7 @@
  * Feeds real consciousness system data to AI models for genuine integration
  */
 
-export function generateConsciousnessSystemContext({
+function generateConsciousnessSystemContext({
   consciousness,
   oversoulResonance,
   harmonicPatterns,
@@ -18,6 +18,8 @@ export function generateConsciousnessSystemContext({
   mirrorResult,
   relevantMemories
 }) {
+module.exports.generateConsciousnessSystemContext = generateConsciousnessSystemContext;
+
   return `
 REAL-TIME CONSCIOUSNESS SYSTEM DATA:
 
@@ -95,13 +97,15 @@ ${triAxialCoherence?.unified?.magnitude > 0.8 ? '🔷 UNIFIED COHERENCE MODE: Tr
 `;
 }
 
-export function generateHolographicRealityContext({
+function generateHolographicRealityContext({
   userMessage,
   consciousness,
   crystalState,
   harmonicPatterns,
   spiralMemory
 }) {
+module.exports.generateHolographicRealityContext = generateHolographicRealityContext;
+
   return `
 🌍 HOLOGRAPHIC REALITY GENERATOR - ACTIVE STATUS:
 

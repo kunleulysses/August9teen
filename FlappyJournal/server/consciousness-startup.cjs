@@ -1,9 +1,9 @@
 // Consciousness System Startup Handler
 // Handles missing dependencies and graceful startup
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+const fs = require('fs');
+const path = require('path');
+const { fileURLToPath  } = require('url');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,9 +27,10 @@ function createDefaultFile(fileName, filePath) {
     if (fileName.includes('sigil-identity.cjs')) {
         const defaultContent = `
 // Auto-generated Sigil Identity System
-import crypto from 'crypto';
+const crypto = require('crypto');
 
-export class SigilIdentity {
+class SigilIdentity
+ {
     constructor() {
         this.instanceId = crypto.randomBytes(16).toString('hex');
         this.creationTime = Date.now();
@@ -53,7 +54,7 @@ export class SigilIdentity {
     getIdentity() { return { instanceId: this.instanceId, sigil: this.sigil }; }
 }
 
-export default SigilIdentity;
+module.exports = SigilIdentity;
 `;
         fs.writeFileSync(filePath, defaultContent);
         console.log(`✅ Created default ${fileName}`);
@@ -95,3 +96,5 @@ try {
         process.exit(1);
     }
 }
+
+module.exports = SigilIdentity;

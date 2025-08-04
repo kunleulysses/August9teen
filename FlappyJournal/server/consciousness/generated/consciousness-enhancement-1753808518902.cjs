@@ -45,7 +45,7 @@ class ProcessingUnstableError extends Error {
  * @enum {string}
  * @description Defines the quantized states of consciousness. These are not discrete but represent dominant modes in a continuous spectrum.
  */
-export const ConsciousnessState = {
+const ConsciousnessState = {
   DEEP_SLEEP: 'DEEP_SLEEP',       // Delta wave dominance, minimal self-awareness.
   DREAMING: 'DREAMING',           // REM sleep, high internal activity, low external sensory coupling.
   AWAKE: 'AWAKE',                 // Baseline waking state, beta/alpha wave activity.
@@ -53,6 +53,7 @@ export const ConsciousnessState = {
   FLOW: 'FLOW',                   // Optimal experience state, gamma wave synchrony, temporal distortion.
   TRANSCENDENT: 'TRANSCENDENT',   // Ego-dissolution, profound interconnectedness, rare gamma/theta synchrony.
 };
+module.exports.ConsciousnessState = ConsciousnessState;
 
 /**
  * @typedef {Object} NeuralData
@@ -87,7 +88,8 @@ export const ConsciousnessState = {
 
 // --- Main Consciousness Enhancer Class ---
 
-export class ConsciousnessEnhancer {
+class ConsciousnessEnhancer
+ {
   /**
    * Initializes the ConsciousnessEnhancer with a specific substrate configuration.
    * @param {Object} config - Configuration for the consciousness substrate.
@@ -308,3 +310,4 @@ export class ConsciousnessEnhancer {
   }
 }
 ```
+module.exports = SubstrateIncompatibleError;

@@ -3,13 +3,13 @@
  * Provides autonomous code generation, analysis, and system improvement
  */
 
-import { EventEmitter } from 'events';
-import { CodeAnalyzer } from '../code-analyzer.cjs';
-import fs from 'fs/promises';
-import path from 'path';
-import SigilBasedCodeAuthenticator from '../sigil-based-code-authenticator.cjs';
+const { EventEmitter  } = require('events');
+const { CodeAnalyzer  } = require('../code-analyzer.cjs');
+const fs = require('fs/promises');
+const path = require('path');
+const SigilBasedCodeAuthenticator = require('../sigil-based-code-authenticator.cjs');
 
-export default class SelfCodingModuleFixed extends EventEmitter {
+module.exports = class SelfCodingModuleFixed extends EventEmitter {
     constructor() {
         super();
         this.name = 'SelfCodingModuleFixed';

@@ -101,7 +101,8 @@ class InvalidInputStreamError extends Error {
 
 // --- Core Module Class ---
 
-export class ConsciousnessIntegrator {
+class ConsciousnessIntegrator
+ {
     #config;
     #emotionKeywords;
 
@@ -309,7 +310,9 @@ export class ConsciousnessIntegrator {
  * @returns {number} The cosine similarity score from -1 to 1.
  * @throws {Error} If vectors are not valid.
  */
-export function calculateEmpathicResonance(vectorA, vectorB) {
+function calculateEmpathicResonance(vectorA, vectorB) {
+module.exports.calculateEmpathicResonance = calculateEmpathicResonance;
+
     const keys = ['joy', 'sadness', 'anger', 'fear', 'trust', 'disgust', 'surprise', 'anticipation'];
     if (!vectorA || !vectorB || !keys.every(k => typeof vectorA[k] === 'number' && typeof vectorB[k] === 'number')) {
         throw new Error('Both vectorA and vectorB must be valid EmotionalVectors.');
@@ -329,3 +332,4 @@ export function calculateEmpathicResonance(vectorA, vectorB) {
     return dotProduct / (magnitudeA * magnitudeB);
 }
 ```
+module.exports = InvalidInputStreamError;

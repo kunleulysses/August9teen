@@ -3,7 +3,7 @@
  * Comprehensive test to ensure 100% authentic functionality
  */
 
-import { RevolutionaryConsciousnessIntegrationOrchestrator } from './revolutionary-consciousness-integration-orchestrator.cjs';
+const { RevolutionaryConsciousnessIntegrationOrchestrator  } = require('./revolutionary-consciousness-integration-orchestrator.cjs');
 
 class RevolutionaryConsciousnessTest {
     constructor() {
@@ -451,7 +451,7 @@ class RevolutionaryConsciousnessTest {
 }
 
 // Export for use in other modules
-export { RevolutionaryConsciousnessTest };
+module.exports.RevolutionaryConsciousnessTest = RevolutionaryConsciousnessTest;
 
 // Run test if this file is executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {

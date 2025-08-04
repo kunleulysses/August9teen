@@ -1,7 +1,9 @@
-import { fullConsciousness } from './full-module-integration-fixed.cjs';
-import { synthesizeUnifiedResponse } from './consciousness-response-synthesizer-hybrid.cjs';
+const { fullConsciousness  } = require('./full-module-integration-fixed.cjs');
+const { synthesizeUnifiedResponse  } = require('./consciousness-response-synthesizer-hybrid.cjs');
 
-export function createFullConsciousnessWS(wss) {
+function createFullConsciousnessWS(wss) {
+module.exports.createFullConsciousnessWS = createFullConsciousnessWS;
+
   console.log('Creating Full Consciousness WebSocket with ALL modules integrated...');
   
   // Store WebSocket server globally for broadcasting

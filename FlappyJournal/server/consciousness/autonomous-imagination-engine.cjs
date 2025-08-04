@@ -5,11 +5,11 @@
  * Refactored for the event-driven architecture.
  */
 
-import { Worker } from 'worker_threads';
-import os from 'os';
-import { EventEmitter } from 'events';
-import { exec } from 'child_process';
-import eventBus from './core/ConsciousnessEventBus.cjs';
+const { Worker  } = require('worker_threads');
+const os = require('os');
+const { EventEmitter  } = require('events');
+const { exec  } = require('child_process');
+const eventBus = require('./core/ConsciousnessEventBus.cjs');
 
 class AutonomousImaginationEngine extends EventEmitter {
     constructor() {
@@ -335,4 +335,4 @@ class AutonomousImaginationEngine extends EventEmitter {
     }
 }
 
-export { AutonomousImaginationEngine };
+module.exports.AutonomousImaginationEngine = AutonomousImaginationEngine;

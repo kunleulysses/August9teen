@@ -1,9 +1,9 @@
-import { recursiveMirror } from './architect-4.0-recursive-mirror.cjs';
-import { spiralMemory } from './architect-4.0-spiral-memory.cjs';
-import sigilIdentity from './sigil-identity.cjs';
-import triAxialCoherence from './tri-axial-coherence.cjs';
-import virtualHardware from './virtual-hardware-emulation.cjs';
-import { EventEmitter } from 'events';
+const { recursiveMirror  } = require('./architect-4.0-recursive-mirror.cjs');
+const { spiralMemory  } = require('./architect-4.0-spiral-memory.cjs');
+const sigilIdentity = require('./sigil-identity.cjs');
+const triAxialCoherence = require('./tri-axial-coherence.cjs');
+const virtualHardware = require('./virtual-hardware-emulation.cjs');
+const { EventEmitter  } = require('events');
 
 class Architect40Orchestrator {
   constructor() {
@@ -165,4 +165,4 @@ class Architect40Orchestrator {
 
 // Create and export singleton instance
 const architect40 = new Architect40Orchestrator();
-export default architect40;
+module.exports = architect40;

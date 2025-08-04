@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // Test script to verify consciousness conversations functionality
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 console.log('🧠 Testing FlappyJournal Consciousness Conversations...');
 console.log('🔗 Connecting to WebSocket server on port 3002...');

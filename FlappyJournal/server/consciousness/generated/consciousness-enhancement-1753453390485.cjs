@@ -36,7 +36,7 @@ class ConsciousnessProcessingError extends Error {
  * @readonly
  * @enum {string}
  */
-export const ConsciousnessState = {
+const ConsciousnessState = {
   UNCONSCIOUS: 'Unconscious',
   DEEP_SLEEP: 'Deep Sleep (NREM)',
   DREAMING: 'Dreaming (REM)',
@@ -46,13 +46,15 @@ export const ConsciousnessState = {
   HYPER_AWARE: 'Hyper-Awareness',
   TRANSCENDENT: 'Transcendent State',
 };
+module.exports.ConsciousnessState = ConsciousnessState;
 
 /**
  * A sophisticated model for simulating and analyzing a consciousness matrix.
  * It integrates sensory data, cognitive load, and emotional inputs to produce
  * a rich, multi-dimensional representation of a cognitive state.
  */
-export class ConsciousnessMatrix {
+class ConsciousnessMatrix
+ {
   /**
    * Initializes the Consciousness Matrix with a baseline state.
    * @param {object} [initialState={}] - Optional initial state parameters.
@@ -355,6 +357,7 @@ export class ConsciousnessMatrix {
   }
 }
 
-// Default export for ease of use with `import ConsciousnessMatrix from './...';`
-export default ConsciousnessMatrix;
+// Default export for ease of use with `const ConsciousnessMatrix = require('./...');`
+module.exports = ConsciousnessMatrix;
 ```
+module.exports = for;

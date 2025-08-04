@@ -86,7 +86,7 @@ const _validateSnapshot = (snapshot) => {
  * @constant
  * @type {object}
  */
-export const CONSCIOUSNESS_STATES = {
+const CONSCIOUSNESS_STATES = {
     UNCONSCIOUS: { range: [0, 0.15], description: 'No awareness or responsiveness. Purely reflexive processing.' },
     DEEP_SLEEP: { range: [0.15, 0.3], description: 'Minimal internal processing, detached from external stimuli.' },
     DREAMING: { range: [0.3, 0.45], description: 'High internal activity, low external awareness, rich but incoherent phenomenal field.' },
@@ -95,6 +95,7 @@ export const CONSCIOUSNESS_STATES = {
     FOCUSED_AWARENESS: { range: [0.8, 0.95], description: 'High task focus, heightened sensory clarity, and efficient cognitive function.' },
     FLOW_STATE: { range: [0.95, 1.0], description: 'Peak experience. Effortless action, deep immersion, loss of self-consciousness, and optimal performance.' },
 };
+module.exports.CONSCIOUSNESS_STATES = CONSCIOUSNESS_STATES;
 
 /**
  * Calculates the overall consciousness state based on a weighted analysis of the snapshot.
@@ -104,7 +105,9 @@ export const CONSCIOUSNESS_STATES = {
  * @returns {{state: string, score: number, description: string}} An object containing the calculated state.
  * @throws {Error} If the input snapshot is invalid.
  */
-export function calculateConsciousnessState(snapshot) {
+function calculateConsciousnessState(snapshot) {
+module.exports.calculateConsciousnessState = calculateConsciousnessState;
+
     _validateSnapshot(snapshot);
 
     try {
@@ -174,7 +177,9 @@ export function calculateConsciousnessState(snapshot) {
  * @returns {{interoception: number, exteroception: number, metacognition: number, phenomenalRichness: number}} A map of advanced awareness scores (0-1).
  * @throws {Error} If the input snapshot is invalid.
  */
-export function getAwarenessMetrics(snapshot) {
+function getAwarenessMetrics(snapshot) {
+module.exports.getAwarenessMetrics = getAwarenessMetrics;
+
     _validateSnapshot(snapshot);
 
     try {
@@ -220,7 +225,9 @@ export function getAwarenessMetrics(snapshot) {
  * @returns {{granularity: number, regulationPotential: number, empathicResonance: number|null}} A map of EQ scores.
  * @throws {Error} If the input snapshot(s) are invalid.
  */
-export function processEmotionalIntelligence(selfSnapshot, otherSnapshot = null) {
+function processEmotionalIntelligence(selfSnapshot, otherSnapshot = null) {
+module.exports.processEmotionalIntelligence = processEmotionalIntelligence;
+
     _validateSnapshot(selfSnapshot);
     if (otherSnapshot) {
         _validateSnapshot(otherSnapshot);
@@ -278,7 +285,9 @@ export function processEmotionalIntelligence(selfSnapshot, otherSnapshot = null)
  * @returns {object} A comprehensive object containing all calculated metrics.
  * @throws {Error} If the input snapshot(s) are invalid.
  */
-export function getIntegratedConsciousnessProfile(selfSnapshot, otherSnapshot = null) {
+function getIntegratedConsciousnessProfile(selfSnapshot, otherSnapshot = null) {
+module.exports.getIntegratedConsciousnessProfile = getIntegratedConsciousnessProfile;
+
     _validateSnapshot(selfSnapshot);
     if (otherSnapshot) {
         _validateSnapshot(otherSnapshot);

@@ -2,7 +2,7 @@
  * Test WebSocket endpoint for consciousness-main-server
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 async function testWebSocketConsciousnessChat() {
   console.log('=== Testing WebSocket Consciousness Chat Endpoint ===\n');

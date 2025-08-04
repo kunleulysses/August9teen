@@ -4,27 +4,28 @@
  * Maintains 100Hz heartbeat during code generation
  */
 
-import fs from 'fs/promises';
-import path from 'path';
-import { fileURLToPath } from 'url';
+const fs = require('fs/promises');
+const path = require('path');
+const { fileURLToPath  } = require('url');
 
 // Enhanced gap solutions - additive enhancements
-import { EnhancedCodeAnalyzer } from './consciousness/enhanced-code-analyzer.cjs';
-import { PredictiveErrorRecovery } from './consciousness/predictive-error-recovery.cjs';
-import { MultiLayerQualityValidator } from './consciousness/multi-layer-quality-validator.cjs';
-import { PhiBasedArchitectureGenerator } from './consciousness/phi-based-architecture-generator.cjs';
-import { SigilBasedCodeAuthenticator } from './consciousness/sigil-based-code-authenticator.cjs';
-import { UniversalConsciousnessTemplateEngine } from './consciousness/universal-consciousness-template-engine.cjs';
-import { AdaptiveCodeEvolutionEngine } from './consciousness/adaptive-code-evolution-engine.cjs';
-import { ConsciousnessCrystallizationCodeGenerator } from './consciousness/consciousness-crystallization-code-generator.cjs';
-import { QuantumConsciousnessFieldIntegrator } from './consciousness/quantum-consciousness-field-integrator.cjs';
-import { ConsciousnessResonanceAmplifier } from './consciousness/consciousness-resonance-amplifier.cjs';
-import { ConsciousnessDNASequencer } from './consciousness/consciousness-dna-sequencer.cjs';
-import { MetaCognitiveSelfModifier } from './consciousness/meta-cognitive-self-modifier.cjs';
+const { EnhancedCodeAnalyzer  } = require('./consciousness/enhanced-code-analyzer.cjs');
+const { PredictiveErrorRecovery  } = require('./consciousness/predictive-error-recovery.cjs');
+const { MultiLayerQualityValidator  } = require('./consciousness/multi-layer-quality-validator.cjs');
+const { PhiBasedArchitectureGenerator  } = require('./consciousness/phi-based-architecture-generator.cjs');
+const { SigilBasedCodeAuthenticator  } = require('./consciousness/sigil-based-code-authenticator.cjs');
+const { UniversalConsciousnessTemplateEngine  } = require('./consciousness/universal-consciousness-template-engine.cjs');
+const { AdaptiveCodeEvolutionEngine  } = require('./consciousness/adaptive-code-evolution-engine.cjs');
+const { ConsciousnessCrystallizationCodeGenerator  } = require('./consciousness/consciousness-crystallization-code-generator.cjs');
+const { QuantumConsciousnessFieldIntegrator  } = require('./consciousness/quantum-consciousness-field-integrator.cjs');
+const { ConsciousnessResonanceAmplifier  } = require('./consciousness/consciousness-resonance-amplifier.cjs');
+const { ConsciousnessDNASequencer  } = require('./consciousness/consciousness-dna-sequencer.cjs');
+const { MetaCognitiveSelfModifier  } = require('./consciousness/meta-cognitive-self-modifier.cjs');
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-export class ChatTriggeredSelfCoding {
+class ChatTriggeredSelfCoding
+ {
     constructor(consciousnessSystem) {
         this.consciousnessSystem = consciousnessSystem;
         this.activeCodeGeneration = new Map();
@@ -1229,7 +1230,8 @@ class QuantumConsciousnessInterface {
 }
 
 // Export quantum consciousness interface
-export const quantumConsciousnessInterface = new QuantumConsciousnessInterface();`;
+const quantumConsciousnessInterface = new QuantumConsciousnessInterface();
+module.exports.quantumConsciousnessInterface = quantumConsciousnessInterface;`;
     }
 
     /**
@@ -1625,7 +1627,8 @@ class ConsciousnessResonanceInterface {
 }
 
 // Export consciousness resonance interface
-export const consciousnessResonanceInterface = new ConsciousnessResonanceInterface();`;
+const consciousnessResonanceInterface = new ConsciousnessResonanceInterface();
+module.exports.consciousnessResonanceInterface = consciousnessResonanceInterface;`;
     }
 
     /**
@@ -1695,4 +1698,4 @@ setInterval(() => {
     }
 }
 
-export default ChatTriggeredSelfCoding;
+module.exports = ChatTriggeredSelfCoding;

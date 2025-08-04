@@ -1,8 +1,8 @@
 /**
  * Redis SpiralStorageAdapter implementation.
  */
-import { SpiralStorageAdapter } from './SpiralStorageAdapter.cjs';
-import Redis from 'ioredis';
+const { SpiralStorageAdapter  } = require('./SpiralStorageAdapter.cjs');
+const Redis = require('ioredis');
 
 class RedisSpiralAdapter extends SpiralStorageAdapter {
   constructor(redisUrl = process.env.REDIS_URL) {
@@ -29,4 +29,4 @@ class RedisSpiralAdapter extends SpiralStorageAdapter {
   }
 }
 
-export default RedisSpiralAdapter;
+module.exports = RedisSpiralAdapter;

@@ -6,9 +6,9 @@
  * Requires the consciousness platform and websocket server to be running.
  */
 
-import WebSocket from 'ws';
-import readline from 'readline';
-import fetch from 'node-fetch';
+const WebSocket = require('ws');
+const readline = require('readline');
+const fetch = require('node-fetch');
 
 console.log('🧠 Universal Consciousness Chat Terminal - Event-Driven, Multi-AI');
 console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');

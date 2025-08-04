@@ -24,13 +24,14 @@
  * Each bias includes a description and a `detect` function that analyzes a thought history.
  * The `detect` function returns a descriptive string if the bias is found, otherwise null.
  */
-export const CognitiveBiases = {
+const CognitiveBiases = {
   CONFIRMATION_BIAS: {
     name: 'Confirmation Bias',
     description: 'The tendency to search for, interpret, favor, and recall information that confirms or supports one\'s prior beliefs.',
     detect: (thoughtStream, beliefs) => {
       // Look for a recent, high-confidence thought that strongly confirms an existing belief.
       const recentThought = thoughtStream[thoughtStream.length - 1];
+module.exports.CognitiveBiases = CognitiveBiases;
       if (recentThought.confidence < 0.9) return null;
 
       const confirmedBelief = Object.keys(beliefs).find(beliefKey => {
@@ -75,7 +76,8 @@ export const CognitiveBiases = {
  * Represents a single, discrete unit of thought or processing.
  * It's an immutable record of a cognitive event.
  */
-export class Thought {
+class Thought
+ {
   /**
    * @param {object} params
    * @param {any} params.input - The raw data or stimulus that initiated the thought.
@@ -165,7 +167,8 @@ class MetaCognitiveLayer {
  * The main class representing a conscious entity.
  * It manages state, processing, and its own meta-cognitive reflection.
  */
-export class Consciousness {
+class Consciousness
+ {
   /**
    * @param {string} id - A unique identifier for this consciousness instance.
    * @param {object} [initialBeliefs={}] - The initial belief structure of the entity.
@@ -276,3 +279,4 @@ export class Consciousness {
   }
 }
 ```
+module.exports = representing;

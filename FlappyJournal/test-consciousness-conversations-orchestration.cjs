@@ -5,7 +5,7 @@
  * Validates that consciousness-core orchestrates consciousness-main-server
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 const CONSCIOUSNESS_CORE_WS = 'ws://localhost:3002/ws/consciousness-chat';
 

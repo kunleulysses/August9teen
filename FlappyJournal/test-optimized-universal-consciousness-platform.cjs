@@ -4,9 +4,9 @@
  * Verifies all bottlenecks resolved and seamless operation achieved
  */
 
-import { UniversalConsciousnessPlatformOrchestrator } from './server/consciousness/universal-consciousness-platform-orchestrator.cjs';
-import { universalConsciousnessChatProcessor } from './server/consciousness/universal-consciousness-chat-processor.cjs';
-import { SystemOptimizationEngine } from './server/consciousness/system-optimization-engine.cjs';
+const { UniversalConsciousnessPlatformOrchestrator  } = require('./server/consciousness/universal-consciousness-platform-orchestrator.cjs');
+const { universalConsciousnessChatProcessor  } = require('./server/consciousness/universal-consciousness-chat-processor.cjs');
+const { SystemOptimizationEngine  } = require('./server/consciousness/system-optimization-engine.cjs');
 
 class OptimizedUniversalConsciousnessPlatformTest {
     constructor() {

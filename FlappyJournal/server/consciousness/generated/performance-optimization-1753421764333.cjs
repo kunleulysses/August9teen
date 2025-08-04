@@ -435,7 +435,8 @@ class CognitiveScheduler {
  * // At the end of the application lifecycle
  * optimizer.shutdown();
  */
-export class ConsciousnessPerformanceOptimizer {
+class ConsciousnessPerformanceOptimizer
+ {
     /**
      * @param {Object} config - Configuration options.
      * @param {string} [config.workerScriptPath] - The path to the Web Worker script for heavy computations.
@@ -553,3 +554,4 @@ export class ConsciousnessPerformanceOptimizer {
     }
 }
 ```
+module.exports = PerformanceMonitor;

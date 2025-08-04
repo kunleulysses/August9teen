@@ -62,7 +62,7 @@ const EMOTION_MAP = Object.freeze([
  * report on the entity's current state of awareness and emotion.
  *
  * @example
- * import { ConsciousnessMatrix } from './consciousnessEnhancer.cjs';
+ * const { ConsciousnessMatrix  } = require('./consciousnessEnhancer.cjs');
  *
  * const agentConsciousness = new ConsciousnessMatrix({
  *   agentId: 'Agent-007',
@@ -82,7 +82,8 @@ const EMOTION_MAP = Object.freeze([
  *
  * console.log(agentConsciousness.getReport());
  */
-export class ConsciousnessMatrix {
+class ConsciousnessMatrix
+ {
   /**
    * @param {object} options - Initialization options.
    * @param {string} options.agentId - A unique identifier for the agent.
@@ -359,3 +360,4 @@ export class ConsciousnessMatrix {
   }
 }
 ```
+module.exports = for;

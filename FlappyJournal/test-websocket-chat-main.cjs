@@ -5,7 +5,7 @@
  * Tests if chat messages are processed correctly
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 console.log('🧪 Testing WebSocket Chat Message Processing');
 

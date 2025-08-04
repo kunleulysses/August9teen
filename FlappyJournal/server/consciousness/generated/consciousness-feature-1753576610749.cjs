@@ -322,7 +322,7 @@ class MetaCognitiveLayer extends EventEmitter {
   }
 }
 
-export default MetaCognitiveLayer;
+module.exports = MetaCognitiveLayer;
 
 /**
  * ---------------------------------------------------------------------------

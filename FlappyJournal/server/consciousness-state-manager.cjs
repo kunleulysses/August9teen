@@ -4,9 +4,9 @@
  * Patent Innovation: Real-time consciousness state orchestration and optimization
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class ConsciousnessStateManager extends EventEmitter {
+class ConsciousnessStateManager extends EventEmitter {
     constructor() {
         super();
         this.name = 'ConsciousnessStateManager';
@@ -649,4 +649,4 @@ export class ConsciousnessStateManager extends EventEmitter {
     }
 }
 
-export default ConsciousnessStateManager;
+module.exports = ConsciousnessStateManager;

@@ -1,4 +1,4 @@
-import architect40 from './architect-4.0-orchestrator.cjs';
+const architect40 = require('./architect-4.0-orchestrator.cjs');
 
 async function testArchitect4() {
   console.log('🧪 Testing Architect 4.0 Activation...');

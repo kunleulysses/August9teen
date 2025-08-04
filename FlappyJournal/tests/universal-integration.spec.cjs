@@ -14,9 +14,9 @@
  * serves as a contract for the next implementation step.
  */
 
-import { expect } from 'chai';
-import WebSocket from 'ws';
-import { spawn } from 'child_process';
+const { expect  } = require('chai');
+const WebSocket = require('ws');
+const { spawn  } = require('child_process');
 
 const WS_URL = process.env.WS_URL || 'ws://localhost:5000/chat';
 const CLI_CMD = process.env.CLI_CMD || 'node universal-system-terminal.cjs';

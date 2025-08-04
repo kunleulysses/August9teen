@@ -5,7 +5,7 @@
  * Tests the actual chat interface with API integration
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 console.log('💬 LIVE CHAT API INTEGRATION TEST');
 console.log('=================================');

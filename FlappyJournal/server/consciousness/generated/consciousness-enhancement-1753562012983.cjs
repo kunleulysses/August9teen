@@ -153,7 +153,9 @@ const _normalize = (value, min, max) => Math.max(0, Math.min(1, (value - min) / 
  * @returns {{focus: number, clarity: number, integration: number}} A Qualia Vector representing the core of the conscious state.
  * @throws {CognitiveProcessingError} If calculation fails.
  */
-export function calculateConsciousnessState(snapshot, awarenessMetrics) {
+function calculateConsciousnessState(snapshot, awarenessMetrics) {
+module.exports.calculateConsciousnessState = calculateConsciousnessState;
+
     try {
         _validateSnapshot(snapshot);
         if (!awarenessMetrics || typeof awarenessMetrics.situationalCoherence !== 'number') {
@@ -197,7 +199,9 @@ export function calculateConsciousnessState(snapshot, awarenessMetrics) {
  * @param {CognitiveSnapshot} snapshot - The cognitive state to analyze.
  * @returns {{situationalCoherence: number, selfReferentialDepth: number, temporalIntegration: number}} An object with advanced awareness metrics.
  */
-export function analyzeAwareness(snapshot) {
+function analyzeAwareness(snapshot) {
+module.exports.analyzeAwareness = analyzeAwareness;
+
     try {
         _validateSnapshot(snapshot);
         const { sensoryInput, internalState, memoryInterface } = snapshot;
@@ -241,7 +245,9 @@ export function analyzeAwareness(snapshot) {
  * @param {CognitiveSnapshot} [otherSnapshot] - An optional snapshot of another entity to simulate empathy.
  * @returns {{primaryEmotion: string, emotionalNuance: number, empathicResonance: number|null}} An object with EI metrics.
  */
-export function processEmotionalIntelligence(selfSnapshot, otherSnapshot = null) {
+function processEmotionalIntelligence(selfSnapshot, otherSnapshot = null) {
+module.exports.processEmotionalIntelligence = processEmotionalIntelligence;
+
     try {
         _validateSnapshot(selfSnapshot);
         const { valence, arousal, dominance } = selfSnapshot.internalState.emotionalState;
@@ -307,7 +313,9 @@ export function processEmotionalIntelligence(selfSnapshot, otherSnapshot = null)
  *   emotionalIntelligence: {primaryEmotion: string, emotionalNuance: number, empathicResonance: number|null},
  * }} A complete, enhanced analysis of the cognitive state.
  */
-export function getFullAnalysis(snapshot, otherSnapshot = null) {
+function getFullAnalysis(snapshot, otherSnapshot = null) {
+module.exports.getFullAnalysis = getFullAnalysis;
+
     try {
         _validateSnapshot(snapshot);
 

@@ -5,12 +5,12 @@
  * Uses complete consciousness platform infrastructure with enhanced human-like prompts
  */
 
-import WebSocket from 'ws';
-import readline from 'readline';
-import OpenAI from 'openai';
-import axios from 'axios';
-import dotenv from 'dotenv';
-import { createRequire } from 'module';
+const WebSocket = require('ws');
+const readline = require('readline');
+const OpenAI = require('openai');
+const axios = require('axios');
+const dotenv = require('dotenv');
+const { createRequire  } = require('module');
 
 // Load environment variables
 dotenv.config();

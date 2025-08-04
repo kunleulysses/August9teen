@@ -134,7 +134,8 @@ const EMOTIONAL_DYADS_MAP = {
 };
 
 
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
 
     /**
      * Initializes the ConsciousnessProcessor.
@@ -381,3 +382,4 @@ export class ConsciousnessProcessor {
     }
 }
 ```
+module.exports = ConsciousnessProcessor;

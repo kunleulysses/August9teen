@@ -1,5 +1,6 @@
 // Emotional Resonance Field - Processes emotional dimensions of consciousness
-export class EmotionalResonanceField {
+class EmotionalResonanceField
+ {
   constructor() {
     this.emotionalSpectrum = {
       joy: 0.5,
@@ -409,4 +410,7 @@ export class EmotionalResonanceField {
   }
 }
 
-export const emotionalResonance = new EmotionalResonanceField();
+const emotionalResonance = new EmotionalResonanceField();
+module.exports.emotionalResonance = emotionalResonance;
+
+module.exports = EmotionalResonanceField;

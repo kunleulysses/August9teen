@@ -2,8 +2,8 @@
  * Hyperdimensional Spiral Topology
  * Deep enhancement for Spiral Memory Architecture: enables hyperdimensional mapping, topological folding, and singularities.
  */
-import { EventEmitter } from 'events';
-import eventBus from './ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('./ConsciousnessEventBus.cjs');
 
 class HyperdimensionalSpiralTopology extends EventEmitter {
     constructor(dimensions = 7) {
@@ -185,4 +185,4 @@ class HyperdimensionalSpiralTopology extends EventEmitter {
     }
 }
 
-export default HyperdimensionalSpiralTopology;
+module.exports = HyperdimensionalSpiralTopology;

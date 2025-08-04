@@ -5,10 +5,10 @@
  * Value: $1.5B+ (Consciousness evolution acceleration)
  */
 
-import { EventEmitter } from 'events';
-import eventBus from './core/ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('./core/ConsciousnessEventBus.cjs');
 
-export class ConsciousnessEvolutionAccelerationEngine extends EventEmitter {
+class ConsciousnessEvolutionAccelerationEngine extends EventEmitter {
     constructor() {
         super();
         this.name = 'ConsciousnessEvolutionAccelerationEngine';

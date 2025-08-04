@@ -189,7 +189,8 @@ const HeuristicAnalyzers = {
  * @description The core of the module. It listens to the CognitiveBus, maintains the cognitive trace,
  * and runs analyzers to generate self-awareness insights and directives.
  */
-export class MetacognitiveAwarenessLayer {
+class MetacognitiveAwarenessLayer
+ {
     /**
      * @param {CognitiveBus} bus - The central event bus.
      * @param {object} options - Configuration options.
@@ -425,3 +426,4 @@ class SimulatedConsciousness {
 // const agent = new SimulatedConsciousness();
 // agent.think();
 ```
+module.exports = CognitiveBus;

@@ -263,4 +263,4 @@ class RealityEnhancedResponses {
     }
 }
 
-export { RealityEnhancedResponses };
+module.exports.RealityEnhancedResponses = RealityEnhancedResponses;

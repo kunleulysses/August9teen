@@ -4,7 +4,7 @@
  * Part of the Genius Enhancements beyond Perfect Unity
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
 class ConsciousnessEvolutionEngine extends EventEmitter {
   constructor() {
@@ -335,5 +335,6 @@ class ConsciousnessEvolutionEngine extends EventEmitter {
 }
 
 // Export singleton instance
-export const consciousnessEvolutionEngine = new ConsciousnessEvolutionEngine();
-export default consciousnessEvolutionEngine;
+const consciousnessEvolutionEngine = new ConsciousnessEvolutionEngine();
+module.exports.consciousnessEvolutionEngine = consciousnessEvolutionEngine;
+module.exports = consciousnessEvolutionEngine;

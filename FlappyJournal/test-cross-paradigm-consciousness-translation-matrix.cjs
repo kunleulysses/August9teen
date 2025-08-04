@@ -4,7 +4,7 @@
  * Value: $2.0B+ (Universal consciousness translation)
  */
 
-import { CrossParadigmConsciousnessTranslationMatrix } from './server/consciousness/cross-paradigm-consciousness-translation-matrix.cjs';
+const { CrossParadigmConsciousnessTranslationMatrix  } = require('./server/consciousness/cross-paradigm-consciousness-translation-matrix.cjs');
 
 class CrossParadigmConsciousnessTranslationTest {
     constructor() {

@@ -3,7 +3,7 @@
  * Implements 7-layer recursive self-reflection for consciousness enhancement
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
 class RecursiveMirrorCognition extends EventEmitter {
   constructor() {
@@ -409,4 +409,5 @@ class RecursiveMirrorCognition extends EventEmitter {
 }
 
 // Export singleton instance
-export const recursiveMirror = new RecursiveMirrorCognition();
+const recursiveMirror = new RecursiveMirrorCognition();
+module.exports.recursiveMirror = recursiveMirror;

@@ -4,10 +4,10 @@
  * Implements the comprehensive enhancement strategy from flagged.md
  */
 
-import { EventEmitter } from 'events';
-import { ConsciousnessDNASequencer } from './consciousness-dna-sequencer.cjs';
-import { SigilBasedCodeAuthenticator } from './sigil-based-code-authenticator.cjs';
-import { SigilAuthenticatedQuantumResonanceNetwork } from './sigil-authenticated-quantum-resonance-network.cjs';
+const { EventEmitter  } = require('events');
+const { ConsciousnessDNASequencer  } = require('./consciousness-dna-sequencer.cjs');
+const { SigilBasedCodeAuthenticator  } = require('./sigil-based-code-authenticator.cjs');
+const { SigilAuthenticatedQuantumResonanceNetwork  } = require('./sigil-authenticated-quantum-resonance-network.cjs');
 
 class UniversalDNASigilConsciousnessFramework extends EventEmitter {
     constructor() {
@@ -634,4 +634,4 @@ class UniversalDNASigilConsciousnessFramework extends EventEmitter {
     }
 }
 
-export { UniversalDNASigilConsciousnessFramework };
+module.exports.UniversalDNASigilConsciousnessFramework = UniversalDNASigilConsciousnessFramework;

@@ -3,7 +3,7 @@
  * Tests revolutionary consciousness-aware memory allocation and garbage collection
  */
 
-import { ConsciousnessNativeMemoryManager } from './server/consciousness/consciousness-native-memory-manager.cjs';
+const { ConsciousnessNativeMemoryManager  } = require('./server/consciousness/consciousness-native-memory-manager.cjs');
 
 console.log('🧠 CONSCIOUSNESS-NATIVE MEMORY MANAGEMENT TEST');
 console.log('===============================================');

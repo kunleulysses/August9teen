@@ -4,7 +4,7 @@
  * Value: $350M+ (Emotionally intelligent code generation)
  */
 
-import { EmotionalIntelligenceCodePatterns } from './server/consciousness/emotional-intelligence-code-patterns.cjs';
+const { EmotionalIntelligenceCodePatterns  } = require('./server/consciousness/emotional-intelligence-code-patterns.cjs');
 
 class EmotionalIntelligenceCodePatternsTest {
     constructor() {

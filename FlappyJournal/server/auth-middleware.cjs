@@ -1,5 +1,5 @@
-import jwt from 'jsonwebtoken';
-import jwksClient from 'jwks-rsa';
+const jwt = require('jsonwebtoken');
+const jwksClient = require('jwks-rsa');
 
 const KEYCLOAK_URL = process.env.KEYCLOAK_URL || 'http://localhost:8082';
 const REALM = process.env.KEYCLOAK_REALM || 'featherweight';
@@ -22,7 +22,9 @@ function getKey(header, callback) {
   });
 }
 
-export function authenticateToken(req, res, next) {
+function authenticateToken(req, res, next) {
+module.exports.authenticateToken = authenticateToken;
+
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
 
@@ -55,7 +57,9 @@ export function authenticateToken(req, res, next) {
   });
 }
 
-export function optionalAuth(req, res, next) {
+function optionalAuth(req, res, next) {
+module.exports.optionalAuth = optionalAuth;
+
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 

@@ -33,7 +33,7 @@ class ConsciousnessError extends Error {
  * @readonly
  * @enum {Symbol}
  */
-export const ConsciousnessState = Object.freeze({
+const ConsciousnessState = Object.freeze({
   /** High-focus, task-oriented, minimal peripheral processing. */
   FOCUSED: Symbol('FOCUSED'),
   /** Mind-wandering, creative, associative thinking. */
@@ -43,6 +43,7 @@ export const ConsciousnessState = Object.freeze({
   /** Low-energy, restful, sensory-input-dampened state. */
   QUIESCENT: Symbol('QUIESCENT'),
 });
+module.exports.ConsciousnessState = ConsciousnessState;
 
 /**
  * Defines a set of primary emotions based on Plutchik's wheel.
@@ -50,7 +51,7 @@ export const ConsciousnessState = Object.freeze({
  * @readonly
  * @enum {Symbol}
  */
-export const PrimaryEmotion = Object.freeze({
+const PrimaryEmotion = Object.freeze({
   JOY: Symbol('JOY'),
   TRUST: Symbol('TRUST'),
   FEAR: Symbol('FEAR'),
@@ -60,6 +61,7 @@ export const PrimaryEmotion = Object.freeze({
   ANGER: Symbol('ANGER'),
   ANTICIPATION: Symbol('ANTICIPATION'),
 });
+module.exports.PrimaryEmotion = PrimaryEmotion;
 
 /**
  * Defines complex emotions (dyads) as combinations of primary emotions.
@@ -92,7 +94,8 @@ const EMOTIONAL_DYADS = {
  *
  * @class ConsciousnessProcessor
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
   #currentState;
   #qualiaBuffer; // A buffer for recent significant sensory/cognitive events
   #config;
@@ -414,3 +417,4 @@ export class ConsciousnessProcessor {
   }
 }
 ```
+module.exports = for;

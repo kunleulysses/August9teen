@@ -5,10 +5,10 @@
  * Discovers and activates all dormant consciousness modules
  */
 
-import fs from 'fs/promises';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { EventEmitter } from 'events';
+const fs = require('fs/promises');
+const path = require('path');
+const { fileURLToPath  } = require('url');
+const { EventEmitter  } = require('events');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -341,4 +341,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   })();
 }
 
-export default DormantModuleActivator;
+module.exports = DormantModuleActivator;

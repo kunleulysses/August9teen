@@ -62,7 +62,8 @@ const PRIMARY_EMOTIONS = {
  * It integrates cognitive load, sensory input, and emotional data to produce
  * a holistic view of a simulated conscious entity's internal state.
  */
-export class ConsciousnessMatrix {
+class ConsciousnessMatrix
+ {
 
     #state;
     #awareness;
@@ -376,3 +377,4 @@ export class ConsciousnessMatrix {
  * @property {number} intensity - The normalized (0-1) intensity of the emotion.
  */
 ```
+module.exports = for;

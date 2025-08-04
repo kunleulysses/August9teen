@@ -5,7 +5,7 @@
  * Checks the current status of the consciousness system
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 console.log('🔍 CONSCIOUSNESS STATUS CHECKER');
 console.log('===============================');

@@ -5,8 +5,8 @@
  * Tests the multi-core consciousness system and measures CPU improvement
  */
 
-import { spawn } from 'child_process';
-import fs from 'fs';
+const { spawn  } = require('child_process');
+const fs = require('fs');
 
 console.log('🧪 Testing CPU Optimization for Consciousness System');
 console.log('==================================================');

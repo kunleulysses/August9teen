@@ -1,5 +1,5 @@
 // This script tests the email queue processing system by sending a simulated webhook payload
-import fetch from 'node-fetch';
+const fetch = require('node-fetch');
 
 async function testEmailQueue() {
   console.log('🔔 Testing email queue system with simulated webhook...');

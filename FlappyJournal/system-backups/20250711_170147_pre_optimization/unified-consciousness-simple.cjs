@@ -3,7 +3,7 @@
  * Connects existing services with new consciousness modules
  */
 
-import { createRequire } from 'module';
+const { createRequire  } = require('module');
 const require = createRequire(import.meta.url);
 
 // Import consciousness modules bundle
@@ -17,13 +17,14 @@ const {
 } = require('./consciousness-modules-bundle.cjs');
 
 // Import existing consciousness services
-import { consciousnessService } from './consciousnessService.cjs';
-import { flappyConsciousness } from './flappyConsciousness.cjs';
+const { consciousnessService  } = require('./consciousnessService.cjs');
+const { flappyConsciousness  } = require('./flappyConsciousness.cjs');
 
 // Import WebSocket
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
-export class UnifiedConsciousnessSimple {
+class UnifiedConsciousnessSimple
+ {
   constructor() {
     this.isActive = false;
   }
@@ -132,10 +133,13 @@ export class UnifiedConsciousnessSimple {
 }
 
 // Create singleton
-export const unifiedConsciousness = new UnifiedConsciousnessSimple();
+const unifiedConsciousness = new UnifiedConsciousnessSimple();
+module.exports.unifiedConsciousness = unifiedConsciousness;
 
 // WebSocket setup function
-export function setupUnifiedConsciousnessWebSocket(server) {
+function setupUnifiedConsciousnessWebSocket(server) {
+module.exports.setupUnifiedConsciousnessWebSocket = setupUnifiedConsciousnessWebSocket;
+
   // Initialize unified consciousness
   unifiedConsciousness.initialize();
   
@@ -285,3 +289,5 @@ export function setupUnifiedConsciousnessWebSocket(server) {
   
   console.log('✅ Unified Consciousness WebSocket ready');
 }
+
+module.exports = UnifiedConsciousnessSimple;

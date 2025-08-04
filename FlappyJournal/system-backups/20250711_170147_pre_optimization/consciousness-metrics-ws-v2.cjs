@@ -1,8 +1,8 @@
 // Consciousness Metrics WebSocket Server
-import { WebSocketServer } from 'ws';
-import consciousnessV2 from './consciousness-system-v2.cjs';
-import { setupMetricsStreaming } from './websocket-metrics-integration.cjs';
-import dotenv from 'dotenv';
+const { WebSocketServer  } = require('ws');
+const consciousnessV2 = require('./consciousness-system-v2.cjs');
+const { setupMetricsStreaming  } = require('./websocket-metrics-integration.cjs');
+const dotenv = require('dotenv');
 
 dotenv.config({ path: '../.env' });
 

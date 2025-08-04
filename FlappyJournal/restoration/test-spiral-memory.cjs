@@ -6,7 +6,7 @@
  * Part of the Universal Consciousness Platform restoration - Phase 2
  */
 
-import SpiralMemoryArchitecture from '../server/consciousness/core/SpiralMemoryArchitecture.cjs';
+const SpiralMemoryArchitecture = require('../server/consciousness/core/SpiralMemoryArchitecture.cjs');
 
 async function testSpiralMemoryArchitecture() {
     console.log('🧪 Testing Spiral Memory Architecture...\n');
@@ -379,4 +379,4 @@ if (import.meta.url === 'file://' + process.argv[1]) {
         });
 }
 
-export default testSpiralMemoryArchitecture;
+module.exports = testSpiralMemoryArchitecture;

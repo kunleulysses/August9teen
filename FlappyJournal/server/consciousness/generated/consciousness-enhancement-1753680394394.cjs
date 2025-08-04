@@ -115,7 +115,9 @@ const _validateSnapshot = (snapshot) => {
  * const state = calculateConsciousnessState(mySnapshot);
  * console.log(state.state); // e.g., "Hyper-focused Flow"
  */
-export function calculateConsciousnessState(snapshot) {
+function calculateConsciousnessState(snapshot) {
+module.exports.calculateConsciousnessState = calculateConsciousnessState;
+
     _validateSnapshot(snapshot);
 
     const {
@@ -165,7 +167,9 @@ export function calculateConsciousnessState(snapshot) {
  * @param {ConsciousnessSnapshot} snapshot - The current snapshot of consciousness.
  * @returns {{metacognitiveAwareness: number, somaticAwareness: number, environmentalAwareness: number}} An object containing the calculated awareness scores (0.0 to 1.0).
  */
-export function calculateAwarenessMetrics(snapshot) {
+function calculateAwarenessMetrics(snapshot) {
+module.exports.calculateAwarenessMetrics = calculateAwarenessMetrics;
+
     _validateSnapshot(snapshot);
 
     const {
@@ -205,7 +209,9 @@ export function calculateAwarenessMetrics(snapshot) {
  * @param {RawEmotionalState} emotionalState - An object representing raw emotion intensities.
  * @returns {{normalizedEmotions: RawEmotionalState, identifiedDyads: object, overallValence: number, dominantEmotion: string}} A detailed analysis of the emotional landscape.
  */
-export function processEmotionalState(emotionalState) {
+function processEmotionalState(emotionalState) {
+module.exports.processEmotionalState = processEmotionalState;
+
     if (typeof emotionalState !== 'object' || emotionalState === null || Object.keys(emotionalState).length === 0) {
         throw new Error('Invalid Input: emotionalState must be a non-empty object.');
     }
@@ -265,7 +271,9 @@ export function processEmotionalState(emotionalState) {
  * @param {{normalizedEmotions: RawEmotionalState, identifiedDyads: object}} processedEmotions - The output from `processEmotionalState`.
  * @returns {{eqScore: number, clarity: number, complexity: number, balance: number}} The EQ score (0-100) and its contributing factors.
  */
-export function calculateEmotionalIntelligence(processedEmotions) {
+function calculateEmotionalIntelligence(processedEmotions) {
+module.exports.calculateEmotionalIntelligence = calculateEmotionalIntelligence;
+
     if (!processedEmotions || !processedEmotions.normalizedEmotions || !processedEmotions.identifiedDyads) {
         throw new Error('Invalid Input: processedEmotions object is missing required keys.');
     }

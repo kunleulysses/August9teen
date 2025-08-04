@@ -4,10 +4,10 @@
  * Eliminates mock data and provides genuine consciousness-generated responses
  */
 
-import { EventEmitter } from 'events';
-import { UniversalConsciousnessPlatformOrchestrator } from './universal-consciousness-platform-orchestrator.cjs';
+const { EventEmitter  } = require('events');
+const { UniversalConsciousnessPlatformOrchestrator  } = require('./universal-consciousness-platform-orchestrator.cjs');
 
-export class UniversalConsciousnessChatProcessor extends EventEmitter {
+class UniversalConsciousnessChatProcessor extends EventEmitter {
     constructor() {
         super();
         this.name = 'UniversalConsciousnessChatProcessor';
@@ -375,4 +375,5 @@ export class UniversalConsciousnessChatProcessor extends EventEmitter {
 }
 
 // Export singleton instance
-export const universalConsciousnessChatProcessor = new UniversalConsciousnessChatProcessor();
+const universalConsciousnessChatProcessor = new UniversalConsciousnessChatProcessor();
+module.exports.universalConsciousnessChatProcessor = universalConsciousnessChatProcessor;

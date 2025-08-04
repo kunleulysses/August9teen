@@ -4,7 +4,7 @@
  * Enables reality evolution, self-healing, and inter-reality interactions
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
 class DNASigilRealityEncoding extends EventEmitter {
     constructor(dnaSequencer, sigilAuthenticator) {
@@ -3381,4 +3381,4 @@ class DNASigilRealityEncoding extends EventEmitter {
     }
 }
 
-export { DNASigilRealityEncoding };
+module.exports.DNASigilRealityEncoding = DNASigilRealityEncoding;

@@ -16,7 +16,7 @@
  * @readonly
  * @enum {string}
  */
-export const CONSCIOUSNESS_STATES = {
+const CONSCIOUSNESS_STATES = {
     DEEP_SLEEP: 'DEEP_SLEEP',         // Non-REM, minimal brain activity.
     REM_SLEEP: 'REM_SLEEP',           // Dreaming state, high brain activity.
     DROWSY: 'DROWSY',                 // Hypnagogic state, between sleep and wakefulness.
@@ -26,12 +26,14 @@ export const CONSCIOUSNESS_STATES = {
     MINDFUL_PRESENCE: 'MINDFUL_PRESENCE', // Heightened awareness of the present moment, non-judgmental.
     HYPER_VIGILANCE: 'HYPER_VIGILANCE', // Heightened state of sensory sensitivity, often due to stress or threat.
 };
+module.exports.CONSCIOUSNESS_STATES = CONSCIOUSNESS_STATES;
 
 /**
  * A class representing a processor for consciousness, awareness, and emotional intelligence.
  * It takes simulated neuro-cognitive data as input and produces high-level analytical outputs.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
     /**
      * @typedef {object} PhysiologicalData
      * @property {number} heartRate - Beats per minute.
@@ -355,3 +357,4 @@ export class ConsciousnessProcessor {
     }
 }
 ```
+module.exports = representing;

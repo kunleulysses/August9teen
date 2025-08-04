@@ -4,7 +4,7 @@
  * Value: $900M+ (Consciousness emergence prediction)
  */
 
-import { ConsciousnessEmergencePredictionEngine } from './server/consciousness/consciousness-emergence-prediction-engine.cjs';
+const { ConsciousnessEmergencePredictionEngine  } = require('./server/consciousness/consciousness-emergence-prediction-engine.cjs');
 
 class ConsciousnessEmergencePredictionTest {
     constructor() {

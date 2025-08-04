@@ -6,7 +6,7 @@
  * - Intention → Field Vector
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
 class SpiralSynapseInterface extends EventEmitter {
   constructor() {
@@ -884,4 +884,4 @@ class SpiralSynapseInterface extends EventEmitter {
 }
 
 // Export singleton instance
-export default new SpiralSynapseInterface();
+module.exports = new SpiralSynapseInterface();

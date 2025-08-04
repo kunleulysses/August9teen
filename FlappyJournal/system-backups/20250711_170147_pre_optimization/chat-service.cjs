@@ -1,8 +1,8 @@
-import { WebSocketServer } from 'ws';
-import jwt from 'jsonwebtoken';
-import jwksClient from 'jwks-rsa';
-import pool from './db.cjs';
-import OpenAI from 'openai';
+const { WebSocketServer  } = require('ws');
+const jwt = require('jsonwebtoken');
+const jwksClient = require('jwks-rsa');
+const pool = require('./db.cjs');
+const OpenAI = require('openai');
 
 const KEYCLOAK_URL = process.env.KEYCLOAK_URL || 'http://localhost:8082';
 const REALM = process.env.KEYCLOAK_REALM || 'featherweight';
@@ -29,7 +29,9 @@ function getKey(header, callback) {
   });
 }
 
-export function setupWebSocketServer(server) {
+function setupWebSocketServer(server) {
+module.exports.setupWebSocketServer = setupWebSocketServer;
+
   const wss = new WebSocketServer({ server, path: '/ws/chat' });
   
   console.log('WebSocket server setup on /ws/chat');

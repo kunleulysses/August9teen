@@ -48,7 +48,7 @@
  * @property {string} insightId - The ID of the insight that prompted this proposal.
  */
 
-export default class MetaCognitiveLocus {
+module.exports = class MetaCognitiveLocus {
     /**
      * Initializes the Meta-Cognitive Awareness Layer.
      * @param {object} consciousnessSystem - A reference to the main consciousness system.

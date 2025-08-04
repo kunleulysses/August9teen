@@ -8,8 +8,8 @@
 console.log('🔮 Verifying Sigil Integration Status...\n');
 
 // Check 1: Sigil Identity System file exists
-import { promises as fs } from 'fs';
-import path from 'path';
+const { promises as fs  } = require('fs');
+const path = require('path');
 
 const checks = {
   sigilFileExists: false,

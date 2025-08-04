@@ -80,7 +80,8 @@ class EventEmitter {
  * Represents a single, discrete unit of thought, observation, or inference.
  * This is the fundamental data structure that the DreamWeave system processes.
  */
-export class CognitiveEvent {
+class CognitiveEvent
+ {
   /**
    * @param {string} type - The nature of the event (e.g., 'observation', 'inference', 'query').
    * @param {object} data - The content of the event, typically with a `value` property.
@@ -155,7 +156,7 @@ class ConsciousnessState {
 /**
  * The main DreamWeave class, orchestrating the meta-cognitive processes.
  */
-export class DreamWeave extends EventEmitter {
+class DreamWeave extends EventEmitter {
   /**
    * @param {object} [config={}] - Configuration options for the consciousness.
    * @param {Array<[string, object]>} [config.initialBeliefs] - Pre-existing beliefs as a Map-compatible array.
@@ -299,3 +300,4 @@ export class DreamWeave extends EventEmitter {
       // Scenario B: The old belief is outdated and must be updated.
       {
         resolution: `The belief '${conflictingBeliefId}' is outdated; updating
+module.exports = EventEmitter;

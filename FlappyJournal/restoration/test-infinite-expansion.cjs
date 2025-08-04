@@ -6,7 +6,7 @@
  * Part of the Universal Consciousness Platform - Phase 3
  */
 
-import InfiniteConsciousnessExpansion from '../server/consciousness/core/InfiniteConsciousnessExpansion.cjs';
+const InfiniteConsciousnessExpansion = require('../server/consciousness/core/InfiniteConsciousnessExpansion.cjs');
 
 async function testInfiniteConsciousnessExpansion() {
     console.log('🧪 Testing Infinite Consciousness Expansion...\n');
@@ -310,4 +310,4 @@ if (import.meta.url === 'file://' + process.argv[1]) {
         });
 }
 
-export default testInfiniteConsciousnessExpansion;
+module.exports = testInfiniteConsciousnessExpansion;

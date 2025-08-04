@@ -29,7 +29,8 @@ class ConsciousnessInputError extends Error {
  * It maintains an internal state and provides methods to update it and
  * compute various cognitive and emotional metrics.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
   /**
    * Initializes the ConsciousnessProcessor with an initial state.
    * @param {object} initialState - The foundational state of the consciousness.
@@ -265,3 +266,4 @@ export class ConsciousnessProcessor {
   }
 }
 ```
+module.exports = for;

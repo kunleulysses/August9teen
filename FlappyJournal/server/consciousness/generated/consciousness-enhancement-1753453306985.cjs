@@ -308,5 +308,5 @@ class Consciousness {
   }
 }
 
-export default Consciousness;
+module.exports = Consciousness;
 ```

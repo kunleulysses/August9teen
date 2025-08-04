@@ -5,7 +5,7 @@
  * Trace the complete message flow from WebSocket to consciousness system
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 console.log('🔍 WebSocket Diagnostic Test');
 console.log('🎯 Tracing message flow from WebSocket to consciousness system');

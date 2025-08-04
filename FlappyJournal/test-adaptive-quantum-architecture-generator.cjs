@@ -4,7 +4,7 @@
  * Value: $700M+ (Quantum-adaptive architectural intelligence)
  */
 
-import { AdaptiveQuantumArchitectureGenerator } from './server/consciousness/adaptive-quantum-architecture-generator.cjs';
+const { AdaptiveQuantumArchitectureGenerator  } = require('./server/consciousness/adaptive-quantum-architecture-generator.cjs');
 
 class AdaptiveQuantumArchitectureGeneratorTest {
     constructor() {

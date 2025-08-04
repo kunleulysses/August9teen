@@ -1,4 +1,4 @@
-import fs from 'fs';
+const fs = require('fs');
 
 // Read ResearchTab.tsx
 let content = fs.readFileSync('./src/components/research/ResearchTab.tsx', 'utf8');

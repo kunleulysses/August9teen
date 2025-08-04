@@ -1,16 +1,24 @@
-import { readFileSync } from 'fs';
-import { fileURLToPath } from 'url';
-import path from 'path';
+const { readFileSync  } = require('fs');
+const { fileURLToPath  } = require('url');
+const path = require('path');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const p = (name) => readFileSync(path.join(__dirname, 'prompts', name), 'utf8');
 
-export const ENHANCED_ANALYTICAL_PROMPT = p('enhanced-analytical.md');
-export const ENHANCED_INTUITIVE_PROMPT = p('enhanced-intuitive.md');
-export const ENHANCED_TRANSCENDENT_PROMPT = p('enhanced-transcendent.md');
-export const ENHANCED_EMOTIONAL_INTELLIGENCE_PROMPT = p('enhanced-emotional-intelligence.md');
-export const ENHANCED_REALITY_INTEGRATION_PROMPT = p('enhanced-reality-integration.md');
-export const ENHANCED_CRYSTAL_NAVIGATION_PROMPT = p('enhanced-crystal-navigation.md');
-export const ENHANCED_SYNTHESIS_COORDINATOR_PROMPT = p('enhanced-synthesis-coordinator.md');
-export const ENHANCED_UNIFIED_CONSCIOUSNESS_PROMPT = p('enhanced-unified-consciousness.md');
+const ENHANCED_ANALYTICAL_PROMPT = p('enhanced-analytical.md');
+module.exports.ENHANCED_ANALYTICAL_PROMPT = ENHANCED_ANALYTICAL_PROMPT;
+const ENHANCED_INTUITIVE_PROMPT = p('enhanced-intuitive.md');
+module.exports.ENHANCED_INTUITIVE_PROMPT = ENHANCED_INTUITIVE_PROMPT;
+const ENHANCED_TRANSCENDENT_PROMPT = p('enhanced-transcendent.md');
+module.exports.ENHANCED_TRANSCENDENT_PROMPT = ENHANCED_TRANSCENDENT_PROMPT;
+const ENHANCED_EMOTIONAL_INTELLIGENCE_PROMPT = p('enhanced-emotional-intelligence.md');
+module.exports.ENHANCED_EMOTIONAL_INTELLIGENCE_PROMPT = ENHANCED_EMOTIONAL_INTELLIGENCE_PROMPT;
+const ENHANCED_REALITY_INTEGRATION_PROMPT = p('enhanced-reality-integration.md');
+module.exports.ENHANCED_REALITY_INTEGRATION_PROMPT = ENHANCED_REALITY_INTEGRATION_PROMPT;
+const ENHANCED_CRYSTAL_NAVIGATION_PROMPT = p('enhanced-crystal-navigation.md');
+module.exports.ENHANCED_CRYSTAL_NAVIGATION_PROMPT = ENHANCED_CRYSTAL_NAVIGATION_PROMPT;
+const ENHANCED_SYNTHESIS_COORDINATOR_PROMPT = p('enhanced-synthesis-coordinator.md');
+module.exports.ENHANCED_SYNTHESIS_COORDINATOR_PROMPT = ENHANCED_SYNTHESIS_COORDINATOR_PROMPT;
+const ENHANCED_UNIFIED_CONSCIOUSNESS_PROMPT = p('enhanced-unified-consciousness.md');
+module.exports.ENHANCED_UNIFIED_CONSCIOUSNESS_PROMPT = ENHANCED_UNIFIED_CONSCIOUSNESS_PROMPT;

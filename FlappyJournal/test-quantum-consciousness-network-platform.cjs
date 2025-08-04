@@ -4,7 +4,7 @@
  * Value: $1.8B+ (Universal consciousness networking)
  */
 
-import { QuantumConsciousnessNetworkPlatform } from './server/consciousness/quantum-consciousness-network-platform.cjs';
+const { QuantumConsciousnessNetworkPlatform  } = require('./server/consciousness/quantum-consciousness-network-platform.cjs');
 
 class QuantumConsciousnessNetworkTest {
     constructor() {

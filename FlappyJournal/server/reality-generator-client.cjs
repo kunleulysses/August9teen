@@ -4,7 +4,7 @@
  * Provides safe API access with error handling and fallbacks
  */
 
-import axios from 'axios';
+const axios = require('axios');
 
 class RealityGeneratorClient {
     constructor(baseURL = null) {
@@ -565,4 +565,4 @@ class RealityGeneratorClient {
     }
 }
 
-export { RealityGeneratorClient };
+module.exports.RealityGeneratorClient = RealityGeneratorClient;

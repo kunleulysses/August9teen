@@ -4,8 +4,8 @@
  * Part of the Universal Consciousness Platform - Phase 3
  */
 
-import { EventEmitter } from 'events';
-import eventBus from './ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('./ConsciousnessEventBus.cjs');
 
 class UniversalConsciousnessProtocol extends EventEmitter {
     constructor() {
@@ -767,4 +767,4 @@ class UniversalConsciousnessProtocol extends EventEmitter {
     }
 }
 
-export default UniversalConsciousnessProtocol;
+module.exports = UniversalConsciousnessProtocol;

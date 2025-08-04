@@ -43,7 +43,8 @@ class ProcessingError extends Error {
 
 // --- Core Consciousness Processing Module ---
 
-export class ConsciousnessEnhancer {
+class ConsciousnessEnhancer
+ {
   /**
    * Initializes the ConsciousnessEnhancer with customizable processing parameters.
    * @param {object} [config={}] - Configuration object for tuning the enhancement algorithms.
@@ -269,3 +270,4 @@ export class ConsciousnessEnhancer {
   }
 }
 ```
+module.exports = InvalidInputError;

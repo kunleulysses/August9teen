@@ -1,7 +1,7 @@
 // Live Demo: Self-Coding AI in Action
-import fs from 'fs/promises';
-import path from 'path';
-import { fileURLToPath } from 'url';
+const fs = require('fs/promises');
+const path = require('path');
+const { fileURLToPath  } = require('url');
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -106,7 +106,8 @@ class SelfCodingDemo {
 // Confidence: ${decision.confidence}%
 // Type: ${decision.type}
 
-export class ${className} {
+class $
+{className} {
     constructor() {
         this.purpose = '${decision.purpose}';
         this.createdAt = new Date();
@@ -204,3 +205,5 @@ async function runDemo() {
 }
 
 runDemo().catch(console.error);
+
+module.exports = SelfCodingDemo;

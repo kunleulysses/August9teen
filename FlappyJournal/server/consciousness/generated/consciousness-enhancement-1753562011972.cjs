@@ -326,5 +326,5 @@ class ConsciousnessProcessor {
 }
 
 // Export the main class as the default export of the module.
-export default ConsciousnessProcessor;
+module.exports = ConsciousnessProcessor;
 ```

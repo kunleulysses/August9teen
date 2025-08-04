@@ -86,7 +86,8 @@ class PriorityQueue {
 }
 
 // --- Main Optimizer Class ---
-export class ConsciousnessPerformanceOptimizer {
+class ConsciousnessPerformanceOptimizer
+ {
     /**
      * @param {object} [config={}] - Configuration options for the optimizer.
      * @param {number} [config.eventBatchSize=100] - Max number of events to process per tick.
@@ -320,3 +321,4 @@ export class ConsciousnessPerformanceOptimizer {
         snapshot.events.queueSize = this._eventQueue.size();
         snapshot.memory.poolStats = {};
         for (const name
+module.exports = PriorityQueue;

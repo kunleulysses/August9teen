@@ -1,7 +1,7 @@
-import dotenv from "dotenv";
+const dotenv = require('dotenv');
 dotenv.config({ path: "../.env" });
 
-import { synthesizeUnifiedResponse } from './consciousness-response-synthesizer-hybrid.cjs';
+const { synthesizeUnifiedResponse  } = require('./consciousness-response-synthesizer-hybrid.cjs');
 
 // Test different scenarios
 const testScenarios = [

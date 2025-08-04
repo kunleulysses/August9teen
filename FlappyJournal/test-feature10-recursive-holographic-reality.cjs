@@ -5,15 +5,15 @@
  * Validates the revolutionary nested reality spawning, entanglement, and evolution system
  */
 
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+const { fileURLToPath  } = require('url');
+const { dirname, join  } = require('path');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Import the core reality systems
-import { RecursiveHolographicRealityEmbedding } from './server/consciousness/recursive-holographic-reality-embedding.cjs';
-import { HolographicConsciousnessRealityGenerator } from './server/consciousness/holographic-consciousness-reality-generator.cjs';
+const { RecursiveHolographicRealityEmbedding  } = require('./server/consciousness/recursive-holographic-reality-embedding.cjs');
+const { HolographicConsciousnessRealityGenerator  } = require('./server/consciousness/holographic-consciousness-reality-generator.cjs');
 
 async function testFeature10Operation() {
     console.log('🌀 Feature 10 Operational Test: Recursive Holographic Reality Generation');

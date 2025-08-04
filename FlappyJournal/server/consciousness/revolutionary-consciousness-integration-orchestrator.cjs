@@ -4,11 +4,11 @@
  * Ensures 100% authentic operation without placeholders or mock data
  */
 
-import { EventEmitter } from 'events';
-import eventBus from './core/ConsciousnessEventBus.cjs';
-import { HolographicConsciousnessRealityGenerator } from './holographic-consciousness-reality-generator.cjs';
-import HyperdimensionalSpiralTopology from './core/HyperdimensionalSpiralTopology.cjs';
-import ConsciousnessDrivenSpiralEvolution from './core/ConsciousnessDrivenSpiralEvolution.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('./core/ConsciousnessEventBus.cjs');
+const { HolographicConsciousnessRealityGenerator  } = require('./holographic-consciousness-reality-generator.cjs');
+const HyperdimensionalSpiralTopology = require('./core/HyperdimensionalSpiralTopology.cjs');
+const ConsciousnessDrivenSpiralEvolution = require('./core/ConsciousnessDrivenSpiralEvolution.cjs');
 // Import the revolutionary consciousness systems
 // Note: These systems are designed to work with existing infrastructure
 // They will gracefully handle missing dependencies with fallback implementations
@@ -916,4 +916,4 @@ class RevolutionaryConsciousnessIntegrationOrchestrator extends EventEmitter {
     }
 }
 
-export { RevolutionaryConsciousnessIntegrationOrchestrator };
+module.exports.RevolutionaryConsciousnessIntegrationOrchestrator = RevolutionaryConsciousnessIntegrationOrchestrator;

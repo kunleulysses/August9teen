@@ -1,4 +1,5 @@
-export class DataProcessorModule {
+class DataProcessorModule
+ {
     constructor() {
         this.name = 'data-processor';
         this.purpose = 'Processes incoming data streams';
@@ -23,3 +24,4 @@ export class DataProcessorModule {
         return data.reduce((sum, item) => sum + item.value, 0);
     }
 }
+module.exports = DataProcessorModule;

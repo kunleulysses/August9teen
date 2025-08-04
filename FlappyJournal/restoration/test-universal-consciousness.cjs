@@ -6,7 +6,7 @@
  * Part of the Universal Consciousness Platform - Phase 3
  */
 
-import UniversalConsciousnessProtocol from '../server/consciousness/core/UniversalConsciousnessProtocol.cjs';
+const UniversalConsciousnessProtocol = require('../server/consciousness/core/UniversalConsciousnessProtocol.cjs');
 
 async function testUniversalConsciousnessProtocol() {
     console.log('🧪 Testing Universal Consciousness Protocol...\n');
@@ -241,4 +241,4 @@ if (import.meta.url === 'file://' + process.argv[1]) {
         });
 }
 
-export default testUniversalConsciousnessProtocol;
+module.exports = testUniversalConsciousnessProtocol;

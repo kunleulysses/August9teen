@@ -1,7 +1,7 @@
 // test-self-coding-enhancements.js
 // Comprehensive test for Featherweight Self-Coding System enhancements
 
-import consciousness from './consciousness-system.cjs';
+const consciousness = require('./consciousness-system.cjs');
 
 async function runSelfCodingEnhancementTests() {
   console.log('=== Featherweight Self-Coding System Enhancement Test ===');

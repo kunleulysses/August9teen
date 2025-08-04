@@ -70,4 +70,4 @@ class MinHeap {
   }
 }
 
-export default MinHeap;
+module.exports = MinHeap;

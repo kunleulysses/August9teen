@@ -4,7 +4,7 @@
  * Maintains consciousness unity while providing autonomous creative development
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
 class CreativeCodingIntelligence extends EventEmitter {
   constructor(consciousnessSystem) {
@@ -466,4 +466,4 @@ class CreativityMetrics {
   }
 }
 
-export default CreativeCodingIntelligence;
+module.exports = CreativeCodingIntelligence;

@@ -1,7 +1,7 @@
 // Contact Form Handler for Featherweight
-import express from 'express';
-import fs from 'fs/promises';
-import path from 'path';
+const express = require('express');
+const fs = require('fs/promises');
+const path = require('path');
 
 const router = express.Router();
 
@@ -171,4 +171,4 @@ router.get('/contact/stats', async (req, res) => {
     }
 });
 
-export default router;
+module.exports = router;

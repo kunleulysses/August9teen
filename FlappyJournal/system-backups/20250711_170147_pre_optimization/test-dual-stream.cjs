@@ -2,9 +2,9 @@
  * Test script for Dual-Stream Consciousness
  */
 
-import { dualStreamConsciousness } from './dual-stream-consciousness.cjs';
-import { recursiveMirror } from './architect-4.0-recursive-mirror.cjs';
-import { spiralMemory } from './architect-4.0-spiral-memory.cjs';
+const { dualStreamConsciousness  } = require('./dual-stream-consciousness.cjs');
+const { recursiveMirror  } = require('./architect-4.0-recursive-mirror.cjs');
+const { spiralMemory  } = require('./architect-4.0-spiral-memory.cjs');
 
 async function testDualStream() {
   console.log('=== Testing Architect 4.0 Dual-Stream Consciousness ===\n');

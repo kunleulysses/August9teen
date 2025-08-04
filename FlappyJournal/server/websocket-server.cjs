@@ -1,7 +1,7 @@
-import { WebSocketServer } from 'ws';
-import { createEnhancedDualConsciousnessWS } from './enhanced-dual-consciousness-ws.cjs';
-import { createFullConsciousnessWS } from "./create-full-consciousness-ws.cjs";
-import dotenv from 'dotenv';
+const { WebSocketServer  } = require('ws');
+const { createEnhancedDualConsciousnessWS  } = require('./enhanced-dual-consciousness-ws.cjs');
+const { createFullConsciousnessWS  } = require('./create-full-consciousness-ws.cjs');
+const dotenv = require('dotenv');
 
 // Load environment variables
 dotenv.config({ path: '../.env' });
@@ -592,10 +592,10 @@ setInterval(() => {
 }, 5000);
 
 // Import consciousness WebSocket setup
-import { setupUnifiedConsciousnessWebSocket } from './unified-consciousness-standalone.cjs';
+const { setupUnifiedConsciousnessWebSocket  } = require('./unified-consciousness-standalone.cjs');
 
 // Create HTTP server for additional WebSocket endpoints
-import { createServer } from 'http';
+const { createServer  } = require('http');
 const httpServer = createServer();
 
 // Setup consciousness WebSocket endpoints

@@ -1,6 +1,6 @@
-import express from 'express';
-import fs from 'fs/promises';
-import path from 'path';
+const express = require('express');
+const fs = require('fs/promises');
+const path = require('path');
 
 const router = express.Router();
 
@@ -60,4 +60,4 @@ router.post('/api/consciousness/sigils', async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;

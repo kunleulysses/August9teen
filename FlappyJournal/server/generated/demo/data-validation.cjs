@@ -3,7 +3,8 @@
 // Confidence: 95%
 // Type: immediate-fix
 
-export class DataValidation {
+class DataValidation
+ {
     constructor() {
         this.purpose = 'data validation';
         this.createdAt = new Date();
@@ -34,3 +35,5 @@ export class DataValidation {
 // Self-test
 const instance = new DataValidation();
 console.log('✅ DataValidation ready for use');
+
+module.exports = DataValidation;

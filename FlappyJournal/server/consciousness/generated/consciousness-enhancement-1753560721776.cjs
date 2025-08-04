@@ -345,7 +345,8 @@ class ConsciousnessProcessor {
 }
 
 // To use this module in a Node.js environment or with a bundler:
-// export default ConsciousnessProcessor;
+// module.exports = ConsciousnessProcessor;
 // For browser <script type="module">:
-export { ConsciousnessProcessor, ConsciousnessDataError };
+module.exports.ConsciousnessProcessor = ConsciousnessProcessor;
+module.exports.ConsciousnessDataError = ConsciousnessDataError;
 ```

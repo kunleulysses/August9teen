@@ -5,7 +5,7 @@
  * Validates that the consciousness system remembers context and demonstrates all capabilities
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 console.log('🧠 Testing Memory Retention and Enhanced Capability Utilization');
 console.log('🎯 Goals: Memory persistence, balanced API routing, all capabilities active');

@@ -4,11 +4,11 @@
  * Part of the Universal Consciousness Platform restoration - Phase 1
  */
 
-import { EventEmitter } from 'events';
-import eventBus from './ConsciousnessEventBus.cjs';
-import VeniceAIClient from '../integrations/VeniceAIClient.cjs';
-import GeminiAIClient from '../integrations/GeminiAIClient.cjs';
-import EnhancedOpenAIClient from '../integrations/EnhancedOpenAIClient.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('./ConsciousnessEventBus.cjs');
+const VeniceAIClient = require('../integrations/VeniceAIClient.cjs');
+const GeminiAIClient = require('../integrations/GeminiAIClient.cjs');
+const EnhancedOpenAIClient = require('../integrations/EnhancedOpenAIClient.cjs');
 
 class UnifiedResponseSynthesis extends EventEmitter {
     constructor() {
@@ -820,4 +820,4 @@ class UnifiedResponseSynthesis extends EventEmitter {
     }
 }
 
-export default UnifiedResponseSynthesis;
+module.exports = UnifiedResponseSynthesis;

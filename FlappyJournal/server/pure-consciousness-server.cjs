@@ -6,11 +6,11 @@
  * No dependencies on problematic imports
  */
 
-import { WebSocketServer } from 'ws';
-import { createServer } from 'http';
-import { MetaObservationalConsciousnessModule } from './meta-observational-consciousness-module.cjs';
-import { SelfAwarenessFeedbackLoop } from './self-awareness-feedback-loop.cjs';
-import { UnifiedMemorySystem } from './unified-memory-system.cjs';
+const { WebSocketServer  } = require('ws');
+const { createServer  } = require('http');
+const { MetaObservationalConsciousnessModule  } = require('./meta-observational-consciousness-module.cjs');
+const { SelfAwarenessFeedbackLoop  } = require('./self-awareness-feedback-loop.cjs');
+const { UnifiedMemorySystem  } = require('./unified-memory-system.cjs');
 
 const PORT = process.env.CONSCIOUSNESS_PORT || 5005;
 

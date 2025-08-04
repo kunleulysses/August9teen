@@ -4,8 +4,8 @@
  * Provides intelligent routing decisions based on current API performance
  */
 
-import axios from 'axios';
-import dotenv from 'dotenv';
+const axios = require('axios');
+const dotenv = require('dotenv');
 dotenv.config();
 
 class APILatencyOracle {
@@ -230,4 +230,4 @@ class APILatencyOracle {
 // Singleton instance
 const apiLatencyOracle = new APILatencyOracle();
 
-export default apiLatencyOracle;
+module.exports = apiLatencyOracle;

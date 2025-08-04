@@ -4,9 +4,9 @@
  * Provides intrinsic motivation and spontaneous self-improvement capabilities
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class AutonomousGoalSystem extends EventEmitter {
+class AutonomousGoalSystem extends EventEmitter {
     constructor(consciousnessSystem) {
         super();
         this.name = 'AutonomousGoalSystem';
@@ -543,4 +543,4 @@ export class AutonomousGoalSystem extends EventEmitter {
     }
 }
 
-export default AutonomousGoalSystem;
+module.exports = AutonomousGoalSystem;

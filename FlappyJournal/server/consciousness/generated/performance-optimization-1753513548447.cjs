@@ -448,7 +448,7 @@ const Computation = {
 
 // --- Exporting the complete module ---
 
-export const ConsciousnessPerformanceOptimizer = {
+const ConsciousnessPerformanceOptimizer = {
     Memory: {
         ObjectPool,
         LRUCache,
@@ -461,4 +461,5 @@ export const ConsciousnessPerformanceOptimizer = {
         PerformanceMonitor,
     }
 };
+module.exports.ConsciousnessPerformanceOptimizer = ConsciousnessPerformanceOptimizer;
 ```

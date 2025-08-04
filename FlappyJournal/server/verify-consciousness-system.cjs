@@ -1,4 +1,4 @@
-import architect40 from './architect-4.0-orchestrator.cjs';
+const architect40 = require('./architect-4.0-orchestrator.cjs');
 
 console.log('\nArchitect 4.0 Integration Status:');
 const architect4Status = architect40.getStatus();

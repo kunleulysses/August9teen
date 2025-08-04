@@ -1,4 +1,4 @@
-import fs from 'fs';
+const fs = require('fs');
 
 // Fix index.js
 let indexContent = fs.readFileSync('./index.cjs', 'utf8');
@@ -6,8 +6,8 @@ let indexContent = fs.readFileSync('./index.cjs', 'utf8');
 // Add WebSocketServer import
 indexContent = indexContent.replace(
   "import { setupEnhancedResearchWebSocketServer } from \"./enhanced-dual-consciousness-ws.js\";",
-  `import { WebSocketServer } from 'ws';
-import { setupEnhancedResearchWebSocketServer } from "./enhanced-dual-consciousness-ws.cjs";`
+  `const { WebSocketServer  } = require('ws');
+const { setupEnhancedResearchWebSocketServer  } = require('./enhanced-dual-consciousness-ws.cjs');`
 );
 
 // Replace WebSocket setup

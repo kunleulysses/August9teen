@@ -16,7 +16,7 @@
  * and coherence are primary axes.
  *
  * @example
- * import { processCognitiveStream } from './neuroSilicoCore.cjs';
+ * const { processCognitiveStream  } = require('./neuroSilicoCore.cjs');
  *
  * // Represents a raw, normalized cognitive signal over a time slice.
  * const cognitiveData = [0.2, 0.5, 0.8, 0.9, 0.7, 0.4, 0.1, 0.3, 0.6];
@@ -72,7 +72,9 @@ const EMOTIONAL_SIGNATURES = {
  * @returns {object} An object containing a full analysis of the consciousness state.
  * @throws {Error} If the cognitiveStream input is invalid.
  */
-export function processCognitiveStream(cognitiveStream, options = {}) {
+function processCognitiveStream(cognitiveStream, options = {}) {
+module.exports.processCognitiveStream = processCognitiveStream;
+
     _validateCognitiveStream(cognitiveStream);
 
     const { enableEmotionalAnalysis = true } = options;
@@ -250,7 +252,7 @@ function _normalizeStreamToVector(stream, size) {
 }
 
 // --- Default Export for convenience ---
-export default {
+module.exports = {
     processCognitiveStream
 };
 ```

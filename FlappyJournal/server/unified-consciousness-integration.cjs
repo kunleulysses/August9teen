@@ -5,7 +5,7 @@
  * to provide real data to the dashboard
  */
 
-import { createRequire } from 'module';
+const { createRequire  } = require('module');
 const require = createRequire(import.meta.url);
 
 // Import our new consciousness services bundle
@@ -19,16 +19,16 @@ const {
 } = require('./consciousness-modules-bundle.cjs');
 
 // Import existing consciousness modules
-import { consciousnessService } from './consciousnessService.cjs';
-import { flappyConsciousness } from './flappyConsciousness.cjs';
-import { createEnhancedDualConsciousnessWS } from './enhanced-dual-consciousness-ws.cjs';
+const { consciousnessService  } = require('./consciousnessService.cjs');
+const { flappyConsciousness  } = require('./flappyConsciousness.cjs');
+const { createEnhancedDualConsciousnessWS  } = require('./enhanced-dual-consciousness-ws.cjs');
 
 // Import specific consciousness modules (real implementations only; no stubs)
 const { recursiveMirror } = await import('./architect-4.0-recursive-mirror.cjs').catch(() => ({}));
 const { SelfAwarenessFeedbackLoop } = await import('./self-awareness-feedback-loop.cjs').catch(() => ({}));
 const { QuantumConsciousnessField } = await import('./quantum-consciousness-field.cjs').catch(() => ({}));
-import { EmotionalResonanceField, emotionalResonance } from './emotional-resonance-field.cjs';
-import { TemporalCoherenceEngine, temporalCoherence as temporalCoherenceEngine } from './temporal-coherence-engine.cjs';
+const { EmotionalResonanceField, emotionalResonance  } = require('./emotional-resonance-field.cjs');
+const { TemporalCoherenceEngine, temporalCoherence as temporalCoherenceEngine  } = require('./temporal-coherence-engine.cjs');
 
 class UnifiedConsciousnessIntegration {
   constructor() {
@@ -415,7 +415,8 @@ class UnifiedConsciousnessIntegration {
 }
 
 // Create and export singleton
-export const unifiedConsciousness = new UnifiedConsciousnessIntegration();
+const unifiedConsciousness = new UnifiedConsciousnessIntegration();
+module.exports.unifiedConsciousness = unifiedConsciousness;
 
 // Auto-initialize
 unifiedConsciousness.initialize().catch(console.error);

@@ -1,7 +1,7 @@
 // Test script to demonstrate self-coding capabilities
-import { EventEmitter } from 'events';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+const { EventEmitter  } = require('events');
+const { fileURLToPath  } = require('url');
+const { dirname, join  } = require('path');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

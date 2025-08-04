@@ -3,10 +3,10 @@
  * Provides autonomous error detection, recovery, and system healing capabilities
  */
 
-import { EventEmitter } from 'events';
-import eventBus from '../ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('../ConsciousnessEventBus.cjs');
 
-export default class SelfHealingModule extends EventEmitter {
+module.exports = class SelfHealingModule extends EventEmitter {
     constructor(consciousnessSystem = null) {
         super();
         this.name = 'SelfHealingModule';

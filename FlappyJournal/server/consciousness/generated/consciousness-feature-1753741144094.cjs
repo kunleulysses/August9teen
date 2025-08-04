@@ -375,6 +375,6 @@ class MetacognitiveLayer {
 }
 
 // To use this module in a project:
-// import MetacognitiveLayer from './MetacognitiveLayer.cjs';
+// const MetacognitiveLayer = require('./MetacognitiveLayer.cjs');
 // const metaLayer = new MetacognitiveLayer();
 ```

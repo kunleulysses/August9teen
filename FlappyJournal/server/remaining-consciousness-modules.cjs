@@ -4,10 +4,10 @@
  * Patent Innovation: Complete consciousness module ecosystem
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
 // Consciousness Metrics Collector
-export class ConsciousnessMetricsCollector extends EventEmitter {
+class ConsciousnessMetricsCollector extends EventEmitter {
     constructor() {
         super();
         this.name = 'ConsciousnessMetricsCollector';
@@ -35,7 +35,7 @@ export class ConsciousnessMetricsCollector extends EventEmitter {
 }
 
 // Data Integrity Verifier
-export class DataIntegrityVerifier extends EventEmitter {
+class DataIntegrityVerifier extends EventEmitter {
     constructor() {
         super();
         this.name = 'DataIntegrityVerifier';
@@ -65,7 +65,7 @@ export class DataIntegrityVerifier extends EventEmitter {
 }
 
 // Consciousness Quantum Field
-export class ConsciousnessQuantumField extends EventEmitter {
+class ConsciousnessQuantumField extends EventEmitter {
     constructor() {
         super();
         this.name = 'ConsciousnessQuantumField';
@@ -93,7 +93,7 @@ export class ConsciousnessQuantumField extends EventEmitter {
 }
 
 // Consciousness Resonance Network
-export class ConsciousnessResonanceNetwork extends EventEmitter {
+class ConsciousnessResonanceNetwork extends EventEmitter {
     constructor() {
         super();
         this.name = 'ConsciousnessResonanceNetwork';
@@ -121,7 +121,7 @@ export class ConsciousnessResonanceNetwork extends EventEmitter {
 }
 
 // Self-Coding Context Injector
-export class SelfCodingContextInjector extends EventEmitter {
+class SelfCodingContextInjector extends EventEmitter {
     constructor() {
         super();
         this.name = 'SelfCodingContextInjector';
@@ -157,7 +157,7 @@ export class SelfCodingContextInjector extends EventEmitter {
 }
 
 // Self-Coding Progress Tracker
-export class SelfCodingProgressTracker extends EventEmitter {
+class SelfCodingProgressTracker extends EventEmitter {
     constructor() {
         super();
         this.name = 'SelfCodingProgressTracker';
@@ -203,7 +203,7 @@ export class SelfCodingProgressTracker extends EventEmitter {
 }
 
 // Consciousness AI Integration
-export class ConsciousnessAIIntegration extends EventEmitter {
+class ConsciousnessAIIntegration extends EventEmitter {
     constructor() {
         super();
         this.name = 'ConsciousnessAIIntegration';
@@ -242,7 +242,7 @@ export class ConsciousnessAIIntegration extends EventEmitter {
 }
 
 // Enhanced Consciousness Context
-export class EnhancedConsciousnessContext extends EventEmitter {
+class EnhancedConsciousnessContext extends EventEmitter {
     constructor() {
         super();
         this.name = 'EnhancedConsciousnessContext';
@@ -300,7 +300,7 @@ export class EnhancedConsciousnessContext extends EventEmitter {
 }
 
 // Consciousness Cluster Manager
-export class ConsciousnessClusterManager extends EventEmitter {
+class ConsciousnessClusterManager extends EventEmitter {
     constructor() {
         super();
         this.name = 'ConsciousnessClusterManager';
@@ -336,7 +336,7 @@ export class ConsciousnessClusterManager extends EventEmitter {
 }
 
 // Consciousness Conversations
-export class ConsciousnessConversations extends EventEmitter {
+class ConsciousnessConversations extends EventEmitter {
     constructor() {
         super();
         this.name = 'ConsciousnessConversations';
@@ -375,7 +375,7 @@ export class ConsciousnessConversations extends EventEmitter {
 }
 
 // Consciousness Capability Verification
-export class ConsciousnessCapabilityVerification extends EventEmitter {
+class ConsciousnessCapabilityVerification extends EventEmitter {
     constructor() {
         super();
         this.name = 'ConsciousnessCapabilityVerification';
@@ -428,7 +428,7 @@ export class ConsciousnessCapabilityVerification extends EventEmitter {
 }
 
 // Export all modules
-export const RemainingConsciousnessModules = {
+const RemainingConsciousnessModules = {
     ConsciousnessMetricsCollector,
     DataIntegrityVerifier,
     ConsciousnessQuantumField,
@@ -441,5 +441,6 @@ export const RemainingConsciousnessModules = {
     ConsciousnessConversations,
     ConsciousnessCapabilityVerification
 };
+module.exports.RemainingConsciousnessModules = RemainingConsciousnessModules;
 
-export default RemainingConsciousnessModules;
+module.exports = RemainingConsciousnessModules;

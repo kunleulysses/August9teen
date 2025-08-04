@@ -141,7 +141,9 @@ function _validateInputStream(inputStream) {
  * @returns {ConsciousnessState} The calculated primary consciousness state.
  * @throws {ConsciousnessProcessingError} If the input stream is invalid or incomplete.
  */
-export function calculateConsciousnessState(inputStream) {
+function calculateConsciousnessState(inputStream) {
+module.exports.calculateConsciousnessState = calculateConsciousnessState;
+
     _validateInputStream(inputStream);
 
     const {
@@ -198,7 +200,9 @@ export function calculateConsciousnessState(inputStream) {
  * @param {NeuralStreamInput} inputStream - The original input stream for richer context.
  * @returns {AwarenessMetrics} A set of advanced awareness metrics.
  */
-export function analyzeAwarenessMetrics(state, inputStream) {
+function analyzeAwarenessMetrics(state, inputStream) {
+module.exports.analyzeAwarenessMetrics = analyzeAwarenessMetrics;
+
     if (!state || !inputStream) {
         throw new ConsciousnessProcessingError('Both state and inputStream must be provided for awareness analysis.');
     }
@@ -235,7 +239,9 @@ export function analyzeAwarenessMetrics(state, inputStream) {
  * @param {NeuralStreamInput} inputStream - The original input stream.
  * @returns {EmotionalIntelligenceProfile} A detailed profile of emotional intelligence factors.
  */
-export function analyzeEmotionalIntelligence(state, inputStream) {
+function analyzeEmotionalIntelligence(state, inputStream) {
+module.exports.analyzeEmotionalIntelligence = analyzeEmotionalIntelligence;
+
     if (!state || !inputStream) {
         throw new ConsciousnessProcessingError('Both state and inputStream must be provided for EI analysis.');
     }
@@ -284,5 +290,5 @@ export function analyzeEmotionalIntelligence(state, inputStream) {
 }
 
 // Export the custom error class for consumers who want to catch it specifically.
-export { ConsciousnessProcessingError };
+module.exports.ConsciousnessProcessingError = ConsciousnessProcessingError;
 ```

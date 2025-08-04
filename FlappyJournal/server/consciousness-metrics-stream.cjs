@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
 class ConsciousnessMetricsStream extends EventEmitter {
     constructor(consciousnessSystem) {
@@ -500,4 +500,4 @@ metrics.push({
     }
 }
 
-export default ConsciousnessMetricsStream;
+module.exports = ConsciousnessMetricsStream;

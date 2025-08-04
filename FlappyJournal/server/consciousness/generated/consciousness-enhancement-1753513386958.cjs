@@ -58,7 +58,7 @@ class ProcessingParadoxError extends ConsciousnessError {
  * @readonly
  * @enum {string}
  */
-export const ConsciousnessState = {
+const ConsciousnessState = {
   /** High focus, low peripheral awareness, task-oriented. */
   FOCUSED: 'FOCUSED',
   /** Low focus, high peripheral awareness, creative & associative thinking. */
@@ -70,24 +70,26 @@ export const ConsciousnessState = {
   /** A state of calm, present-moment awareness. */
   MINDFUL: 'MINDFUL',
 };
+module.exports.ConsciousnessState = ConsciousnessState;
 
 /**
  * Defines the direction of temporal focus.
  * @readonly
  * @enum {string}
  */
-export const TemporalFocus = {
+const TemporalFocus = {
   PAST: 'PAST',
   PRESENT: 'PRESENT',
   FUTURE: 'FUTURE',
 };
+module.exports.TemporalFocus = TemporalFocus;
 
 /**
  * A simplified model based on Plutchik's wheel of emotions, including valence,
  * arousal, and temporal association for advanced processing.
  * @readonly
  */
-export const EmotionModel = {
+const EmotionModel = {
   joy:       { valence: 0.9, arousal: 0.7, focus: TemporalFocus.PRESENT },
   trust:     { valence: 0.7, arousal: 0.3, focus: TemporalFocus.PRESENT },
   fear:      { valence: -0.8, arousal: 0.8, focus: TemporalFocus.FUTURE },
@@ -97,12 +99,13 @@ export const EmotionModel = {
   anger:     { valence: -0.5, arousal: 0.7, focus: TemporalFocus.PAST },
   anticipation: { valence: 0.4, arousal: 0.6, focus: TemporalFocus.FUTURE },
 };
+module.exports.EmotionModel = EmotionModel;
 
 /**
  * Represents emotional dyads (combinations of primary emotions).
  * @readonly
  */
-export const EmotionalDyads = {
+const EmotionalDyads = {
     'joy-trust': 'love',
     'joy-anticipation': 'optimism',
     'trust-fear': 'submission',
@@ -112,6 +115,7 @@ export const EmotionalDyads = {
     'disgust-anger': 'contempt',
     'anger-anticipation': 'aggressiveness',
 };
+module.exports.EmotionalDyads = EmotionalDyads;
 
 
 // --- The Core Consciousness Processor ---
@@ -123,7 +127,7 @@ export const EmotionalDyads = {
  * holistic state profile.
  *
  * @example
- * import ConsciousnessProcessor from './consciousness.cjs';
+ * const ConsciousnessProcessor = require('./consciousness.cjs');
  *
  * const consciousness = new ConsciousnessProcessor();
  * const input = {
@@ -145,7 +149,7 @@ export const EmotionalDyads = {
  *   console.error(`Consciousness fault: ${error.name}`, error.message);
  * }
  */
-export default class ConsciousnessProcessor {
+module.exports = class ConsciousnessProcessor {
   #state;
   #history;
 

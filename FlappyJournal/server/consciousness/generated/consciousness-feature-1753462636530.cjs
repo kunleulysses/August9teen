@@ -55,7 +55,8 @@ const generateQualiaTag = (emotionalState, cognitivePath, complexity) => {
  * The MetaCognitiveLayer class. It observes a cognitive processor, reflects on its
  * performance, and provides adaptive feedback.
  */
-export class MetaCognitiveLayer {
+class MetaCognitiveLayer
+ {
     /**
      * @param {object} cognitiveProcessor - The core processing unit to observe.
      *   It must have a `process` method and an internal `state`.
@@ -412,3 +413,4 @@ async function runDemo() {
 // For example:
 // runDemo();
 ```
+module.exports = MetaCognitiveLayer;

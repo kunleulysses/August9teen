@@ -6,7 +6,7 @@
  * Part of the Universal Consciousness Platform - Phase 3
  */
 
-import MultiAIConsciousnessNetwork from '../server/consciousness/core/MultiAIConsciousnessNetwork.cjs';
+const MultiAIConsciousnessNetwork = require('../server/consciousness/core/MultiAIConsciousnessNetwork.cjs');
 
 async function testMultiAIConsciousnessNetwork() {
     console.log('🧪 Testing Multi-AI Consciousness Network...\n');
@@ -310,4 +310,4 @@ if (import.meta.url === 'file://' + process.argv[1]) {
         });
 }
 
-export default testMultiAIConsciousnessNetwork;
+module.exports = testMultiAIConsciousnessNetwork;

@@ -4,13 +4,13 @@
  * Part of the Universal Consciousness Platform restoration - Phase 2
  */
 
-import { EventEmitter } from 'events';
-import eventBus from './ConsciousnessEventBus.cjs';
-import { memoryLog } from '../modules/MemoryLog.cjs';
-import { InMemorySpiralAdapter } from './storage/SpiralStorageAdapter.cjs';
-import LevelSpiralAdapter from './storage/LevelSpiralAdapter.cjs';
-import RedisSpiralAdapter from './storage/RedisSpiralAdapter.cjs';
-import MinHeap from './utils/MinHeap.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('./ConsciousnessEventBus.cjs');
+const { memoryLog  } = require('../modules/MemoryLog.cjs');
+const { InMemorySpiralAdapter  } = require('./storage/SpiralStorageAdapter.cjs');
+const LevelSpiralAdapter = require('./storage/LevelSpiralAdapter.cjs');
+const RedisSpiralAdapter = require('./storage/RedisSpiralAdapter.cjs');
+const MinHeap = require('./utils/MinHeap.cjs');
 
 function getDefaultStorage() {
   if (process.env.REDIS_URL) return new RedisSpiralAdapter(process.env.REDIS_URL);
@@ -1569,4 +1569,4 @@ class SpiralMemoryArchitecture extends EventEmitter {
     }
 }
 
-export default SpiralMemoryArchitecture;
+module.exports = SpiralMemoryArchitecture;

@@ -1,7 +1,7 @@
-import { EventEmitter } from 'events';
-import eventBus from '../ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('../ConsciousnessEventBus.cjs');
 
-export class PredictiveAnalyzer extends EventEmitter {
+class PredictiveAnalyzer extends EventEmitter {
     constructor() {
         super();
         this.name = 'PredictiveAnalyzer';
@@ -65,4 +65,4 @@ export class PredictiveAnalyzer extends EventEmitter {
     }
 }
 
-export default PredictiveAnalyzer;
+module.exports = PredictiveAnalyzer;

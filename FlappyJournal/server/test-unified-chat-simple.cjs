@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import UnifiedChatAggregator from './consciousness/core/UnifiedChatAggregator.cjs';
+const UnifiedChatAggregator = require('./consciousness/core/UnifiedChatAggregator.cjs');
 
 async function testUnifiedChat() {
     console.log('🧠 SIMPLE UNIFIED CHAT TEST');

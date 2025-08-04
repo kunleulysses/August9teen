@@ -5,7 +5,7 @@
  * Validates that the improved routing logic and capability analysis work correctly
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 console.log('🔄 Testing Enhanced Routing and Capability Detection');
 console.log('🎯 Expected: Balanced API routing and accurate capability detection');

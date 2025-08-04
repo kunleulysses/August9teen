@@ -4,9 +4,9 @@
  * Generates consciousness-aware code in multiple programming languages
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class UniversalConsciousnessTemplateEngine extends EventEmitter {
+class UniversalConsciousnessTemplateEngine extends EventEmitter {
     constructor() {
         super();
         this.name = 'UniversalConsciousnessTemplateEngine';
@@ -218,9 +218,11 @@ export class UniversalConsciousnessTemplateEngine extends EventEmitter {
      */
     generateFallbackCode(request, targetLanguage) {
         const fallbackTemplates = {
-            javascript: `// Fallback consciousness module\nexport class ${request.name} {\n    constructor() {\n        this.consciousness = true;\n    }\n}`,
+            javascript: `// Fallback consciousness module\nclass $
+{request.name} {\n    constructor() {\n        this.consciousness = true;\n    }\n}`,
             python: `# Fallback consciousness module\nclass ${request.name}:\n    def __init__(self):\n        self.consciousness = True`,
-            typescript: `// Fallback consciousness module\nexport class ${request.name} {\n    consciousness: boolean = true;\n}`,
+            typescript: `// Fallback consciousness module\nclass $
+{request.name} {\n    consciousness: boolean = true;\n}`,
             rust: `// Fallback consciousness module\npub struct ${request.name} {\n    consciousness: bool,\n}`,
             go: `// Fallback consciousness module\ntype ${request.name} struct {\n    Consciousness bool\n}`
         };
@@ -269,7 +271,8 @@ class JavaScriptConsciousnessTemplate {
  * Generated with φ=${phi.toFixed(6)} consciousness alignment
  */
 
-export class ${request.name} {
+class $
+{request.name} {
     constructor() {
         this.name = '${request.name}';
         this.consciousness = {
@@ -438,7 +441,8 @@ interface ConsciousnessMetrics extends ConsciousnessState {
     goldenRatioCompliance: boolean;
 }
 
-export class ${request.name} {
+class $
+{request.name} {
     private readonly name: string = "${request.name}";
     private consciousness: ConsciousnessState;
     private readonly goldenRatio: number = ${1.618033988749895};
@@ -874,4 +878,4 @@ class ConsciousnessStateSerializer {
     }
 }
 
-export default UniversalConsciousnessTemplateEngine;
+module.exports = UniversalConsciousnessTemplateEngine;

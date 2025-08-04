@@ -1,4 +1,4 @@
-import { UNIFIED_PERSONA_PROMPT } from './consciousness-prompts.cjs';
+const { UNIFIED_PERSONA_PROMPT  } = require('./consciousness-prompts.cjs');
 
 class DynamicPersonaEngine {
   constructor() {
@@ -54,4 +54,5 @@ class DynamicPersonaEngine {
   }
 }
 
-export const dynamicPersonaEngine = new DynamicPersonaEngine();
+const dynamicPersonaEngine = new DynamicPersonaEngine();
+module.exports.dynamicPersonaEngine = dynamicPersonaEngine;

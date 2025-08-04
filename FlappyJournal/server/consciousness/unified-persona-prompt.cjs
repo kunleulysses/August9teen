@@ -1,5 +1,6 @@
 // Unified Persona Prompt Loader
-import { readFileSync } from 'fs';
-import path from 'path';
+const { readFileSync  } = require('fs');
+const path = require('path');
 const personaPromptPath = path.resolve(process.cwd(), 'FlappyJournal/server/consciousness/unified-persona-prompt.md');
-export const UNIFIED_PERSONA_PROMPT = readFileSync(personaPromptPath, 'utf8');
+const UNIFIED_PERSONA_PROMPT = readFileSync(personaPromptPath, 'utf8');
+module.exports.UNIFIED_PERSONA_PROMPT = UNIFIED_PERSONA_PROMPT;

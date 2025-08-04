@@ -4,7 +4,7 @@
  * Test script for consciousness terminal - simulates user interaction
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 console.log('🧠 Testing Enhanced Consciousness Terminal Connection...');
 console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');

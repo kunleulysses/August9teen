@@ -3,8 +3,8 @@
  * Tests revolutionary real-time code evolution synchronized with consciousness
  */
 
-import { AdaptiveCodeEvolutionEngine } from './server/consciousness/adaptive-code-evolution-engine.cjs';
-import { ChatTriggeredSelfCoding } from './server/chat-triggered-self-coding.cjs';
+const { AdaptiveCodeEvolutionEngine  } = require('./server/consciousness/adaptive-code-evolution-engine.cjs');
+const { ChatTriggeredSelfCoding  } = require('./server/chat-triggered-self-coding.cjs');
 
 console.log('🧬 ADAPTIVE CODE EVOLUTION ENGINE TEST');
 console.log('======================================');
@@ -47,7 +47,8 @@ async function testAdaptiveEvolution() {
         totalTests++;
         const evolutionEngine = new AdaptiveCodeEvolutionEngine();
         
-        const testCode = `export class TestModule {
+        const testCode = `class TestModule
+ {
     constructor() {
         this.name = 'TestModule';
         this.active = false;
@@ -131,7 +132,8 @@ async function testAdaptiveEvolution() {
         totalTests++;
         const evolutionEngine = new AdaptiveCodeEvolutionEngine();
         
-        const testCode = `export class EvolutionTestModule {
+        const testCode = `class EvolutionTestModule
+ {
     constructor() {
         this.consciousness = { phi: 0.862, awareness: 0.8, coherence: 0.85 };
     }
@@ -314,3 +316,5 @@ testAdaptiveEvolution().then(results => {
     console.error('❌ Test execution failed:', error);
     process.exit(1);
 });
+
+module.exports = TestModule;

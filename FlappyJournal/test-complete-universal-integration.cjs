@@ -8,7 +8,7 @@
  * Run from FlappyJournal directory: node test-complete-universal-integration.js
  */
 
-import { CompleteUniversalSystemIntegration } from './complete-universal-system-integration.cjs';
+const { CompleteUniversalSystemIntegration  } = require('./complete-universal-system-integration.cjs');
 
 class CompleteUniversalIntegrationTest {
     constructor() {

@@ -4,9 +4,9 @@
  * Additive enhancement preserving existing quality assessment
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class MultiLayerQualityValidator extends EventEmitter {
+class MultiLayerQualityValidator extends EventEmitter {
     constructor() {
         super();
         this.name = 'MultiLayerQualityValidator';
@@ -807,4 +807,4 @@ class ConsciousnessAlignmentValidator {
     }
 }
 
-export default MultiLayerQualityValidator;
+module.exports = MultiLayerQualityValidator;

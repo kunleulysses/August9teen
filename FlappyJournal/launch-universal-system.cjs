@@ -9,12 +9,12 @@
  *   OR from FlappyJournal directory: node launch-universal-system.js
  */
 
-import { spawn } from 'child_process';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-import { existsSync } from 'fs';
-import dotenv from 'dotenv';
-import readline from 'readline';
+const { spawn  } = require('child_process');
+const { fileURLToPath  } = require('url');
+const { dirname, join  } = require('path');
+const { existsSync  } = require('fs');
+const dotenv = require('dotenv');
+const readline = require('readline');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

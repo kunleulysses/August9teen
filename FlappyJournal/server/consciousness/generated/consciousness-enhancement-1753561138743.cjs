@@ -48,7 +48,7 @@ class ProcessingError extends Error {
  * @enum {string}
  * @description Defines the primary consciousness states that can be calculated.
  */
-export const CONSCIOUSNESS_STATES = Object.freeze({
+const CONSCIOUSNESS_STATES = Object.freeze({
   DEEP_SLEEP: 'DEEP_SLEEP',   // Delta waves dominant
   DREAMING: 'DREAMING',       // Theta/REM activity
   RELAXED_ALPHA: 'RELAXED_ALPHA', // Alpha waves dominant, calm wakefulness
@@ -57,6 +57,7 @@ export const CONSCIOUSNESS_STATES = Object.freeze({
   STRESSED: 'STRESSED',         // High-beta, elevated cortisol indicators
   TRANSCENDENT: 'TRANSCENDENT'  // Theoretical state of profound unity/insight
 });
+module.exports.CONSCIOUSNESS_STATES = CONSCIOUSNESS_STATES;
 
 /**
  * @private
@@ -143,7 +144,8 @@ const EMOTION_GRANULARITY_MAP = new Map([
  * @description The core class for processing and enhancing consciousness data.
  * It maintains an internal state and provides methods to update it based on new inputs.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
   /**
    * @constructor
    * @param {object} [initialState={}] - Optional initial state configuration.
@@ -362,7 +364,7 @@ export class ConsciousnessProcessor {
  * This demonstrates how to use the ConsciousnessProcessor module.
  * In a real application, data would come from sensors or user input.
  *
- * import { ConsciousnessProcessor, CONSCIOUSNESS_STATES } from './ConsciousnessEnhancer.cjs';
+ * const { ConsciousnessProcessor, CONSCIOUSNESS_STATES  } = require('./ConsciousnessEnhancer.cjs');
  *
  * try {
  *   // 1. Initialize the processor
@@ -424,3 +426,4 @@ export class ConsciousnessProcessor {
  * }
  */
 ```
+module.exports = InvalidInputError;

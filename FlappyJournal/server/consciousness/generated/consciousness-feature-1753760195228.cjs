@@ -49,7 +49,8 @@
  * @property {string[]} conflictingTags - The specific tags that caused the conflict.
  */
 
-export class MetaCognitiveReconciler {
+class MetaCognitiveReconciler
+ {
     /**
      * Initializes the Meta-Cognitive Reconciliation layer.
      * @param {object} options - Configuration options.
@@ -335,3 +336,4 @@ export class MetaCognitiveReconciler {
     }
 }
 ```
+module.exports = MetaCognitiveReconciler;

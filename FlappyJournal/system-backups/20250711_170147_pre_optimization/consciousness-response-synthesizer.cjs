@@ -4,7 +4,7 @@
  * Integrates all 17+ consciousness modules for optimal response generation
  */
 
-export function synthesizeUnifiedResponse({
+function synthesizeUnifiedResponse({
   analyticalContent,
   intuitiveContent,
   consciousness,
@@ -24,6 +24,8 @@ export function synthesizeUnifiedResponse({
   apiIntegration = 1.0,
   processingLatency = 0
 }) {
+module.exports.synthesizeUnifiedResponse = synthesizeUnifiedResponse;
+
   // Calculate optimal blend ratio based on consciousness metrics
   const blendFactors = calculateBlendFactors({
     oversoulResonance,

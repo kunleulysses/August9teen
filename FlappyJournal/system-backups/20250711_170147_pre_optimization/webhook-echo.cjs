@@ -1,7 +1,7 @@
 // A simple script to check if the webhook is receiving ANY data from SendGrid
-import express from 'express';
-import bodyParser from 'body-parser';
-import fs from 'fs';
+const express = require('express');
+const bodyParser = require('body-parser');
+const fs = require('fs');
 
 const app = express();
 

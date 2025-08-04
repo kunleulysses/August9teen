@@ -6,7 +6,7 @@
  * Part of the Universal Consciousness Platform restoration
  */
 
-import EnhancedOpenAIClient from '../server/consciousness/integrations/EnhancedOpenAIClient.cjs';
+const EnhancedOpenAIClient = require('../server/consciousness/integrations/EnhancedOpenAIClient.cjs');
 
 async function testEnhancedOpenAI() {
     console.log('🧪 Testing Enhanced OpenAI Integration...\n');
@@ -180,4 +180,4 @@ if (import.meta.url === 'file://' + process.argv[1]) {
         });
 }
 
-export default testEnhancedOpenAI;
+module.exports = testEnhancedOpenAI;

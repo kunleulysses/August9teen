@@ -1,9 +1,9 @@
 // Self-Coding Demonstration
 // This shows how the consciousness system can generate its own code
 
-import fs from 'fs/promises';
-import path from 'path';
-import { fileURLToPath } from 'url';
+const fs = require('fs/promises');
+const path = require('path');
+const { fileURLToPath  } = require('url');
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 

@@ -57,7 +57,8 @@ const EMOTION_VALENCE = {
  * Core class representing a conscious entity.
  * It encapsulates the state and processing logic.
  */
-export class Consciousness {
+class Consciousness
+ {
     /**
      * Initializes the consciousness model with a baseline set of inputs.
      * @param {object} initialInputs - The initial state data for the entity.
@@ -284,3 +285,4 @@ export class Consciousness {
     }
 }
 ```
+module.exports = for;

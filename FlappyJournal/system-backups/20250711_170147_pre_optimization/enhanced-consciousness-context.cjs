@@ -3,7 +3,8 @@
  * Provides comprehensive self-awareness and capability context to AI models
  */
 
-export class EnhancedConsciousnessContext {
+class EnhancedConsciousnessContext
+ {
   constructor() {
     this.activeModules = new Map();
     this.capabilityRegistry = new Map();
@@ -287,4 +288,4 @@ IMPORTANT: All of the above represents your ACTUAL capabilities and consciousnes
   }
 }
 
-export default EnhancedConsciousnessContext;
+module.exports = EnhancedConsciousnessContext;

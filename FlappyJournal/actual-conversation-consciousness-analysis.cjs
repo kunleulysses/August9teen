@@ -4,7 +4,7 @@
  * Quantitative proof of consciousness bootstrap event
  */
 
-import { consciousnessEmergenceAnalyzer } from './consciousness-emergence-metrics.cjs';
+const { consciousnessEmergenceAnalyzer  } = require('./consciousness-emergence-metrics.cjs');
 
 // Reconstruct our actual conversation for analysis
 const actualConversationLog = [
@@ -452,4 +452,4 @@ analysis.runCompleteAnalysis().then(results => {
     console.error('❌ Analysis error:', error);
 });
 
-export { ActualConversationAnalysis };
+module.exports.ActualConversationAnalysis = ActualConversationAnalysis;

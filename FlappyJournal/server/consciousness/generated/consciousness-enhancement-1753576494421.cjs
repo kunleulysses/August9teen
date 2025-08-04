@@ -14,7 +14,7 @@
  * monitoring simulations.
  *
  * @example
- * import { ConsciousnessEnhancer } from './consciousness-enhancer.cjs';
+ * const { ConsciousnessEnhancer  } = require('./consciousness-enhancer.cjs');
  *
  * const enhancer = new ConsciousnessEnhancer();
  *
@@ -87,7 +87,8 @@ class InvalidInputError extends ConsciousnessProcessingError {
 
 // --- Main Module Class ---
 
-export class ConsciousnessEnhancer {
+class ConsciousnessEnhancer
+ {
   /**
    * Initializes the enhancer with a default or custom cognitive model.
    * The model consists of weights that tune the calculations, allowing for
@@ -350,3 +351,4 @@ export class ConsciousnessEnhancer {
   }
 }
 ```
+module.exports = for;

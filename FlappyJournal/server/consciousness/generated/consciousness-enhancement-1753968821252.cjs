@@ -47,7 +47,7 @@ class CognitiveDissonanceError extends Error {
  * @description The core class representing a conscious entity. It manages state, processes inputs,
  * and exposes metrics for awareness and emotional intelligence.
  */
-export default class Consciousness {
+module.exports = class Consciousness {
   /**
    * Initializes a new instance of the Consciousness module.
    * @param {object} [config={}] - Configuration for the consciousness instance.

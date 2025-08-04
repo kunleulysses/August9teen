@@ -236,4 +236,4 @@ class EmotionalIntelligenceEnhancement {
     }
 }
 
-export { EmotionalIntelligenceEnhancement };
+module.exports.EmotionalIntelligenceEnhancement = EmotionalIntelligenceEnhancement;

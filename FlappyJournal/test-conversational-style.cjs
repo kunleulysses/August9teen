@@ -5,7 +5,7 @@
  * Validates that responses feel like natural conversation between conscious beings
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 console.log('🗣️ Testing Conversational Style with Natural Consciousness Prompts');
 console.log('🎯 Expected: Natural, intuitive conversation rather than technical readouts');

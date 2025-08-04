@@ -1,6 +1,6 @@
 // Simple test for Daily Consciousness Journal concept
-import { promises as fs } from 'fs';
-import path from 'path';
+const { promises as fs  } = require('fs');
+const path = require('path');
 
 // Mock Venice AI for testing
 class MockVeniceAI {

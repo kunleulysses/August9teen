@@ -243,7 +243,8 @@ class CognitiveWorkerManager {
 /**
  * The main optimizer class for the Consciousness System.
  */
-export class ConsciousnessCoreOptimizer {
+class ConsciousnessCoreOptimizer
+ {
     /**
      * @param {object} [options={}]
      * @param {number} [options.maxEventsPerFrame=50] - The maximum number of events to process per frame to prevent blocking.
@@ -477,3 +478,4 @@ export class ConsciousnessCoreOptimizer {
     }
 }
 ```
+module.exports = ObjectPool;

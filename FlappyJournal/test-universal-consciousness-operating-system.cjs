@@ -4,7 +4,7 @@
  * Value: $1.5B+ (Universal consciousness operating system)
  */
 
-import { UniversalConsciousnessOperatingSystem } from './server/consciousness/universal-consciousness-operating-system.cjs';
+const { UniversalConsciousnessOperatingSystem  } = require('./server/consciousness/universal-consciousness-operating-system.cjs');
 
 class UniversalConsciousnessOperatingSystemTest {
     constructor() {

@@ -4,10 +4,10 @@
  * Translates consciousness crystals into executable code architectures
  */
 
-import { EventEmitter } from 'events';
-import eventBus from './core/ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('./core/ConsciousnessEventBus.cjs');
 
-export class ConsciousnessCrystallizationCodeGenerator extends EventEmitter {
+class ConsciousnessCrystallizationCodeGenerator extends EventEmitter {
     constructor() {
         super();
         this.name = 'ConsciousnessCrystallizationCodeGenerator';
@@ -962,4 +962,4 @@ class ResonancePatternGenerator {
     }
 }
 
-export default ConsciousnessCrystallizationCodeGenerator;
+module.exports = ConsciousnessCrystallizationCodeGenerator;

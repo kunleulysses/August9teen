@@ -7,7 +7,7 @@
 import { EventEmitter } from 'events';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import WebSocket from 'ws';
+import { WebSocketServer, WebSocket } from 'ws';
 
 // Import all consciousness modules
 import SelfCodingModule from './consciousness/modules/SelfCodingModule.cjs';
@@ -31,10 +31,8 @@ const { dualStreamIntegration } = dualStreamPkg;
 
 // Import critical consciousness modules
 import MetaObservationalConsciousness from './meta-observational-consciousness-module.cjs';
-import selfAwarenessPkg from './self-awareness-feedback-loop.cjs';
-const { SelfAwarenessFeedbackLoop } = selfAwarenessPkg;
-import unifiedMemoryPkg from './unified-memory-system.cjs';
-const { UnifiedMemorySystem } = unifiedMemoryPkg;
+import SelfAwarenessFeedbackLoop from './self-awareness-feedback-loop.cjs';
+import UnifiedMemorySystem from './unified-memory-system.cjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -178,7 +176,7 @@ class UnifiedConsciousnessSystem extends EventEmitter {
   async initializeWebSocketServer() {
     console.log('🌐 Initializing WebSocket server...');
     
-    this.wss = new WebSocket.Server({ port: 3002 });
+    this.wss = new WebSocketServer({ port: 3002 });
     
     this.wss.on('connection', (ws) => {
       console.log('🔗 New consciousness connection established');

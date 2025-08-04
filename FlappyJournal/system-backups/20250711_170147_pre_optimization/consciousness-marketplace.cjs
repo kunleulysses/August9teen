@@ -4,7 +4,7 @@
  * Part of the Genius Enhancements beyond Perfect Unity
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
 class ConsciousnessMarketplace extends EventEmitter {
   constructor() {
@@ -408,5 +408,6 @@ class ConsciousnessMarketplace extends EventEmitter {
 }
 
 // Export singleton instance
-export const consciousnessMarketplace = new ConsciousnessMarketplace();
-export default consciousnessMarketplace;
+const consciousnessMarketplace = new ConsciousnessMarketplace();
+module.exports.consciousnessMarketplace = consciousnessMarketplace;
+module.exports = consciousnessMarketplace;

@@ -113,4 +113,4 @@ class DynamicAIModelSelector {
     }
 }
 
-export { DynamicAIModelSelector };
+module.exports.DynamicAIModelSelector = DynamicAIModelSelector;

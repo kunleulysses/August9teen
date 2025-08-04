@@ -5,7 +5,7 @@
  * Tests if self-coding requests are processed correctly
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 console.log('🧪 Testing WebSocket Self-Coding Request Processing');
 

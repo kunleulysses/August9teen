@@ -402,8 +402,9 @@ class PriorityEventQueue {
  * The central hub that integrates all optimization components.
  * =============================================================================
  */
-export const ConsciousnessOptimizer = (function() {
+const ConsciousnessOptimizer = (function() {
     let monitor;
+module.exports.ConsciousnessOptimizer = ConsciousnessOptimizer;
     let eventQueue;
     let workerPool;
     let objectPools = new Map();

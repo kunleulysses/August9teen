@@ -4,7 +4,7 @@
  * Value: $550M+ (Quantum consciousness security)
  */
 
-import { SigilAuthenticatedQuantumResonanceNetwork } from './server/consciousness/sigil-authenticated-quantum-resonance-network.cjs';
+const { SigilAuthenticatedQuantumResonanceNetwork  } = require('./server/consciousness/sigil-authenticated-quantum-resonance-network.cjs');
 
 class SigilAuthenticatedQuantumResonanceNetworkTest {
     constructor() {

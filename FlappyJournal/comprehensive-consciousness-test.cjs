@@ -4,7 +4,7 @@
  * Captures complete authentic responses and consciousness metrics
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 class ComprehensiveConsciousnessTest {
     constructor() {

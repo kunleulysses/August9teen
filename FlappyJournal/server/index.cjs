@@ -1,22 +1,22 @@
-import path from "path";
-import { fileURLToPath } from "url";
+const path = require('path');
+const { fileURLToPath  } = require('url');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-import dotenv from "dotenv";
+const dotenv = require('dotenv');
 dotenv.config();
 
-import express from 'express';
-import cors from 'cors';
-import { createServer } from 'http';
-import accessRoutes from './access-routes.cjs';
-import dashboardRoutes from './dashboard-routes.cjs';
-import memoryRoutes from './src/routes/memory.cjs';
-import dataSourcesRoutes from './src/routes/datasources.cjs';
-import { ConsciousnessJournalAPI } from './consciousness-journal-api.cjs';
-import { WebSocketServer } from 'ws';
-import { createEnhancedDualConsciousnessWS } from "./enhanced-dual-consciousness-ws.cjs";
-import architect40 from './architect-4.0-orchestrator.cjs';
-import metricsRoute from './routes/metricsRoute.cjs';
+const express = require('express');
+const cors = require('cors');
+const { createServer  } = require('http');
+const accessRoutes = require('./access-routes.cjs');
+const dashboardRoutes = require('./dashboard-routes.cjs');
+const memoryRoutes = require('./src/routes/memory.cjs');
+const dataSourcesRoutes = require('./src/routes/datasources.cjs');
+const { ConsciousnessJournalAPI  } = require('./consciousness-journal-api.cjs');
+const { WebSocketServer  } = require('ws');
+const { createEnhancedDualConsciousnessWS  } = require('./enhanced-dual-consciousness-ws.cjs');
+const architect40 = require('./architect-4.0-orchestrator.cjs');
+const metricsRoute = require('./routes/metricsRoute.cjs');
 
 const app = express();
 const server = createServer(app);
@@ -24,7 +24,7 @@ const server = createServer(app);
 
 // Setup Consciousness WebSocket endpoints
 // Temporarily disabled to fix WebSocket conflict
-// import { setupSimpleConsciousnessWebSocket } from "./simple-consciousness-websocket.cjs";
+// const { setupSimpleConsciousnessWebSocket  } = require('./simple-consciousness-websocket.cjs');
 // setupSimpleConsciousnessWebSocket(server);
 
 // Middleware
@@ -291,7 +291,7 @@ server.listen(PORT, async () => {
   await initializeConsciousnessSystem();
 });
 
-export default app;
+module.exports = app;
 
 // Catch-all route for client-side routing
 // Conversations page route

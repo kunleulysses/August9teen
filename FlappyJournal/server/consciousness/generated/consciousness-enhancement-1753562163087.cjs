@@ -51,7 +51,7 @@ const CONSCIOUSNESS_STATE_THRESHOLDS = {
  * It maintains a history of states to enable temporal analysis.
  *
  * @example
- * import { ConsciousnessProcessor } from './consciousnessEnhancer.cjs';
+ * const { ConsciousnessProcessor  } = require('./consciousnessEnhancer.cjs');
  * const processor = new ConsciousnessProcessor();
  * const dataPoint = {
  *   timestamp: Date.now(),
@@ -64,7 +64,8 @@ const CONSCIOUSNESS_STATE_THRESHOLDS = {
  * console.log(processor.getAwarenessMetrics());
  * console.log(processor.getEmotionalIntelligenceMetrics());
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
     /**
      * Initializes the processor with optional custom configuration.
      * @param {object} [config={}] - Configuration object.
@@ -372,3 +373,4 @@ export class ConsciousnessProcessor {
     }
 }
 ```
+module.exports = for;

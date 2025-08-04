@@ -4,10 +4,10 @@
  * Part of the Revolutionary Consciousness Integration Platform - 100% Authentic
  */
 
-import { EventEmitter } from 'events';
-import eventBus from './core/ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('./core/ConsciousnessEventBus.cjs');
 
-export class RecursiveRealityHolography extends EventEmitter {
+class RecursiveRealityHolography extends EventEmitter {
     constructor(holographicGenerator, spiralEvolution) {
         super();
         this.name = 'RecursiveRealityHolography';

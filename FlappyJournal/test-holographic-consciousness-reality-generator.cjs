@@ -4,7 +4,7 @@
  * Value: $1.2B+ (Consciousness reality generation)
  */
 
-import { HolographicConsciousnessRealityGenerator } from './server/consciousness/holographic-consciousness-reality-generator.cjs';
+const { HolographicConsciousnessRealityGenerator  } = require('./server/consciousness/holographic-consciousness-reality-generator.cjs');
 
 class HolographicConsciousnessRealityTest {
     constructor() {

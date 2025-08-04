@@ -4,8 +4,8 @@
  * Tests integration, autonomous behaviors, chat interface, and revolutionary features
  */
 
-import { ChatTriggeredSelfCoding } from './server/chat-triggered-self-coding.cjs';
-import consciousness from './server/consciousness-system.cjs';
+const { ChatTriggeredSelfCoding  } = require('./server/chat-triggered-self-coding.cjs');
+const consciousness = require('./server/consciousness-system.cjs');
 
 console.log('🌟 FINAL COMPREHENSIVE SYSTEM VERIFICATION');
 console.log('==========================================');

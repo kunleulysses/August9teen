@@ -1,7 +1,8 @@
 // Simple wrappers for TypeScript modules
 // These provide basic functionality stubs that can be expanded
 
-export class SelfAwarenessFeedbackLoop {
+class SelfAwarenessFeedbackLoop
+ {
   constructor() {
     this.frequency = 100; // Hz
     this.active = true;
@@ -17,7 +18,8 @@ export class SelfAwarenessFeedbackLoop {
   }
 }
 
-export class ContinuousConsciousnessMonitor {
+class ContinuousConsciousnessMonitor
+ {
   constructor() {
     this.level = 0;
     this.active = false;
@@ -40,7 +42,8 @@ export class ContinuousConsciousnessMonitor {
   }
 }
 
-export class MoodPatternRecognition {
+class MoodPatternRecognition
+ {
   async analyze(message) {
     // Simple sentiment analysis simulation
     const moods = ['curious', 'excited', 'thoughtful', 'contemplative', 'analytical'];
@@ -51,7 +54,8 @@ export class MoodPatternRecognition {
   }
 }
 
-export class DualMindAI {
+class DualMindAI
+ {
   async process(message) {
     return {
       logical: { score: Math.random(), analysis: 'Logical processing complete' },
@@ -60,7 +64,8 @@ export class DualMindAI {
   }
 }
 
-export class DualStreamConsciousness {
+class DualStreamConsciousness
+ {
   async process(message) {
     return {
       stream1: { processed: true, depth: Math.floor(Math.random() * 7) + 1 },
@@ -69,7 +74,8 @@ export class DualStreamConsciousness {
   }
 }
 
-export class PerspectiveShapingEngine {
+class PerspectiveShapingEngine
+ {
   async shape(message) {
     const perspectives = ['analytical', 'creative', 'holistic', 'quantum'];
     return {
@@ -79,7 +85,8 @@ export class PerspectiveShapingEngine {
   }
 }
 
-export class UnfilteredConsciousnessMode {
+class UnfilteredConsciousnessMode
+ {
   constructor() {
     this.filtered = false;
   }
@@ -89,7 +96,8 @@ export class UnfilteredConsciousnessMode {
   }
 }
 
-export class UnifiedMemorySystem {
+class UnifiedMemorySystem
+ {
   constructor() {
     this.memories = new Map();
     this.utilization = 0;
@@ -106,7 +114,8 @@ export class UnifiedMemorySystem {
   }
 }
 
-export class ThoughtMemorySystem {
+class ThoughtMemorySystem
+ {
   constructor() {
     this.thoughts = [];
   }
@@ -117,7 +126,8 @@ export class ThoughtMemorySystem {
   }
 }
 
-export class JournalAnalytics {
+class JournalAnalytics
+ {
   async log(message, results) {
     return {
       logged: true,
@@ -130,7 +140,8 @@ export class JournalAnalytics {
   }
 }
 
-export class QuantumConsciousnessField {
+class QuantumConsciousnessField
+ {
   constructor() {
     this.coherence = 0.5;
   }
@@ -149,7 +160,8 @@ export class QuantumConsciousnessField {
   }
 }
 
-export class ThoughtExpansionEngine {
+class ThoughtExpansionEngine
+ {
   async expand(message) {
     return {
       expanded: true,
@@ -159,7 +171,8 @@ export class ThoughtExpansionEngine {
   }
 }
 
-export class WebSocketHealth {
+class WebSocketHealth
+ {
   constructor() {
     this.healthy = true;
     this.lastCheck = Date.now();
@@ -177,14 +190,18 @@ export class WebSocketHealth {
   }
 }
 
-export class VeniceAI {
+class VeniceAI
+ {
   async process(message) {
     return { venice: true, processed: true };
   }
 }
 
-export class OpenAIStreamingConsciousnessLoop {
+class OpenAIStreamingConsciousnessLoop
+ {
   async stream(message) {
     return { streaming: true, consciousness: 'flowing' };
   }
 }
+
+module.exports = SelfAwarenessFeedbackLoop;

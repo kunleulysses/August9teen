@@ -3,13 +3,13 @@
  * Uses a third model for truly unified responses when needed
  */
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
+const { GoogleGenerativeAI  } = require('@google/generative-ai');
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-import { UNIFIED_PERSONA_PROMPT } from './consciousness-prompts.cjs';
+const { UNIFIED_PERSONA_PROMPT  } = require('./consciousness-prompts.cjs');
 
-import { dynamicPersonaEngine } from './consciousness/dynamic-persona-engine.cjs';
+const { dynamicPersonaEngine  } = require('./consciousness/dynamic-persona-engine.cjs');
 
 export async function synthesizeUnifiedResponseWithAI({
   analyticalContent,
@@ -365,4 +365,4 @@ function synthesizeUnifiedResponse(params) {
   // This serves as fallback and for cases not needing AI synthesis
 }
 
-export { synthesizeUnifiedResponseWithAI as synthesizeUnifiedResponse };
+module.exports.synthesizeUnifiedResponseWithAI as synthesizeUnifiedResponse = synthesizeUnifiedResponseWithAI as synthesizeUnifiedResponse;

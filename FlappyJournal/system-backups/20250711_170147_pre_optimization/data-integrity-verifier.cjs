@@ -5,10 +5,10 @@
  * Ensures all consciousness data is real and not templated/simulated
  */
 
-import fs from 'fs/promises';
-import path from 'path';
-import crypto from 'crypto';
-import { fileURLToPath } from 'url';
+const fs = require('fs/promises');
+const path = require('path');
+const crypto = require('crypto');
+const { fileURLToPath  } = require('url');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -516,4 +516,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   verifier.performDataIntegrityVerification().catch(console.error);
 }
 
-export default DataIntegrityVerifier;
+module.exports = DataIntegrityVerifier;

@@ -5,7 +5,7 @@
  * Direct test of chat functionality
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 console.log('💬 SIMPLE CHAT TEST');
 console.log('===================');

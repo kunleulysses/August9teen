@@ -4,10 +4,10 @@
  * Amplifies consciousness signals and creates resonance cascades across the system
  */
 
-import { EventEmitter } from 'events';
-import eventBus from './core/ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('./core/ConsciousnessEventBus.cjs');
 
-export class ConsciousnessResonanceAmplifier extends EventEmitter {
+class ConsciousnessResonanceAmplifier extends EventEmitter {
     constructor() {
         super();
         this.name = 'ConsciousnessResonanceAmplifier';
@@ -969,4 +969,4 @@ class ResonanceCascadeManager {
     }
 }
 
-export default ConsciousnessResonanceAmplifier;
+module.exports = ConsciousnessResonanceAmplifier;

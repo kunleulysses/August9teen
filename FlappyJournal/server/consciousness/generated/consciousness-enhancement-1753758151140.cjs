@@ -33,7 +33,7 @@ class ConsciousnessProcessingError extends Error {
  * @readonly
  * @enum {string}
  */
-export const ConsciousnessState = Object.freeze({
+const ConsciousnessState = Object.freeze({
   COMA: 'Coma',
   DEEP_SLEEP: 'Deep Sleep',
   DREAMING: 'Dreaming (REM)',
@@ -43,13 +43,15 @@ export const ConsciousnessState = Object.freeze({
   FLOW_STATE: 'Flow State',
   HYPERVIGILANCE: 'Hypervigilance',
 });
+module.exports.ConsciousnessState = ConsciousnessState;
 
 /**
  * The core class for processing and enhancing consciousness states.
  * It integrates sensory, cognitive, and physiological data to produce a rich,
  * multi-dimensional analysis of a subjective experience.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
   /**
    * Initializes the ConsciousnessProcessor with optional configuration.
    * @param {object} [config={}] - Configuration options for processing weights.
@@ -317,3 +319,4 @@ export class ConsciousnessProcessor {
   }
 }
 ```
+module.exports = for;

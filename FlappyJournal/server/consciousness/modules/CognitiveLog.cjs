@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+const fs = require('fs');
+const path = require('path');
 
 const logDirectory = path.join(process.cwd(), 'FlappyJournal', 'consciousness-journal', 'cognitive-logs');
 
@@ -64,4 +64,5 @@ class CognitiveLog {
     }
 }
 
-export const cognitiveLog = new CognitiveLog();
+const cognitiveLog = new CognitiveLog();
+module.exports.cognitiveLog = cognitiveLog;

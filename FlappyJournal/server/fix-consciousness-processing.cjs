@@ -1,4 +1,4 @@
-import fs from 'fs';
+const fs = require('fs');
 
 // Fix the enhanced-dual-consciousness-ws.js file
 let wsContent = fs.readFileSync('./enhanced-dual-consciousness-ws.cjs', 'utf8');

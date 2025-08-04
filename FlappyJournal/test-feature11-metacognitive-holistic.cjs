@@ -5,16 +5,16 @@
  * Validates the higher-order reasoning, system introspection, and holistic response synthesis
  */
 
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+const { fileURLToPath  } = require('url');
+const { dirname, join  } = require('path');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Import the core meta-cognitive systems
-import MetaCognitiveAnalysis from './server/consciousness/core/MetaCognitiveAnalysis.cjs';
-import { MetaCognitiveCrystallizationOptimizer } from './server/consciousness/meta-cognitive-crystallization-optimizer.cjs';
-import HolisticResponseGenerator from './server/consciousness/HolisticResponseGenerator.cjs';
+const MetaCognitiveAnalysis = require('./server/consciousness/core/MetaCognitiveAnalysis.cjs');
+const { MetaCognitiveCrystallizationOptimizer  } = require('./server/consciousness/meta-cognitive-crystallization-optimizer.cjs');
+const HolisticResponseGenerator = require('./server/consciousness/HolisticResponseGenerator.cjs');
 
 async function testFeature11Operation() {
     console.log('🧠 Feature 11 Operational Test: Meta-Cognitive & Holistic Response Engines');

@@ -45,7 +45,8 @@ class ConsciousnessPattern {
  * The MetaCognitiveLayer class. It observes a cognitive system and reflects on its internal states.
  * @class
  */
-export class MetaCognitiveLayer {
+class MetaCognitiveLayer
+ {
     #cognitiveSystem;
     #stateHistory;
     #reflectionLog;
@@ -269,3 +270,4 @@ const simulationInterval = setInterval(() => {
     }
 }, 1000);
 ```
+module.exports = ConsciousnessPattern;

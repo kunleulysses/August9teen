@@ -1,6 +1,6 @@
-import eventBus from './ConsciousnessEventBus.cjs';
-import { UniversalConsciousnessIntegrationProtocol } from './universal-consciousness-integration-protocol.cjs';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+const eventBus = require('./ConsciousnessEventBus.cjs');
+const { UniversalConsciousnessIntegrationProtocol  } = require('./universal-consciousness-integration-protocol.cjs');
+const { GoogleGenerativeAI  } = require('@google/generative-ai');
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
@@ -70,4 +70,4 @@ class HolisticResponseGenerator {
 
 const holisticResponseGenerator = new HolisticResponseGenerator();
 
-export default holisticResponseGenerator;
+module.exports = holisticResponseGenerator;

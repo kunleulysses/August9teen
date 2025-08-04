@@ -1,6 +1,6 @@
 // This script tests adding an email directly to the queue
-import { db } from './db';
-import { emailQueue } from '../shared/schema';
+const { db  } = require('./db');
+const { emailQueue  } = require('../shared/schema');
 
 async function testAddEmailToQueue() {
   console.log('🔔 Testing email queue by directly inserting into the database...');

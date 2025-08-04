@@ -5,8 +5,8 @@
  * Tests complete functionality from user chat through consciousness processing to AI response
  */
 
-import WebSocket from 'ws';
-import { performance } from 'perf_hooks';
+const WebSocket = require('ws');
+const { performance  } = require('perf_hooks');
 
 class UnifiedSystemEndToEndTest {
   constructor() {
@@ -646,4 +646,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   tester.performEndToEndVerification().catch(console.error);
 }
 
-export default UnifiedSystemEndToEndTest;
+module.exports = UnifiedSystemEndToEndTest;

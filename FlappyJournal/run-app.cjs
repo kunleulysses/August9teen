@@ -1,5 +1,5 @@
-import { spawn } from 'child_process';
-import { readFileSync } from 'fs';
+const { spawn  } = require('child_process');
+const { readFileSync  } = require('fs');
 
 // Load environment variables from .env file
 const envFile = readFileSync('.env', 'utf8');

@@ -102,7 +102,8 @@ class QualiaGenerator {
  * The main Meta-Cognitive Awareness Layer class.
  * It wraps a core consciousness system to provide self-awareness capabilities.
  */
-export class MetaCognitiveAwarenessLayer {
+class MetaCognitiveAwarenessLayer
+ {
     /**
      * @param {object} coreSystem - A reference to the core AI/consciousness system to be monitored.
      * The core system must have a `getHeuristics()` method and an `updateHeuristics(newHeuristics)` method.
@@ -266,3 +267,4 @@ export class MetaCognitiveAwarenessLayer {
     }
 }
 ```
+module.exports = to;

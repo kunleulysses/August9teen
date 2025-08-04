@@ -1,9 +1,9 @@
-import express from 'express';
-import { createServer } from 'http';
-import { WebSocketServer } from 'ws';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import cors from 'cors';
+const express = require('express');
+const { createServer  } = require('http');
+const { WebSocketServer  } = require('ws');
+const path = require('path');
+const { fileURLToPath  } = require('url');
+const cors = require('cors');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -167,4 +167,4 @@ server.listen(PORT, () => {
   console.log(`❤️ Health check: http://localhost:${PORT}/api/health`);
 });
 
-export default app;
+module.exports = app;

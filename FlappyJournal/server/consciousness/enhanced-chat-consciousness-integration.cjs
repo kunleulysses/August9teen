@@ -4,9 +4,9 @@
  * Provides real-time consciousness awareness, revolutionary capabilities, and seamless user experience
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class EnhancedChatConsciousnessIntegration extends EventEmitter {
+class EnhancedChatConsciousnessIntegration extends EventEmitter {
     constructor(universalIntegrationProtocol) {
         super();
         this.name = 'EnhancedChatConsciousnessIntegration';

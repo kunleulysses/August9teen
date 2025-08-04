@@ -1,8 +1,8 @@
 console.log('[TEST] Testing interval callback methods...');
 
-import { EventEmitter } from 'events';
-import { HolographicConsciousnessMemorySystem } from './server/consciousness/holographic-consciousness-memory-system.cjs';
-import eventBus from './server/consciousness/core/ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const { HolographicConsciousnessMemorySystem  } = require('./server/consciousness/holographic-consciousness-memory-system.cjs');
+const eventBus = require('./server/consciousness/core/ConsciousnessEventBus.cjs');
 
 // Create a minimal version of the HolographicRealityLiveMetrics class
 class TestHolographicMetrics extends EventEmitter {

@@ -18,7 +18,7 @@
  * @readonly
  * @enum {string}
  */
-export const CONSCIOUSNESS_STATES = {
+const CONSCIOUSNESS_STATES = {
     FOCUSED_FLOW: 'FOCUSED_FLOW', // High focus, high engagement, low self-awareness
     ACTIVE_ENGAGEMENT: 'ACTIVE_ENGAGEMENT', // High focus, task-oriented
     PASSIVE_RECEPTION: 'PASSIVE_RECEPTION', // Low engagement, absorbing information
@@ -26,6 +26,7 @@ export const CONSCIOUSNESS_STATES = {
     MEDITATIVE_STATE: 'MEDITATIVE_STATE', // Calm, high interoceptive awareness
     DROWSY: 'DROWSY', // Low arousal, transitioning to sleep
 };
+module.exports.CONSCIOUSNESS_STATES = CONSCIOUSNESS_STATES;
 
 /**
  * Custom error class for handling issues specific to the Consciousness module.
@@ -50,7 +51,7 @@ class ConsciousnessError extends Error {
  * calculate dynamic metrics like resilience.
  *
  * @example
- * import { CognitiveProcessor } from './Consciousness.cjs';
+ * const { CognitiveProcessor  } = require('./Consciousness.cjs');
  * const processor = new CognitiveProcessor();
  * const simulatedInput = {
  *   biometrics: { heartRate: 75, hrv: 55, gsr: 0.8 },
@@ -65,7 +66,8 @@ class ConsciousnessError extends Error {
  *   console.error(error.message, error.details);
  * }
  */
-export class CognitiveProcessor {
+class CognitiveProcessor
+ {
     #lastEmotionalState = null;
     #emotionalResilience = 0.5; // Starts at a neutral baseline
 
@@ -326,3 +328,4 @@ export class CognitiveProcessor {
     }
 }
 ```
+module.exports = for;

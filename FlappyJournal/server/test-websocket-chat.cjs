@@ -2,7 +2,7 @@
  * Test WebSocket chat with Architect 4.0
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 async function testWebSocketChat() {
   console.log('=== Testing WebSocket Chat with Architect 4.0 ===\n');

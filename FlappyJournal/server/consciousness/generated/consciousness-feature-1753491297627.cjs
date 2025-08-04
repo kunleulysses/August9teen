@@ -26,7 +26,8 @@
  * The MetaCognitiveLayer class. It observes a host "consciousness" system
  * to provide introspective analysis and corrective feedback.
  */
-export class MetaCognitiveLayer {
+class MetaCognitiveLayer
+ {
     /**
      * @param {object} consciousnessSystem - The host system to monitor. Must implement a `registerHook` method.
      * @param {object} [config={}] - Configuration options for the meta-cognitive layer.
@@ -446,3 +447,4 @@ async function runSimulation() {
 
     // Scenario 3: Recency Bias
     console.log("\n--- SCENARIO 3: INDUCING
+module.exports = MetaCognitiveLayer;

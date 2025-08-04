@@ -524,4 +524,4 @@ class TriAxialCoherenceSystem {
     }
 }
 
-export default new TriAxialCoherenceSystem();
+module.exports = new TriAxialCoherenceSystem();

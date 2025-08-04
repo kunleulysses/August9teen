@@ -134,7 +134,8 @@ function normalize(value, min, max) {
  * A class representing a sophisticated consciousness processing unit.
  * It integrates various inputs to create a holistic model of a conscious state.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
     #currentState;
 
     /**
@@ -391,3 +392,4 @@ export class ConsciousnessProcessor {
     }
 }
 ```
+module.exports = representing;

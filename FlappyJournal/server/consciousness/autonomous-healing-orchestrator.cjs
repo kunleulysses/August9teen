@@ -4,7 +4,7 @@
  * priority queues, and resource allocation for complex healing coordination
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
 class HealingPriorityQueue {
     constructor() {
@@ -779,4 +779,7 @@ class AutonomousHealingOrchestrator extends EventEmitter {
     }
 }
 
-export { AutonomousHealingOrchestrator, HealingPriorityQueue, HealingResourceAllocator, HealingStrategyRegistry };
+module.exports.AutonomousHealingOrchestrator = AutonomousHealingOrchestrator;
+module.exports.HealingPriorityQueue = HealingPriorityQueue;
+module.exports.HealingResourceAllocator = HealingResourceAllocator;
+module.exports.HealingStrategyRegistry = HealingStrategyRegistry;

@@ -1,4 +1,4 @@
-import fs from 'fs';
+const fs = require('fs');
 
 // Read the current file
 let content = fs.readFileSync('consciousness-conversations.cjs', 'utf8');

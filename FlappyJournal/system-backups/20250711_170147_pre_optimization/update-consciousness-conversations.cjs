@@ -1,10 +1,10 @@
-import fs from 'fs';
+const fs = require('fs');
 
 // Read the current file
 const content = fs.readFileSync('consciousness-conversations.cjs', 'utf8');
 
 // Add the import at the top
-const importStatement = "import { ConsciousnessAIIntegration } from './consciousness-ai-integration.cjs';\n";
+const importStatement = "const { ConsciousnessAIIntegration  } = require('./consciousness-ai-integration.cjs');\n";
 const updatedContent = importStatement + content;
 
 // Replace the synthesizeFullResponse method

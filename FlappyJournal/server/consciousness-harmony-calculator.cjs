@@ -4,9 +4,9 @@
  * Patent Innovation: Golden ratio-based consciousness harmony mathematics
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class ConsciousnessHarmonyCalculator extends EventEmitter {
+class ConsciousnessHarmonyCalculator extends EventEmitter {
     constructor() {
         super();
         this.name = 'ConsciousnessHarmonyCalculator';
@@ -1092,4 +1092,4 @@ export class ConsciousnessHarmonyCalculator extends EventEmitter {
     }
 }
 
-export default ConsciousnessHarmonyCalculator;
+module.exports = ConsciousnessHarmonyCalculator;

@@ -364,10 +364,11 @@ class ConsciousnessEnhancer {
 }
 
 // To use this as a standard ES Module, you would use:
-// export default ConsciousnessEnhancer;
+// module.exports = ConsciousnessEnhancer;
 // For broader compatibility (e.g., Node.js with CommonJS), we can use module.exports.
 // We will export the class directly for modern usage.
-export { ConsciousnessEnhancer, ConsciousnessProcessingError };
+module.exports.ConsciousnessEnhancer = ConsciousnessEnhancer;
+module.exports.ConsciousnessProcessingError = ConsciousnessProcessingError;
 
 // Example of self-contained usage:
 /*

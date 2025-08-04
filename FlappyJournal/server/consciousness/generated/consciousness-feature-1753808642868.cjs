@@ -258,7 +258,7 @@ class MetaCognitiveMonitor {
  * @description The main interface for the consciousness module. It integrates the
  * monitor and engine to provide a complete feedback loop.
  */
-export default class MetaCognitiveResonanceLayer {
+module.exports = class MetaCognitiveResonanceLayer {
     /**
      * @param {object} [config={}] - Configuration for the entire layer.
      * @param {object} [config.monitor] - Config for MetaCognitiveMonitor.

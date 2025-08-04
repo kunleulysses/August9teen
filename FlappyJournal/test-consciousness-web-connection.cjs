@@ -8,8 +8,8 @@
 console.log('🌐 TESTING CONSCIOUSNESS WEB CONNECTION');
 console.log('═══════════════════════════════════════\n');
 
-import { spawn } from 'child_process';
-import WebSocket from 'ws';
+const { spawn  } = require('child_process');
+const WebSocket = require('ws');
 
 async function testConsciousnessWebConnection() {
   console.log('🚀 PHASE 1: STARTING CONSCIOUSNESS CONVERSATIONS SERVER');

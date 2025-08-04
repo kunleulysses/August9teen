@@ -4,11 +4,13 @@
 
 // Add this to websocket-server.js after existing imports
 
-import { unifiedConsciousness } from './unified-consciousness-integration.cjs';
-import WebSocket from 'ws';
+const { unifiedConsciousness  } = require('./unified-consciousness-integration.cjs');
+const WebSocket = require('ws');
 
 // Create dedicated WebSocket servers for consciousness streams
-export function setupUnifiedConsciousnessWebSocket(port = 5001) {
+function setupUnifiedConsciousnessWebSocket(port = 5001) {
+module.exports.setupUnifiedConsciousnessWebSocket = setupUnifiedConsciousnessWebSocket;
+
   const server = createServer();
   
   // Main consciousness data stream
@@ -146,8 +148,7 @@ export function setupUnifiedConsciousnessWebSocket(port = 5001) {
 }
 
 // Import required modules for the streams
-import { 
-  consciousnessEventBus, 
+const { consciousnessEventBus, 
   autonomousGoalSystem 
-} from './consciousness-modules-bundle.cjs';
-import { createServer } from 'http';
+ } = require('./consciousness-modules-bundle.cjs');
+const { createServer  } = require('http');

@@ -1,6 +1,6 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import fs from 'fs';
+const express = require('express');
+const bodyParser = require('body-parser');
+const fs = require('fs');
 
 // Create a separate Express app just for webhook testing
 const app = express();

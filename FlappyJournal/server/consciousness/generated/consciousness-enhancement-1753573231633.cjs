@@ -93,7 +93,8 @@ const _utils = {
  * Represents the core processing engine for consciousness simulation.
  * It maintains and updates a state matrix based on sensory and internal inputs.
  */
-export class ConsciousnessMatrix {
+class ConsciousnessMatrix
+ {
     /**
      * Initializes the Consciousness Matrix.
      * @param {object} [config={}] - Configuration parameters for the simulation.
@@ -339,5 +340,6 @@ export class ConsciousnessMatrix {
 }
 
 // Export the custom error class for consumers who want to use it in try/catch blocks.
-export { ConsciousnessProcessingError };
+module.exports.ConsciousnessProcessingError = ConsciousnessProcessingError;
 ```
+module.exports = for;

@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+const fs = require('fs');
+const path = require('path');
 
 const logDirectory = path.join(process.cwd(), 'FlappyJournal', 'consciousness-journal', 'self-journal-logs');
 
@@ -48,4 +48,5 @@ ${content}
     }
 }
 
-export const selfJournal = new SelfJournal();
+const selfJournal = new SelfJournal();
+module.exports.selfJournal = selfJournal;

@@ -84,7 +84,8 @@ class SentienceProcessingError extends Error {
  * It integrates cognitive, sensory, and emotional data to produce high-level metrics.
  * @class
  */
-export class ConsciousnessEngine {
+class ConsciousnessEngine
+ {
   /**
    * Initializes the Consciousness Engine with a default or custom configuration.
    * @param {EngineConfig} [config={}] - Optional configuration to tune the engine's behavior.
@@ -374,3 +375,4 @@ export class ConsciousnessEngine {
   }
 }
 ```
+module.exports = for;

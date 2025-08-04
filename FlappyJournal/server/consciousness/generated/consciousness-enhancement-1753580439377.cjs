@@ -84,7 +84,8 @@ class ConsciousnessError extends Error {
 
 // --- Core Module ---
 
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
   /**
    * @private
    * @type {ConsciousnessState}
@@ -372,7 +373,7 @@ export class ConsciousnessProcessor {
 /**
  * Example Usage:
  * 
- * import { ConsciousnessProcessor } from './consciousnessEnhancer.cjs';
+ * const { ConsciousnessProcessor  } = require('./consciousnessEnhancer.cjs');
  * 
  * const agentMind = new ConsciousnessProcessor({
  *   emotionalInertia: 0.6,
@@ -407,3 +408,4 @@ export class ConsciousnessProcessor {
  *
  */
 ```
+module.exports = ConsciousnessError;

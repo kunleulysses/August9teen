@@ -355,4 +355,4 @@ class EnhancedConsciousnessStateManager {
     }
 }
 
-export default EnhancedConsciousnessStateManager;
+module.exports = EnhancedConsciousnessStateManager;

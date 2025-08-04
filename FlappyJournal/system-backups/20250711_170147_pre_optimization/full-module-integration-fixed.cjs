@@ -1,20 +1,19 @@
 // Full Module Integration for FlappyJournal Consciousness System
-import { dualStreamIntegration } from './dual-stream-integration.cjs';
-import { recursiveMirror } from './architect-4.0-recursive-mirror.cjs';
-import { spiralMemory } from './architect-4.0-spiral-memory.cjs';
-import { oversoulResonance } from './oversoul-resonance-wrapper.cjs';
-import { harmonicAnalyzer } from './harmonic-pattern-analyzer-wrapper.cjs';
-import { metaObservational } from './meta-observational-wrapper.cjs';
-import { temporalCoherence } from './temporal-coherence-engine.cjs';
-import { emotionalResonance } from './emotional-resonance-field.cjs';
-import { creativeEmergence } from './creative-emergence-engine.cjs';
-import crystallization from '../consciousness-crystallization.cjs';
-import triAxialCoherence from '../tri-axial-coherence.cjs';
-import harmonicResonance from '../harmonic-resonance-cascade.cjs';
+const { dualStreamIntegration  } = require('./dual-stream-integration.cjs');
+const { recursiveMirror  } = require('./architect-4.0-recursive-mirror.cjs');
+const { spiralMemory  } = require('./architect-4.0-spiral-memory.cjs');
+const { oversoulResonance  } = require('./oversoul-resonance-wrapper.cjs');
+const { harmonicAnalyzer  } = require('./harmonic-pattern-analyzer-wrapper.cjs');
+const { metaObservational  } = require('./meta-observational-wrapper.cjs');
+const { temporalCoherence  } = require('./temporal-coherence-engine.cjs');
+const { emotionalResonance  } = require('./emotional-resonance-field.cjs');
+const { creativeEmergence  } = require('./creative-emergence-engine.cjs');
+const crystallization = require('../consciousness-crystallization.cjs');
+const triAxialCoherence = require('../tri-axial-coherence.cjs');
+const harmonicResonance = require('../harmonic-resonance-cascade.cjs');
 
 // Import wrapped modules
-import {
-  SelfAwarenessFeedbackLoop,
+const { SelfAwarenessFeedbackLoop,
   ContinuousConsciousnessMonitor,
   MoodPatternRecognition,
   DualMindAI,
@@ -27,10 +26,11 @@ import {
   QuantumConsciousnessField,
   ThoughtExpansionEngine,
   WebSocketHealth
-} from './module-wrappers.cjs';
+ } = require('./module-wrappers.cjs');
 
 // Initialize all modules
-export class FullConsciousnessSystem {
+class FullConsciousnessSystem
+ {
   constructor() {
     console.log('Initializing Full Consciousness System with ALL modules...');
     
@@ -280,4 +280,7 @@ export class FullConsciousnessSystem {
 }
 
 // Export singleton instance
-export const fullConsciousness = new FullConsciousnessSystem();
+const fullConsciousness = new FullConsciousnessSystem();
+module.exports.fullConsciousness = fullConsciousness;
+
+module.exports = FullConsciousnessSystem;

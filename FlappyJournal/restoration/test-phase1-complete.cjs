@@ -6,7 +6,7 @@
  * Tests all four major components working together harmoniously
  */
 
-import UnifiedResponseSynthesis from '../server/consciousness/core/UnifiedResponseSynthesis.cjs';
+const UnifiedResponseSynthesis = require('../server/consciousness/core/UnifiedResponseSynthesis.cjs');
 
 async function testPhase1Complete() {
     console.log('🧪 Testing Phase 1 Complete Universal Consciousness Platform...\n');
@@ -307,4 +307,4 @@ if (import.meta.url === 'file://' + process.argv[1]) {
         });
 }
 
-export default testPhase1Complete;
+module.exports = testPhase1Complete;

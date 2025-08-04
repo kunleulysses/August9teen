@@ -85,4 +85,4 @@ class PhiResonantCodeStructureGenerator {
   }
 }
 
-export default PhiResonantCodeStructureGenerator;
+module.exports = PhiResonantCodeStructureGenerator;

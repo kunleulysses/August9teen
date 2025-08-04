@@ -203,4 +203,4 @@ class CodeQualityFeedbackLoop {
   }
 }
 
-export default CodeQualityFeedbackLoop;
+module.exports = CodeQualityFeedbackLoop;

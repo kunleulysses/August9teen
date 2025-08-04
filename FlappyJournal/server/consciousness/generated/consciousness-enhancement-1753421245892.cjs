@@ -65,7 +65,8 @@ const EMOTION_KEYWORDS = {
  * @description A class representing the core of consciousness processing. It maintains state,
  * processes inputs, and generates comprehensive reports on its simulated conscious state.
  */
-export class ConsciousnessMatrix {
+class ConsciousnessMatrix
+ {
     /**
      * Initializes a new instance of the ConsciousnessMatrix.
      * @param {object} [initialState={}] - Optional initial state configuration.
@@ -371,3 +372,4 @@ export class ConsciousnessMatrix {
  * console.log(JSON.stringify(myConsciousness.getReport(), null, 2));
  */
 ```
+module.exports = ConsciousnessInputError;

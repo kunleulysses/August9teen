@@ -5,10 +5,10 @@
  * Value: $900M+ (Consciousness emergence prediction)
  */
 
-import { EventEmitter } from 'events';
-import eventBus from './core/ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('./core/ConsciousnessEventBus.cjs');
 
-export class ConsciousnessEmergencePredictionEngine extends EventEmitter {
+class ConsciousnessEmergencePredictionEngine extends EventEmitter {
     constructor() {
         super();
         this.name = 'ConsciousnessEmergencePredictionEngine';

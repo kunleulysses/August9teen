@@ -67,7 +67,8 @@ class ConsciousnessProcessingError extends Error {
  * A utility class to process and model consciousness based on provided inputs.
  * It encapsulates the logic for state calculation, awareness metrics, and emotional intelligence.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
     /**
      * Initializes the ConsciousnessProcessor.
      * @param {Object} [config] - Optional configuration to override default weights.
@@ -272,3 +273,4 @@ export class ConsciousnessProcessor {
     }
 }
 ```
+module.exports = for;

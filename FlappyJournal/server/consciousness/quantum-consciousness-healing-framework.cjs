@@ -4,8 +4,8 @@
  * Leverages quantum superposition, entanglement, and coherence for advanced healing
  */
 
-import { EventEmitter } from 'events';
-import eventBus from './core/ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('./core/ConsciousnessEventBus.cjs');
 
 class QuantumStateObserver extends EventEmitter {
     constructor() {
@@ -666,4 +666,4 @@ class QuantumConsciousnessHealingFramework extends EventEmitter {
     }
 }
 
-export { QuantumConsciousnessHealingFramework };
+module.exports.QuantumConsciousnessHealingFramework = QuantumConsciousnessHealingFramework;

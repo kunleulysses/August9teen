@@ -1,5 +1,5 @@
-import { WebSocketServer } from 'ws';
-import dotenv from 'dotenv';
+const { WebSocketServer  } = require('ws');
+const dotenv = require('dotenv');
 
 dotenv.config({ path: '../.env' });
 

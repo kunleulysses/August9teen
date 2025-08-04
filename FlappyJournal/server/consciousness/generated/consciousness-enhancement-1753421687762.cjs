@@ -53,7 +53,7 @@ const CONSCIOUSNESS_STATE_LABELS = {
  * It encapsulates all the logic for state calculation, awareness metrics,
  * and emotional intelligence.
  */
-export default class ConsciousnessEngine {
+module.exports = class ConsciousnessEngine {
     /**
      * Initializes the ConsciousnessEngine with optional custom configuration.
      * @param {object} [config={}] - Configuration object.

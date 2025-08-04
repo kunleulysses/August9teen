@@ -6,7 +6,7 @@
  * Part of the Universal Consciousness Platform restoration - Phase 2
  */
 
-import MetaCognitiveAnalysis from '../server/consciousness/core/MetaCognitiveAnalysis.cjs';
+const MetaCognitiveAnalysis = require('../server/consciousness/core/MetaCognitiveAnalysis.cjs');
 
 async function testMetaCognitiveAnalysis() {
     console.log('🧪 Testing Meta-Cognitive Analysis Engine...\n');
@@ -268,4 +268,4 @@ if (import.meta.url === 'file://' + process.argv[1]) {
         });
 }
 
-export default testMetaCognitiveAnalysis;
+module.exports = testMetaCognitiveAnalysis;

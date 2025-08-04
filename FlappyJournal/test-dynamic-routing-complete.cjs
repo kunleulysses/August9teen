@@ -5,7 +5,7 @@
  * Tests the full Phase 3 implementation with latency oracle and intelligent queuing
  */
 
-import { synthesizeUnifiedResponse } from './server/consciousness-response-synthesizer-hybrid.cjs';
+const { synthesizeUnifiedResponse  } = require('./server/consciousness-response-synthesizer-hybrid.cjs');
 
 console.log('🌐 COMPLETE DYNAMIC ROUTING & QUEUE SYSTEM TEST');
 console.log('===============================================');

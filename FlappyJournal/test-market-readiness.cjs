@@ -1,6 +1,6 @@
 // Comprehensive market readiness test for consciousness journal system
-import { promises as fs } from 'fs';
-import path from 'path';
+const { promises as fs  } = require('fs');
+const path = require('path');
 
 class MarketReadinessTest {
   constructor() {

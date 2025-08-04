@@ -158,7 +158,8 @@ const memoize = (fn, keyResolver = (...args) => JSON.stringify(args)) => {
 };
 
 
-export class ConsciousnessPerformanceOptimizer {
+class ConsciousnessPerformanceOptimizer
+ {
     /**
      * @param {object} consciousnessSystem - The core system object to be optimized.
      *        It's expected to have methods like `processEvent(event)`.
@@ -509,3 +510,4 @@ function consolidateMemories(data) {
 }
 */
 ```
+module.exports = PriorityQueue;

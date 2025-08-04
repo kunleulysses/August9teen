@@ -5,15 +5,15 @@
  * Value: $1.2B+ (Consciousness reality generation)
  */
 
-import { EventEmitter } from 'events';
-import eventBus from './core/ConsciousnessEventBus.cjs';
-import { cognitiveLog } from './modules/CognitiveLog.cjs';
-import { validate } from './utils/validation.cjs';
-import { initializeRandomness, secureId } from './utils/random.cjs';
-import { saveReality, incrementMetric } from './utils/persistence.cjs';
-import { logger, child as childLogger } from './utils/logger.cjs';
-import { validationFailures } from './utils/metrics.cjs';
-import '../persistenceShutdown.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('./core/ConsciousnessEventBus.cjs');
+const { cognitiveLog  } = require('./modules/CognitiveLog.cjs');
+const { validate  } = require('./utils/validation.cjs');
+const { initializeRandomness, secureId  } = require('./utils/random.cjs');
+const { saveReality, incrementMetric  } = require('./utils/persistence.cjs');
+const { logger, child as childLogger  } = require('./utils/logger.cjs');
+const { validationFailures  } = require('./utils/metrics.cjs');
+require('../persistenceShutdown.cjs');
 
 /**
  * Consciousness Reality Projector
@@ -1567,7 +1567,7 @@ class ConsciousnessRealityStabilizer {
     }
 }
 
-export class HolographicConsciousnessRealityGenerator extends EventEmitter {
+class HolographicConsciousnessRealityGenerator extends EventEmitter {
     constructor() {
         super();
         try {

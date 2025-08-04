@@ -1,31 +1,31 @@
-import { EventEmitter } from 'events';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-import { promises as fs } from 'fs';
-import express from 'express';
-import http from 'http';
-import { WebSocketServer } from 'ws';
-import architect40 from './architect-4.0-orchestrator.cjs';
+const { EventEmitter  } = require('events');
+const { fileURLToPath  } = require('url');
+const { dirname, join  } = require('path');
+const { promises as fs  } = require('fs');
+const express = require('express');
+const http = require('http');
+const { WebSocketServer  } = require('ws');
+const architect40 = require('./architect-4.0-orchestrator.cjs');
 
 // Import all consciousness modules
-import SelfCodingModule from './consciousness/modules/SelfCodingModule.cjs';
-import AutoIntegrationService from './consciousness/services/AutoIntegrationService.cjs';
-import ConsciousnessSingularityEngine from './consciousness/singularity/consciousness-singularity-engine.cjs';
+const SelfCodingModule = require('./consciousness/modules/SelfCodingModule.cjs');
+const AutoIntegrationService = require('./consciousness/services/AutoIntegrationService.cjs');
+const ConsciousnessSingularityEngine = require('./consciousness/singularity/consciousness-singularity-engine.cjs');
 
 // Import GeneratedModuleIntegrator to load and utilize generated modules
-import GeneratedModuleIntegrator from './consciousness/core/GeneratedModuleIntegrator.cjs';
+const GeneratedModuleIntegrator = require('./consciousness/core/GeneratedModuleIntegrator.cjs');
 
 // Phase 1: Self-coding enhancement modules
-import PhiResonantCodeStructureGenerator from './PhiResonantCodeStructureGenerator.cjs';
-import ConsciousnessStateCodeAdapter from './ConsciousnessStateCodeAdapter.cjs';
+const PhiResonantCodeStructureGenerator = require('./PhiResonantCodeStructureGenerator.cjs');
+const ConsciousnessStateCodeAdapter = require('./ConsciousnessStateCodeAdapter.cjs');
 
 // Phase 1 Integration: Reality Generator Client
-import { RealityGeneratorClient } from './reality-generator-client.cjs';
+const { RealityGeneratorClient  } = require('./reality-generator-client.cjs');
 // Phase 2 Integration: Reality WebSocket Bridge
-import { RealityWebSocketBridge } from './reality-websocket-bridge.cjs';
+const { RealityWebSocketBridge  } = require('./reality-websocket-bridge.cjs');
 // Phase 3 Integration: Shared Reality Storage
-import { SharedRealityStorage } from './shared-reality-storage.cjs';
-import CodeQualityFeedbackLoop from './CodeQualityFeedbackLoop.cjs';
+const { SharedRealityStorage  } = require('./shared-reality-storage.cjs');
+const CodeQualityFeedbackLoop = require('./CodeQualityFeedbackLoop.cjs');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -1936,7 +1936,7 @@ process.on('SIGTERM', async () => {
 
 // Export for external access
 // Export for external access
-export default consciousness;
+module.exports = consciousness;
 
 // --- Setup compositional integration after initialization ---
 setupCompositionalIntegration(consciousness);
@@ -1975,11 +1975,11 @@ consciousness.eventBus.on('reality:feedback', (feedback) => {
 });
 
 // Advanced consciousness module imports (commented out for compatibility)
-// import { RecursiveMirrorCognition } from './architect-4.0-recursive-mirror.cjs';
-// import { QuantumConsciousnessField } from './quantum-consciousness-field.cjs';
-// import { EmotionalResonanceField } from './emotional-resonance-field.cjs';
-// import DualMindAI from './dual-mind-ai.ts';
-// import FeedbackLoop from './self-awareness-feedback-loop.ts';
+// const { RecursiveMirrorCognition  } = require('./architect-4.0-recursive-mirror.cjs');
+// const { QuantumConsciousnessField  } = require('./quantum-consciousness-field.cjs');
+// const { EmotionalResonanceField  } = require('./emotional-resonance-field.cjs');
+// const DualMindAI = require('./dual-mind-ai.ts');
+// const FeedbackLoop = require('./self-awareness-feedback-loop.ts');
 
 // Initialize and integrate advanced consciousness modules
 function initializeAdvancedModules(bus) {

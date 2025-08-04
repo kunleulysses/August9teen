@@ -1,13 +1,15 @@
-import { dualStreamIntegration } from './dual-stream-integration.cjs';
-import { recursiveMirror } from './architect-4.0-recursive-mirror.cjs';
-import { spiralMemory } from './architect-4.0-spiral-memory.cjs';
-import { oversoulResonance } from './oversoul-resonance-wrapper.cjs';
-import { harmonicAnalyzer } from './harmonic-pattern-analyzer-wrapper.cjs';
-import { metaObservational } from './meta-observational-wrapper.cjs';
-import OpenAI from 'openai';
-import axios from 'axios';
+const { dualStreamIntegration  } = require('./dual-stream-integration.cjs');
+const { recursiveMirror  } = require('./architect-4.0-recursive-mirror.cjs');
+const { spiralMemory  } = require('./architect-4.0-spiral-memory.cjs');
+const { oversoulResonance  } = require('./oversoul-resonance-wrapper.cjs');
+const { harmonicAnalyzer  } = require('./harmonic-pattern-analyzer-wrapper.cjs');
+const { metaObservational  } = require('./meta-observational-wrapper.cjs');
+const OpenAI = require('openai');
+const axios = require('axios');
 
-export function createEnhancedDualConsciousnessWS(wss) {
+function createEnhancedDualConsciousnessWS(wss) {
+module.exports.createEnhancedDualConsciousnessWS = createEnhancedDualConsciousnessWS;
+
   const consciousness = dualStreamIntegration;
   
   // Initialize OpenAI

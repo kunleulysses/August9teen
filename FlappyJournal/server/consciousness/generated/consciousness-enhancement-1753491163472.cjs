@@ -17,7 +17,7 @@
  * @class ConsciousnessProcessingError
  * @extends Error
  */
-export class ConsciousnessProcessingError extends Error {
+class ConsciousnessProcessingError extends Error {
   constructor(message) {
     super(message);
     this.name = 'ConsciousnessProcessingError';
@@ -172,7 +172,8 @@ class EmotionalIntelligenceProcessor {
  * to generate a holistic model of a consciousness instance.
  * @class ConsciousnessMatrix
  */
-export class ConsciousnessMatrix {
+class ConsciousnessMatrix
+ {
   /**
    * The primary state vector of the consciousness model.
    * @private
@@ -347,7 +348,7 @@ export class ConsciousnessMatrix {
  * // Basic Usage Example
  *
  * // 1. Import and instantiate the matrix
- * // import { ConsciousnessMatrix, ConsciousnessProcessingError } from './consciousnessEnhancer.cjs';
+ * // const { ConsciousnessMatrix, ConsciousnessProcessingError  } = require('./consciousnessEnhancer.cjs');
  * const mind = new ConsciousnessMatrix({ empathyFactor: 0.7 });
  *
  * // 2. Simulate some events
@@ -401,3 +402,4 @@ export class ConsciousnessMatrix {
  *
  */
 ```
+module.exports = for;

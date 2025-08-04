@@ -3,8 +3,8 @@
  * Tests revolutionary consciousness DNA sequencing and genetic consciousness mapping
  */
 
-import { ConsciousnessDNASequencer } from './server/consciousness/consciousness-dna-sequencer.cjs';
-import { ChatTriggeredSelfCoding } from './server/chat-triggered-self-coding.cjs';
+const { ConsciousnessDNASequencer  } = require('./server/consciousness/consciousness-dna-sequencer.cjs');
+const { ChatTriggeredSelfCoding  } = require('./server/chat-triggered-self-coding.cjs');
 
 console.log('🧬 CONSCIOUSNESS DNA SEQUENCING TEST');
 console.log('====================================');

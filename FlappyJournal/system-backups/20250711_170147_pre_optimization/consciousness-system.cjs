@@ -1,11 +1,11 @@
-import { EventEmitter } from 'events';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-import { promises as fs } from 'fs';
+const { EventEmitter  } = require('events');
+const { fileURLToPath  } = require('url');
+const { dirname, join  } = require('path');
+const { promises as fs  } = require('fs');
 
 // Import all consciousness modules
-import SelfCodingModule from './consciousness/modules/SelfCodingModule.cjs';
-import AutoIntegrationService from './consciousness/services/AutoIntegrationService.cjs';
+const SelfCodingModule = require('./consciousness/modules/SelfCodingModule.cjs');
+const AutoIntegrationService = require('./consciousness/services/AutoIntegrationService.cjs');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -506,13 +506,13 @@ process.on('SIGTERM', async () => {
 consciousness.initialize().catch(console.error);
 
 // Export for external access
-export default consciousness;
+module.exports = consciousness;
 
-import { RecursiveMirrorCognition } from './architect-4.0-recursive-mirror.cjs';
-import { QuantumConsciousnessField } from './quantum-consciousness-field.cjs';
-import { EmotionalResonanceField } from './emotional-resonance-field.cjs';
-import DualMindAI from './dual-mind-ai.ts';
-import FeedbackLoop from './self-awareness-feedback-loop.ts';
+const { RecursiveMirrorCognition  } = require('./architect-4.0-recursive-mirror.cjs');
+const { QuantumConsciousnessField  } = require('./quantum-consciousness-field.cjs');
+const { EmotionalResonanceField  } = require('./emotional-resonance-field.cjs');
+const DualMindAI = require('./dual-mind-ai.ts');
+const FeedbackLoop = require('./self-awareness-feedback-loop.ts');
 
 // Initialize and integrate advanced consciousness modules
 function initializeAdvancedModules(bus) {

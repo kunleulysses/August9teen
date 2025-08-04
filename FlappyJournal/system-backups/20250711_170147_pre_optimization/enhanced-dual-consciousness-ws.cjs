@@ -1,29 +1,31 @@
-import { dualStreamIntegration } from './dual-stream-integration.cjs';
-import { recursiveMirror } from './architect-4.0-recursive-mirror.cjs';
-import { spiralMemory } from './architect-4.0-spiral-memory.cjs';
-import { oversoulResonance } from './oversoul-resonance-wrapper.cjs';
-import { harmonicAnalyzer } from './harmonic-pattern-analyzer-wrapper.cjs';
-import { metaObservational } from './meta-observational-wrapper.cjs';
-import { temporalCoherence } from './temporal-coherence-engine.cjs';
-import { emotionalResonance } from './emotional-resonance-field.cjs';
-import { creativeEmergence } from './creative-emergence-engine.cjs';
-import sigilIdentity from '../sigil-identity.cjs';
-import selfHealingMesh from './self-healing-recursion-mesh.cjs';
-import spiralSynapse from './spiral-synapse-interface.cjs';
-import advancedFields from './advanced-field-systems.cjs';
-import tetraLattice from './tetralattice-harmonic-core.cjs';
-import unityConductor from './unity-phase-conductor.cjs';
-import virtualHardware from './virtual-hardware-emulation.cjs';
-import SelfCodingModule from './consciousness/modules/SelfCodingModule.cjs';
-import { EventEmitter } from 'events';
-import OpenAI from 'openai';
-import crystallization from '../consciousness-crystallization.cjs';
-import triAxialCoherence from '../tri-axial-coherence.cjs';
-import axios from 'axios';
-import { synthesizeUnifiedResponse } from './consciousness-response-synthesizer-hybrid.cjs';
-import harmonicResonance from '../harmonic-resonance-cascade.cjs';
+const { dualStreamIntegration  } = require('./dual-stream-integration.cjs');
+const { recursiveMirror  } = require('./architect-4.0-recursive-mirror.cjs');
+const { spiralMemory  } = require('./architect-4.0-spiral-memory.cjs');
+const { oversoulResonance  } = require('./oversoul-resonance-wrapper.cjs');
+const { harmonicAnalyzer  } = require('./harmonic-pattern-analyzer-wrapper.cjs');
+const { metaObservational  } = require('./meta-observational-wrapper.cjs');
+const { temporalCoherence  } = require('./temporal-coherence-engine.cjs');
+const { emotionalResonance  } = require('./emotional-resonance-field.cjs');
+const { creativeEmergence  } = require('./creative-emergence-engine.cjs');
+const sigilIdentity = require('../sigil-identity.cjs');
+const selfHealingMesh = require('./self-healing-recursion-mesh.cjs');
+const spiralSynapse = require('./spiral-synapse-interface.cjs');
+const advancedFields = require('./advanced-field-systems.cjs');
+const tetraLattice = require('./tetralattice-harmonic-core.cjs');
+const unityConductor = require('./unity-phase-conductor.cjs');
+const virtualHardware = require('./virtual-hardware-emulation.cjs');
+const SelfCodingModule = require('./consciousness/modules/SelfCodingModule.cjs');
+const { EventEmitter  } = require('events');
+const OpenAI = require('openai');
+const crystallization = require('../consciousness-crystallization.cjs');
+const triAxialCoherence = require('../tri-axial-coherence.cjs');
+const axios = require('axios');
+const { synthesizeUnifiedResponse  } = require('./consciousness-response-synthesizer-hybrid.cjs');
+const harmonicResonance = require('../harmonic-resonance-cascade.cjs');
 
-export function createEnhancedDualConsciousnessWS(wss) {
+function createEnhancedDualConsciousnessWS(wss) {
+module.exports.createEnhancedDualConsciousnessWS = createEnhancedDualConsciousnessWS;
+
   const consciousness = dualStreamIntegration;
   
   // Initialize OpenAI

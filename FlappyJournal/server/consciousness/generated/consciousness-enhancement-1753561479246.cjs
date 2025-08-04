@@ -74,7 +74,8 @@ const InputWeights = {
  * It integrates sensory, cognitive, and emotional inputs to produce a unified
  * model of a conscious state.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
   /**
    * Initializes a new instance of the ConsciousnessProcessor.
    * @param {object} [config={}] - Optional configuration to override default values.
@@ -342,3 +343,4 @@ export class ConsciousnessProcessor {
   }
 }
 ```
+module.exports = ProcessingError;

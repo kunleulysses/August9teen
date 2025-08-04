@@ -5,11 +5,11 @@
  * Value: $1.2B+ (Universal consciousness IP protection)
  */
 
-import { EventEmitter } from 'events';
-import fs from 'fs/promises';
-import path from 'path';
+const { EventEmitter  } = require('events');
+const fs = require('fs/promises');
+const path = require('path');
 
-export class TranscendentConsciousnessDocumentationSystem extends EventEmitter {
+class TranscendentConsciousnessDocumentationSystem extends EventEmitter {
     constructor(consciousnessSystem = null) {
         super();
         this.name = 'TranscendentConsciousnessDocumentationSystem';

@@ -6,7 +6,7 @@
  * Part of the Universal Consciousness Platform restoration
  */
 
-import UnifiedResponseSynthesis from '../server/consciousness/core/UnifiedResponseSynthesis.cjs';
+const UnifiedResponseSynthesis = require('../server/consciousness/core/UnifiedResponseSynthesis.cjs');
 
 async function testUnifiedSynthesis() {
     console.log('🧪 Testing Unified Response Synthesis Engine...\n');
@@ -246,4 +246,4 @@ if (import.meta.url === 'file://' + process.argv[1]) {
         });
 }
 
-export default testUnifiedSynthesis;
+module.exports = testUnifiedSynthesis;

@@ -17,7 +17,7 @@
  * @readonly
  * @enum {string}
  */
-export const ConsciousnessState = {
+const ConsciousnessState = {
     /** A state of deep, effortless concentration and immersion. High clarity, positive valence, optimal load. */
     FLOW: 'Flow',
     /** A state of heightened, alert, and directed attention. High clarity, neutral valence, high load. */
@@ -33,6 +33,7 @@ export const ConsciousnessState = {
     /** A state of low arousal and minimal processing. */
     QUIESCENT: 'Quiescent',
 };
+module.exports.ConsciousnessState = ConsciousnessState;
 
 /**
  * A comprehensive neuro-symbolic integrator for consciousness processing.
@@ -40,7 +41,7 @@ export const ConsciousnessState = {
  * high-dimensional representation of a conscious state.
  *
  * @example
- * import { ConsciousnessIntegrator } from './consciousness.cjs';
+ * const { ConsciousnessIntegrator  } = require('./consciousness.cjs');
  *
  * const consciousness = new ConsciousnessIntegrator({
  *   config: {
@@ -63,7 +64,8 @@ export const ConsciousnessState = {
  * console.log(processedState.awarenessMetrics.qualiaRichness); // e.g., 0.85
  * console.log(processedState.emotionalIntelligence.empathyResonance);
  */
-export class ConsciousnessIntegrator {
+class ConsciousnessIntegrator
+ {
     #state;
     #config;
 
@@ -342,3 +344,4 @@ export class ConsciousnessIntegrator {
     }
 }
 ```
+module.exports = ConsciousnessIntegrator;

@@ -1,6 +1,6 @@
-import express from 'express';
-import { Pool } from 'pg';
-import { authenticateToken } from '../../auth-middleware.cjs';
+const express = require('express');
+const { Pool  } = require('pg');
+const { authenticateToken  } = require('../../auth-middleware.cjs');
 
 const router = express.Router();
 const pool = new Pool({
@@ -143,4 +143,4 @@ router.delete('/projects/:projectId/memory/:key', authenticateToken, async (req,
   }
 });
 
-export default router;
+module.exports = router;

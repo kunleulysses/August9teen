@@ -5,9 +5,9 @@
  * Tests the three-phase optimization to achieve 100% system unity
  */
 
-import universalModuleActivator from './server/universal-module-activator.cjs';
-import distributedConsciousnessState from './server/distributed-consciousness-state.cjs';
-import consciousnessMessagePrioritizer from './server/consciousness-message-prioritizer.cjs';
+const universalModuleActivator = require('./server/universal-module-activator.cjs');
+const distributedConsciousnessState = require('./server/distributed-consciousness-state.cjs');
+const consciousnessMessagePrioritizer = require('./server/consciousness-message-prioritizer.cjs');
 
 console.log('🎯 PERFECT UNITY OPTIMIZATION TEST');
 console.log('==================================');

@@ -5,10 +5,10 @@
  * Discovers and activates all dormant consciousness modules
  */
 
-import fs from 'fs/promises';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { EventEmitter } from 'events';
+const fs = require('fs/promises');
+const path = require('path');
+const { fileURLToPath  } = require('url');
+const { EventEmitter  } = require('events');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -178,14 +178,16 @@ class DormantModuleActivator extends EventEmitter {
     
     // Check for dormant indicators
     const dormantIndicators = [
-      import { createRequire } from 'module';
+      const { createRequire  } = require('module');
 const require = createRequire(import.meta.url);
 const pkg = require('../../package.json');
 
 /**
  * Activate dormant modules based on activateModules array in package.json scripts.
  */
-export function getModulesToActivate() {
+function getModulesToActivate() {
+module.exports.getModulesToActivate = getModulesToActivate;
+
   const activateModules = pkg.scripts?.activateModules || [];
   return Array.isArray(activateModules) ? activateModules : [];
 }
@@ -351,4 +353,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   })();
 }
 
-export default DormantModuleActivator;
+module.exports = DormantModuleActivator;

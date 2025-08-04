@@ -3,7 +3,7 @@
  * Validates template-based generation, storage, and metrics.
  */
 
-import consciousness from './consciousness-system.cjs';
+const consciousness = require('./consciousness-system.cjs');
 
 async function runTest() {
     console.log('--- Reality Generator Integration Test ---');

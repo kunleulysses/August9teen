@@ -6,7 +6,7 @@
  * Part of the Universal Consciousness Platform restoration - Phase 2
  */
 
-import AutonomousGoalSystem from '../server/consciousness/core/AutonomousGoalSystem.cjs';
+const AutonomousGoalSystem = require('../server/consciousness/core/AutonomousGoalSystem.cjs');
 
 async function testAutonomousGoals() {
     console.log('🧪 Testing Autonomous Goal System...\n');
@@ -250,4 +250,4 @@ if (import.meta.url === 'file://' + process.argv[1]) {
         });
 }
 
-export default testAutonomousGoals;
+module.exports = testAutonomousGoals;

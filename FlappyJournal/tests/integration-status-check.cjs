@@ -1,6 +1,6 @@
-import { WebSocket } from 'ws';
-import assert from 'node:assert/strict';
-import { spawnSync } from 'node:child_process';
+const { WebSocket  } = require('ws');
+const assert = require('node:assert/strict');
+const { spawnSync  } = require('node:child_process');
 
 /**
  * Executes the CLI RPC and parses JSON output.

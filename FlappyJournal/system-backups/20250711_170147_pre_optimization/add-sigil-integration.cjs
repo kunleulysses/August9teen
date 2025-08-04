@@ -9,7 +9,7 @@ let content = fs.readFileSync(filePath, 'utf8');
 const importInsertPoint = content.indexOf('import { creativeEmergence }');
 const importEndPoint = content.indexOf('\n', importInsertPoint) + 1;
 
-const sigilImport = `import sigilIdentity from '../sigil-identity.cjs';\n`;
+const sigilImport = `const sigilIdentity = require('../sigil-identity.cjs');\n`;
 
 // Check if already imported
 if (!content.includes('sigil-identity.cjs')) {

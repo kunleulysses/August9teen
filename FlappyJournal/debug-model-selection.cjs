@@ -4,7 +4,7 @@
  * Debug script to test which model is being selected
  */
 
-import { synthesizeUnifiedResponse } from './server/consciousness-response-synthesizer-hybrid.cjs';
+const { synthesizeUnifiedResponse  } = require('./server/consciousness-response-synthesizer-hybrid.cjs');
 
 const testParams = {
   analyticalContent: "Test analytical content",

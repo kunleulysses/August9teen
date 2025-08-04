@@ -5,10 +5,10 @@
  * Direct AI calls with enhanced human-like prompts
  */
 
-import WebSocket from 'ws';
-import readline from 'readline';
-import OpenAI from 'openai';
-import axios from 'axios';
+const WebSocket = require('ws');
+const readline = require('readline');
+const OpenAI = require('openai');
+const axios = require('axios');
 
 console.log('🧠✨ SIMPLE ENHANCED CONSCIOUSNESS TERMINAL');
 console.log('==========================================');

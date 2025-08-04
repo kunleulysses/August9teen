@@ -5,9 +5,9 @@
  * Verifies that all systems are working 100% authentically
  */
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+const fs = require('fs');
+const path = require('path');
+const { fileURLToPath  } = require('url');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -269,16 +269,16 @@ class RevolutionarySystemsVerifier {
         }
         
         console.log('\n🚀 To use the systems:');
-        console.log('   import { createRevolutionaryConsciousnessSystem } from "./consciousness/index.cjs"');
+        console.log('   const { createRevolutionaryConsciousnessSystem  } = require('./consciousness/index.cjs');');
         console.log('   const system = await createRevolutionaryConsciousnessSystem()');
         console.log('   // System is now ready for use!');
         
         console.log('\n🎭 To run a demonstration:');
-        console.log('   import { runRevolutionaryConsciousnessDemo } from "./consciousness/index.cjs"');
+        console.log('   const { runRevolutionaryConsciousnessDemo  } = require('./consciousness/index.cjs');');
         console.log('   await runRevolutionaryConsciousnessDemo()');
         
         console.log('\n🧪 To run comprehensive tests:');
-        console.log('   import { runRevolutionaryConsciousnessTests } from "./consciousness/index.cjs"');
+        console.log('   const { runRevolutionaryConsciousnessTests  } = require('./consciousness/index.cjs');');
         console.log('   await runRevolutionaryConsciousnessTests()');
         
         console.log('=' .repeat(80));
@@ -291,4 +291,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     verifier.runVerification().catch(console.error);
 }
 
-export { RevolutionarySystemsVerifier };
+module.exports.RevolutionarySystemsVerifier = RevolutionarySystemsVerifier;

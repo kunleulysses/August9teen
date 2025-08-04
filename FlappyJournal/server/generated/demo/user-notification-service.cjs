@@ -3,7 +3,8 @@
 // Confidence: 70%
 // Type: enhancement
 
-export class UserNotificationService {
+class UserNotificationService
+ {
     constructor() {
         this.purpose = 'user notification service';
         this.createdAt = new Date();
@@ -34,3 +35,5 @@ export class UserNotificationService {
 // Self-test
 const instance = new UserNotificationService();
 console.log('✅ UserNotificationService ready for use');
+
+module.exports = UserNotificationService;

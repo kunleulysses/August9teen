@@ -28,7 +28,8 @@ class InvalidCognitiveStateError extends Error {
  * It takes an initial cognitive state and provides methods to process it.
  * @class
  */
-export class ConsciousnessEnhancer {
+class ConsciousnessEnhancer
+ {
     #cognitiveState;
     #isProcessed = false;
     #processedReport = null;
@@ -289,3 +290,4 @@ export class ConsciousnessEnhancer {
     }
 }
 ```
+module.exports = for;

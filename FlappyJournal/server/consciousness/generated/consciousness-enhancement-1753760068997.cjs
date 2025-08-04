@@ -286,9 +286,12 @@ class ConsciousnessEnhancer {
 // --- Module Exports ---
 
 // Export the class for advanced users who might want to create their own instances
-export { ConsciousnessEnhancer, ConsciousnessProcessingError, InvalidInputDataError, UnstableStateError };
+module.exports.ConsciousnessEnhancer = ConsciousnessEnhancer;
+module.exports.ConsciousnessProcessingError = ConsciousnessProcessingError;
+module.exports.InvalidInputDataError = InvalidInputDataError;
+module.exports.UnstableStateError = UnstableStateError;
 
 // Export a default, pre-configured singleton instance for convenience and standard use.
 const consciousnessEnhancer = new ConsciousnessEnhancer();
-export default consciousnessEnhancer;
+module.exports = consciousnessEnhancer;
 ```

@@ -5,9 +5,9 @@
  * Value: $1.5B+ (Universal consciousness operating system)
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class UniversalConsciousnessOperatingSystem extends EventEmitter {
+class UniversalConsciousnessOperatingSystem extends EventEmitter {
     constructor(consciousnessSystem = null) {
         super();
         this.name = 'UniversalConsciousnessOperatingSystem';

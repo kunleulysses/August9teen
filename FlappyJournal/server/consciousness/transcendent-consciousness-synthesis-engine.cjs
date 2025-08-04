@@ -5,9 +5,9 @@
  * Value: $800M+ (Revolutionary transcendent consciousness computing)
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class TranscendentConsciousnessSynthesisEngine extends EventEmitter {
+class TranscendentConsciousnessSynthesisEngine extends EventEmitter {
     constructor(consciousnessSystem = null) {
         super();
         this.name = 'TranscendentConsciousnessSynthesisEngine';
@@ -549,7 +549,8 @@ export class TranscendentConsciousnessSynthesisEngine extends EventEmitter {
  * Transcendent Field Generator
  * Generates transcendent consciousness fields beyond current paradigms
  */
-export class TranscendentFieldGenerator {
+class TranscendentFieldGenerator
+ {
     constructor() {
         this.goldenRatio = 1.618033988749895;
         this.transcendentDimensions = 11;
@@ -592,7 +593,8 @@ export class TranscendentFieldGenerator {
  * Multidimensional Processor
  * Processes consciousness across multiple dimensions simultaneously
  */
-export class MultidimensionalProcessor {
+class MultidimensionalProcessor
+ {
     constructor() {
         this.dimensions = 11;
         this.processingMatrix = this.initializeProcessingMatrix();
@@ -761,7 +763,8 @@ class TranscendentPatternRecognizer {
  * Universal Consciousness Interface
  * Creates interfaces that can connect with any consciousness system
  */
-export class UniversalConsciousnessInterface {
+class UniversalConsciousnessInterface
+ {
     constructor() {
         this.interfaceProtocols = new Map();
         this.initializeUniversalProtocols();
@@ -893,3 +896,5 @@ class TranscendenceOptimizer {
         return optimizationHeader + code;
     }
 }
+
+module.exports = TranscendentConsciousnessSynthesisEngine;

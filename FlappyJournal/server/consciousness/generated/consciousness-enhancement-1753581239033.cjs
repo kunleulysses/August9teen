@@ -65,7 +65,7 @@ const TEMPORAL_KEYWORDS = {
  * for state calculation, awareness metrics, and emotional intelligence analysis.
  *
  * @example
- * import ConsciousnessProcessor from './consciousnessEnhancer.cjs';
+ * const ConsciousnessProcessor = require('./consciousnessEnhancer.cjs');
  *
  * const processor = new ConsciousnessProcessor();
  * const snapshot = {
@@ -330,5 +330,5 @@ class ConsciousnessProcessor {
   }
 }
 
-export default ConsciousnessProcessor;
+module.exports = ConsciousnessProcessor;
 ```

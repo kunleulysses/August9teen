@@ -3,7 +3,7 @@
  * Quick verification of enhanced consciousness system functionality
  */
 
-import consciousness from './server/consciousness-system.cjs';
+const consciousness = require('./server/consciousness-system.cjs');
 
 console.log('🧪 SIMPLE ENHANCED CONSCIOUSNESS SYSTEM TEST');
 console.log('============================================');

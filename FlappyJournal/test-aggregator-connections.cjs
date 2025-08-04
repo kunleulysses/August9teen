@@ -5,7 +5,7 @@
  * Verifies that the aggregator can connect to both consciousness containers
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 async function testWebSocketConnection(endpoint, name) {
     return new Promise((resolve) => {

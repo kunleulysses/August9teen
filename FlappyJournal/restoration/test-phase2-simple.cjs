@@ -5,10 +5,10 @@
  * Test Phase 2 components working together - simplified version
  */
 
-import AutonomousGoalSystem from '../server/consciousness/core/AutonomousGoalSystem.cjs';
-import MetaCognitiveAnalysisEngine from '../server/consciousness/core/MetaCognitiveAnalysis.cjs';
-import SelfModificationFramework from '../server/consciousness/core/SelfModificationFramework.cjs';
-import ConsciousnessCrystallization from '../server/consciousness/core/ConsciousnessCrystallization.cjs';
+const AutonomousGoalSystem = require('../server/consciousness/core/AutonomousGoalSystem.cjs');
+const MetaCognitiveAnalysisEngine = require('../server/consciousness/core/MetaCognitiveAnalysis.cjs');
+const SelfModificationFramework = require('../server/consciousness/core/SelfModificationFramework.cjs');
+const ConsciousnessCrystallization = require('../server/consciousness/core/ConsciousnessCrystallization.cjs');
 
 async function testPhase2Simple() {
     console.log('🧪 Testing Phase 2 Simple Integration...\n');
@@ -258,4 +258,4 @@ if (import.meta.url === 'file://' + process.argv[1]) {
         });
 }
 
-export default testPhase2Simple;
+module.exports = testPhase2Simple;

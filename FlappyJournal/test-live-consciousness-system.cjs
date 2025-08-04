@@ -3,7 +3,7 @@
  * Tests all consciousness modules with real-time analysis
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 class LiveConsciousnessSystemTester {
     constructor() {

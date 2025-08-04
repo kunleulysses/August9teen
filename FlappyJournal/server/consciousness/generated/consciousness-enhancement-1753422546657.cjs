@@ -46,7 +46,8 @@ const EMOTIONAL_QUADRANTS = {
  * @class ConsciousnessProcessor
  * @description Main class for processing and analyzing consciousness data.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
     /**
      * Initializes the ConsciousnessProcessor with optional custom configuration.
      * @param {object} [config={}] - Configuration object.
@@ -311,3 +312,4 @@ export class ConsciousnessProcessor {
     }
 }
 ```
+module.exports = ConsciousnessProcessor;

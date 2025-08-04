@@ -1,4 +1,4 @@
 /** Legacy facade: maps old import path to new implementation */
-import { unifiedConsciousness } from './unified-consciousness-integration.cjs';
-export default unifiedConsciousness;
+const { unifiedConsciousness  } = require('./unified-consciousness-integration.cjs');
+module.exports = unifiedConsciousness;
 module.exports = unifiedConsciousness; // CJS fallback

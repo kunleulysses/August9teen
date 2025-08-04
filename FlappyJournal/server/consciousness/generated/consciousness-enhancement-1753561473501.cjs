@@ -262,5 +262,5 @@ class ConsciousnessEngine {
   }
 }
 
-export default ConsciousnessEngine;
+module.exports = ConsciousnessEngine;
 ```

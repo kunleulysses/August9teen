@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 console.log('Testing WebSocket connection...');
 

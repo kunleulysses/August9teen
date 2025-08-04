@@ -30,7 +30,8 @@
  * Represents a layer of self-awareness for a cognitive system.
  * It wraps a core "cognitive processor" to monitor and analyze its behavior.
  */
-export class MetaCognitiveLayer {
+class MetaCognitiveLayer
+ {
     /**
      * @typedef {object} CognitiveEvent
      * @property {string} id - A unique ID for the cognitive event.
@@ -335,3 +336,4 @@ export class MetaCognitiveLayer {
     }
 }
 ```
+module.exports = MetaCognitiveLayer;

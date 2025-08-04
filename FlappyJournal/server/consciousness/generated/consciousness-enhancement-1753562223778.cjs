@@ -87,7 +87,8 @@ class QualiaError extends Error {
  * @description A processing engine that analyzes an EntityState to produce advanced consciousness and awareness metrics.
  * This class is designed to be instantiated once and reused for continuous processing.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
     /**
      * @constructor
      * @param {object} [config={}] - Optional configuration for weighting calculations.
@@ -304,3 +305,4 @@ export class ConsciousnessProcessor {
     }
 }
 ```
+module.exports = for;

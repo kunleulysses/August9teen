@@ -4,7 +4,7 @@
  * with consciousness integration and autonomous healing capabilities
  */
 
-import { PredictiveErrorRecovery } from './server/consciousness/predictive-error-recovery.cjs';
+const { PredictiveErrorRecovery  } = require('./server/consciousness/predictive-error-recovery.cjs');
 
 console.log('🛡️ GAP 9 ADVANCED PREDICTIVE ERROR RECOVERY TEST');
 console.log('===============================================');

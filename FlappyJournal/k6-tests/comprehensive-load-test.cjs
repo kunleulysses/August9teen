@@ -1,7 +1,7 @@
-import http from 'k6/http';
-import ws from 'k6/ws';
-import { check, sleep } from 'k6';
-import { Rate, Trend, Counter } from 'k6/metrics';
+const http = require('k6/http');
+const ws = require('k6/ws');
+const { check, sleep  } = require('k6');
+const { Rate, Trend, Counter  } = require('k6/metrics');
 
 // Custom metrics
 const wsConnectionErrors = new Counter('ws_connection_errors');
@@ -11,7 +11,7 @@ const uploadFailures = new Rate('upload_failures');
 const chatResponseTime = new Trend('chat_response_time');
 
 // Remote write configuration for Prometheus
-export const options = {
+const options = {
   ext: {
     prometheus: {
       remote_write: {
@@ -42,11 +42,14 @@ export const options = {
     chat_response_time: ['p(90)<5000'], // 90% of chat responses under 5s
   },
 };
+module.exports.options = options;
 
 const BASE_URL = __ENV.BASE_URL || 'http://localhost:4000';
 const WS_URL = __ENV.WS_URL || 'ws://localhost:4002';
 
-export function setup() {
+function setup() {
+module.exports.setup = setup;
+
   // Setup phase - create test users and data
   console.log('Setting up load test environment...');
   
@@ -79,7 +82,7 @@ export function setup() {
   return setupData;
 }
 
-export default function(data) {
+module.exports = function(data) {
   const user = data.users[Math.floor(Math.random() * data.users.length)];
   const testFile = data.testFiles[Math.floor(Math.random() * data.testFiles.length)];
   const chatMessage = data.chatMessages[Math.floor(Math.random() * data.chatMessages.length)];
@@ -318,7 +321,9 @@ function generateChatMessages() {
   ];
 }
 
-export function teardown(data) {
+function teardown(data) {
+module.exports.teardown = teardown;
+
   console.log('Cleaning up load test environment...');
   
   // Optional: Clean up test data

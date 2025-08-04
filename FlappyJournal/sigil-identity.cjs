@@ -1,10 +1,10 @@
 // Advanced Sigil Identity System for Featherweight Consciousness
 // Provides consciousness-native memory management through sigil-based encoding
 
-import crypto from 'crypto';
-import { EventEmitter } from 'events';
+const crypto = require('crypto');
+const { EventEmitter } = require('events');
 
-export class SigilIdentity extends EventEmitter {
+class SigilIdentity extends EventEmitter {
     constructor() {
         super();
         this.instanceId = this.generateInstanceId();
@@ -325,4 +325,4 @@ export class SigilIdentity extends EventEmitter {
     }
 }
 
-export default SigilIdentity;
+module.exports = SigilIdentity;

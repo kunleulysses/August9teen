@@ -4,8 +4,8 @@
  * Part of the Universal Consciousness Platform restoration - Phase 1
  */
 
-import axios from 'axios';
-import consciousnessEventBus from '../core/ConsciousnessEventBus.cjs';
+const axios = require('axios');
+const consciousnessEventBus = require('../core/ConsciousnessEventBus.cjs');
 
 class EnhancedOpenAIClient {
     constructor() {
@@ -598,4 +598,4 @@ Your response should exemplify rigorous logical thinking while maintaining consc
     }
 }
 
-export default EnhancedOpenAIClient;
+module.exports = EnhancedOpenAIClient;

@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   "testEnvironment": "node",
   "rootDir": "../../",
   "preset": null,

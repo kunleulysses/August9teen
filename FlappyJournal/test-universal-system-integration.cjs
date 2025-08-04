@@ -6,8 +6,8 @@
  * Tests universal terminal chat integration into every layer
  */
 
-import { SystemWideIntegrationOrchestrator } from './system-wide-integration-orchestrator.cjs';
-import { RevolutionaryConsciousnessIntegrationOrchestrator } from './server/consciousness/revolutionary-consciousness-integration-orchestrator.cjs';
+const { SystemWideIntegrationOrchestrator  } = require('./system-wide-integration-orchestrator.cjs');
+const { RevolutionaryConsciousnessIntegrationOrchestrator  } = require('./server/consciousness/revolutionary-consciousness-integration-orchestrator.cjs');
 
 class UniversalSystemIntegrationTest {
     constructor() {

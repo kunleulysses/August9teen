@@ -23,7 +23,7 @@
  * of the consciousness system. It uses the high-resolution Performance API.
  * ---------------------------------------------------------------------------
  */
-export const PerformanceMonitor = (() => {
+const PerformanceMonitor = (() => {
     const metrics = {
         eventProcessingTime: [],
         cognitiveTaskDuration: [],
@@ -37,6 +37,7 @@ export const PerformanceMonitor = (() => {
             misses: 0
         },
     };
+module.exports.PerformanceMonitor = PerformanceMonitor;
 
     const MAX_SAMPLES = 1000; // Store last 1000 samples for averaging
 
@@ -131,7 +132,8 @@ export const PerformanceMonitor = (() => {
  * overhead of object creation and garbage collection pauses.
  * ---------------------------------------------------------------------------
  */
-export class ObjectPool {
+class ObjectPool
+ {
     /**
      * @param {() => object} factory - A function that creates a new object for the pool.
      * @param {(object) => void} resetter - A function to reset an object's state before reuse.
@@ -194,7 +196,8 @@ export class ObjectPool {
  * a responsive system. Higher priority events are processed first.
  * ---------------------------------------------------------------------------
  */
-export class PriorityEventQueue {
+class PriorityEventQueue
+ {
     /**
      * @param {object} options
      * @param {(event: object) => void} options.handler - The function to process a single event.
@@ -274,7 +277,9 @@ export class PriorityEventQueue {
  * garbage collection of keys that are no longer referenced elsewhere.
  * ---------------------------------------------------------------------------
  */
-export function memoize(fn) {
+function memoize(fn) {
+module.exports.memoize = memoize;
+
     const cache = new WeakMap();
 
     return function(...args) {
@@ -310,7 +315,8 @@ export function memoize(fn) {
  * maintaining system responsiveness.
  * ---------------------------------------------------------------------------
  */
-export class CognitiveWorkerPool {
+class CognitiveWorkerPool
+ {
     /**
      * @param {number} [poolSize=navigator.hardwareConcurrency || 2] - Number of workers to spawn.
      */
@@ -433,3 +439,4 @@ export class CognitiveWorkerPool {
     }
 }
 ```
+module.exports = ObjectPool;

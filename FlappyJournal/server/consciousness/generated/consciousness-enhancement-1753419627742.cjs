@@ -12,7 +12,7 @@
  * @license MIT
  *
  * @example
- * import ConsciousnessProcessor from './consciousnessProcessor.cjs';
+ * const ConsciousnessProcessor = require('./consciousnessProcessor.cjs');
  *
  * const initialInputs = {
  *   sensoryBandwidth: 0.7, // (0-1) Proportion of sensory channels active
@@ -59,7 +59,7 @@ class ConsciousnessProcessorError extends Error {
  * The main class for processing and modeling consciousness.
  * It encapsulates the state, inputs, and all computational logic.
  */
-export default class ConsciousnessProcessor {
+module.exports = class ConsciousnessProcessor {
   /**
    * Initializes the Consciousness Processor.
    * @param {object} initialInputs - The initial set of inputs to seed the consciousness model.

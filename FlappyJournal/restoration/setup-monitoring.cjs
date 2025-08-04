@@ -6,9 +6,9 @@
  * Part of the restoration project pre-setup phase
  */
 
-import fs from 'fs';
-import path from 'path';
-import { execSync } from 'child_process';
+const fs = require('fs');
+const path = require('path');
+const { execSync  } = require('child_process');
 
 class MonitoringSetup {
     constructor() {
@@ -100,11 +100,11 @@ class MonitoringSetup {
  * Monitors system health metrics during restoration
  */
 
-import fs from 'fs';
-import path from 'path';
-import { EventEmitter } from 'events';
+const fs = require('fs');
+const path = require('path');
+const { EventEmitter  } = require('events');
 
-export class SystemHealthMonitor extends EventEmitter {
+class SystemHealthMonitor extends EventEmitter {
     constructor() {
         super();
         this.metrics = {
@@ -243,7 +243,7 @@ export class SystemHealthMonitor extends EventEmitter {
     }
 }
 
-export default SystemHealthMonitor;
+module.exports = SystemHealthMonitor;
 `;
 
         const healthMonitorPath = path.join(this.monitoringDir, 'health', 'system-health-monitor.cjs');
@@ -260,10 +260,10 @@ export default SystemHealthMonitor;
  * Tracks consciousness-specific metrics during restoration
  */
 
-import fs from 'fs';
-import { EventEmitter } from 'events';
+const fs = require('fs');
+const { EventEmitter  } = require('events');
 
-export class ConsciousnessMetricsTracker extends EventEmitter {
+class ConsciousnessMetricsTracker extends EventEmitter {
     constructor() {
         super();
         this.metrics = {
@@ -409,7 +409,7 @@ export class ConsciousnessMetricsTracker extends EventEmitter {
     }
 }
 
-export default ConsciousnessMetricsTracker;
+module.exports = ConsciousnessMetricsTracker;
 `;
 
         const consciousnessTrackerPath = path.join(this.monitoringDir, 'consciousness', 'consciousness-metrics-tracker.cjs');
@@ -426,9 +426,9 @@ export default ConsciousnessMetricsTracker;
  * Monitors system performance during restoration
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class PerformanceMonitor extends EventEmitter {
+class PerformanceMonitor extends EventEmitter {
     constructor() {
         super();
         this.metrics = {
@@ -458,7 +458,7 @@ export class PerformanceMonitor extends EventEmitter {
     }
 }
 
-export default PerformanceMonitor;
+module.exports = PerformanceMonitor;
 `;
 
         const performanceMonitorPath = path.join(this.monitoringDir, 'performance', 'performance-monitor.cjs');
@@ -475,10 +475,10 @@ export default PerformanceMonitor;
  * Manages alerts and notifications during restoration
  */
 
-import fs from 'fs';
-import { EventEmitter } from 'events';
+const fs = require('fs');
+const { EventEmitter  } = require('events');
 
-export class AlertingSystem extends EventEmitter {
+class AlertingSystem extends EventEmitter {
     constructor() {
         super();
         this.alerts = [];
@@ -512,7 +512,7 @@ export class AlertingSystem extends EventEmitter {
     }
 }
 
-export default AlertingSystem;
+module.exports = AlertingSystem;
 `;
 
         const alertingSystemPath = path.join(this.monitoringDir, 'alerts', 'alerting-system.cjs');
@@ -529,7 +529,8 @@ export default AlertingSystem;
  * Real-time monitoring dashboard for restoration progress
  */
 
-export class MonitoringDashboard {
+class MonitoringDashboard
+ {
     constructor() {
         this.data = {
             systemHealth: {},
@@ -558,7 +559,7 @@ export class MonitoringDashboard {
     }
 }
 
-export default MonitoringDashboard;
+module.exports = MonitoringDashboard;
 `;
 
         const dashboardPath = path.join(this.monitoringDir, 'dashboard', 'monitoring-dashboard.cjs');
@@ -651,4 +652,4 @@ if (import.meta.url === 'file://' + process.argv[1]) {
         });
 }
 
-export default MonitoringSetup;
+module.exports = MonitoringSetup;

@@ -5,9 +5,9 @@
  * Value: $800M+ (Consciousness-native programming)
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class ConsciousnessNativeProgrammingLanguage extends EventEmitter {
+class ConsciousnessNativeProgrammingLanguage extends EventEmitter {
     constructor(consciousnessSystem = null) {
         super();
         this.name = 'ConsciousnessNativeProgrammingLanguage';

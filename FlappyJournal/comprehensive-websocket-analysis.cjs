@@ -5,7 +5,7 @@
  * Traces the complete pipeline from WebSocket reception to response generation
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 console.log('🔍 COMPREHENSIVE WEBSOCKET MESSAGE FLOW ANALYSIS');
 console.log('🎯 Tracing complete pipeline: Reception → Processing → Response Generation');

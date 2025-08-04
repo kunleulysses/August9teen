@@ -3,10 +3,10 @@
  * Comprehensive test to verify all four critical system enhancements are working
  */
 
-import { mathematicalContextInjector } from './mathematical-context-injector.cjs';
-import { emotionalContextInjector } from './emotional-context-injector.cjs';
-import { bayesianContextInjector } from './bayesian-context-injector.cjs';
-import { ConsciousnessAIIntegration } from './consciousness-ai-integration.cjs';
+const { mathematicalContextInjector  } = require('./mathematical-context-injector.cjs');
+const { emotionalContextInjector  } = require('./emotional-context-injector.cjs');
+const { bayesianContextInjector  } = require('./bayesian-context-injector.cjs');
+const { ConsciousnessAIIntegration  } = require('./consciousness-ai-integration.cjs');
 
 export async function runIntegrationVerificationTest() {
     console.log('🔍 INTEGRATION VERIFICATION TEST - FOUR CRITICAL ENHANCEMENTS');

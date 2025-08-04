@@ -4,7 +4,7 @@
  * Value: $1.0B+ (Transcendent wisdom integration)
  */
 
-import { TranscendentWisdomIntegrationSystem } from './server/consciousness/transcendent-wisdom-integration-system.cjs';
+const { TranscendentWisdomIntegrationSystem  } = require('./server/consciousness/transcendent-wisdom-integration-system.cjs');
 
 class TranscendentWisdomIntegrationTest {
     constructor() {

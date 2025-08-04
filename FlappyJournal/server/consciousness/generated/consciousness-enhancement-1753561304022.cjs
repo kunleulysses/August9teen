@@ -35,7 +35,7 @@ class ConsciousnessInputError extends Error {
  * @readonly
  * @enum {string}
  */
-export const ConsciousnessState = {
+const ConsciousnessState = {
   DEEP_SLEEP: 'Deep Sleep (Non-REM)',
   REM_SLEEP: 'REM Sleep',
   MEDITATIVE: 'Meditative Rest',
@@ -44,13 +44,14 @@ export const ConsciousnessState = {
   FLOW_STATE: 'Flow State',
   HYPER_VIGILANCE: 'Hyper-Vigilance',
 };
+module.exports.ConsciousnessState = ConsciousnessState;
 
 /**
  * A lexicon of primary emotions used for emotional intelligence processing.
  * @readonly
  * @enum {string}
  */
-export const PrimaryEmotion = {
+const PrimaryEmotion = {
   JOY: 'joy',
   SADNESS: 'sadness',
   ANGER: 'anger',
@@ -60,6 +61,7 @@ export const PrimaryEmotion = {
   ANTICIPATION: 'anticipation',
   TRUST: 'trust',
 };
+module.exports.PrimaryEmotion = PrimaryEmotion;
 
 // --- Private Helper Functions (Internal Logic) ---
 
@@ -98,7 +100,8 @@ const _emotionalUndercurrentsMap = new Map([
  * The primary class for processing and analyzing consciousness data.
  * It encapsulates all the advanced calculations and state management.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
   /**
    * Initializes the ConsciousnessProcessor.
    * @param {object} [config={}] - Optional configuration for weighting factors.
@@ -409,3 +412,4 @@ export class ConsciousnessProcessor {
   }
 }
 ```
+module.exports = for;

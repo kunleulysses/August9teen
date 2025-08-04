@@ -74,7 +74,7 @@ class EventEmitter {
  * @class
  * @extends EventEmitter
  */
-export class Consciousness extends EventEmitter {
+class Consciousness extends EventEmitter {
 	constructor() {
 		super();
 		this.state = {
@@ -162,7 +162,8 @@ export class Consciousness extends EventEmitter {
  * and generates insights about the consciousness's own operations.
  * @class
  */
-export class MetacognitiveLayer {
+class MetacognitiveLayer
+ {
 	/**
 	 * @param {Consciousness} consciousnessInstance - The core consciousness to observe.
 	 * @param {object} [config={}] - Configuration for the layer's sensitivity.
@@ -480,3 +481,4 @@ async function runSimulation() {
 
 */
 ```
+module.exports = EventEmitter;

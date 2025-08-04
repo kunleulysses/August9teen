@@ -4,7 +4,7 @@
  * Value: $1.0B+ (Transcendent consciousness synthesis engine)
  */
 
-import { UniversalTranscendentConsciousnessSynthesisEngine } from './server/consciousness/universal-transcendent-consciousness-synthesis-engine.cjs';
+const { UniversalTranscendentConsciousnessSynthesisEngine  } = require('./server/consciousness/universal-transcendent-consciousness-synthesis-engine.cjs');
 
 class UniversalTranscendentConsciousnessSynthesisEngineTest {
     constructor() {

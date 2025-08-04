@@ -3,9 +3,9 @@
  * Bridges Architect 4.0 with FlappyJournal's existing consciousness infrastructure
  */
 
-import { dualStreamConsciousness } from './dual-stream-consciousness.cjs';
-import { recursiveMirror } from './architect-4.0-recursive-mirror.cjs';
-import { spiralMemory } from './architect-4.0-spiral-memory.cjs';
+const { dualStreamConsciousness  } = require('./dual-stream-consciousness.cjs');
+const { recursiveMirror  } = require('./architect-4.0-recursive-mirror.cjs');
+const { spiralMemory  } = require('./architect-4.0-spiral-memory.cjs');
 
 // Import consciousness modules (assuming they exist based on earlier conversation)
 const CONSCIOUSNESS_MODULES_PATH = '/opt/featherweight/FlappyJournal/consciousness-modules';
@@ -345,10 +345,13 @@ class DualStreamIntegration {
 }
 
 // Export singleton instance
-export const dualStreamIntegration = new DualStreamIntegration();
+const dualStreamIntegration = new DualStreamIntegration();
+module.exports.dualStreamIntegration = dualStreamIntegration;
 
 // Also export for WebSocket integration
-export function createEnhancedConsciousness() {
+function createEnhancedConsciousness() {
+module.exports.createEnhancedConsciousness = createEnhancedConsciousness;
+
   return {
     process: async (input, context) => {
       return await dualStreamIntegration.process(input, context);

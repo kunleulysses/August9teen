@@ -31,7 +31,7 @@ class ConsciousnessInputError extends Error {
  * @readonly
  * @enum {number}
  */
-export const CONSCIOUSNESS_STATES = Object.freeze({
+const CONSCIOUSNESS_STATES = Object.freeze({
   UNDEFINED: 0,
   DEEP_SLEEP: 1, // Low arousal, no awareness
   DREAMING: 2, // High internal activity, low external awareness
@@ -41,6 +41,7 @@ export const CONSCIOUSNESS_STATES = Object.freeze({
   FLOW: 6, // Optimal experience: high focus, high clarity, effortless action
   TRANSCENDENT: 7, // Peak state of metacognitive and emotional clarity
 });
+module.exports.CONSCIOUSNESS_STATES = CONSCIOUSNESS_STATES;
 
 /**
  * Defines primary emotional vectors based on a dimensional model of affect.
@@ -48,11 +49,12 @@ export const CONSCIOUSNESS_STATES = Object.freeze({
  * @readonly
  * @enum {string}
  */
-export const EMOTIONAL_VECTORS = Object.freeze({
+const EMOTIONAL_VECTORS = Object.freeze({
   VALENCE: 'valence', // Pleasure vs. Displeasure (Joy/Sadness)
   AROUSAL: 'arousal', // Activation vs. Deactivation (Anticipation/Surprise vs. Calm)
   DOMINANCE: 'dominance', // Control vs. Lack of Control (Anger/Pride vs. Fear/Submission)
 });
+module.exports.EMOTIONAL_VECTORS = EMOTIONAL_VECTORS;
 
 
 /**
@@ -125,7 +127,8 @@ export const EMOTIONAL_VECTORS = Object.freeze({
  * This class encapsulates the logic for translating raw data into meaningful insights
  * about an entity's current state of being.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
   #currentState;
   #stateHistory;
 
@@ -354,3 +357,4 @@ export class ConsciousnessProcessor {
   }
 }
 ```
+module.exports = for;

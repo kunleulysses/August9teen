@@ -39,7 +39,7 @@
  */
 
 
-export default class MetaCognitiveLayer {
+module.exports = class MetaCognitiveLayer {
     /**
      * Initializes the Meta-Cognitive Awareness Layer.
      * @param {object} [config={}] - Configuration options for the layer.

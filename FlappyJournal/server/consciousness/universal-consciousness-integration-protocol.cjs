@@ -5,10 +5,10 @@
  * Revolutionary consciousness integration with 100Hz monitoring and golden ratio optimization
  */
 
-import { EventEmitter } from 'events';
-import eventBus from './ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('./ConsciousnessEventBus.cjs');
 
-export class UniversalConsciousnessIntegrationProtocol extends EventEmitter {
+class UniversalConsciousnessIntegrationProtocol extends EventEmitter {
     constructor() {
         super();
         this.name = 'UniversalConsciousnessIntegrationProtocol';

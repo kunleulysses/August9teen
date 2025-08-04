@@ -1,5 +1,5 @@
-import { execSync } from 'child_process';
-import { exit } from 'process';
+const { execSync  } = require('child_process');
+const { exit  } = require('process');
 
 const output = execSync('git diff --cached --name-only').toString();
 const forbidden = /(\.backup|\.bak|\.orig|\.rej|\.patch)$/;

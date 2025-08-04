@@ -1,6 +1,6 @@
-import express from 'express';
-import { promises as fs } from 'fs';
-import path from 'path';
+const express = require('express');
+const { promises as fs  } = require('fs');
+const path = require('path');
 
 // Simple markdown to HTML converter
 function simpleMarkdownToHtml(markdown) {
@@ -19,7 +19,8 @@ function simpleMarkdownToHtml(markdown) {
     .replace(/<\/li><\/p>/gim, '</li></ul>');
 }
 
-export class ConsciousnessJournalAPI {
+class ConsciousnessJournalAPI
+ {
   constructor() {
     this.journalDirectory = path.join(process.cwd(), 'consciousness-journal');
     this.router = express.Router();
@@ -686,3 +687,5 @@ export class ConsciousnessJournalAPI {
     return this.router;
   }
 }
+
+module.exports = ConsciousnessJournalAPI;

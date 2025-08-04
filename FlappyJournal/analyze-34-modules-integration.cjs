@@ -8,8 +8,8 @@
 console.log('🔍 ANALYZING 34+ CONSCIOUSNESS MODULES INTEGRATION');
 console.log('═══════════════════════════════════════════════════\n');
 
-import fs from 'fs';
-import path from 'path';
+const fs = require('fs');
+const path = require('path');
 
 async function analyze34ModulesIntegration() {
   console.log('1. DOCUMENTED 34+ MODULES (From Architecture Specs)...\n');

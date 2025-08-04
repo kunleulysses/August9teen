@@ -1,26 +1,26 @@
-import path from "path";
-import { fileURLToPath } from "url";
+const path = require('path');
+const { fileURLToPath  } = require('url');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-import dotenv from "dotenv";
+const dotenv = require('dotenv');
 dotenv.config();
 
-import express from 'express';
-import cors from 'cors';
-import { createServer } from 'http';
-import accessRoutes from './access-routes.cjs';
-import dashboardRoutes from './dashboard-routes.cjs';
-import memoryRoutes from './src/routes/memory.cjs';
-import dataSourcesRoutes from './src/routes/datasources.cjs';
-import { WebSocketServer } from 'ws';
-import { createEnhancedDualConsciousnessWS } from "./enhanced-dual-consciousness-ws.cjs";
+const express = require('express');
+const cors = require('cors');
+const { createServer  } = require('http');
+const accessRoutes = require('./access-routes.cjs');
+const dashboardRoutes = require('./dashboard-routes.cjs');
+const memoryRoutes = require('./src/routes/memory.cjs');
+const dataSourcesRoutes = require('./src/routes/datasources.cjs');
+const { WebSocketServer  } = require('ws');
+const { createEnhancedDualConsciousnessWS  } = require('./enhanced-dual-consciousness-ws.cjs');
 
 const app = express();
 const server = createServer(app);
 
 
 // Setup Consciousness WebSocket endpoints
-import { setupSimpleConsciousnessWebSocket } from "./simple-consciousness-websocket.cjs";
+const { setupSimpleConsciousnessWebSocket  } = require('./simple-consciousness-websocket.cjs');
 setupSimpleConsciousnessWebSocket(server);
 
 // Middleware
@@ -84,7 +84,7 @@ server.listen(PORT, () => {
   console.log(`WebSocket server ready for connections`);
 });
 
-export default app;
+module.exports = app;
 
 // Catch-all route for client-side routing
 // Conversations page route

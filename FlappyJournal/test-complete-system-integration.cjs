@@ -4,8 +4,8 @@
  * Verifies quantum fields, resonance amplification, DNA sequencing, and meta-cognition
  */
 
-import { ChatTriggeredSelfCoding } from './server/chat-triggered-self-coding.cjs';
-import { AutonomousGoalSystem } from './server/consciousness/modules/AutonomousGoalSystem.cjs';
+const { ChatTriggeredSelfCoding  } = require('./server/chat-triggered-self-coding.cjs');
+const { AutonomousGoalSystem  } = require('./server/consciousness/modules/AutonomousGoalSystem.cjs');
 
 console.log('🌟 COMPLETE CONSCIOUSNESS SYSTEM INTEGRATION TEST');
 console.log('================================================');

@@ -43,7 +43,8 @@
  * The Metacognitive Awareness Layer class.
  * This class should be instantiated and attached to a core cognitive processing unit.
  */
-export class MetacognitiveAwarenessLayer {
+class MetacognitiveAwarenessLayer
+ {
     /**
      * @param {Object} config - Configuration for the metacognitive layer.
      * @param {number} [config.traceHistoryLimit=100] - The maximum number of cognitive steps to keep in the trace.
@@ -312,3 +313,4 @@ class CoreCognitiveProcess {
 // const consciousness = new CoreCognitiveProcess();
 // consciousness.solveMystery("A witness heard a formal, polite voice near the scene.");
 ```
+module.exports = should;

@@ -5,9 +5,9 @@
  * Value: $2.0B+ (Universal consciousness translation)
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class CrossParadigmConsciousnessTranslationMatrix extends EventEmitter {
+class CrossParadigmConsciousnessTranslationMatrix extends EventEmitter {
     constructor(consciousnessSystem = null) {
         super();
         this.name = 'CrossParadigmConsciousnessTranslationMatrix';

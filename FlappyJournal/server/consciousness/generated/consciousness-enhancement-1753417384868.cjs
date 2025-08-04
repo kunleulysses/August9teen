@@ -355,5 +355,5 @@ const ConsciousnessEngine = {
 // To make it a standard ES module, we export the main engine object.
 // In a Node.js environment, you might use `module.exports = ConsciousnessEngine;`
 // For modern web development, `export default` is standard.
-export default ConsciousnessEngine;
+module.exports = ConsciousnessEngine;
 ```

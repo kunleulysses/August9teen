@@ -4,8 +4,8 @@
  * and generate self-healing wrapper code with healing patterns
  */
 
-import { EventEmitter } from 'events';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+const { EventEmitter  } = require('events');
+const { GoogleGenerativeAI  } = require('@google/generative-ai');
 
 class CodeAnalyzer extends EventEmitter {
     constructor() {
@@ -698,4 +698,7 @@ Return only the JavaScript code with comprehensive comments explaining the heali
     }
 }
 
-export { SelfHealingCodeGenerator, CodeAnalyzer, VulnerabilityDetector, HealingPatternLibrary };
+module.exports.SelfHealingCodeGenerator = SelfHealingCodeGenerator;
+module.exports.CodeAnalyzer = CodeAnalyzer;
+module.exports.VulnerabilityDetector = VulnerabilityDetector;
+module.exports.HealingPatternLibrary = HealingPatternLibrary;

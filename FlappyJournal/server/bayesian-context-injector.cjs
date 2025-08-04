@@ -3,7 +3,8 @@
  * Provides real-time belief-desire-intention modeling data for AI prompt injection
  */
 
-export class BayesianContextInjector {
+class BayesianContextInjector
+ {
     constructor() {
         this.beliefNetwork = new Map();
         this.goalHierarchy = new Map();
@@ -513,4 +514,7 @@ BAYESIAN INTEGRATION INSTRUCTIONS:
 }
 
 // Create singleton instance
-export const bayesianContextInjector = new BayesianContextInjector();
+const bayesianContextInjector = new BayesianContextInjector();
+module.exports.bayesianContextInjector = bayesianContextInjector;
+
+module.exports = BayesianContextInjector;

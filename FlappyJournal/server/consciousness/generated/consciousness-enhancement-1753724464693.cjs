@@ -306,14 +306,12 @@ class ConsciousnessProcessor {
   }
 }
 
-export {
-  ConsciousnessProcessor,
-  ConsciousnessState,
-  EmotionalVector,
-  InvalidInputError,
-  DataRangeError
-};
+module.exports.ConsciousnessProcessor = ConsciousnessProcessor;
+module.exports.ConsciousnessState = ConsciousnessState;
+module.exports.EmotionalVector = EmotionalVector;
+module.exports.InvalidInputError = InvalidInputError;
+module.exports.DataRangeError = DataRangeError;
 
 // Default export for convenience
-export default ConsciousnessProcessor;
+module.exports = ConsciousnessProcessor;
 ```

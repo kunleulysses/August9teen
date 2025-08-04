@@ -3,10 +3,10 @@
  * Handles automatic integration of generated code and system components
  */
 
-import { EventEmitter } from 'events';
-import eventBus from '../core/ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('../core/ConsciousnessEventBus.cjs');
 
-export default class AutoIntegrationService extends EventEmitter {
+module.exports = class AutoIntegrationService extends EventEmitter {
     constructor() {
         super();
         this.name = 'AutoIntegrationService';

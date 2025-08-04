@@ -5,11 +5,11 @@
  * Multi-core distributed processing to reduce CPU load
  */
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import cluster from 'cluster';
-import os from 'os';
+const fs = require('fs');
+const path = require('path');
+const { fileURLToPath  } = require('url');
+const cluster = require('cluster');
+const os = require('os');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -44,9 +44,10 @@ function createDefaultFile(fileName, filePath) {
     if (fileName.includes('sigil-identity.cjs')) {
         const defaultContent = `
 // Auto-generated Sigil Identity System
-import crypto from 'crypto';
+const crypto = require('crypto');
 
-export class SigilIdentity {
+class SigilIdentity
+ {
     constructor() {
         this.instanceId = crypto.randomBytes(16).toString('hex');
         this.creationTime = Date.now();
@@ -70,7 +71,7 @@ export class SigilIdentity {
     getIdentity() { return { instanceId: this.instanceId, sigil: this.sigil }; }
 }
 
-export default SigilIdentity;
+module.exports = SigilIdentity;
 `;
         fs.writeFileSync(filePath, defaultContent);
         console.log(`✅ Created default ${fileName}`);
@@ -266,3 +267,5 @@ main().catch((error) => {
     console.error('❌ Failed to start consciousness system:', error);
     process.exit(1);
 });
+
+module.exports = SigilIdentity;

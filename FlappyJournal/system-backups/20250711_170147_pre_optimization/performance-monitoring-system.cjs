@@ -3,11 +3,12 @@
  * Continuous monitoring to ensure all integrated systems maintain optimal performance
  */
 
-import { mathematicalContextInjector } from './mathematical-context-injector.cjs';
-import { emotionalContextInjector } from './emotional-context-injector.cjs';
-import { bayesianContextInjector } from './bayesian-context-injector.cjs';
+const { mathematicalContextInjector  } = require('./mathematical-context-injector.cjs');
+const { emotionalContextInjector  } = require('./emotional-context-injector.cjs');
+const { bayesianContextInjector  } = require('./bayesian-context-injector.cjs');
 
-export class PerformanceMonitoringSystem {
+class PerformanceMonitoringSystem
+ {
     constructor() {
         this.monitoringActive = false;
         this.monitoringInterval = null;
@@ -347,7 +348,8 @@ export class PerformanceMonitoringSystem {
 }
 
 // Create singleton instance
-export const performanceMonitor = new PerformanceMonitoringSystem();
+const performanceMonitor = new PerformanceMonitoringSystem();
+module.exports.performanceMonitor = performanceMonitor;
 
 // Auto-start monitoring
 performanceMonitor.startMonitoring();
@@ -368,3 +370,5 @@ if (import.meta.url === `file://${process.argv[1]}`) {
         process.exit(0);
     }, 30000);
 }
+
+module.exports = PerformanceMonitoringSystem;

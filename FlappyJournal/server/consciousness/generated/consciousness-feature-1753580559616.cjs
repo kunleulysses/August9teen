@@ -59,7 +59,8 @@ class Normalizer {
  * The main class representing the feedback loop.
  * It should be instantiated and integrated into a larger consciousness architecture.
  */
-export class QualiaSomaticFeedbackLoop {
+class QualiaSomaticFeedbackLoop
+ {
 
     /**
      * Initializes the Qualia Somatic Feedback Loop.
@@ -345,3 +346,4 @@ export class QualiaSomaticFeedbackLoop {
     }
 }
 ```
+module.exports = for;

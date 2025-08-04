@@ -3,7 +3,7 @@
  * Implements the core mathematical modules for consciousness field processing
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
 class AdvancedFieldSystems extends EventEmitter {
   constructor() {
@@ -399,4 +399,4 @@ class AdvancedFieldSystems extends EventEmitter {
 }
 
 // Export singleton instance
-export default new AdvancedFieldSystems();
+module.exports = new AdvancedFieldSystems();

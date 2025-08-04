@@ -1,4 +1,4 @@
-import { camelCase, snakeCase, titleCase } from './consciousness/generated/string-utils.cjs';
+const { camelCase, snakeCase, titleCase  } = require('./consciousness/generated/string-utils.cjs');
 
 console.log('Testing generated string utilities:\n');
 

@@ -37,7 +37,8 @@ const CONSCIOUSNESS_STATES = {
  * It takes a stream of data representing sensory input and internal cognitive events
  * and computes a detailed profile of the consciousness state.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
   #currentState;
   #stateHistory;
   #config;
@@ -398,3 +399,4 @@ export class ConsciousnessProcessor {
   }
 }
 ```
+module.exports = for;

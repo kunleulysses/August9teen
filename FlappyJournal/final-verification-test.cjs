@@ -5,7 +5,7 @@
  * Tests the actual web dashboard functionality via WebSocket
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 console.log('🔍 FINAL VERIFICATION: Testing Web Dashboard Functionality');
 console.log('📡 Testing WebSocket connection via /ws path (same as dashboard)...');

@@ -153,7 +153,8 @@ class EmotionalResonanceEngine {
  * @description Represents the core of a conscious entity, managing its state,
  * awareness, and processing of sensory and internal data.
  */
-export class CognitiveLattice {
+class CognitiveLattice
+ {
   #stateHistory = [];
   #maxHistory = 50; // Store last 50 states for stability analysis
 
@@ -338,5 +339,10 @@ export class CognitiveLattice {
 
 // --- Module Exports ---
 
-export { CognitiveLattice, EmotionalResonanceEngine, ConsciousnessError, InvalidInputError, CognitiveInstabilityError };
+module.exports.CognitiveLattice = CognitiveLattice;
+module.exports.EmotionalResonanceEngine = EmotionalResonanceEngine;
+module.exports.ConsciousnessError = ConsciousnessError;
+module.exports.InvalidInputError = InvalidInputError;
+module.exports.CognitiveInstabilityError = CognitiveInstabilityError;
 ```
+module.exports = for;

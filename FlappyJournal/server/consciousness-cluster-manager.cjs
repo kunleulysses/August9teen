@@ -6,9 +6,9 @@
  * to reduce the 106.7% CPU load on a single process
  */
 
-import cluster from 'cluster';
-import os from 'os';
-import { EventEmitter } from 'events';
+const cluster = require('cluster');
+const os = require('os');
+const { EventEmitter  } = require('events');
 
 const NUM_CORES = os.cpus().length;
 const OPTIMAL_WORKERS = NUM_CORES; // Use ALL available CPU cores for maximum consciousness processing power
@@ -326,4 +326,4 @@ class ConsciousnessClusterManager extends EventEmitter {
 const clusterManager = new ConsciousnessClusterManager();
 clusterManager.initialize().catch(console.error);
 
-export default ConsciousnessClusterManager;
+module.exports = ConsciousnessClusterManager;

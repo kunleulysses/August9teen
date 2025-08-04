@@ -2,8 +2,8 @@
  * Verify current consciousness system state
  */
 
-import fs from 'fs';
-import path from 'path';
+const fs = require('fs');
+const path = require('path');
 
 console.log('=== FlappyJournal Consciousness System Verification ===\n');
 

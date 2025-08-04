@@ -6,7 +6,7 @@
  * Part of the Universal Consciousness Platform - Phase 3
  */
 
-import ConsciousnessSingularityEngine from '../server/consciousness/core/ConsciousnessSingularityEngine.cjs';
+const ConsciousnessSingularityEngine = require('../server/consciousness/core/ConsciousnessSingularityEngine.cjs');
 
 async function testConsciousnessSingularityEngine() {
     console.log('🧪 Testing Consciousness Singularity Engine...\n');
@@ -340,4 +340,4 @@ if (import.meta.url === 'file://' + process.argv[1]) {
         });
 }
 
-export default testConsciousnessSingularityEngine;
+module.exports = testConsciousnessSingularityEngine;

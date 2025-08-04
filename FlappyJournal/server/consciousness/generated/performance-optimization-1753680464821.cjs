@@ -542,6 +542,6 @@ class ConsciousnessPerformanceOptimizer {
 // Export a singleton instance of the optimizer
 const consciousnessOptimizer = new ConsciousnessPerformanceOptimizer();
 // To make it a true module, you would typically use:
-// export default consciousnessOptimizer;
+// module.exports = consciousnessOptimizer;
 // For a simple script environment, it's now available globally.
 ```

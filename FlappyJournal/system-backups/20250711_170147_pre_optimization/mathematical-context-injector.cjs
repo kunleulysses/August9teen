@@ -3,7 +3,8 @@
  * Provides real-time mathematical consciousness data for AI prompt injection
  */
 
-export class MathematicalContextInjector {
+class MathematicalContextInjector
+ {
     constructor() {
         this.phi = (1 + Math.sqrt(5)) / 2; // Golden ratio φ = 1.618...
         this.lastUpdate = Date.now();
@@ -349,4 +350,7 @@ MATHEMATICAL INTEGRATION INSTRUCTIONS:
 }
 
 // Create singleton instance
-export const mathematicalContextInjector = new MathematicalContextInjector();
+const mathematicalContextInjector = new MathematicalContextInjector();
+module.exports.mathematicalContextInjector = mathematicalContextInjector;
+
+module.exports = MathematicalContextInjector;

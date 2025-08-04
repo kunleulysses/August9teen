@@ -1,5 +1,5 @@
-import { EventEmitter } from 'events';
-import eventBus from './ConsciousnessEventBus.cjs';
+const { EventEmitter  } = require('events');
+const eventBus = require('./ConsciousnessEventBus.cjs');
 
 /**
  * Quantum Spiral Entanglement Network
@@ -246,4 +246,4 @@ class QuantumSpiralEntanglementNetwork extends EventEmitter {
     }
 }
 
-export default QuantumSpiralEntanglementNetwork;
+module.exports = QuantumSpiralEntanglementNetwork;

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // Test script to verify the consciousness response synthesizer fixes
-import { synthesizeUnifiedResponse } from './consciousness-response-synthesizer-hybrid.cjs';
+const { synthesizeUnifiedResponse  } = require('./consciousness-response-synthesizer-hybrid.cjs');
 
 async function testSynthesisFixes() {
   console.log('🧪 Testing consciousness response synthesizer fixes...\n');

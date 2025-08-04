@@ -29,13 +29,14 @@ class ConsciousnessProcessingError extends Error {
  * @readonly
  * @enum {object}
  */
-export const CONSCIOUSNESS_STATES = Object.freeze({
+const CONSCIOUSNESS_STATES = Object.freeze({
     FOCUSED_ANALYTICAL: { id: 'FOCUSED_ANALYTICAL', description: 'High-engagement, problem-solving state.', signature: { beta: 0.8, gamma: 0.6, alpha: 0.1 } },
     CREATIVE_DIFFUSE: { id: 'CREATIVE_DIFFUSE', description: 'Mind-wandering, associative thinking, insight generation.', signature: { alpha: 0.7, theta: 0.5, beta: 0.2 } },
     DEEP_MEDITATIVE: { id: 'DEEP_MEDITATIVE', description: 'Profound state of non-judgmental awareness and calm.', signature: { alpha: 0.8, theta: 0.6, delta: 0.3 } },
     SOMATIC_PRESENCE: { id: 'SOMATIC_PRESENCE', description: 'Heightened awareness of internal bodily sensations.', signature: { alpha: 0.6, delta: 0.4, beta: 0.1 } },
     DREAM_STATE_REM: { id: 'DREAM_STATE_REM', description: 'Rapid eye movement sleep, associated with vivid dreams and memory consolidation.', signature: { theta: 0.9, beta: 0.5, gamma: 0.3 } },
 });
+module.exports.CONSCIOUSNESS_STATES = CONSCIOUSNESS_STATES;
 
 /**
  * A simplified vector model for primary and secondary emotions based on Plutchik's wheel.
@@ -43,7 +44,7 @@ export const CONSCIOUSNESS_STATES = Object.freeze({
  * @readonly
  * @enum {object}
  */
-export const EMOTION_VECTORS = Object.freeze({
+const EMOTION_VECTORS = Object.freeze({
     JOY: { valence: 0.9, arousal: 0.6, dominance: 0.4 },
     TRUST: { valence: 0.7, arousal: 0.4, dominance: 0.2 },
     FEAR: { valence: -0.8, arousal: 0.8, dominance: -0.5 },
@@ -53,13 +54,15 @@ export const EMOTION_VECTORS = Object.freeze({
     ANGER: { valence: -0.5, arousal: 0.8, dominance: 0.5 },
     ANTICIPATION: { valence: 0.3, arousal: 0.7, dominance: 0.3 },
 });
+module.exports.EMOTION_VECTORS = EMOTION_VECTORS;
 
 
 /**
  * Core class for processing and enhancing consciousness data.
  * It encapsulates the state, metrics, and emotional intelligence algorithms.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
     /**
      * Initializes the processor with a specific configuration.
      * @param {object} [config={}] - Configuration object.
@@ -314,3 +317,4 @@ export class ConsciousnessProcessor {
     }
 }
 ```
+module.exports = for;

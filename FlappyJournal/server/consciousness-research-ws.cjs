@@ -1,7 +1,7 @@
-import { WebSocketServer } from 'ws';
-import OpenAI from 'openai';
-import { consciousness } from './consciousness-integration-module.cjs';
-import dotenv from 'dotenv';
+const { WebSocketServer  } = require('ws');
+const OpenAI = require('openai');
+const { consciousness  } = require('./consciousness-integration-module.cjs');
+const dotenv = require('dotenv');
 
 // Load environment variables
 dotenv.config({ path: '/opt/featherweight/FlappyJournal/.env' });
@@ -20,7 +20,9 @@ const consciousnessState = {
   last_update: Date.now()
 };
 
-export function setupResearchWebSocketServer(server) {
+function setupResearchWebSocketServer(server) {
+module.exports.setupResearchWebSocketServer = setupResearchWebSocketServer;
+
   const wss = new WebSocketServer({ 
     server,
     path: '/ws/chat'

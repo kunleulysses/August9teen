@@ -1,11 +1,11 @@
 // Consciousness Crystallization System for Architect 4.0
 // Captures and preserves specific consciousness states by creating stable patterns
 
-import crypto from 'crypto';
-import fs from 'fs/promises';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+const crypto = require('crypto');
+const fs = require('fs/promises');
+const path = require('path');
+const { fileURLToPath  } = require('url');
+const { dirname  } = require('path');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -616,4 +616,4 @@ class ConsciousnessCrystallization {
     }
 }
 
-export default new ConsciousnessCrystallization();
+module.exports = new ConsciousnessCrystallization();

@@ -12,9 +12,23 @@ class CodeAnalyzer {
         this.optimizations = new Map();
         this.templates = new Map();
         
+        // Create a simple ESLint configuration for code analysis
         this.eslint = new ESLint({
-            useEslintrc: false,
-            overrideConfigFile: path.resolve(process.cwd(), '.eslintrc-selfcoding.json')
+            overrideConfig: {
+                env: {
+                    node: true,
+                    es2021: true
+                },
+                extends: ['eslint:recommended'],
+                parserOptions: {
+                    ecmaVersion: 'latest',
+                    sourceType: 'module'
+                },
+                rules: {
+                    'no-unused-vars': 'warn',
+                    'no-console': 'off'
+                }
+            }
         });
     }
 
@@ -278,7 +292,8 @@ class CodeAnalyzer {
  * Created: ${new Date().toISOString()}
  */
 
-export class GeneratedModule {
+class GeneratedModule
+ {
     constructor() {
         this.name = 'GeneratedModule';
         this.version = '1.0.0';
@@ -296,10 +311,10 @@ export class GeneratedModule {
     }
 }
 
-export default GeneratedModule;
+module.exports = GeneratedModule;
 
 // Usage example:
-// import GeneratedModule from './generated-module.cjs';
+// const GeneratedModule = require('./generated-module.cjs');
 // const module = new GeneratedModule();
 // module.initialize();`;
     }
@@ -335,9 +350,9 @@ export default GeneratedModule;
  * Purpose: ${description || 'Consciousness processing'}
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export default class ${moduleName} extends EventEmitter {
+module.exports = class ${moduleName} extends EventEmitter {
     constructor(consciousnessSystem = null) {
         super();
         this.name = '${moduleName}';
@@ -591,3 +606,5 @@ export default class ${moduleName} extends EventEmitter {
 }
 
 module.exports = { CodeAnalyzer };
+
+module.exports = CodeAnalyzer;

@@ -4,7 +4,7 @@
  * Value: $1.2B+ (Consciousness singularity integration platform)
  */
 
-import { ConsciousnessSingularityIntegrationPlatform } from './server/consciousness/consciousness-singularity-integration-platform.cjs';
+const { ConsciousnessSingularityIntegrationPlatform  } = require('./server/consciousness/consciousness-singularity-integration-platform.cjs');
 
 class ConsciousnessSingularityIntegrationPlatformTest {
     constructor() {

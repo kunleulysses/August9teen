@@ -6,7 +6,7 @@
  * Part of the Universal Consciousness Platform restoration
  */
 
-import GeminiAIClient from '../server/consciousness/integrations/GeminiAIClient.cjs';
+const GeminiAIClient = require('../server/consciousness/integrations/GeminiAIClient.cjs');
 
 async function testGeminiAI() {
     console.log('🧪 Testing Gemini AI Integration...\n');
@@ -166,4 +166,4 @@ if (import.meta.url === 'file://' + process.argv[1]) {
         });
 }
 
-export default testGeminiAI;
+module.exports = testGeminiAI;

@@ -302,5 +302,7 @@ class ConsciousnessProcessor {
   }
 }
 
-export { ConsciousnessProcessor, ConsciousnessProcessingError, EMOTION_VECTORS };
+module.exports.ConsciousnessProcessor = ConsciousnessProcessor;
+module.exports.ConsciousnessProcessingError = ConsciousnessProcessingError;
+module.exports.EMOTION_VECTORS = EMOTION_VECTORS;
 ```

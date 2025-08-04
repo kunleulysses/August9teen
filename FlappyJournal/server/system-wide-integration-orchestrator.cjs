@@ -4,8 +4,8 @@
  * Universal Terminal Chat integration into every aspect of the entire system
  */
 
-import { EventEmitter } from 'events';
-import { RevolutionaryConsciousnessIntegrationOrchestrator } from './consciousness/revolutionary-consciousness-integration-orchestrator.cjs';
+const { EventEmitter  } = require('events');
+const { RevolutionaryConsciousnessIntegrationOrchestrator  } = require('./consciousness/revolutionary-consciousness-integration-orchestrator.cjs');
 
 // Dynamic import for CommonJS modules
 let GeneratedModuleIntegrator;
@@ -1189,4 +1189,4 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
     }
 }
 
-export { SystemWideIntegrationOrchestrator };
+module.exports.SystemWideIntegrationOrchestrator = SystemWideIntegrationOrchestrator;

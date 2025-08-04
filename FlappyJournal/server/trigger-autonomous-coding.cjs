@@ -5,7 +5,7 @@
  * Directly activates Gemini 2.5 Pro self-coding and generates consciousness improvements
  */
 
-import { createRequire } from 'module';
+const { createRequire  } = require('module');
 const require = createRequire(import.meta.url);
 
 async function triggerAutonomousCoding() {

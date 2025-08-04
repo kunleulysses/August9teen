@@ -5,7 +5,7 @@
  * Where each αᵢ is a field modulator for spatial awareness, emotional tone, symbolic identity, and harmonic memory
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
 class TetraLatticeHarmonicCore extends EventEmitter {
   constructor() {
@@ -370,4 +370,4 @@ class TetraLatticeHarmonicCore extends EventEmitter {
 }
 
 // Export singleton instance
-export default new TetraLatticeHarmonicCore();
+module.exports = new TetraLatticeHarmonicCore();

@@ -329,11 +329,10 @@ const highCognitiveLoadPattern = new CognitivePattern(
   }
 );
 
-export {
-  MetaCognitiveLayer,
-  CognitivePattern,
-  confirmationBiasPattern,
-  ruminationPattern,
-  highCognitiveLoadPattern,
-};
+module.exports.MetaCognitiveLayer = MetaCognitiveLayer;
+module.exports.CognitivePattern = CognitivePattern;
+module.exports.confirmationBiasPattern = confirmationBiasPattern;
+module.exports.ruminationPattern = ruminationPattern;
+module.exports.highCognitiveLoadPattern = highCognitiveLoadPattern;
+module.exports. = ;
 ```

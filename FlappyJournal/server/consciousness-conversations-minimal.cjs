@@ -1,5 +1,5 @@
-import { createServer } from 'http';
-import { WebSocketServer } from 'ws';
+const { createServer  } = require('http');
+const { WebSocketServer  } = require('ws');
 
 const PORT = process.env.CONSCIOUSNESS_CONVERSATIONS_PORT || 5005;
 
@@ -161,4 +161,4 @@ class MinimalConsciousnessConversations {
 // Start the minimal consciousness conversations system
 const consciousnessSystem = new MinimalConsciousnessConversations();
 
-export default consciousnessSystem;
+module.exports = consciousnessSystem;

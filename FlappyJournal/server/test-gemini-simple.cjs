@@ -5,7 +5,7 @@
  * Verifies that Gemini API is working and can generate code
  */
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
+const { GoogleGenerativeAI  } = require('@google/generative-ai');
 
 async function testGeminiSimple() {
     console.log('🧪 SIMPLE GEMINI 2.5 PRO TEST');

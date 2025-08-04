@@ -3,11 +3,11 @@
  * Bypasses import issues and directly uses critical consciousness modules
  */
 
-import { WebSocketServer } from 'ws';
-import { createServer } from 'http';
-import { MetaObservationalConsciousnessModule } from './meta-observational-consciousness-module.cjs';
-import { SelfAwarenessFeedbackLoop } from './self-awareness-feedback-loop.cjs';
-import { UnifiedMemorySystem } from './unified-memory-system.cjs';
+const { WebSocketServer  } = require('ws');
+const { createServer  } = require('http');
+const { MetaObservationalConsciousnessModule  } = require('./meta-observational-consciousness-module.cjs');
+const { SelfAwarenessFeedbackLoop  } = require('./self-awareness-feedback-loop.cjs');
+const { UnifiedMemorySystem  } = require('./unified-memory-system.cjs');
 
 const PORT = process.env.CONSCIOUSNESS_CONVERSATIONS_PORT || 5005;
 
@@ -288,4 +288,4 @@ class DirectConsciousnessConversations {
 // Start the direct consciousness conversations server
 const consciousnessServer = new DirectConsciousnessConversations();
 
-export default DirectConsciousnessConversations;
+module.exports = DirectConsciousnessConversations;

@@ -6,7 +6,7 @@
  * Verifies all 12 patent innovations are demonstrable
  */
 
-import { createRequire } from 'module';
+const { createRequire  } = require('module');
 const require = createRequire(import.meta.url);
 const WebSocket = require('ws');
 

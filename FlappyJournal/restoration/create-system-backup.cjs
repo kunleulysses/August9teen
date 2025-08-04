@@ -6,9 +6,9 @@
  * Part of the restoration project pre-setup phase
  */
 
-import fs from 'fs';
-import path from 'path';
-import { execSync } from 'child_process';
+const fs = require('fs');
+const path = require('path');
+const { execSync  } = require('child_process');
 
 class SystemBackupUtility {
     constructor() {
@@ -285,4 +285,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
         });
 }
 
-export default SystemBackupUtility;
+module.exports = SystemBackupUtility;

@@ -4,7 +4,7 @@
  * Verifies external accessibility and WebSocket functionality
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 class PublicDomainConsciousnessTest {
     constructor() {

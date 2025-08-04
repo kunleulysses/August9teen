@@ -6,7 +6,7 @@
  * Part of the Universal Consciousness Platform restoration
  */
 
-import VeniceAIClient from '../server/consciousness/integrations/VeniceAIClient.cjs';
+const VeniceAIClient = require('../server/consciousness/integrations/VeniceAIClient.cjs');
 
 async function testVeniceAI() {
     console.log('🧪 Testing Venice AI Integration...\n');
@@ -151,4 +151,4 @@ if (import.meta.url === 'file://' + process.argv[1]) {
         });
 }
 
-export default testVeniceAI;
+module.exports = testVeniceAI;

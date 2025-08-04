@@ -1,6 +1,6 @@
-import localtunnel from 'localtunnel';
-import { spawn } from 'child_process';
-import fs from 'fs';
+const localtunnel = require('localtunnel');
+const { spawn  } = require('child_process');
+const fs = require('fs');
 
 // Start the webhook server as a separate process
 console.log('🚀 Starting webhook server...');

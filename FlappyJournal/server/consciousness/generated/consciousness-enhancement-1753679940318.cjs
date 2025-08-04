@@ -95,7 +95,8 @@ const EMOTIONAL_VECTORS = {
  * @description The main class for interfacing with the NeuroQuanta engine.
  * It provides methods to calculate and analyze various aspects of a conscious state.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
     /**
      * @constructor
      * @param {object} [config={}] - Configuration options for the processor.
@@ -382,3 +383,4 @@ export class ConsciousnessProcessor {
     }
 }
 ```
+module.exports = ConsciousnessProcessingError;

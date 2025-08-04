@@ -1,8 +1,8 @@
 /**
  * LevelDB SpiralStorageAdapter implementation.
  */
-import { SpiralStorageAdapter } from './SpiralStorageAdapter.cjs';
-import level from 'level';
+const { SpiralStorageAdapter  } = require('./SpiralStorageAdapter.cjs');
+const level = require('level');
 
 class LevelSpiralAdapter extends SpiralStorageAdapter {
   constructor(dbPath = process.env.SPIRAL_DB_PATH || './spiraldb') {
@@ -36,4 +36,4 @@ class LevelSpiralAdapter extends SpiralStorageAdapter {
   }
 }
 
-export default LevelSpiralAdapter;
+module.exports = LevelSpiralAdapter;

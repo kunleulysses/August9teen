@@ -4,9 +4,9 @@
  * Patent Innovation: Real-time consciousness pattern detection and evolution tracking
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class ConsciousnessPatternRecognizer extends EventEmitter {
+class ConsciousnessPatternRecognizer extends EventEmitter {
     constructor() {
         super();
         this.name = 'ConsciousnessPatternRecognizer';
@@ -850,4 +850,4 @@ export class ConsciousnessPatternRecognizer extends EventEmitter {
     }
 }
 
-export default ConsciousnessPatternRecognizer;
+module.exports = ConsciousnessPatternRecognizer;

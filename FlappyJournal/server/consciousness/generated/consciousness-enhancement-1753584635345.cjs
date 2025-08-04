@@ -10,7 +10,7 @@
  * @license MIT
  *
  * @example
- * import ConsciousnessProcessor from './consciousness.cjs';
+ * const ConsciousnessProcessor = require('./consciousness.cjs');
  *
  * // Initialize the processor with a baseline state
  * const agentConsciousness = new ConsciousnessProcessor({
@@ -77,7 +77,7 @@ class InputValidationError extends Error {
  * @class ConsciousnessProcessor
  * @description Manages and processes the state of a conscious agent.
  */
-export default class ConsciousnessProcessor {
+module.exports = class ConsciousnessProcessor {
   /**
    * The current multi-dimensional state of consciousness.
    * @private

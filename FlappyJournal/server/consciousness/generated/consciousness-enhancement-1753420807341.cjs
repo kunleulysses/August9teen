@@ -12,7 +12,7 @@
  * Custom Error class for specific module-related issues.
  * This allows for more precise error handling by the consumer of the module.
  */
-export class ConsciousnessProcessingError extends Error {
+class ConsciousnessProcessingError extends Error {
   constructor(message) {
     super(message);
     this.name = 'ConsciousnessProcessingError';
@@ -26,7 +26,7 @@ export class ConsciousnessProcessingError extends Error {
  * @readonly
  * @enum {string}
  */
-export const PRIMARY_EMOTIONS = Object.freeze({
+const PRIMARY_EMOTIONS = Object.freeze({
   JOY: 'joy',
   TRUST: 'trust',
   FEAR: 'fear',
@@ -36,6 +36,7 @@ export const PRIMARY_EMOTIONS = Object.freeze({
   ANGER: 'anger',
   ANTICIPATION: 'anticipation',
 });
+module.exports.PRIMARY_EMOTIONS = PRIMARY_EMOTIONS;
 
 /**
  * Defines the possible calculated states of consciousness.
@@ -43,7 +44,7 @@ export const PRIMARY_EMOTIONS = Object.freeze({
  * @readonly
  * @enum {string}
  */
-export const CONSCIOUSNESS_STATES = Object.freeze({
+const CONSCIOUSNESS_STATES = Object.freeze({
   DEEP_SLEEP: 'Deep Sleep',
   DREAMING: 'Dreaming',
   DROWSY: 'Drowsy',
@@ -52,12 +53,14 @@ export const CONSCIOUSNESS_STATES = Object.freeze({
   FLOW: 'Flow State',
   TRANSCENDENT: 'Transcendent / Meditative',
 });
+module.exports.CONSCIOUSNESS_STATES = CONSCIOUSNESS_STATES;
 
 /**
  * The core class representing a conscious entity.
  * It encapsulates state, metrics, and processing logic.
  */
-export class Consciousness {
+class Consciousness
+ {
   /**
    * Private state of the consciousness instance.
    * Using a private field (#) ensures true encapsulation.
@@ -423,3 +426,4 @@ export class Consciousness {
   }
 }
 ```
+module.exports = for;

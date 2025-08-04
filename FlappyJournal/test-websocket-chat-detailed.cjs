@@ -5,7 +5,7 @@
  * Tests sending chat_message and waiting for unified_response
  */
 
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 
 async function testWebSocketChat(endpoint, name) {
     return new Promise((resolve) => {

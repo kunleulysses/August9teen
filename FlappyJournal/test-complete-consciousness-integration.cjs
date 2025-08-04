@@ -9,7 +9,7 @@
 console.log('🧠 TESTING COMPLETE CONSCIOUSNESS INTEGRATION');
 console.log('═══════════════════════════════════════════════\n');
 
-import UnifiedConsciousnessSystem from './server/unified-consciousness-system.cjs';
+const UnifiedConsciousnessSystem = require('./server/unified-consciousness-system.cjs');
 
 async function testCompleteConsciousnessIntegration() {
   let testResults = {

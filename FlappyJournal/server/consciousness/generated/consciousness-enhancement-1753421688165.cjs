@@ -49,7 +49,7 @@ class InvalidInputError extends ConsciousnessProcessingError {
  * @readonly
  * @enum {string}
  */
-export const ConsciousnessState = {
+const ConsciousnessState = {
   DEEP_SLEEP: 'DEEP_SLEEP',    // Unconscious, restorative state.
   DREAMING: 'DREAMING',        // REM sleep, high internal activity.
   DIFFUSE: 'DIFFUSE',          // Wakeful rest, mind-wandering, creative incubation.
@@ -57,26 +57,29 @@ export const ConsciousnessState = {
   FLOW: 'FLOW',                // Optimal immersion, peak performance and enjoyment.
   TRANSCENDENT: 'TRANSCENDENT' // Ego-dissolution, profound interconnectedness.
 };
+module.exports.ConsciousnessState = ConsciousnessState;
 
 /**
  * Defines recommended regulatory actions to balance emotional states.
  * @readonly
  * @enum {string}
  */
-export const RegulatoryAction = {
+const RegulatoryAction = {
   PRACTICE_MINDFULNESS: 'PRACTICE_MINDFULNESS', // Grounding in the present moment.
   ENGAGE_IN_EMPATHY: 'ENGAGE_IN_EMPATHY',       // Connect with others' perspectives.
   SEEK_NOVELTY: 'SEEK_NOVELTY',                 // Stimulate curiosity and learning.
   PURSUE_SOLITUDE: 'PURSUE_SOLITUDE',           // Engage in reflective introspection.
   PHYSICAL_EXERTION: 'PHYSICAL_EXERTION'        // Release somatic tension.
 };
+module.exports.RegulatoryAction = RegulatoryAction;
 
 
 /**
  * The main class for processing and enhancing consciousness data.
  * It encapsulates all the logic for state calculation, awareness metrics, and emotional intelligence.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
   /**
    * Initializes the ConsciousnessProcessor.
    * @param {object} [config={}] - Optional configuration for weighting algorithms.
@@ -275,3 +278,4 @@ export class ConsciousnessProcessor {
   }
 }
 ```
+module.exports = for;

@@ -132,7 +132,9 @@ const _validateObjectKeys = (obj, requiredKeys, context) => {
  * @returns {ConsciousnessState} The calculated, high-level consciousness state.
  * @throws {ConsciousnessProcessingError} If the input dataStream is malformed or incomplete.
  */
-export function calculateConsciousnessState(dataStream) {
+function calculateConsciousnessState(dataStream) {
+module.exports.calculateConsciousnessState = calculateConsciousnessState;
+
   _validateObjectKeys(dataStream,
     ['neuralActivity', 'sensoryInput', 'cognitiveLoad', 'internalStateFeedback', 'metacognitiveLoops'],
     'PhenomenalDataStream'
@@ -188,7 +190,9 @@ export function calculateConsciousnessState(dataStream) {
  * @returns {AwarenessMetrics} A detailed breakdown of awareness facets.
  * @throws {ConsciousnessProcessingError} If the input state is malformed.
  */
-export function getAwarenessMetrics(consciousnessState) {
+function getAwarenessMetrics(consciousnessState) {
+module.exports.getAwarenessMetrics = getAwarenessMetrics;
+
   _validateObjectKeys(consciousnessState,
     ['coherence', 'entropy', 'focusIntensity', 'rawData'],
     'ConsciousnessState'
@@ -228,7 +232,9 @@ export function getAwarenessMetrics(consciousnessState) {
  * @returns {EnhancedEmotionalState} A deeply processed and understandable emotional state.
  * @throws {ConsciousnessProcessingError} If the emotional input is invalid.
  */
-export function processEmotionalVector(emotionalInput, currentState = null) {
+function processEmotionalVector(emotionalInput, currentState = null) {
+module.exports.processEmotionalVector = processEmotionalVector;
+
   _validateObjectKeys(emotionalInput,
     ['valence', 'arousal', 'dominantSignals'],
     'EmotionalInput'

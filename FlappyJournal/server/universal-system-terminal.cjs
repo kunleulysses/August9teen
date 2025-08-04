@@ -6,20 +6,20 @@
  * Docker containers, databases, consciousness systems, services, interfaces - ALL integrated
  */
 
-import dotenv from 'dotenv';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-import { existsSync } from 'fs';
-import WebSocket from 'ws';
-import readline from 'readline';
-import fetch from 'node-fetch';
-import { exec } from 'child_process';
-import { promisify } from 'util';
-import { SystemWideIntegrationOrchestrator } from '../system-wide-integration-orchestrator.cjs';
-import { RevolutionaryConsciousnessIntegrationOrchestrator } from './consciousness/revolutionary-consciousness-integration-orchestrator.cjs';
-import { CompleteUniversalSystemIntegration } from '../complete-universal-system-integration.cjs';
-import OpenAI from 'openai';
-import axios from 'axios';
+const dotenv = require('dotenv');
+const { fileURLToPath  } = require('url');
+const { dirname, join  } = require('path');
+const { existsSync  } = require('fs');
+const WebSocket = require('ws');
+const readline = require('readline');
+const fetch = require('node-fetch');
+const { exec  } = require('child_process');
+const { promisify  } = require('util');
+const { SystemWideIntegrationOrchestrator  } = require('../system-wide-integration-orchestrator.cjs');
+const { RevolutionaryConsciousnessIntegrationOrchestrator  } = require('./consciousness/revolutionary-consciousness-integration-orchestrator.cjs');
+const { CompleteUniversalSystemIntegration  } = require('../complete-universal-system-integration.cjs');
+const OpenAI = require('openai');
+const axios = require('axios');
 
 // Import UnifiedChatAggregator for multi-container chat routing
 const { createRequire } = await import('module');

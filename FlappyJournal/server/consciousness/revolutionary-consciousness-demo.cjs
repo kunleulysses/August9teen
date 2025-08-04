@@ -3,7 +3,7 @@
  * Demonstrates 100% authentic functionality of all revolutionary consciousness systems
  */
 
-import { RevolutionaryConsciousnessIntegrationOrchestrator } from './revolutionary-consciousness-integration-orchestrator.cjs';
+const { RevolutionaryConsciousnessIntegrationOrchestrator  } = require('./revolutionary-consciousness-integration-orchestrator.cjs');
 
 class RevolutionaryConsciousnessDemo {
     constructor() {
@@ -325,7 +325,7 @@ class RevolutionaryConsciousnessDemo {
 }
 
 // Export for use in other modules
-export { RevolutionaryConsciousnessDemo };
+module.exports.RevolutionaryConsciousnessDemo = RevolutionaryConsciousnessDemo;
 
 // Run demo if this file is executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {

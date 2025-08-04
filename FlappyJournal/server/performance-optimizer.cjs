@@ -3,9 +3,9 @@
  * Implements message batching, connection pooling, and caching mechanisms
  */
 
-import { EventEmitter } from 'events';
-import { createHash } from 'crypto';
-import { getPerformanceConfig } from './performance-config.cjs';
+const { EventEmitter  } = require('events');
+const { createHash  } = require('crypto');
+const { getPerformanceConfig  } = require('./performance-config.cjs');
 
 class PerformanceOptimizer extends EventEmitter {
   constructor() {
@@ -505,4 +505,4 @@ class PerformanceOptimizer extends EventEmitter {
   }
 }
 
-export default PerformanceOptimizer; 
+module.exports = PerformanceOptimizer; 

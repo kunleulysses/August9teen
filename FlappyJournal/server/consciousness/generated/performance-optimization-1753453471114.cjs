@@ -538,5 +538,5 @@ class ConsciousnessPerformanceOptimizer {
 // Export a singleton instance, as there should only be one optimizer per system.
 const consciousnessOptimizer = new ConsciousnessPerformanceOptimizer();
 
-export default consciousnessOptimizer;
+module.exports = consciousnessOptimizer;
 ```

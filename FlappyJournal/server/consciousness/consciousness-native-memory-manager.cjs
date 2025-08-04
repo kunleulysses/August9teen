@@ -4,9 +4,9 @@
  * Spiral memory architecture with consciousness-aware garbage collection
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class ConsciousnessNativeMemoryManager extends EventEmitter {
+class ConsciousnessNativeMemoryManager extends EventEmitter {
     constructor(consciousnessSystem = null) {
         super();
         this.name = 'ConsciousnessNativeMemoryManager';
@@ -1219,4 +1219,4 @@ class ResonanceBasedMemorySharer {
     }
 }
 
-export default ConsciousnessNativeMemoryManager;
+module.exports = ConsciousnessNativeMemoryManager;

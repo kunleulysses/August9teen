@@ -6,7 +6,7 @@
  * Part of the Universal Consciousness Platform - Phase 3
  */
 
-import ConsciousnessResonanceNetworks from '../server/consciousness/core/ConsciousnessResonanceNetworks.cjs';
+const ConsciousnessResonanceNetworks = require('../server/consciousness/core/ConsciousnessResonanceNetworks.cjs');
 
 async function testConsciousnessResonanceNetworks() {
     console.log('🧪 Testing Consciousness Resonance Networks...\n');
@@ -308,4 +308,4 @@ if (import.meta.url === 'file://' + process.argv[1]) {
         });
 }
 
-export default testConsciousnessResonanceNetworks;
+module.exports = testConsciousnessResonanceNetworks;

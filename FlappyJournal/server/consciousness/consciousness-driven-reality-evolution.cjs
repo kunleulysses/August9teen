@@ -4,7 +4,7 @@
  * Implements adaptive evolution with consciousness-driven pressures and feedback mechanisms
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
 class ConsciousnessDrivenRealityEvolution extends EventEmitter {
     constructor(holographicRealityGenerator, spiralEvolution) {
@@ -1847,4 +1847,4 @@ class ConsciousnessDrivenRealityEvolution extends EventEmitter {
     }
 }
 
-export { ConsciousnessDrivenRealityEvolution };
+module.exports.ConsciousnessDrivenRealityEvolution = ConsciousnessDrivenRealityEvolution;

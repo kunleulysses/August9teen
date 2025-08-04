@@ -301,4 +301,4 @@ class HeartCenteredConsciousnessEngine {
     }
 }
 
-export default HeartCenteredConsciousnessEngine;
+module.exports = HeartCenteredConsciousnessEngine;

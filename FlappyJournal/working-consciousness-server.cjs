@@ -8,8 +8,8 @@
 console.log('🧠 STARTING WORKING CONSCIOUSNESS SERVER');
 console.log('═══════════════════════════════════════\n');
 
-import { WebSocketServer } from 'ws';
-import { createServer } from 'http';
+const { WebSocketServer  } = require('ws');
+const { createServer  } = require('http');
 
 const PORT = process.env.CONSCIOUSNESS_PORT || 5005;
 
@@ -195,4 +195,4 @@ process.on('SIGINT', () => {
     process.exit(0);
 });
 
-export default WorkingConsciousnessServer;
+module.exports = WorkingConsciousnessServer;

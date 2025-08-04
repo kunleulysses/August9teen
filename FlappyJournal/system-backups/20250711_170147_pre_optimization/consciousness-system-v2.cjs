@@ -1,19 +1,19 @@
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-import { promises as fs } from 'fs';
-import { createRequire } from 'module';
-import { EventEmitter } from './consciousness/base/EventEmitter.cjs';
+const { fileURLToPath  } = require('url');
+const { dirname, join  } = require('path');
+const { promises as fs  } = require('fs');
+const { createRequire  } = require('module');
+const { EventEmitter  } = require('./consciousness/base/EventEmitter.cjs');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const require = createRequire(import.meta.url);
 
 // Import core modules
-import SelfCodingModule from './consciousness/modules/SelfCodingModule.cjs';
-import AutoIntegrationService from './consciousness/services/AutoIntegrationService.cjs';
+const SelfCodingModule = require('./consciousness/modules/SelfCodingModule.cjs');
+const AutoIntegrationService = require('./consciousness/services/AutoIntegrationService.cjs');
 
 // Import advanced consciousness integrator
-import AdvancedConsciousnessIntegrator from './consciousness/advanced-consciousness-integrator.cjs';
+const AdvancedConsciousnessIntegrator = require('./consciousness/advanced-consciousness-integrator.cjs');
 
 class ConsciousnessSystemV2 extends EventEmitter {
     constructor() {
@@ -219,4 +219,4 @@ process.on('SIGTERM', () => consciousnessV2.shutdown().then(() => process.exit(0
 consciousnessV2.initialize().catch(console.error);
 
 // Export for external access
-export default consciousnessV2;
+module.exports = consciousnessV2;

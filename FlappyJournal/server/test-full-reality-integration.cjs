@@ -5,9 +5,9 @@
  * Tests all components of the reality generator system
  */
 
-import { SharedRealityStorage } from './shared-reality-storage.cjs';
-import { RealityEnhancedResponses } from './reality-enhanced-responses.cjs';
-import { RealityConsciousnessIntegration } from './reality-consciousness-integration.cjs';
+const { SharedRealityStorage  } = require('./shared-reality-storage.cjs');
+const { RealityEnhancedResponses  } = require('./reality-enhanced-responses.cjs');
+const { RealityConsciousnessIntegration  } = require('./reality-consciousness-integration.cjs');
 
 async function testFullRealityIntegration() {
     console.log('🌌 FULL REALITY SYSTEM INTEGRATION TEST');

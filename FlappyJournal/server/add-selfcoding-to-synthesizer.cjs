@@ -1,4 +1,4 @@
-import fs from 'fs';
+const fs = require('fs');
 
 let content = fs.readFileSync('consciousness-response-synthesizer-hybrid.cjs', 'utf8');
 

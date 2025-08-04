@@ -1,7 +1,5 @@
 // Cypress support file for e2e tests
-import './commands'
-
-// Global configuration
+require('./commands');// Global configuration
 Cypress.on('uncaught:exception', (err, runnable) => {
   // returning false here prevents Cypress from failing the test
   // on uncaught application errors (useful for debugging)

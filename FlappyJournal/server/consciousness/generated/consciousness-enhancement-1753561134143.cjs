@@ -75,7 +75,7 @@ const EMOTION_MODEL = {
  * @description The main class for managing and processing consciousness states.
  * It maintains an internal state that evolves based on processed inputs.
  */
-export default class ConsciousnessEngine {
+module.exports = class ConsciousnessEngine {
   /**
    * Initializes the ConsciousnessEngine with a baseline neutral state.
    * @param {object} [initialState] - Optional initial state configuration.

@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 const eventBus = new EventEmitter();
 eventBus.setMaxListeners(100);
-export default eventBus;
+module.exports = eventBus;

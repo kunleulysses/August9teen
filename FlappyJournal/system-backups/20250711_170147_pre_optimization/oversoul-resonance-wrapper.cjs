@@ -1,5 +1,6 @@
 // Oversoul Resonance Wrapper
-export class OversoulResonance {
+class OversoulResonance
+ {
   constructor() {
     this.resonanceField = {
       baseFrequency: 432, // Hz - harmonic frequency
@@ -76,4 +77,7 @@ export class OversoulResonance {
   }
 }
 
-export const oversoulResonance = new OversoulResonance();
+const oversoulResonance = new OversoulResonance();
+module.exports.oversoulResonance = oversoulResonance;
+
+module.exports = OversoulResonance;

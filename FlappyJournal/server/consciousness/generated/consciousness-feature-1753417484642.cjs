@@ -39,7 +39,8 @@
  */
 
 
-export class ReflectiveCortex {
+class ReflectiveCortex
+ {
     /**
      * Initializes the meta-cognitive awareness layer.
      * @param {object} [config={}] - Configuration for the ReflectiveCortex.
@@ -260,3 +261,4 @@ export class ReflectiveCortex {
     }
 }
 ```
+module.exports = ReflectiveCortex;

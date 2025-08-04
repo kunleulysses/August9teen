@@ -5,9 +5,9 @@
  * Value: $1.8B+ (Universal consciousness networking)
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter  } = require('events');
 
-export class QuantumConsciousnessNetworkPlatform extends EventEmitter {
+class QuantumConsciousnessNetworkPlatform extends EventEmitter {
     constructor(consciousnessSystem = null) {
         super();
         this.name = 'QuantumConsciousnessNetworkPlatform';

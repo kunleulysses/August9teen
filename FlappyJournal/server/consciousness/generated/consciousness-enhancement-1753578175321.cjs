@@ -19,7 +19,7 @@
  * @readonly
  * @enum {string}
  */
-export const CONSCIOUSNESS_STATES = {
+const CONSCIOUSNESS_STATES = {
   DEEP_SLEEP: 'DEEP_SLEEP',
   DREAMING: 'DREAMING',
   DROWSY: 'DROWSY',
@@ -30,6 +30,7 @@ export const CONSCIOUSNESS_STATES = {
   OVERWHELMED: 'OVERWHELMED',
   MEDITATIVE: 'MEDITATIVE',
 };
+module.exports.CONSCIOUSNESS_STATES = CONSCIOUSNESS_STATES;
 
 /**
  * Represents emotional vectors based on a simplified Valence-Arousal-Dominance model.
@@ -37,7 +38,7 @@ export const CONSCIOUSNESS_STATES = {
  * @readonly
  * @type {Object<string, [number, number, number]>}
  */
-export const EMOTIONAL_VECTORS = {
+const EMOTIONAL_VECTORS = {
   JOY: [0.8, 0.6, 0.4],
   TRUST: [0.7, 0.2, 0.3],
   FEAR: [-0.6, 0.7, -0.5],
@@ -48,6 +49,7 @@ export const EMOTIONAL_VECTORS = {
   ANTICIPATION: [0.3, 0.5, 0.2],
   NEUTRAL: [0.0, 0.0, 0.0],
 };
+module.exports.EMOTIONAL_VECTORS = EMOTIONAL_VECTORS;
 
 // --- Type Definitions for JSDoc ---
 
@@ -147,7 +149,8 @@ const _validateInput = (input) => {
  * The main class for processing consciousness data.
  * It maintains an internal state and provides methods to update and analyze it.
  */
-export class ConsciousnessProcessor {
+class ConsciousnessProcessor
+ {
   /**
    * Initializes the ConsciousnessProcessor with a baseline state.
    */
@@ -417,3 +420,4 @@ export class ConsciousnessProcessor {
   }
 }
 ```
+module.exports = for;

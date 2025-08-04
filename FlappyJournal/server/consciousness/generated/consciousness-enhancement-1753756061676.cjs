@@ -47,7 +47,7 @@ class UnstableConsciousnessError extends Error {
  * @enum {string}
  * @description Defines the primary calculable states of consciousness.
  */
-export const ConsciousnessState = {
+const ConsciousnessState = {
   FOCUSED_ATTENTION: 'FOCUSED_ATTENTION', // High cognitive load, low neural entropy
   DIFFUSE_AWARENESS: 'DIFFUSE_AWARENESS', // Moderate cognitive load, high sensory input
   MEDITATIVE_QUIETUDE: 'MEDITATIVE_QUIETUDE', // Low cognitive load, high alpha-wave synchrony
@@ -55,6 +55,7 @@ export const ConsciousnessState = {
   DEEP_REFLECTION: 'DEEP_REFLECTION', // Moderate cognitive load, high access to memory schemas
   AFFECTIVE_RESONANCE: 'AFFECTIVE_RESONANCE', // Dominated by emotional processing
 };
+module.exports.ConsciousnessState = ConsciousnessState;
 
 /**
  * @typedef {object} NeuralData
@@ -93,7 +94,8 @@ export const ConsciousnessState = {
  * @class ConsciousnessEngine
  * @description The core class for processing and analyzing consciousness data.
  */
-export class ConsciousnessEngine {
+class ConsciousnessEngine
+ {
   /**
    * @constructor
    * @param {object} [config={}] - Configuration options for the engine.
@@ -297,3 +299,4 @@ export class ConsciousnessEngine {
   }
 }
 ```
+module.exports = InvalidDataStreamError;

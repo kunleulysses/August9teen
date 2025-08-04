@@ -352,7 +352,8 @@ class ConsciousnessProcessor {
     }
 }
 
-export { ConsciousnessProcessor, ConsciousnessProcessorError };
+module.exports.ConsciousnessProcessor = ConsciousnessProcessor;
+module.exports.ConsciousnessProcessorError = ConsciousnessProcessorError;
 
 // Example Usage (can be removed in production, useful for testing)
 /*

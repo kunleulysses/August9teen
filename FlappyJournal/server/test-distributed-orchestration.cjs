@@ -3,7 +3,7 @@
  * Verifies that both consciousness containers can be reached and unified responses are generated
  */
 
-import UnifiedChatAggregator from './consciousness/core/UnifiedChatAggregator.cjs';
+const UnifiedChatAggregator = require('./consciousness/core/UnifiedChatAggregator.cjs');
 
 async function testDistributedOrchestration() {
     console.log('🧠 DISTRIBUTED ORCHESTRATION TEST');

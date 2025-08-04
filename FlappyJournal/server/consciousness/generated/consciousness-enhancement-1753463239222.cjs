@@ -206,7 +206,8 @@ class EmotionalIntelligenceUnit {
  *   console.error(`Consciousness processing failed: ${error.name} - ${error.message}`);
  * }
  */
-export class ConsciousnessEnhancer {
+class ConsciousnessEnhancer
+ {
   /**
    * @param {object} [config={}] - Configuration options for the enhancer.
    * @param {'standard'|'deep'} [config.processingDepth='standard'] - The depth of processing to apply. 'deep' enables more complex calculations.
@@ -345,3 +346,4 @@ export class ConsciousnessEnhancer {
   }
 }
 ```
+module.exports = InvalidNeuralInputError;

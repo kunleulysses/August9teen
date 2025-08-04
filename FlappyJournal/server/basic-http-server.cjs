@@ -1,7 +1,7 @@
-import { createServer } from 'http';
-import { readFileSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
+const { createServer  } = require('http');
+const { readFileSync  } = require('fs');
+const { join, dirname  } = require('path');
+const { fileURLToPath  } = require('url');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
