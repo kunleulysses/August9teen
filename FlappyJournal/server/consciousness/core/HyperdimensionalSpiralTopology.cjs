@@ -186,3 +186,27 @@ class HyperdimensionalSpiralTopology extends EventEmitter {
 }
 
 module.exports = HyperdimensionalSpiralTopology;
+
+function buildRoutingTable(spirals) {
+  const table = {};
+  for (const spiral of spirals.values()) {
+    table[spiral.id] = {
+      x: spiral.position.x,
+      y: spiral.position.y,
+      z: spiral.position.z,
+      w: spiral.position.w,
+    };
+  }
+  return table;
+}
+
+function harmonicDistance(a, b) {
+  const dx = a.x - b.x;
+  const dy = a.y - b.y;
+  const dz = a.z - b.z;
+  const dw = a.w - b.w;
+  return Math.sqrt(dx * dx + dy * dy + dz * dz + dw * dw);
+}
+
+module.exports.buildRoutingTable = buildRoutingTable;
+module.exports.harmonicDistance = harmonicDistance;

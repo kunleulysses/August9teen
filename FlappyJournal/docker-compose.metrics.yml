@@ -1,0 +1,96 @@
+version: '3.8'
+
+services:
+  # Consciousness Core with Metrics
+  consciousness-core:
+    environment:
+      - METRICS_ENABLED=true
+      - METRICS_PORT=3002
+      - JWT_SECRET=${JWT_SECRET:-your-secret-key}
+      - WS_RATE_LIMIT=${WS_RATE_LIMIT:-100}
+      - WS_RATE_WINDOW=${WS_RATE_WINDOW:-10}
+      - ALLOW_ANONYMOUS_WS=${ALLOW_ANONYMOUS_WS:-false}
+      - PROMETHEUS_METRICS=true
+      - PROMETHEUS_PREFIX=consciousness_core
+    ports:
+      - "3002:3002"
+    depends_on:
+      - redis
+
+  # WebSocket Server with Auth
+  websocket-server:
+    environment:
+      - NODE_ENV=production
+      - WS_PORT=3001
+      - JWT_SECRET=${JWT_SECRET:-your-secret-key}
+      - WS_RATE_LIMIT=${WS_RATE_LIMIT:-100}
+      - WS_RATE_WINDOW=${WS_RATE_WINDOW:-10}
+      - ALLOW_ANONYMOUS_WS=${ALLOW_ANONYMOUS_WS:-false}
+      - PROMETHEUS_METRICS=true
+      - PROMETHEUS_PREFIX=websocket_server
+    ports:
+      - "3001:3001"
+    depends_on:
+      - redis
+
+  # Redis for rate limiting
+  redis:
+    image: redis:alpine
+    container_name: redis-rate-limit
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./monitoring/prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    ports:
+      - "9090:9090"
+    depends_on:
+      - consciousness-core
+      - websocket-server
+    environment:
+      - PROMETHEUS_AUTH_TOKEN=${PROMETHEUS_AUTH_TOKEN}
+      - PROMETHEUS_USER=${PROMETHEUS_USER:-prometheus}
+      - PROMETHEUS_PASSWORD=${PROMETHEUS_PASSWORD:-changeme}
+
+  # Grafana
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+
+volumes:
+  redis_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  default:
+    external: true
+    name: consciousness-network

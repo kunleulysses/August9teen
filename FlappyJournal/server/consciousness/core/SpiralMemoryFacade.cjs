@@ -6,6 +6,7 @@
 const SpiralMemoryArchitecture = require('./SpiralMemoryArchitecture.cjs');
 const eventBus = require('./ConsciousnessEventBus.cjs');
 const { InMemorySpiralAdapter  } = require('./storage/SpiralStorageAdapter.cjs');
+const rl = require('../../rate/spiralLimiter.cjs');
 const LevelSpiralAdapter = require('./storage/LevelSpiralAdapter.cjs');
 const RedisSpiralAdapter = require('./storage/RedisSpiralAdapter.cjs');
 
@@ -44,6 +45,16 @@ class SpiralMemoryFacade {
     // Listen to both legacy and new event keys for store/retrieve
     [legacyEvents.storeReq, newEvents.storeReq].forEach(ev =>
       eventBus.on(ev, async (data) => {
+        const idKey = data.userId || data.tenantId || 'anon';
+        try {
+          await rl.consume(idKey);
+        } catch (rej) {
+          const err = { error: 'rate_limit', retryAfter: rej.msBeforeNext / 1000 | 0, requestId: data.requestId };
+          eventBus.emit(newEvents.storeFail, err);
+          eventBus.emit(legacyEvents.storeFail, err);
+          eventBus.emit('rate_limit:violation', { key: idKey, ts: Date.now() });
+          return;
+        }
         try {
           // SpiralMemoryArchitecture expects: content, type, depth, associations
           // Legacy expects: memoryId, memoryData, consciousnessContext
@@ -129,3 +140,4 @@ class SpiralMemoryFacade {
 
 const singleton = new SpiralMemoryFacade();
 module.exports = singleton;
+module.exports.eventBus = eventBus;

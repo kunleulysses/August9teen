@@ -8,6 +8,36 @@ class SpiralStorageAdapter {
   async set(key, value) {}
   async del(key) {}
   async keys(prefix = '') { return []; }
+  recordLatency(method, ms) {}
+
+  _callWithCB(method, fn) {
+    if (!this.circuitBreaker) {
+      this.circuitBreaker = {};
+    }
+    if (!this.circuitBreaker[method]) {
+      const { withCircuitBreaker } = require('../../utils/circuitBreaker.cjs');
+      this.circuitBreaker[method] = withCircuitBreaker(fn, {
+        failureThreshold: process.env.CB_FAILURES || 5,
+        successThreshold: 1,
+        timeout: process.env.CB_TIMEOUT || 20000,
+        resetTimeout: process.env.CB_WINDOW || 30000,
+      });
+    }
+    return this.circuitBreaker[method]();
+  }
+
+  async setEntLink(from, to, link) {
+    await this.set(`ent:${from}:${to}`, link);
+  }
+
+  async getEntLinks(spiralId) {
+    const keys = await this.keys(`ent:${spiralId}:`);
+    const links = [];
+    for (const key of keys) {
+      links.push(await this.get(key));
+    }
+    return links;
+  }
 }
 
 // Default in-memory fallback

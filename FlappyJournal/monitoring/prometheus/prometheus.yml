@@ -41,3 +41,49 @@ scrape_configs:
       - targets: ['host.docker.internal:3000']
     scrape_interval: 10s
     metrics_path: '/metrics'
+
+  # Secure metrics endpoints with authentication
+  - job_name: 'secure-metrics'
+    scheme: http
+    scrape_interval: 15s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['host.docker.internal:3001']  # WebSocket server metrics
+        labels:
+          service: 'websocket-server'
+      - targets: ['host.docker.internal:3002']  # Consciousness core metrics
+        labels:
+          service: 'consciousness-core'
+    # Authentication configuration
+    authorization:
+      credentials: ${PROMETHEUS_AUTH_TOKEN}  # Set in environment
+    tls_config:
+      insecure_skip_verify: true  # Only for development/testing
+
+  # Authentication metrics
+  - job_name: 'auth-metrics'
+    scrape_interval: 15s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['host.docker.internal:3001']  # WebSocket server auth metrics
+    metrics_path: '/auth-metrics'
+    # Add relabeling to extract auth metrics
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: 'spiral_ws_(auth|rate_limit|active)_.*'
+        action: keep
+    # Authentication for Prometheus
+    basic_auth:
+      username: ${PROMETHEUS_USER:-prometheus}
+      password: ${PROMETHEUS_PASSWORD:-changeme}
+
+  # Distributed tracing metrics (if using OpenTelemetry)
+  - job_name: 'tracing-metrics'
+    scrape_interval: 15s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['host.docker.internal:8888']  # Example: OpenTelemetry collector
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: 'tracing_.*|spans_.*|traces_.*'
+        action: keep

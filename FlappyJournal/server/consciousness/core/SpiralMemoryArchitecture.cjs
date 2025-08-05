@@ -11,7 +11,8 @@ const { memoryLog  } = require('../modules/MemoryLog.cjs');
 const { InMemorySpiralAdapter  } = require('./storage/SpiralStorageAdapter.cjs');
 const LevelSpiralAdapter = require('./storage/LevelSpiralAdapter.cjs');
 const RedisSpiralAdapter = require('./storage/RedisSpiralAdapter.cjs');
-const MinHeap = require('./utils/MinHeap.cjs');
+const { createQueue } = require('../utils/priorityQueue.cjs');
+const { buildRoutingTable, harmonicDistance } = require('./HyperdimensionalSpiralTopology.cjs');
 
 function getDefaultStorage() {
   if (process.env.REDIS_URL) return new RedisSpiralAdapter(process.env.REDIS_URL);
@@ -39,10 +40,11 @@ class SpiralMemoryArchitecture extends EventEmitter {
         this.memorySpirals = new Map();
 
         // GC MinHeap, keyed by lastAccessed
-        this.gcQueue = new MinHeap();
+        this.gcQueue = createQueue((a, b) => a.score < b.score);
         // Sigil LFU cache
         this._sigilCache = new Map(); // key: sigil, value: {val, cnt}
         this._sigilCacheMax = 5000;
+        this.gcSkipCount = new Map();
 
         // Enhanced spiral memory configuration with deep context expansion
         this.memoryConfig = {
@@ -358,6 +360,8 @@ class SpiralMemoryArchitecture extends EventEmitter {
                 await this.initializeSpiralMemory();
             }
 
+            this.routing = buildRoutingTable(this.memorySpirals);
+
             this.isInitialized = true;
             console.log('✅ Spiral Memory Architecture initialized successfully');
 
@@ -422,7 +426,8 @@ class SpiralMemoryArchitecture extends EventEmitter {
                 const sigil = await this.generateSigil(content, type, depth);
 
                 // Select optimal spiral for storage
-                const spiral = await this.selectOptimalSpiral(type, depth, content.length);
+                const spiral = await this.selectOptimalSpiral(type, depth, content.length, this.lastSpiralId);
+                this.lastSpiralId = spiral.id;
 
                 // Calculate spiral position
                 const position = await this.calculateSpiralPosition(spiral, sigil);
@@ -509,6 +514,16 @@ class SpiralMemoryArchitecture extends EventEmitter {
                     setTimeout(() => eventBus.emit('system:gc_tick'), 0);
                 }
 
+                // Attempt to create entanglement link
+                if (process.env.ENABLE_QUANTUM_LINKS === 'true') {
+                    const { attemptLink } = require('./entanglement/linkEngine.cjs');
+                    for (const candidateSpiral of this.memorySpirals.values()) {
+                        if (candidateSpiral.id !== spiral.id) {
+                            await attemptLink(spiral, candidateSpiral, 0.5, this);
+                        }
+                    }
+                }
+
                 return memoryNode;
 
             } catch (error) {
@@ -523,9 +538,10 @@ class SpiralMemoryArchitecture extends EventEmitter {
         const contentHash = this.hashContent(content);
         const typeSymbol = this.getTypeSymbol(type);
         const depthSymbol = this.getDepthSymbol(depth);
+        const sliceLength = Number(process.env.SIGIL_HASH_SLICE || 10);
         
         const sigil = {
-            signature: `${typeSymbol}${depthSymbol}${contentHash.substring(0, 6)}`,
+            signature: `${typeSymbol}${depthSymbol}${contentHash.substring(0, sliceLength)}`,
             symbols: [typeSymbol, depthSymbol],
             contentHash: contentHash,
             complexity: this.calculateSigilComplexity(content, type, depth),
@@ -534,6 +550,10 @@ class SpiralMemoryArchitecture extends EventEmitter {
             energyPattern: this.generateSigilEnergyPattern(type, depth),
             createdAt: new Date().toISOString()
         };
+
+        if (this.sigilRegistry.has(sigil.signature)) {
+            eventBus.emit('sigil:collision', { sigil: sigil.signature });
+        }
         
         return sigil;
     }
@@ -738,25 +758,32 @@ class SpiralMemoryArchitecture extends EventEmitter {
         };
     }
 
-    async selectOptimalSpiral(type, depth, contentSize) {
-        // Select the best spiral for storing this memory
-        const availableSpirals = Array.from(this.memorySpirals.values())
-            .filter(spiral => spiral.nodeCount < spiral.template.memoryCapacity);
+    async selectOptimalSpiral(type, depth, contentSize, lastSpiralId) {
+        const weightDistance = Number(process.env.HD_WEIGHT_DISTANCE || 0.5);
+        const weightLoad = Number(process.env.HD_WEIGHT_LOAD || 0.3);
+        const weightAge = Number(process.env.HD_WEIGHT_AGE || 0.2);
 
-        if (availableSpirals.length === 0) {
-            // Create new spiral if none available
+        let bestSpiral = null;
+        let minScore = Infinity;
+
+        for (const spiral of this.memorySpirals.values()) {
+            const distance = lastSpiralId ? harmonicDistance(this.routing[lastSpiralId], this.routing[spiral.id]) : 0;
+            const load = spiral.nodeCount / spiral.template.memoryCapacity;
+            const age = (Date.now() - new Date(spiral.lastUpdated).getTime()) / 1000;
+
+            const score = (distance * weightDistance) + (load * weightLoad) + (age * weightAge);
+
+            if (score < minScore) {
+                minScore = score;
+                bestSpiral = spiral;
+            }
+        }
+
+        if (minScore > 1.0) {
             return await this.createNewSpiral(type, depth);
         }
 
-        // Score spirals based on suitability
-        const scoredSpirals = availableSpirals.map(spiral => ({
-            spiral: spiral,
-            score: this.calculateSpiralScore(spiral, type, depth, contentSize)
-        }));
-
-        // Sort by score and return best spiral
-        scoredSpirals.sort((a, b) => b.score - a.score);
-        return scoredSpirals[0].spiral;
+        return bestSpiral;
     }
 
     calculateSpiralScore(spiral, type, depth, contentSize) {
@@ -1269,14 +1296,32 @@ class SpiralMemoryArchitecture extends EventEmitter {
             this.garbageCollectionCount++;
             const start = (typeof performance !== 'undefined' && performance.now ? performance.now() : Date.now());
             let collectedCount = 0;
+            let forced = 0;
             let now = start;
 
-            while (this.gcQueue.size() && (now - start) < timeBudgetMs) {
+            const queue = this.gcQueue.size();
+            const scale = Number(process.env.GC_BUDGET_SCALE || 10); // nodes per ms
+            const dynBudget = Math.min(250, Math.ceil(queue / scale));
+
+            while (this.gcQueue.size() && (now - start) < dynBudget) {
                 const { key: memoryId } = this.gcQueue.pop();
                 const memoryNode = this.spiralMemory.get(memoryId);
-                if (memoryNode && this.shouldCollectMemory(memoryNode, Date.now())) {
-                    await this.collectMemory(memoryId);
-                    collectedCount++;
+                if (memoryNode) {
+                    const shouldCollect = this.shouldCollectMemory(memoryNode, Date.now());
+                    if (shouldCollect) {
+                        await this.collectMemory(memoryId);
+                        collectedCount++;
+                        this.gcSkipCount.delete(memoryId);
+                    } else {
+                        const cnt = (this.gcSkipCount.get(memoryId) || 0) + 1;
+                        if (cnt >= (Number(process.env.GC_FORCE_SKIP) || 3)) {
+                            await this.collectMemory(memoryId);
+                            forced++;
+                            this.gcSkipCount.delete(memoryId);
+                        } else {
+                            this.gcSkipCount.set(memoryId, cnt);
+                        }
+                    }
                 }
                 now = (typeof performance !== 'undefined' && performance.now ? performance.now() : Date.now());
             }
@@ -1284,9 +1329,11 @@ class SpiralMemoryArchitecture extends EventEmitter {
             // Emit tick event for monitoring
             eventBus.emit('spiralmemory:gc_tick', {
                 collectedCount,
+                forced,
                 remaining: this.gcQueue.size(),
                 totalMemories: this.spiralMemory.size,
-                timeMs: now - start
+                timeMs: now - start,
+                budgetMs: dynBudget
             });
         });
     }
@@ -1379,6 +1426,7 @@ class SpiralMemoryArchitecture extends EventEmitter {
         memoryNode.accessCount++;
         // GC heap update
         this.gcQueue.update(memoryId, new Date(memoryNode.lastAccessed).getTime());
+        this.gcSkipCount.delete(memoryId);
 
         return memoryNode;
     }
@@ -1774,3 +1822,9 @@ class SpiralMemoryArchitecture extends EventEmitter {
 }
 
 module.exports = SpiralMemoryArchitecture;
+
+SpiralMemoryArchitecture.prototype.checkStorageHealth = async function() {
+  const res = await this.storage.redis.ping();
+  if (res !== 'PONG') throw new Error('bad_redis_ping');
+  if (this.storage.redis.isCluster) { /* ... */ }
+};

@@ -1,15 +1,96 @@
-const { WebSocketServer  } = require('ws');
-const { createEnhancedDualConsciousnessWS  } = require('./enhanced-dual-consciousness-ws.cjs');
-const { createFullConsciousnessWS  } = require('./create-full-consciousness-ws.cjs');
+const { WebSocketServer } = require('ws');
+const { createEnhancedDualConsciousnessWS } = require('./enhanced-dual-consciousness-ws.cjs');
+const { createFullConsciousnessWS } = require('./create-full-consciousness-ws.cjs');
 const dotenv = require('dotenv');
+const { createServer } = require('http');
+const express = require('express');
+const { createWsAuth, metrics: wsMetrics } = require('./auth/wsAuth.cjs');
+const { createAuthMetrics } = require('./auth/authMetrics.cjs');
+
+// Import prom-client for metrics
+const client = require('prom-client');
+
+// Create a registry and register default metrics
+const register = new client.Registry();
+client.collectDefaultMetrics({ register });
+
+// Register WebSocket metrics
+register.registerMetric(wsMetrics.rateLimitExceeded);
+register.registerMetric(wsMetrics.activeConnections);
+register.registerMetric(wsMetrics.activeUsers);
+
+const wsMsgIn = new client.Counter({ name:'ws_messages_in_total', help:'Client→server', registers:[register]});
+const wsMsgOut = new Counter({ name:'ws_messages_out_total', help:'Server→client', registers:[register]});
+const wsBytes = new Counter({ name:'ws_bytes_out_total', help:'Bytes sent', registers:[register]});
 
 // Load environment variables
 dotenv.config({ path: '../.env' });
 
 const PORT = process.env.WS_PORT || 3001;
 
-// Create WebSocket server
-const wss = new WebSocketServer({ port: PORT });
+// Create Express app for handling WebSocket upgrades and metrics
+const app = express();
+const server = createServer(app);
+
+// Create metrics auth middleware
+const authMetrics = createAuthMetrics({
+  secret: process.env.JWT_SECRET || 'dev-secret-change-me'
+});
+
+// Add metrics endpoint
+app.get('/metrics', authMetrics, async (req, res) => {
+  res.set('Content-Type', register.contentType);
+  res.end(await register.metrics());
+});
+
+// Create WebSocket server with noServer option
+const wss = new WebSocketServer({
+  noServer: true,
+  perMessageDeflate: {
+    zlibDeflateOptions: {
+      level: 6
+    }
+  }
+});
+
+// Create authentication middleware
+const wsAuth = createWsAuth({
+  // In production, use environment variables for these values
+  secret: process.env.JWT_SECRET || 'dev-secret-change-me',
+  max: parseInt(process.env.WS_RATE_LIMIT || '100', 10),
+  window: parseInt(process.env.WS_RATE_WINDOW || '10', 10),
+  endpoint: 'consciousness-ws'
+});
+
+// Handle HTTP server upgrade
+server.on('upgrade', (request, socket, head) => {
+  // Apply authentication middleware
+  wsAuth(request, socket, head, () => {
+    if (!request.auth) {
+      socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
+      socket.destroy();
+      return;
+    }
+
+    // Handle WebSocket upgrade
+    wss.handleUpgrade(request, socket, head, (ws) => {
+      // Attach user info and track connection
+      ws.user = request.auth;
+      if (request.trackConnection) {
+        request.trackConnection(ws);
+      }
+      wss.emit('connection', ws, request);
+    });
+  });
+});
+
+if (require.main === module) {
+  server.listen(PORT, () => {
+    console.log(`WebSocket server listening on port ${PORT}`);
+  });
+}
+
+module.exports = server;
 
 
 // Broadcast function to send messages to all connected clients
@@ -19,9 +100,22 @@ const broadcast = (data) => {
   wss.clients.forEach(client => {
     if (client.readyState === 1) { // WebSocket.OPEN
       client.send(message);
+      wsMsgOut.inc();
+      wsBytes.inc(message.length);
     }
   });
 };
+
+const { attachHeartbeat } = require('./ws/heartbeat.cjs');
+const { attachIdle } = require('./ws/idle.cjs');
+
+wss.on('connection', (ws) => {
+  attachHeartbeat(ws);
+  attachIdle(ws);
+  ws.on('message', (message) => {
+    wsMsgIn.inc();
+  });
+});
 
 console.log(`WebSocket server starting on port ${PORT}`);
 
@@ -595,14 +689,22 @@ setInterval(() => {
 const { setupUnifiedConsciousnessWebSocket  } = require('./unified-consciousness-standalone.cjs');
 
 // Create HTTP server for additional WebSocket endpoints
-const { createServer  } = require('http');
-const httpServer = createServer();
+const consciousnessApp = express();
+const consciousnessServer = createServer(consciousnessApp);
+
+// Secure the consciousness server as well
+const consciousnessAuth = createWsAuth({
+  secret: process.env.JWT_SECRET || 'dev-secret-change-me',
+  max: parseInt(process.env.WS_RATE_LIMIT || '100', 10),
+  window: parseInt(process.env.WS_RATE_WINDOW || '10', 10),
+  endpoint: 'consciousness-v2-ws'
+});
 
 // Setup consciousness WebSocket endpoints
-setupUnifiedConsciousnessWebSocket(httpServer);
+setupUnifiedConsciousnessWebSocket(consciousnessServer, consciousnessAuth);
 
 // Start HTTP server on different port for consciousness streams
 const CONSCIOUSNESS_PORT = 3002;
-httpServer.listen(CONSCIOUSNESS_PORT, () => {
+consciousnessServer.listen(CONSCIOUSNESS_PORT, () => {
   console.log(`🧠 Consciousness WebSocket endpoints ready on port ${CONSCIOUSNESS_PORT}`);
 });

@@ -14,18 +14,31 @@ class LevelSpiralAdapter extends SpiralStorageAdapter {
     if (!this.db) this.db = level(this.dbPath, { valueEncoding: 'json' });
   }
   async get(key) {
-    try {
-      return await this.db.get(key);
-    } catch (e) {
-      if (e.notFound) return undefined;
-      throw e;
-    }
+    return this._callWithCB('get', async () => {
+      const t = Date.now();
+      try {
+        const v = await this.db.get(key);
+        this.recordLatency('get', Date.now() - t);
+        return v;
+      } catch (e) {
+        if (e.notFound) return undefined;
+        throw e;
+      }
+    });
   }
   async set(key, value) {
-    await this.db.put(key, value);
+    return this._callWithCB('set', async () => {
+      const t = Date.now();
+      await this.db.put(key, value);
+      this.recordLatency('set', Date.now() - t);
+    });
   }
   async del(key) {
-    await this.db.del(key);
+    return this._callWithCB('del', async () => {
+      const t = Date.now();
+      await this.db.del(key);
+      this.recordLatency('del', Date.now() - t);
+    });
   }
   async keys(prefix = '') {
     const keys = [];

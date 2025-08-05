@@ -1,0 +1,23 @@
+rule_files:
+  - spiral-rules.yaml
+
+evaluation_interval: 1m
+
+tests:
+  - name: SpiralEventLagHigh
+    interval: 1m
+    input_series:
+      - series: 'eventbus_publish_lag_ms_bucket{le="0.1"} 0'
+        values: '0 0 0 0 0'
+      - series: 'eventbus_publish_lag_ms_bucket{le="+Inf"} 1'
+        values: '1 1 1 1 1'
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: SpiralEventLagHigh
+        exp_alerts:
+          - exp_labels:
+              severity: page
+            exp_annotations:
+              summary: High EventBus lag
+              description: The EventBus publish lag is over 100ms.
+              runbook_url: https://github.com/example/flappy-journal/blob/main/RUNBOOK.md#lag

@@ -1,0 +1,113 @@
+name: Authentication and Rate Limiting Tests
+
+on:
+  push:
+    paths:
+      - 'server/auth/**'
+      - '__tests__/auth/**'
+      - 'scripts/generate-test-jwt.cjs'
+      - '.github/workflows/auth-tests.yml'
+  pull_request:
+    paths:
+      - 'server/auth/**'
+      - '__tests__/auth/**'
+      - 'scripts/generate-test-jwt.cjs'
+      - '.github/workflows/auth-tests.yml'
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Run Auth Tests
+    runs-on: ubuntu-latest
+    
+    services:
+      redis:
+        image: redis:alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Install promtool
+      run: |
+        wget https://github.com/prometheus/prometheus/releases/download/v2.37.0/prometheus-2.37.0.linux-amd64.tar.gz
+        tar xvfz prometheus-2.37.0.linux-amd64.tar.gz
+        sudo mv prometheus-2.37.0.linux-amd64/promtool /usr/local/bin/
+
+    - name: Generate test JWT
+      id: generate-jwt
+      run: |
+        # Generate a test JWT with a test secret
+        TOKEN=$(node scripts/generate-test-jwt.cjs --secret test-secret --user-id test-user --roles admin,user --tenant test-tenant)
+        echo "TEST_JWT=$TOKEN" >> $GITHUB_ENV
+        echo "JWT_SECRET=test-secret" >> $GITHUB_ENV
+        echo "Generated JWT for testing"
+
+    - name: Run authentication tests
+      env:
+        NODE_ENV: test
+        REDIS_URL: redis://localhost:6379
+        JWT_SECRET: ${{ env.JWT_SECRET }}
+        TEST_JWT: ${{ env.TEST_JWT }}
+        ALLOW_ANONYMOUS_WS: 'false'
+        WS_RATE_LIMIT: '5'
+        WS_RATE_WINDOW: '10'
+      run: |
+        # Run tests with coverage
+        npx jest __tests__/auth/ --coverage --ci --runInBand --detectOpenHandles --forceExit
+        promtool test rules prometheus/spiral-alerts.test.yaml
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: ./coverage/lcov.info
+        flags: auth
+        name: codecov-umbrella
+        fail_ci_if_error: false
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results
+        path: |
+          coverage/
+          test-results.xml
+        retention-days: 7
+
+    - name: Run security audit
+      run: npm audit --production --audit-level=moderate
+
+    - name: Check for vulnerabilities
+      uses: snyk/actions/node@master
+      continue-on-error: true
+      with:
+        args: --severity-threshold=high --skip-unresolved
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+    - name: Run OWASP ZAP scan
+      uses: zaproxy/action-full-scan@v0.7.0
+      continue-on-error: true
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        target: 'http://localhost:3000'
+        rules_file_name: '.zap/rules.tsv'
+        cmd_options: '-I'

@@ -5,6 +5,10 @@
 
 const { EventEmitter } = require('events');
 const { verify } = require('./security/eventSign.cjs');
+const client = require('prom-client');
+
+const eventCount = new client.Gauge({ name:'eventbus_backlog', help:'Queue length'});
+const eventLag  = new client.Histogram({ name:'eventbus_publish_lag_ms', help:'Lag ms', buckets:[1,2,5,10,50,100]});
 
 class ConsciousnessEventBus extends EventEmitter {
     constructor() {
@@ -14,8 +18,15 @@ class ConsciousnessEventBus extends EventEmitter {
         this.eventHistory = [];
         this.maxHistorySize = 100;
         this.subscribers = new Map();
+        this.pendingEvents = new Map();
         
         console.log('[ConsciousnessEventBus] Initialized');
+
+        if (process.env.METRICS_ENABLED !== 'false') {
+            setInterval(() => {
+                eventCount.set(this.pendingEvents.size);
+            }, 1000);
+        }
     }
 
     /**
@@ -53,6 +64,9 @@ class ConsciousnessEventBus extends EventEmitter {
      * Emit an event with tracking
      */
     emit(eventName, ...args) {
+        const eventId = `${eventName}-${Date.now()}-${Math.random()}`;
+        this.pendingEvents.set(eventId, Date.now());
+
         // Track event in history
         this.eventHistory.push({
             event: eventName,
@@ -65,6 +79,21 @@ class ConsciousnessEventBus extends EventEmitter {
             this.eventHistory.shift();
         }
         
+        const listeners = this.listeners(eventName);
+        const promises = listeners.map(listener => {
+            return (async () => {
+                await listener(...args);
+            })();
+        });
+
+        Promise.all(promises).then(() => {
+            const startTime = this.pendingEvents.get(eventId);
+            if (startTime) {
+                eventLag.observe(Date.now() - startTime);
+                this.pendingEvents.delete(eventId);
+            }
+        });
+
         // Call parent emit
         return super.emit(eventName, ...args);
     }

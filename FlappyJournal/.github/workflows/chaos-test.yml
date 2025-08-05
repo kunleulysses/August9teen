@@ -1,0 +1,29 @@
+name: Chaos Test
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '0 0 * * *'
+jobs:
+  chaos-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Lint CronJob YAML
+        run: |
+          npm install -g @kubernetes-models/kube-score
+          kube-score FlappyJournal/deploy/cron-rebuild-stats.yaml
+      - name: Run chaos test
+        run: |
+          docker-compose up -d
+          npm test -- test/chaos/chaos.spec.ts
+      - name: Lint Grafana Dashboard
+        run: |
+          npm install -g @grafana/dashboard-linter
+          dashboard-linter lint FlappyJournal/grafana/spiral-dashboard-v3.json
+      - name: Upload test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results
+          path: test-results.xml

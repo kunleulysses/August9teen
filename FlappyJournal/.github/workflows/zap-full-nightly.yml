@@ -1,0 +1,29 @@
+name: ZAP Full Scan
+on:
+  schedule:
+    - cron: '0 3 * * *'
+jobs:
+  zap_scan:
+    runs-on: ubuntu-latest
+    name: Scan the webapplication
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: ZAP Scan
+        uses: zaproxy/action-full-scan@v0.6.1
+        with:
+          target: 'http://localhost:3000'
+          rules_file_name: '.zap/rules.tsv'
+          cmd_options: '-w zap_report.html -J zap_report.json'
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: zap-report
+          path: zap_report.html
+      - name: Slack Notification
+        uses: rt-actions/slack-bot@v2.2.0
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK }}
+          message: 'ZAP full scan report is ready!'
+          channel: '#sec-reports'
+          attachment: zap_report.html

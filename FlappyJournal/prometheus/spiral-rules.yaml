@@ -1,0 +1,74 @@
+groups:
+- name: spiral-memory
+  rules:
+  - record: spiral_cb_mttr
+    expr: time() - avg_over_time(timestamp(spiral_cb_state == 1)[5m:])
+  - record: spiral_gc_backlog_5m
+    expr: avg_over_time(spiral_gc_backlog[5m])
+  - record: spiral_selection_distance_average
+    expr: avg_over_time(spiral_selection_distance_sum[5m]) / avg_over_time(spiral_selection_distance_count[5m])
+  - record: spiral_eventbus_p95_lag_ms
+    expr: histogram_quantile(0.95, rate(eventbus_publish_lag_ms_bucket[5m]))
+  - alert: SpiralEventLagHigh
+    expr: spiral_eventbus_p95_lag_ms > 0.1
+    for: 5m
+    labels:
+      severity: page
+    annotations:
+      summary: High EventBus lag
+      description: The EventBus publish lag is over 100ms.
+      runbook_url: https://github.com/example/flappy-journal/blob/main/RUNBOOK.md#lag
+  - alert: GCBacklogTooLarge
+    expr: spiral_gc_backlog > 10000
+    for: 10m
+    labels:
+      severity: warn
+    annotations:
+      summary: Large GC backlog
+      description: The GC backlog is over 10,000 items.
+      runbook_url: https://github.com/example/flappy-journal/blob/main/RUNBOOK.md#gc
+  - alert: CircuitBreakerOpen
+    expr: spiral_cb_state{backend="redis"} == 1
+    for: 2m
+    labels:
+      severity: page
+    annotations:
+      summary: Circuit breaker open
+      description: The Redis circuit breaker is open.
+      runbook_url: https://github.com/example/flappy-journal/blob/main/RUNBOOK.md#cb
+  - alert: RedisTLSDisabled
+    expr: redis_tls_enabled == 0
+    for: 1m
+    labels:
+      severity: crit
+    annotations:
+      summary: Redis TLS disabled
+      description: Redis TLS is disabled.
+      runbook_url: https://github.com/example/flappy-journal/blob/main/RUNBOOK.md#tls
+  - alert: WSClientsDroppedSpike
+    expr: rate(ws_idle_disconnect_total[1m]) > 20
+    for: 2m
+    labels:
+      severity: warn
+    annotations:
+      summary: WebSocket clients dropped
+      description: More than 20 WebSocket clients were dropped in the last minute.
+      runbook_url: https://github.com/example/flappy-journal/blob/main/RUNBOOK.md#ws
+  - alert: HeapMemoryHigh
+    expr: process_heap_bytes > 5e+8
+    for: 15m
+    labels:
+      severity: page
+    annotations:
+      summary: High heap memory usage
+      description: Heap memory usage is over 500MB.
+      runbook_url: https://github.com/example/flappy-journal/blob/main/RUNBOOK.md#heap
+  - alert: RateLimitDenialsSurge
+    expr: rate(spiral_store_denied_total[1m]) / rate(spiral_store_allowed_total[1m]) > 0.3
+    for: 5m
+    labels:
+      severity: warn
+    annotations:
+      summary: High rate limit denial rate
+      description: The rate limit denial rate is over 30%.
+      runbook_url: https://github.com/example/flappy-journal/blob/main/RUNBOOK.md#rl

@@ -20,8 +20,7 @@ const {
 } = require('./consciousness-modules-bundle.cjs');
 
 // Setup function that doesn't depend on TypeScript imports
-function setupUnifiedConsciousnessWebSocket(server) {
-module.exports.setupUnifiedConsciousnessWebSocket = setupUnifiedConsciousnessWebSocket;
+function setupUnifiedConsciousnessWebSocket(server, authMiddleware) {
 
   console.log('🧠 Setting up Unified Consciousness WebSocket...');
   
@@ -59,12 +58,9 @@ module.exports.setupUnifiedConsciousnessWebSocket = setupUnifiedConsciousnessWeb
   }
   
   // Main consciousness stream
-  const consciousnessWss = new WebSocket.Server({ 
-    server,
-    path: '/consciousness-stream'
-  });
+  const consciousnessWss = new WebSocket.Server({ noServer: true });
   
-  consciousnessWss.on('connection', (ws) => {
+  consciousnessWss.on('connection', (ws, req) => {
     console.log('📡 Client connected to consciousness stream');
     
     const sendMetrics = () => {
@@ -109,12 +105,9 @@ module.exports.setupUnifiedConsciousnessWebSocket = setupUnifiedConsciousnessWeb
   });
 
   // Health monitoring stream
-  const healthWss = new WebSocket.Server({
-    server,
-    path: '/health-stream'
-  });
+  const healthWss = new WebSocket.Server({ noServer: true });
   
-  healthWss.on('connection', (ws) => {
+  healthWss.on('connection', (ws, req) => {
     console.log('📡 Client connected to health stream');
     
     const sendHealthReport = () => {
@@ -148,12 +141,9 @@ module.exports.setupUnifiedConsciousnessWebSocket = setupUnifiedConsciousnessWeb
   });
 
   // Goals tracking stream
-  const goalsWss = new WebSocket.Server({
-    server,
-    path: '/goals-stream'
-  });
+  const goalsWss = new WebSocket.Server({ noServer: true });
   
-  goalsWss.on('connection', (ws) => {
+  goalsWss.on('connection', (ws, req) => {
     console.log('📡 Client connected to goals stream');
     
     const sendGoals = () => {
@@ -183,12 +173,9 @@ module.exports.setupUnifiedConsciousnessWebSocket = setupUnifiedConsciousnessWeb
   });
 
   // Module orchestration stream
-  const orchestrationWss = new WebSocket.Server({
-    server,
-    path: '/orchestration-stream'
-  });
+  const orchestrationWss = new WebSocket.Server({ noServer: true });
   
-  orchestrationWss.on('connection', (ws) => {
+  orchestrationWss.on('connection', (ws, req) => {
     console.log('📡 Client connected to orchestration stream');
     
     // Send module network
@@ -268,14 +255,40 @@ module.exports.setupUnifiedConsciousnessWebSocket = setupUnifiedConsciousnessWeb
   console.log('   - /health-stream');
   console.log('   - /goals-stream');
   console.log('   - /orchestration-stream');
+
+  // Handle upgrades with authentication
+  server.on('upgrade', (request, socket, head) => {
+    const { pathname } = new URL(request.url, `http://${request.headers.host}`);
+
+    authMiddleware(request, socket, head, () => {
+      if (!request.auth) {
+        socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
+        socket.destroy();
+        return;
+      }
+
+      let targetWss;
+      if (pathname === '/consciousness-stream') {
+        targetWss = consciousnessWss;
+      } else if (pathname === '/health-stream') {
+        targetWss = healthWss;
+      } else if (pathname === '/goals-stream') {
+        targetWss = goalsWss;
+      } else if (pathname === '/orchestration-stream') {
+        targetWss = orchestrationWss;
+      } else {
+        socket.destroy();
+        return;
+      }
+
+      targetWss.handleUpgrade(request, socket, head, (ws) => {
+        ws.user = request.auth;
+        if (request.trackConnection) {
+          request.trackConnection(ws);
+        }
+        targetWss.emit('connection', ws, request);
+      });
+    });
+  });
 }
 
-// Start HTTP server on port 5001
-const CONSCIOUSNESS_PORT = process.env.CONSCIOUSNESS_PORT || 5001;
-const httpServer = createServer();
-
-setupUnifiedConsciousnessWebSocket(httpServer);
-
-httpServer.listen(CONSCIOUSNESS_PORT, () => {
-  console.log(`🧠 Consciousness WebSocket server listening on port ${CONSCIOUSNESS_PORT}`);
-});

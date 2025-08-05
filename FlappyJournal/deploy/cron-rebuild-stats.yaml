@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: spiral-rebuild-stats
+spec:
+  schedule: "30 2 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: spiral-rebuild-stats
+            image: ourapp:latest
+            command: ["node", "bin/spiral-repair.cjs", "--ci"]
+            env:
+            - name: SLACK_WEBHOOK_URL
+              valueFrom:
+                secretKeyRef:
+                  name: slack-webhook
+                  key: url
+            resources:
+              requests:
+                cpu: "50m"
+                memory: "128Mi"
+              limits:
+                cpu: "100m"
+                memory: "256Mi"
+          restartPolicy: OnFailure
