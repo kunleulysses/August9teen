@@ -381,6 +381,124 @@ export class SpiralMemoryEngine extends EventEmitter {
             this.memorySpiral.delete(id);
         }
     }
+
+    /**
+     * Get comprehensive statistics about the spiral memory system
+     */
+    getStatistics() {
+        const memories = Array.from(this.memorySpiral.values());
+        const resonanceFrequencies = Array.from(this.resonanceField.keys());
+        
+        // Calculate memory distribution by emotional amplitude
+        const amplitudeRanges = {
+            low: memories.filter(m => m.emotionalAmplitude < 0.3).length,
+            medium: memories.filter(m => m.emotionalAmplitude >= 0.3 && m.emotionalAmplitude < 0.7).length,
+            high: memories.filter(m => m.emotionalAmplitude >= 0.7).length
+        };
+
+        // Calculate spiral coherence metrics
+        const coherenceScores = memories.map(m => m.resonanceFrequency);
+        const avgCoherence = coherenceScores.length > 0 
+            ? coherenceScores.reduce((sum, freq) => sum + freq, 0) / coherenceScores.length 
+            : 0;
+
+        // Calculate memory age distribution
+        const now = Date.now();
+        const ageRanges = {
+            recent: memories.filter(m => now - m.timestamp < 60000).length, // < 1 minute
+            recent_hour: memories.filter(m => now - m.timestamp < 3600000).length, // < 1 hour
+            recent_day: memories.filter(m => now - m.timestamp < 86400000).length, // < 1 day
+            old: memories.filter(m => now - m.timestamp >= 86400000).length // >= 1 day
+        };
+
+        return {
+            totalMemories: this.memorySpiral.size,
+            totalResonanceFrequencies: resonanceFrequencies.length,
+            amplitudeDistribution: amplitudeRanges,
+            averageCoherence: avgCoherence,
+            ageDistribution: ageRanges,
+            memoryDensity: this.memorySpiral.size / 10000, // Normalized to max capacity
+            spiralComplexity: this.calculateSpiralComplexity(),
+            resonanceFieldDensity: this.resonanceField.size / 100, // Normalized
+            systemHealth: this.calculateSystemHealth(),
+            lastPruneTime: this.lastPruneTime || 0,
+            goldenRatioAlignment: this.calculateGoldenRatioAlignment()
+        };
+    }
+
+    /**
+     * Calculate spiral complexity based on memory distribution
+     */
+    calculateSpiralComplexity() {
+        const memories = Array.from(this.memorySpiral.values());
+        if (memories.length === 0) return 0;
+
+        // Calculate variance in spiral coordinates
+        const realCoords = memories.map(m => m.spiralCoordinate.real);
+        const imagCoords = memories.map(m => m.spiralCoordinate.imaginary);
+        
+        const realVariance = this.calculateVariance(realCoords);
+        const imagVariance = this.calculateVariance(imagCoords);
+        
+        // Normalize complexity score
+        return Math.min(1.0, (realVariance + imagVariance) / 2);
+    }
+
+    /**
+     * Calculate variance of an array of numbers
+     */
+    calculateVariance(values) {
+        if (values.length === 0) return 0;
+        const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
+        const squaredDiffs = values.map(val => Math.pow(val - mean, 2));
+        return squaredDiffs.reduce((sum, diff) => sum + diff, 0) / values.length;
+    }
+
+    /**
+     * Calculate system health based on various metrics
+     */
+    calculateSystemHealth() {
+        const memories = Array.from(this.memorySpiral.values());
+        const resonanceFrequencies = Array.from(this.resonanceField.keys());
+        
+        // Health factors (calculated directly to avoid recursion)
+        const memoryUtilization = Math.min(1.0, memories.length / 10000);
+        
+        const coherenceScores = memories.map(m => m.resonanceFrequency);
+        const avgCoherence = coherenceScores.length > 0 
+            ? coherenceScores.reduce((sum, freq) => sum + freq, 0) / coherenceScores.length 
+            : 0.5; // Default to 0.5 if no memories
+        const coherenceHealth = Math.max(0, 1 - Math.abs(avgCoherence - 0.5));
+        
+        const now = Date.now();
+        const oldMemories = memories.filter(m => now - m.timestamp >= 86400000).length;
+        const ageHealth = memories.length > 0 
+            ? Math.max(0, 1 - (oldMemories / memories.length))
+            : 1.0; // Perfect health if no memories
+        
+        // Weighted health score
+        return (memoryUtilization * 0.3 + coherenceHealth * 0.4 + ageHealth * 0.3);
+    }
+
+    /**
+     * Calculate alignment with golden ratio principles
+     */
+    calculateGoldenRatioAlignment() {
+        const memories = Array.from(this.memorySpiral.values());
+        if (memories.length === 0) return 0;
+
+        // Check if memory distribution follows golden ratio patterns
+        const angles = memories.map(m => Math.atan2(m.spiralCoordinate.imaginary, m.spiralCoordinate.real));
+        const goldenAngles = angles.map(angle => angle / this.goldenRatio);
+        
+        // Calculate how well angles align with golden ratio
+        const alignmentScores = goldenAngles.map(ga => {
+            const fractionalPart = ga - Math.floor(ga);
+            return Math.min(fractionalPart, 1 - fractionalPart); // Distance from 0 or 1
+        });
+        
+        return 1 - (alignmentScores.reduce((sum, score) => sum + score, 0) / alignmentScores.length);
+    }
 }
 // Export singleton instance
 export const spiralMemory = new SpiralMemoryEngine();
