@@ -20,6 +20,7 @@ describe('WebSocket Timeouts', () => {
   });
 
   it('should close the connection after 2 missed pongs', (done) => {
+    jest.setTimeout(1000);
     wss.on('connection', (ws) => {
       attachHeartbeat(ws, { interval: 100, maxMissed: 2 });
     });
@@ -33,6 +34,7 @@ describe('WebSocket Timeouts', () => {
   }, 300);
 
   it('should close the connection after 5 minutes of inactivity', (done) => {
+    jest.setTimeout(1000);
     wss.on('connection', (ws) => {
       attachIdle(ws, 100);
     });

@@ -7,12 +7,14 @@ describe('Chaos Test', () => {
   let arch: SpiralMemoryArchitecture;
 
   beforeAll(async () => {
+    jest.setTimeout(30000);
     await new Promise(resolve => exec('docker-compose up -d', resolve));
     arch = new SpiralMemoryArchitecture({ storage: new RedisSpiralAdapter('redis://localhost:6379') });
     await arch.init();
   });
 
   afterAll(async () => {
+    jest.setTimeout(30000);
     await new Promise(resolve => exec('docker-compose down', resolve));
   });
 

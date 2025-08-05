@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: holograph-gateway
+spec:
+  replicas: 3
+  strategy:
+    blueGreen:
+      activeService: holograph-svc-active
+      previewService: holograph-svc-preview
+      autoPromotionEnabled: false
+  selector:
+    matchLabels:
+      app: holograph-gateway
+  template:
+    metadata:
+      labels:
+        app: holograph-gateway
+    spec:
+      containers:
+        - name: gateway
+          image: ghcr.io/org/holograph-api:latest
+          ports:
+            - containerPort: 8080

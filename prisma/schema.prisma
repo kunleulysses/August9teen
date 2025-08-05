@@ -1,6 +1,6 @@
 datasource db {
-  provider = "sqlite"
-  url      = "file:./consciousness.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 generator client {
@@ -40,4 +40,26 @@ model ConsciousnessField {
 model Metric {
   key   String @id
   value Float
+}
+
+model SceneNode {
+  id        String   @id @default(uuid())
+  sceneId   String
+  type      String
+  parentId  String?
+  payload   Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([parentId])
+}
+
+model FrameStat {
+  id         Int      @id @default(autoincrement())
+  timestamp  DateTime @default(now())
+  fps        Float
+  gpuMemMiB  Float
+  overBudget Boolean
+
+  @@index([timestamp])
 }

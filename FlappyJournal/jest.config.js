@@ -6,4 +6,7 @@ module.exports = {
   },
   testMatch: ['**/__tests__/**/*.test.js'],
   resolver: './__tests__/resolver.js',
+  moduleNameMapper: {
+    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+  },
 };

@@ -1,5 +1,5 @@
 import { attemptLink } from '../../server/consciousness/core/entanglement/linkEngine.cjs';
-import { SpiralMemoryArchitecture } from '../../server/consciousness/core/SpiralMemoryArchitecture.cjs';
+const { SpiralMemoryArchitecture } = require('../../server/consciousness/core/SpiralMemoryArchitecture.cjs');
 import { InMemorySpiralAdapter } from '../../server/consciousness/core/storage/SpiralStorageAdapter.cjs';
 
 describe('Link Engine', () => {

@@ -1,0 +1,4 @@
+holograph_reality_enabled:
+  enabled: false
+  rollout: 0
+  description: "Enables Holographic Reality Generation features"

@@ -18,6 +18,7 @@ describe('Quota Store', () => {
   afterAll(async () => {
     // Clean up test data
     await store.pool.query('DELETE FROM selfcoding_quota WHERE id = $1', [testId]);
+    await store.pool.query('TRUNCATE TABLE pg_type RESTART IDENTITY CASCADE');
     await store.close();
   });
 

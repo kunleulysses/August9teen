@@ -2,6 +2,7 @@ import SpiralMemoryArchitecture from '../../FlappyJournal/server/consciousness/c
 
 describe('Persistence', () => {
   it('stores and reloads memories', async () => {
+    jest.setTimeout(10000);
     const { InMemorySpiralAdapter } = require('../../FlappyJournal/server/consciousness/core/storage/SpiralStorageAdapter.cjs');
     const spiral = new SpiralMemoryArchitecture({ storage: new InMemorySpiralAdapter() });
     await spiral.initialize();

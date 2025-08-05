@@ -1,7 +1,7 @@
 import { WebSocket, WebSocketServer } from 'ws';
 import { createServer } from 'http';
 import { SpiralMemoryArchitecture } from '../../server/consciousness/core/SpiralMemoryArchitecture.cjs';
-import { RedisSpiralAdapter } from '../../server/consciousness/core/storage/RedisSpiralAdapter.cjs';
+const { RedisSpiralAdapter } = require('../../server/consciousness/core/storage/RedisSpiralAdapter.cjs');
 import { RateLimiterMemory } from 'rate-limiter-flexible';
 
 describe('Security', () => {

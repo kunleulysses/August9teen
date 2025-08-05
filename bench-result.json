@@ -1,0 +1,20 @@
+{
+  "timestamp": "2025-08-05T20:36:47.625Z",
+  "duration": "5.00",
+  "frames": 105391,
+  "fps": 21077.78,
+  "frameTime": {
+    "unit": "ms",
+    "avg": 0.04,
+    "min": 0.04,
+    "max": 3.46,
+    "p95": 0.08
+  },
+  "memory": {
+    "unit": "MB",
+    "rss": "68.83",
+    "heapTotal": "26.52",
+    "heapUsed": "11.97",
+    "external": "1.45"
+  }
+}

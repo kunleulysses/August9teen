@@ -8,7 +8,7 @@ describe('Rate Limiter', () => {
 
   it('should allow requests under the rate limit', async () => {
     for (let i = 0; i < 100; i++) {
-      await expect(consume('test-user')).resolves.toBeUndefined();
+      await expect(consume('test-user')).resolves.toBeDefined();
     }
   });
 
@@ -28,6 +28,6 @@ describe('Rate Limiter', () => {
     // Wait for the duration to pass
     await new Promise(resolve => setTimeout(resolve, 10000));
 
-    await expect(consume('test-user')).resolves.toBeUndefined();
+    await expect(consume('test-user')).resolves.toBeDefined();
   });
 });

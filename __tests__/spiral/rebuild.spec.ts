@@ -31,6 +31,7 @@ describe('SpiralMemoryArchitecture Rebuild Statistics', () => {
     
     // Reinitialize spiral memory structures
     await spiral.initializeSpiralMemory();
+    await spiral.initialize();
 
     // Test with Redis adapter if available
     if (process.env.REDIS_URL) {

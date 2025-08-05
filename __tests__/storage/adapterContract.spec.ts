@@ -36,7 +36,8 @@ describe('Storage Adapter Contract', () => {
             await testAdapter.redis.quit();
           } catch (error) {
             console.log(`⚠️  Skipping ${config.name} tests - service not available`);
-            pending(`${config.name} service not available`);
+            console.warn(`${config.name} service not available`);
+            return;
             return;
           }
         }

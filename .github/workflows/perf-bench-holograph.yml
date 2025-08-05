@@ -1,0 +1,39 @@
+# Holographic Reality Performance Benchmark Workflow
+# This workflow runs the performance benchmark and uploads the results as an artifact.
+
+name: Holograph Perf Benchmark
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  perf-bench:
+    name: Run Performance Benchmark
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Holograph perf bench
+        run: node bench/holograph-perf.cjs --duration=5000 --json=bench-result.json
+
+      - name: Upload perf artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: holograph-bench
+          path: bench-result.json

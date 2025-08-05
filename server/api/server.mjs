@@ -19,17 +19,24 @@ import storePkg from '../common/storeFactory.cjs';
 const { getStore, closeStore } = storePkg;
 import metricsPkg from './metrics.cjs';
 const { register: metricsRegister } = metricsPkg;
+import { fork } from 'child_process';
 
 const app = express();
 let httpServer = null;
 
-app.use(helmet({
-  contentSecurityPolicy: {
+app.use(
+  helmet.contentSecurityPolicy({
     directives: {
-      defaultSrc: ["'self'"]
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"], // minimize 'unsafe-inline'
+      imgSrc: ["'self'", "data:", "blob:"],
+      connectSrc: ["'self'", "wss://*"],
+      fontSrc: ["'self'"],
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: [],
     }
-  }
-}));
+  })
+);
 
 // global rate limiter (for all routes)
 app.use(
@@ -97,6 +104,9 @@ if (process.env.NODE_ENV !== 'test') {
   app.listen(config.PORT, () => {
     logger.info(`API listening on port ${config.PORT}`);
   });
+
+  // Start the renderer worker
+  fork(new URL('../holograph/worker/renderer.cjs', import.meta.url).pathname);
 }
 
 export default app;

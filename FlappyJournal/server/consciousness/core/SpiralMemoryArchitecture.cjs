@@ -11,7 +11,7 @@ const { memoryLog  } = require('../modules/MemoryLog.cjs');
 const { InMemorySpiralAdapter  } = require('./storage/SpiralStorageAdapter.cjs');
 const LevelSpiralAdapter = require('./storage/LevelSpiralAdapter.cjs');
 const RedisSpiralAdapter = require('./storage/RedisSpiralAdapter.cjs');
-const { createQueue } = require('../utils/priorityQueue.cjs');
+const { createQueue } = require('../../utils/priorityQueue.cjs');
 const { buildRoutingTable, harmonicDistance } = require('./HyperdimensionalSpiralTopology.cjs');
 
 function getDefaultStorage() {

@@ -1,0 +1,30 @@
+groups:
+  - name: Holograph SLO Alerts
+    rules:
+      - alert: HoloFPSDegradation
+        expr: histogram_quantile(0.95, rate(holograph_fps_bucket[5m])) < 55
+        for: 3m
+        labels: { severity: page }
+        annotations:
+          summary: "Holograph FPS p95 below 55"
+
+      - alert: RecursiveExplosion
+        expr: holograph_scene_max_depth > 10
+        for: 1m
+        labels: { severity: warning }
+        annotations:
+          summary: "Scene graph depth exceeded safe threshold"
+
+      - alert: FrameBudgetBreach
+        expr: rate(holograph_frames_over_budget_total[5m]) > 0.2
+        for: 2m
+        labels: { severity: warning }
+        annotations:
+          summary: "Frequent frame budget overruns"
+
+      - alert: GPUOOMRisk
+        expr: holograph_gpu_memory_bytes > 0.9 * 6.0e9
+        for: 1m
+        labels: { severity: page }
+        annotations:
+          summary: "GPU memory usage at risk threshold"

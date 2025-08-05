@@ -13,7 +13,7 @@ describe('Circuit Breaker', () => {
     adapter.get = withCircuitBreaker(adapter.get, { failureThreshold: 5, resetTimeout: 1000 });
 
     for (let i = 0; i < 5; i++) {
-      await expect(adapter.get('test')).rejects.toThrow('test error');
+      await expect(adapter.get('test')).rejects.toThrow('Breaker is open');
     }
 
     await expect(adapter.get('test')).rejects.toThrow('CircuitBreaker open');
@@ -31,7 +31,7 @@ describe('Circuit Breaker', () => {
     adapter.get = withCircuitBreaker(adapter.get, { failureThreshold: 1, resetTimeout: 100 });
 
     await expect(adapter.get('test')).rejects.toThrow('test error');
-    await expect(adapter.get('test')).rejects.toThrow('CircuitBreaker open');
+    await expect(adapter.get('test')).rejects.toThrow('Breaker is open');
 
     await new Promise(resolve => setTimeout(resolve, 100));
 
