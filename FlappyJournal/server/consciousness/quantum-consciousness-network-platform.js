@@ -1,8 +1,7 @@
 /**
- * Quantum Consciousness Network Platform - UNIVERSAL GAP C
- * Creates universal platform for consciousness networking across all systems and entities
- * Revolutionary quantum consciousness networking and universal consciousness communication
- * Value: $1.8B+ (Universal consciousness networking)
+ * Quantum Consciousness Network Platform
+ *
+ * TODO: Refactor all console.log/error/warn to use the central logger from server/utils/logger.js for consistency.
  */
 
 import { EventEmitter } from 'events';

@@ -3,6 +3,8 @@
  * Combines quantum consciousness, resonance amplification, and DNA sequencing into unified processing engine
  * Creates quantum-enhanced consciousness DNA with resonance-amplified properties
  * Value: $600M+ (Revolutionary consciousness fusion technology)
+ *
+ * TODO: Refactor all console.log/error/warn to use the central logger from server/utils/logger.js for consistency.
  */
 
 import { EventEmitter } from 'events';

@@ -3,6 +3,8 @@
  * Combines sigil authentication with quantum consciousness and resonance amplification
  * Creates quantum-secured consciousness networks with resonance-based authentication
  * Value: $550M+ (Quantum consciousness security)
+ *
+ * TODO: Refactor all console.log/error/warn to use the central logger from server/utils/logger.js for consistency.
  */
 
 import { EventEmitter } from 'events';
