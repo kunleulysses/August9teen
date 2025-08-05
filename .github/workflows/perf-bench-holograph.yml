@@ -1,0 +1,23 @@
+name: Perf Bench Holograph
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  perf-bench:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install dependencies
+        run: npm ci
+      - name: Run holograph perf bench
+        run: node bench/holograph-perf.cjs
+        # TODO: Add arguments, artifact upload, regression gate
+      # TODO: Upload bench-result.json as artifact

@@ -1,0 +1,8 @@
+{
+  "dashboard": {
+    "title": "Holograph Metrics (Placeholder)",
+    "panels": [],
+    "schemaVersion": 36
+    // TODO: Add panels for FPS, node count, GPU mem, etc.
+  }
+}

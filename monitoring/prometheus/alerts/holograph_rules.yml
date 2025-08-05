@@ -1,0 +1,4 @@
+groups:
+  - name: Holograph Placeholder Rule Group
+    rules: []
+    # TODO: Add alerting rules for frame budget, recursion, GPU etc.
