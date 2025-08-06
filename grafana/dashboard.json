@@ -1,0 +1,36 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Runtime Metrics",
+    "panels": [
+      {
+        "type": "timeseries",
+        "title": "Scene Latency",
+        "targets": [
+          { "expr": "scene_latency_ms" }
+        ]
+      },
+      {
+        "type": "timeseries",
+        "title": "WS FPS",
+        "targets": [
+          { "expr": "ws_fps" }
+        ]
+      },
+      {
+        "type": "timeseries",
+        "title": "Heap Usage",
+        "targets": [
+          { "expr": "heap_usage_ratio" }
+        ]
+      },
+      {
+        "type": "timeseries",
+        "title": "DB Size",
+        "targets": [
+          { "expr": "db_size_bytes" }
+        ]
+      }
+    ]
+  }
+}
