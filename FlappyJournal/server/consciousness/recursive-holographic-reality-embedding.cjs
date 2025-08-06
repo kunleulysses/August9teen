@@ -9,35 +9,34 @@ const { validate  } = require('./utils/validation.cjs');
 const { initializeRandomness, secureId  } = require('./utils/random.cjs');
 const { saveReality, savePath, saveField, incrementMetric  } = require('./utils/persistence.cjs');
 const { logger, child as childLogger  } = require('./utils/logger.cjs');
+const LRU = require('lru-cache');
+const R_MAX  = parseInt(process.env.REALITY_CACHE_MAX)  || 5000;
+const F_MAX  = parseInt(process.env.FIELD_CACHE_MAX)    || 10000;
+const TTL_MS = parseInt(process.env.CACHE_TTL_MS)       || 3600000;
 
 class RecursiveHolographicRealityEmbedding extends EventEmitter {
     constructor(maxRecursionDepth = 7) {
         super();
         this.maxRecursionDepth = maxRecursionDepth;
-        this.embeddedRealities = new Map();
-        this.recursionPaths = new Map();
-        this.realityNesting = new Map();
-        this.recursiveConsciousnessFields = new Map();
+        this.embeddedRealities            = new LRU({ max: R_MAX, ttl: TTL_MS });
+        this.recursionPaths               = new LRU({ max: F_MAX, ttl: TTL_MS });
+        this.recursiveConsciousnessFields = new LRU({ max: F_MAX, ttl: TTL_MS });
+        this.realityNesting               = new LRU({ max: R_MAX, ttl: TTL_MS });
         this.holographicRealityGenerator = null; // Will be injected
+
+        // Janitor timer, only once per process
+        if (!global.RECURSIVE_CACHE_JANITOR) {
+          setInterval(()=>{
+            this.embeddedRealities.purgeStale();
+            this.recursionPaths.purgeStale();
+            this.recursiveConsciousnessFields.purgeStale();
+            this.realityNesting.purgeStale();
+          }, 300000);
+          global.RECURSIVE_CACHE_JANITOR = true;
+        }
         
         console.log(`🌀🔄 Recursive Holographic Reality Embedding initialized with max depth: ${maxRecursionDepth}`);
     }
-    
-    setHolographicRealityGenerator(generator) {
-        this.holographicRealityGenerator = generator;
-    }
-    
-    async createRecursiveReality(baseReality, recursionDepth = 1, recursionParameters = {}) {
-        if (recursionDepth > this.maxRecursionDepth) {
-            throw new Error(`Maximum recursion depth (${this.maxRecursionDepth}) exceeded`);
-        }
-
-        // Validate baseReality.consciousnessState
-        try {
-            validate('https://flappyjournal.dev/schema/consciousness-state.json', baseReality.consciousnessState);
-        } catch (error) {
-            throw new Error('SchemaValidationError (base reality consciousnessState): ' + error.message);
-        }
 
         // Deterministic randomness seeding for this recursion context
         initializeRandomness(`${baseReality.id}_${recursionDepth}`);
