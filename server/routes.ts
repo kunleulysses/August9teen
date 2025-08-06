@@ -24,7 +24,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/health", (_req: Request, res: Response) => {
     res.json({ status: "ok", timestamp: new Date().toISOString() });
   });
-  
+
+  // Mark user account for deletion
+  app.delete("/v1/user/:uid", async (req: Request, res: Response) => {
+    const uid = Number(req.params.uid);
+    if (Number.isNaN(uid)) {
+      return res.status(400).json({ error: "Invalid user id" });
+    }
+    const user = await storage.getUser(uid);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    if (!user.pendingErase) {
+      await storage.markUserPendingErase(uid);
+    }
+    return res.status(202).json({ status: "pending erase" });
+  });
+
   // Simple webhook test endpoint - publicly accessible for external testing
   app.post("/api/webhook-test", (req: Request, res: Response) => {
     console.log('🔔 WEBHOOK TEST ENDPOINT ACCESSED');

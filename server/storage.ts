@@ -28,7 +28,8 @@ export interface IStorage {
   updateUserStripeCustomerId(userId: number, stripeCustomerId: string): Promise<User>;
   updateUserStripeSubscriptionId(userId: number, stripeSubscriptionId: string): Promise<User>;
   updateUserPaymentDetails(userId: number, paymentDetails: PaymentDetails): Promise<User>;
-  
+  markUserPendingErase(userId: number): Promise<User | undefined>;
+
   // Journal operations
   getJournalEntries(userId: number, filter?: JournalFilter): Promise<JournalEntry[]>;
   getJournalEntry(id: number): Promise<JournalEntry | undefined>;
@@ -148,12 +149,13 @@ export class MemStorage implements IStorage {
       theme: "light"
     };
     
-    const user: User = { 
-      ...insertUser, 
-      id, 
-      createdAt, 
+    const user: User = {
+      ...insertUser,
+      id,
+      createdAt,
       updatedAt,
-      preferences
+      preferences,
+      pendingErase: false
     };
     
     this.users.set(id, user);
@@ -177,6 +179,20 @@ export class MemStorage implements IStorage {
     
     this.users.set(userId, updatedUser);
     return updatedUser;
+  }
+
+  async markUserPendingErase(userId: number): Promise<User | undefined> {
+    const user = await this.getUser(userId);
+    if (!user) {
+      return undefined;
+    }
+    const updated: User = {
+      ...user,
+      pendingErase: true,
+      updatedAt: new Date()
+    };
+    this.users.set(userId, updated);
+    return updated;
   }
 
   // Journal methods
