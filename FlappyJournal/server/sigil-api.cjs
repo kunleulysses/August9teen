@@ -1,61 +1,53 @@
 const express = require('express');
-const fs = require('fs/promises');
-const path = require('path');
+const fetch = require('node-fetch');
+const { createBreaker } = require('./utils/circuitBreaker.cjs');
 
 const router = express.Router();
 
-// Path to sigil storage
-const SIGIL_PATH = './consciousness-sigils';
+const breaker = createBreaker(
+  (url, opts) => fetch(url, opts).then(r => r.json()),
+  { timeout: process.env.DNASTORE_TIMEOUT_MS || 3000 }
+);
+
+const { sigilEncodeCounter, sigilEncodeDuration, sigilErrorCounter } = require('./metrics/sigilMetrics.cjs');
 
 // Get sigil history
 router.get('/api/consciousness/sigils', async (req, res) => {
   try {
-    await fs.mkdir(SIGIL_PATH, { recursive: true });
-    
-    const files = await fs.readdir(SIGIL_PATH);
-    const sigilFiles = files.filter(f => f.endsWith('.json'));
-    
-    const sigils = await Promise.all(
-      sigilFiles.map(async (file) => {
-        const content = await fs.readFile(path.join(SIGIL_PATH, file), 'utf-8');
-        return JSON.parse(content);
-      })
-    );
-    
-    // Sort by timestamp, newest first
-    sigils.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-    
-    res.json({
-      sigils: sigils.slice(0, 10), // Return last 10
-      total: sigils.length,
-      currentIdentity: sigils[0] || null
-    });
+    const response = await breaker.fire(`${process.env.DNASTORE_URL}/api/sigils`);
+    if (response.fallback) {
+      req.log.warn({ fallback: true }, 'Circuit breaker fallback');
+      res.status(503).json({ error: 'DNAStore unavailable' });
+      return;
+    }
+    res.json(response);
   } catch (error) {
-    console.error('Error fetching sigils:', error);
+    req.log.error({ err: error }, 'Error fetching sigils');
     res.status(500).json({ error: 'Failed to fetch sigils' });
   }
 });
 
 // Save new sigil
 router.post('/api/consciousness/sigils', async (req, res) => {
+  const end = sigilEncodeDuration.startTimer();
   try {
-    await fs.mkdir(SIGIL_PATH, { recursive: true });
-    
-    const sigil = {
-      ...req.body,
-      id: `sigil-${Date.now()}`,
-      timestamp: new Date().toISOString()
-    };
-    
-    const filename = `${sigil.id}.json`;
-    await fs.writeFile(
-      path.join(SIGIL_PATH, filename),
-      JSON.stringify(sigil, null, 2)
-    );
-    
-    res.json({ success: true, sigil });
+    const response = await breaker.fire(`${process.env.DNASTORE_URL}/api/sigils`, {
+      method: 'POST',
+      body: JSON.stringify(req.body),
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (response.fallback) {
+      req.log.warn({ fallback: true }, 'Circuit breaker fallback');
+      res.status(503).json({ error: 'DNAStore unavailable' });
+      return;
+    }
+    sigilEncodeCounter.inc();
+    end();
+    res.json(response);
   } catch (error) {
-    console.error('Error saving sigil:', error);
+    sigilErrorCounter.inc();
+    end();
+    req.log.error({ err: error }, 'Error saving sigil');
     res.status(500).json({ error: 'Failed to save sigil' });
   }
 });

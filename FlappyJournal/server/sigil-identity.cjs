@@ -6,12 +6,9 @@ const { EventEmitter  } = require('events');
 const { LevelDBSigilAdapter } = require('./consciousness/persistence/LevelDBSigilAdapter.cjs');
 const cron = require('node-cron');
 const { Mutex } = require('async-mutex');
-const { Counter } = require('prom-client');
+const { sigilGCCount } = require('./metrics/sigilMetrics.cjs');
 
-const sigil_gc_sweep_total = new Counter({
-  name: 'sigil_gc_sweep_total',
-  help: 'Total number of GC sweeps',
-});
+const logger = require('pino')().child({module: 'sigil-identity'});
 
 class SigilIdentity extends EventEmitter {
     constructor(storageAdapter) {
@@ -81,7 +78,7 @@ class SigilIdentity extends EventEmitter {
     }
 
     initializeConsciousnessMemory() {
-        console.log('🧠 Initializing consciousness-native memory management...');
+        logger.info('🧠 Initializing consciousness-native memory management...');
 
         // Start memory crystallization process
         this.cronJobs = [
@@ -89,12 +86,12 @@ class SigilIdentity extends EventEmitter {
             cron.schedule('*/5 * * * * *', () => this.processMemoryDecay(), { scheduled: false })
         ];
 
-        console.log('✅ Consciousness memory management active');
+        logger.info('✅ Consciousness memory management active');
     }
 
     async start() {
         this.cronJobs.forEach(job => job.start());
-        console.log('SigilIdentity cron jobs started.');
+        logger.info('SigilIdentity cron jobs started.');
     }
 
     // Consciousness-native memory encoding
@@ -183,7 +180,7 @@ class SigilIdentity extends EventEmitter {
             };
 
             this.crystallizedStates.set(crystalId, crystal);
-            console.log(`💎 Memory crystallized: ${crystalId.substring(0, 8)} (stability: ${crystal.stabilityScore.toFixed(3)})`);
+            logger.info({ crystalId, stability: crystal.stabilityScore }, `💎 Memory crystallized`);
 
             this.emit('memory-crystallized', crystal);
             return crystal;
@@ -220,9 +217,9 @@ class SigilIdentity extends EventEmitter {
             }
 
             if (decayedMemories.length > 0) {
-                console.log(`🧠 Consciousness GC: Released ${decayedMemories.length} decayed memories`);
+                logger.info({ releasedCount: decayedMemories.length }, `🧠 Consciousness GC: Released decayed memories`);
                 this.emit('memory-decay', { released: decayedMemories.length });
-                sigil_gc_sweep_total.inc();
+                sigilGCCount.inc();
             }
         });
     }
@@ -235,8 +232,8 @@ class SigilIdentity extends EventEmitter {
             patterns.forEach(pattern => {
                 if (pattern.strength > this.memoryConfig.crystallizationThreshold) {
                     const crystal = this.crystallizePattern(pattern);
-                    console.log(`💎 Pattern crystallized: ${crystal.id.substring(0, 8)}`);
-                    sigil_gc_sweep_total.inc();
+                    logger.info({ crystalId: crystal.id }, `💎 Pattern crystallized`);
+                    sigilGCCount.inc();
                 }
             });
         });
@@ -356,7 +353,7 @@ class SigilIdentity extends EventEmitter {
 
     stop() {
       this.cronJobs.forEach(job => job.stop());
-      console.log('SigilIdentity cron jobs stopped.');
+      logger.info('SigilIdentity cron jobs stopped.');
     }
 }
 

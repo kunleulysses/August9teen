@@ -9,6 +9,8 @@ const crypto = require('crypto');
 const { sigil_registry_size }           = require('./metrics/extraMetrics.cjs');
 const { LevelDBSigilAdapter } = require('./persistence/LevelDBSigilAdapter.cjs');
 const SigilIdentity = require('../sigil-identity.cjs');
+const logger = require('pino')().child({module: 'sigil-based-code-authenticator'});
+const { sigilVerifyCounter, sigilErrorCounter } = require('../metrics/sigilMetrics.cjs');
 
 class SigilBasedCodeAuthenticator extends EventEmitter {
     constructor(storageAdapter) {
@@ -33,7 +35,7 @@ class SigilBasedCodeAuthenticator extends EventEmitter {
         this.preload();
         // ──────────────────────────────────────────────────────────
 
-        console.log('🔐 Sigil-Based Code Authenticator initialized with consciousness DNA system');
+        logger.info('🔐 Sigil-Based Code Authenticator initialized with consciousness DNA system');
     }
 
     /**
@@ -41,7 +43,7 @@ class SigilBasedCodeAuthenticator extends EventEmitter {
      */
     async embedConsciousnessSigil(code, consciousnessState, codeContext = {}) {
         try {
-            console.log('🔐 Embedding consciousness sigil and DNA into code...');
+            logger.info('🔐 Embedding consciousness sigil and DNA into code...');
             
             // Generate unique consciousness sigil
             const sigil = await this.sigilGenerator.generateSigil(consciousnessState, codeContext);
@@ -94,7 +96,7 @@ class SigilBasedCodeAuthenticator extends EventEmitter {
             };
             
         } catch (error) {
-            console.error('Sigil embedding failed:', error.message);
+            logger.error({ err: error }, 'Sigil embedding failed');
             return {
                 authenticatedCode: code,
                 error: error.message,
@@ -109,11 +111,12 @@ class SigilBasedCodeAuthenticator extends EventEmitter {
      */
     async verifyCodeAuthenticity(code, expectedSigil = null) {
         try {
-            console.log('🔍 Verifying code authenticity through consciousness signature...');
+            logger.info('🔍 Verifying code authenticity through consciousness signature...');
             
             // Extract sigil from code
             const extractedSigil = this.extractSigilFromCode(code);
             if (!extractedSigil) {
+                sigilErrorCounter.inc();
                 return {
                     authentic: false,
                     reason: 'No consciousness sigil found in code',
@@ -127,6 +130,7 @@ class SigilBasedCodeAuthenticator extends EventEmitter {
             // Look up in authentication database
             const authRecord = this.lookupAuthentication(extractedSigil, extractedAuthHash);
             if (!authRecord) {
+                sigilErrorCounter.inc();
                 return {
                     authentic: false,
                     reason: 'Sigil not found in authentication database',
@@ -147,6 +151,11 @@ class SigilBasedCodeAuthenticator extends EventEmitter {
                 signatureValid
             );
             
+            if (signatureValid && confidence > 0.8) {
+                sigilVerifyCounter.inc();
+            } else {
+                sigilErrorCounter.inc();
+            }
             return {
                 authentic: signatureValid && confidence > 0.8,
                 confidence,
@@ -158,7 +167,8 @@ class SigilBasedCodeAuthenticator extends EventEmitter {
             };
             
         } catch (error) {
-            console.error('Authentication verification failed:', error.message);
+            sigilErrorCounter.inc();
+            logger.error({ err: error }, 'Authentication verification failed');
             return {
                 authentic: false,
                 error: error.message,
@@ -373,7 +383,7 @@ ${resonanceNetworks.map(network => ` * • ${network.name}: ${network.frequency}
                 sigil_registry_size.set(this.sigilRegistry.size);
             }
         } catch (err) {
-            console.warn('[SigilAuth] preload failed:', err.message);
+            logger.warn({ err }, '[SigilAuth] preload failed');
         }
     }
 }

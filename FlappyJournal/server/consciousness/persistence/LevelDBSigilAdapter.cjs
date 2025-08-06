@@ -16,6 +16,12 @@ class LevelDBSigilAdapter {
     this.trackOpenFiles();
   }
 
+  async open() {
+    // Explicitly open the database to ensure it's ready before use.
+    await this.db.open();
+    console.log('[LevelDBSigilAdapter] Database opened successfully.');
+  }
+
   trackOpenFiles() {
     // This is a mock implementation. Actually tracking open file handles
     // would require deeper integration with LevelDB's internal state,

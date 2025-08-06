@@ -98,6 +98,13 @@ scrape_configs:
    });
    ```
 
+## API Endpoints
+
+- `GET /sigil/api/consciousness/sigils`
+- `POST /sigil/api/consciousness/sigils`
+- `GET /healthz`
+- `GET /readyz`
+
 ## 🚀 Quick Start
 
 ### Prerequisites
