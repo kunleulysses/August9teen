@@ -9,6 +9,8 @@ const {
   sceneGenLatency,
   register: promRegister
 } = require('../common/metrics.cjs');
+const { startTracing, shutdownTracing, withSpan } = require('../common/tracing.cjs');
+startTracing('scene-worker');
 
 const EXPORT_PROM = process.env.EXPORT_PROM === "true";
 if (EXPORT_PROM) {
