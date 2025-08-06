@@ -26,10 +26,16 @@ const sigilGCCount = new promClient.Counter({
   help: 'Number of GC cycles run'
 });
 
+const validationFailures = new promClient.Counter({
+  name: 'validation_failures_total',
+  help: 'Total number of validation failures'
+});
+
 module.exports = {
   sigilEncodeCounter,
   sigilVerifyCounter,
   sigilErrorCounter,
   sigilEncodeDuration,
-  sigilGCCount
+  sigilGCCount,
+  validationFailures
 };

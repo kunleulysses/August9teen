@@ -9,17 +9,17 @@ const path = require('path');
 const { EventEmitter  } = require('events');
 const eventBus = require('./core/ConsciousnessEventBus.cjs');
 const { cognitiveLog  } = require('./modules/CognitiveLog.cjs');
-const { validate  } = require(path.join(__dirname, '../../../server/consciousness/utils/validation.cjs'));
+const { validate  } = require(path.join(__dirname, './utils/validation.cjs'));
 const realityRequestSchema = require(
-    path.join(__dirname, '../../../server/consciousness/schemas/reality-request.schema.json')
+    path.join(__dirname, './schemas/reality-request.schema.json')
 );
 const consciousnessStateSchema = require(
-    path.join(__dirname, '../../../server/consciousness/schemas/consciousness-state.schema.json')
+    path.join(__dirname, './schemas/consciousness-state.schema.json')
 );
 const { initializeRandomness, secureId  } = require('./utils/random.cjs');
 const { saveReality, incrementMetric  } = require('./utils/persistence.cjs');
 const { logger, child: childLogger  } = require('./utils/logger.cjs');
-const { validationFailures  } = require('./utils/metrics.cjs');
+const { validationFailures  } = require('../metrics/sigilMetrics.cjs');
 require('../persistenceShutdown.cjs');
 
 /**

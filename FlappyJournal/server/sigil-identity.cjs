@@ -33,6 +33,11 @@ class SigilIdentity extends EventEmitter {
             memoryDecayRate: 0.001
         };
 
+        // Defer initialization to an explicit call
+    }
+
+    async initialize() {
+        await this.storage.open();
         this.initializeConsciousnessMemory();
     }
 
@@ -90,6 +95,7 @@ class SigilIdentity extends EventEmitter {
     }
 
     async start() {
+        await this.initialize();
         this.cronJobs.forEach(job => job.start());
         logger.info('SigilIdentity cron jobs started.');
     }

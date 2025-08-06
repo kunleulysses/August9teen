@@ -10,7 +10,8 @@ const logger = pino({
 logger.info('Starting server...');
 const express = require('express');
 const SigilBasedCodeAuthenticator = require('./consciousness/sigil-based-code-authenticator.cjs');
-const sigilApiRouter = require('./sigil-api.cjs');
+const consciousnessV2 = require('./consciousness-system-v2.cjs');
+const createSigilApiRouter = require('./sigil-api.cjs');
 const promClient = require('prom-client');
 promClient.collectDefaultMetrics();
 
@@ -32,7 +33,7 @@ const port = process.env.PORT || 3004;
 const sigilAuthenticator = new SigilBasedCodeAuthenticator();
 
 const mountPath = process.env.SIGIL_API_MOUNT_PATH || '/sigil';
-app.use(mountPath, sigilApiRouter);
+app.use(mountPath, createSigilApiRouter(consciousnessV2));
 
 app.get('/', (req, res) => {
   res.send('Hello, world!');
@@ -72,7 +73,9 @@ app.get('/readyz', async (req, res) => {
 (async () => {
   await sigilAuthenticator.storage.open();
   await sigilAuthenticator.preload();
+  await sigilAuthenticator.sigilIdentity.initialize();
   await sigilAuthenticator.sigilIdentity.start();
+  await consciousnessV2.initialize();
   logger.info('Starting to listen...');
   const server = app.listen(port, () => {
     logger.info(`Server listening on port ${port}`);

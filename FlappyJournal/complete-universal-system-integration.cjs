@@ -7,13 +7,10 @@
  */
 
 const dotenv = require('dotenv');
-const { fileURLToPath  } = require('url');
-const { dirname, join  } = require('path');
+const { join  } = require('path');
 const { existsSync  } = require('fs');
 
 // Load environment variables
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 const envPath = join(__dirname, '.env');
 if (existsSync(envPath)) {
     dotenv.config({ path: envPath });
@@ -187,7 +184,7 @@ class CompleteUniversalSystemIntegration {
 
         for (const moduleInfo of commonJSModules) {
             try {
-                const Module = await import(moduleInfo.path);
+                const Module = require(moduleInfo.path);
                 const ModuleClass = Module.default || Module[moduleInfo.name];
 
                 this.commonJSModules.set(moduleInfo.name, {

@@ -1,12 +1,6 @@
-const { fileURLToPath  } = require('url');
-const { dirname, join  } = require('path');
+const { join } = require('path');
 const fs = require('fs').promises;
-const { createRequire  } = require('module');
-const { EventEmitter  } = require('./consciousness/base/EventEmitter.cjs');
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const require = createRequire(import.meta.url);
+const { EventEmitter } = require('events');
 
 // Import core modules
 const SelfCodingModule = require('./consciousness/modules/SelfCodingModule.cjs');
@@ -158,7 +152,7 @@ class ConsciousnessSystemV2 extends EventEmitter {
     
     async loadPersistedState() {
         try {
-            const statePath = join(__dirname, 'data', 'consciousness-state.json');
+            const statePath = join('./data', 'consciousness-state.json');
             const data = await fs.readFile(statePath, 'utf8');
             const state = JSON.parse(data);
             
@@ -175,8 +169,8 @@ class ConsciousnessSystemV2 extends EventEmitter {
     
     async saveState() {
         try {
-            const statePath = join(__dirname, 'data', 'consciousness-state.json');
-            await fs.mkdir(join(__dirname, 'data'), { recursive: true });
+            const statePath = join('./data', 'consciousness-state.json');
+            await fs.mkdir(join('./data'), { recursive: true });
             
             await fs.writeFile(statePath, JSON.stringify(this.state, null, 2));
             console.log('📤 State persisted successfully');

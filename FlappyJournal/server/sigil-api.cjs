@@ -2,12 +2,13 @@ const express = require('express');
 const fetch = require('node-fetch');
 const { createBreaker } = require('./utils/circuitBreaker.cjs');
 
-const router = express.Router();
+function createRouter(consciousness) {
+  const router = express.Router();
 
-const breaker = createBreaker(
-  (url, opts) => fetch(url, opts).then(r => r.json()),
-  { timeout: process.env.DNASTORE_TIMEOUT_MS || 3000 }
-);
+  const breaker = createBreaker(
+    (url, opts) => fetch(url, opts).then(r => r.json()),
+    { timeout: process.env.DNASTORE_TIMEOUT_MS || 3000 }
+  );
 
 const { sigilEncodeCounter, sigilEncodeDuration, sigilErrorCounter } = require('./metrics/sigilMetrics.cjs');
 
@@ -52,4 +53,28 @@ router.post('/api/consciousness/sigils', async (req, res) => {
   }
 });
 
-module.exports = router;
+  // Generate code
+  router.post('/generate-code', async (req, res) => {
+    const { request } = req.body;
+    if (!request) {
+      return res.status(400).json({ error: 'Missing request body' });
+    }
+
+    try {
+      const selfCoder = consciousness.modules.get('SelfCodingModule');
+      if (!selfCoder) {
+        return res.status(500).json({ error: 'SelfCodingModule not found' });
+      }
+
+      const result = await selfCoder.generateWithAutoIntegration(request);
+      res.json(result);
+    } catch (error) {
+      req.log.error({ err: error }, 'Error generating code');
+      res.status(500).json({ error: 'Failed to generate code' });
+    }
+  });
+
+  return router;
+}
+
+module.exports = createRouter;

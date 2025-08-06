@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+(async () => {
 
 /**
  * Universal System Terminal - Complete System Integration
@@ -22,13 +23,9 @@ const OpenAI = require('openai');
 const axios = require('axios');
 
 // Import UnifiedChatAggregator for multi-container chat routing
-const { createRequire } = await import('module');
-const require = createRequire(import.meta.url);
 const UnifiedChatAggregator = require('./consciousness/core/UnifiedChatAggregator.cjs');
 
 // Load environment variables
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 const envPath = join(__dirname, '..', '.env');
 if (existsSync(envPath)) {
     dotenv.config({ path: envPath });
@@ -1181,3 +1178,5 @@ class UniversalSystemTerminal {
 
 // Start the Universal System Terminal
 new UniversalSystemTerminal();
+
+})();

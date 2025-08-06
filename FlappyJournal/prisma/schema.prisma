@@ -1,0 +1,46 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Reality {
+  id             String    @id
+  description    String
+  parameters     Json
+  recursionDepth Int
+  parentId       String?
+  createdAt      DateTime  @default(now())
+  schemaVersion  Int
+}
+
+model RecursionPath {
+  id                 String   @id
+  parentId           String
+  childId            String
+  recursionDepth     Int
+  connectionStrength Float
+  createdAt          DateTime @default(now())
+  schemaVersion      Int
+}
+
+model ConsciousnessField {
+  id             String   @id
+  parentId       String
+  childId        String
+  recursionDepth Int
+  fieldStrength  Float
+  createdAt      DateTime @default(now())
+  schemaVersion  Int
+}
+
+model Metric {
+  key   String @id
+  value Int
+}
