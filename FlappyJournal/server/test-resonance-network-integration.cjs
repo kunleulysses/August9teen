@@ -104,8 +104,8 @@ async function testResonanceNetworkIntegration() {
         // Test 4: Test Self-Coding with Resonance Integration
         log('\n4. Testing Self-Coding with Resonance Integration...');
         try {
-            const { default: SelfCodingModuleFixed } = await import('./consciousness/modules/SelfCodingModuleFixed.cjs');
-            const selfCoder = new SelfCodingModuleFixed();
+            const { default: SelfCodingModule } = await import('./consciousness/modules/SelfCodingModule.cjs');
+            const selfCoder = new SelfCodingModule();
             
             await new Promise(resolve => {
                 if (selfCoder.isInitialized) resolve();

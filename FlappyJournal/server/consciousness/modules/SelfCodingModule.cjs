@@ -4,6 +4,8 @@
  */
 
 const { EventEmitter } = require('events');
+const fs = require('fs/promises');
+const path = require('path');
 const CodeAnalyzer = require('../code-analyzer.cjs');
 const AutonomousCodeRefactoringSystem = require('./AutonomousCodeRefactoringSystem.cjs');
 const { selfCodingLog } = require('./SelfCodingLog.cjs');
@@ -22,7 +24,9 @@ class SelfCodingModule extends EventEmitter {
         this.options = {
             analysisInterval: 5000,
             debugMode: false,
-            maxConcurrentAnalysis: 3
+            maxConcurrentAnalysis: 3,
+            outputDirectory: './generated/autonomous',
+            autoSave: true
         };
 
         this.activeAnalysis = new Set();
@@ -498,6 +502,52 @@ class SelfCodingModule extends EventEmitter {
     }
 
     /**
+     * Normalize incoming generation request
+     */
+    normalizeRequest(request) {
+        if (typeof request === 'string') {
+            return {
+                purpose: 'string-request',
+                description: request,
+                type: 'function',
+                language: 'javascript',
+                moduleId: this.generateModuleId('generated-module')
+            };
+        }
+
+        return {
+            purpose: request.purpose || 'code-generation',
+            description: request.description || request.purpose || 'Generated code',
+            type: request.type || request.template || 'function',
+            language: request.language || 'javascript',
+            requirements: request.requirements || request.description,
+            moduleId: request.moduleId || this.generateModuleId(request.purpose)
+        };
+    }
+
+    /**
+     * Generate a module identifier
+     */
+    generateModuleId(base = 'module') {
+        return `${base.replace(/\s+/g, '-')}-${Date.now()}`;
+    }
+
+    /**
+     * Save generated code to filesystem
+     */
+    async saveGeneratedCode(moduleId, code) {
+        try {
+            await fs.mkdir(this.options.outputDirectory, { recursive: true });
+            const filePath = path.join(this.options.outputDirectory, `${moduleId}.cjs`);
+            await fs.writeFile(filePath, code, 'utf8');
+            return filePath;
+        } catch (error) {
+            log.warn('[SelfCodingModule] Failed to save generated code:', error.message);
+            return null;
+        }
+    }
+
+    /**
      * Generate code - Main public interface
      */
     async generateCode(request) {
@@ -509,15 +559,17 @@ class SelfCodingModule extends EventEmitter {
      */
     async generateCodeSafely(request) {
         try {
+            const normalized = this.normalizeRequest(request);
+
             // Use existing handleCodeGeneration method
             const generationData = {
-                request: request,
-                moduleId: request.purpose,
-                template: request.type || 'module',
-                requirements: request.description,
-                purpose: request.purpose,
-                language: request.language || 'javascript',
-                description: request.description
+                request: normalized,
+                moduleId: normalized.moduleId,
+                template: normalized.type || 'module',
+                requirements: normalized.requirements,
+                purpose: normalized.purpose,
+                language: normalized.language,
+                description: normalized.description
             };
 
             // Call the existing generation method
@@ -525,20 +577,28 @@ class SelfCodingModule extends EventEmitter {
 
             // Return the generated result
             const lastGeneration = this.codeHistory[this.codeHistory.length - 1];
-            if (lastGeneration && lastGeneration.purpose === request.purpose) {
+            if (lastGeneration && lastGeneration.purpose === normalized.purpose) {
+                if (this.options.autoSave && lastGeneration.generated) {
+                    lastGeneration.savedTo = await this.saveGeneratedCode(
+                        lastGeneration.moduleId || normalized.moduleId,
+                        lastGeneration.generated
+                    );
+                }
+
                 return {
                     success: true,
                     code: lastGeneration.generated,
-                    purpose: request.purpose,
-                    description: request.description,
-                    capabilities: request.capabilities || [],
+                    purpose: normalized.purpose,
+                    description: normalized.description,
+                    capabilities: normalized.capabilities || [],
                     timestamp: Date.now(),
-                    generated: true
+                    generated: true,
+                    savedTo: lastGeneration.savedTo
                 };
             }
 
             // Fallback to basic generation
-            return await this.basicCodeGeneration(request);
+            return await this.basicCodeGeneration(normalized);
 
         } catch (error) {
             log.error(`Code generation error: ${error.message}`);

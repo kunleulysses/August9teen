@@ -16,54 +16,9 @@ async function testSelfCodingStatus() {
     try {
         log('🧪 Testing Self-Coding System Status');
         
-        // Test 1: SelfCodingModuleFixed
+        // Test: SelfCodingModule
         try {
-            log('1. Testing SelfCodingModuleFixed...');
-            const { default: SelfCodingModuleFixed } = await import('./consciousness/modules/SelfCodingModuleFixed.cjs');
-            log('✅ SelfCodingModuleFixed import successful');
-            
-            const selfCoder = new SelfCodingModuleFixed();
-            log('✅ SelfCodingModuleFixed instantiated');
-            
-            // Wait for initialization
-            await new Promise(resolve => {
-                if (selfCoder.isInitialized) {
-                    resolve();
-                } else {
-                    selfCoder.once('initialized', resolve);
-                }
-            });
-            
-            log(`✅ Module initialized: ${selfCoder.name} v${selfCoder.version}`);
-            
-            // Test code generation
-            const result = await selfCoder.generateCode({
-                purpose: 'status-test',
-                description: 'Test code generation for status check',
-                template: 'function'
-            });
-            
-            log(`✅ Code generation: ${result.success ? 'SUCCESS' : 'FAILED'}`);
-            if (result.success) {
-                log(`   Generated ${result.code.split('\n').length} lines`);
-                log(`   Saved to: ${result.savedTo}`);
-            }
-            
-            // Get status
-            const status = selfCoder.getStatus();
-            log(`✅ Status retrieved:`);
-            log(`   Total generations: ${status.stats.totalGenerations}`);
-            log(`   Successful: ${status.stats.successfulGenerations}`);
-            log(`   Files created: ${status.stats.modulesCreated}`);
-            log(`   Lines generated: ${status.stats.linesOfCodeGenerated}`);
-            
-        } catch (error) {
-            log(`❌ SelfCodingModuleFixed error: ${error.message}`);
-        }
-        
-        // Test 2: Original SelfCodingModule
-        try {
-            log('\n2. Testing original SelfCodingModule...');
+            log('1. Testing SelfCodingModule...');
             const { default: SelfCodingModule } = await import('./consciousness/modules/SelfCodingModule.cjs');
             log('✅ SelfCodingModule import successful');
             
@@ -91,9 +46,9 @@ async function testSelfCodingStatus() {
             log(`❌ Original SelfCodingModule error: ${error.message}`);
         }
         
-        // Test 3: Check generated files
+        // Test 2: Check generated files
         try {
-            log('\n3. Checking generated files...');
+            log('\n2. Checking generated files...');
             const files = await fs.readdir('./generated/autonomous');
             log(`✅ Found ${files.length} generated files:`);
             files.forEach(file => log(`   - ${file}`));
@@ -101,9 +56,9 @@ async function testSelfCodingStatus() {
             log(`❌ File check error: ${error.message}`);
         }
         
-        // Test 4: Check logging
+        // Test 3: Check logging
         try {
-            log('\n4. Checking self-coding logs...');
+            log('\n3. Checking self-coding logs...');
             const logContent = await fs.readFile('./FlappyJournal/consciousness-journal/self-coding-logs/self-coding-log-2025-07-20.md', 'utf8');
             const logLines = logContent.split('\n').filter(line => line.trim());
             log(`✅ Log file has ${logLines.length} entries`);
