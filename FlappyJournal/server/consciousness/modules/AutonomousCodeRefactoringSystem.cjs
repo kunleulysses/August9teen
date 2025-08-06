@@ -1,4 +1,6 @@
 const { EventEmitter } = require('events');
+const fs = require('fs').promises;
+const path = require('path');
 const eventBus = require('../core/ConsciousnessEventBus.cjs');
 
 // New dependencies
@@ -193,6 +195,29 @@ class AutonomousCodeRefactoringSystem extends EventEmitter {
 
       // Execute refactoring (stub)
       const result = await this.executeRefactoring(candidate, refactoringPlan);
+
+      if (result.success && result.transformedCode) {
+        const modulePath = path.resolve(candidate.moduleId);
+        const originalCode = candidate.code;
+        try {
+          await fs.writeFile(modulePath, result.transformedCode, 'utf8');
+          eventBus.emit('module:refactored', {
+            moduleId: candidate.moduleId,
+            path: modulePath
+          });
+        } catch (writeErr) {
+          console.error(`❌ Failed to write refactored module ${candidate.moduleId}:`, writeErr);
+          try {
+            await fs.writeFile(modulePath, originalCode, 'utf8');
+            console.log(`↩️ Rolled back changes for ${candidate.moduleId}`);
+          } catch (rollbackErr) {
+            console.error(`⚠️ Rollback failed for ${candidate.moduleId}:`, rollbackErr);
+          }
+          result.success = false;
+          result.errors = result.errors || [];
+          result.errors.push(`Write failed: ${writeErr.message}`);
+        }
+      }
 
       // Store in history
       this.refactoringHistory.push({
