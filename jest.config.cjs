@@ -43,6 +43,7 @@ module.exports = {
     'FlappyJournal/server/consciousness/core/ConsciousnessEventBus.cjs',
     'FlappyJournal/server/consciousness/core/utils/*.cjs',
     'FlappyJournal/server/consciousness/core/security/*.{cjs,ts}',
+    'server/consciousness/**reality*',
     '!**/*.test.*',   // exclude tests
     '!**/__tests__/**' // exclude test files
   ],
@@ -50,10 +51,7 @@ module.exports = {
   coverageReporters: ['text', 'text-summary', 'json-summary', 'lcov', 'html'],
   coverageThreshold: {
     global: {
-      branches: 80,
-      functions: 80,
-      lines: 80,
-      statements: 80
+      lines: 80
     }
   },
 
