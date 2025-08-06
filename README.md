@@ -165,6 +165,11 @@ docker compose up --build
 docker compose --profile monitoring up --build
 ```
 
+## 📚 Additional Documentation
+
+- [Self-Coding API](docs/self-coding-API.md)
+- [Deployment Guide](docs/deployment-guide.md)
+
 ## 🧬 License
 
 MIT for open-source logic components. Proprietary assets like Flappy IP and the plush toy designs are developed and held under the August9teen creative studio.
