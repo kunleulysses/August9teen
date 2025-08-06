@@ -8,6 +8,7 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import AutonomousImaginationEngine from './consciousness/autonomous-imagination-engine.cjs';
 import { HolographicConsciousnessRealityGenerator } from './consciousness/holographic-consciousness-reality-generator.cjs';
+import rateLimit from 'express-rate-limit';
 import os from 'os';
 
 // Initialize Express app
@@ -20,6 +21,12 @@ const io = new Server(server, {
     }
 // Add raw WebSocket server for compatibility with ws-based clients (e.g., RealityWebSocketBridge)
 
+});
+
+// Rate limiting - 100 requests per minute per IP
+const limiter = rateLimit({
+    windowMs: 60 * 1000,
+    max: 100
 });
 
 // Service configuration
@@ -40,6 +47,7 @@ let serviceMetrics = {
 };
 
 // Middleware
+app.use(limiter);
 app.use(express.json());
 
 // Health check endpoint
