@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "test": "jest",
+    "test:heavy": "RUN_HEAVY_TESTS=1 jest",
     "test:ci": "jest --coverage --runInBand",
     "test:coverage": "jest --coverage --collectCoverageFrom='FlappyJournal/server/consciousness/core/storage/*.cjs' --coverageThreshold='{\"global\":{\"lines\":90}}'",
     "verify-coverage": "node scripts/verify-coverage.cjs",
@@ -21,7 +22,8 @@
     "load:test": "k6 run scripts/k6-load.js",
     "fix:modules": "node scripts/convert-commonjs-to-cjs.js",
     "perf:store": "node scripts/perf-store.cjs",
-    "bench:holograph": "node bench/holograph-perf.cjs"
+    "bench:holograph": "node bench/holograph-perf.cjs",
+    "build:eventsign": "tsc FlappyJournal/server/consciousness/core/security/eventSign.ts --module commonjs --outDir FlappyJournal/server/consciousness/core/security --resolveJsonModule --esModuleInterop --target es6 && mv FlappyJournal/server/consciousness/core/security/eventSign.js FlappyJournal/server/consciousness/core/security/eventSign.cjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.859.0",

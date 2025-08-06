@@ -13,7 +13,8 @@
     "test:watch": "NODE_ENV=test NODE_OPTIONS='--experimental-vm-modules' jest --config restoration/tests/jest.config.js --watch",
     "test:coverage": "NODE_ENV=test NODE_OPTIONS='--experimental-vm-modules' jest --config restoration/tests/jest.config.js --coverage",
     "migrate": "echo 'Migration skipped'",
-    "seed:initial": "echo 'Seeding skipped'"
+    "seed:initial": "echo 'Seeding skipped'",
+    "build:eventsign": "tsc --project tsconfig.eventsign.json && mv dist/server/consciousness/core/security/eventSign.js server/consciousness/core/security/eventSign.cjs"
   },
   "dependencies": {
     "@google/generative-ai": "^0.5.0",

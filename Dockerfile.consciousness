@@ -16,24 +16,24 @@ WORKDIR /opt/consciousness
 
 # Copy package files (updated for sync fix)
 # Copy package files and source code for building
-COPY FlappyJournal/package*.json ./
-COPY FlappyJournal/tsconfig.json ./
+COPY package*.json ./
+COPY tsconfig.json ./
 
 # Copy application code and config files needed for build
-COPY FlappyJournal/vite.config.js ./
-COPY FlappyJournal/tailwind.config.cjs ./
-COPY FlappyJournal/postcss.config.cjs ./
-COPY FlappyJournal/client ./client/
-COPY FlappyJournal/server ./server/
-COPY FlappyJournal/shared ./shared/
-COPY FlappyJournal/public ./public/
-COPY FlappyJournal/sigil-identity.cjs ./
+COPY vite.config.js ./
+COPY tailwind.config.cjs ./
+COPY postcss.config.cjs ./
+COPY client ./client/
+COPY server ./server/
+COPY shared ./shared/
+COPY public ./public/
+COPY sigil-identity.cjs ./
 # Core runtime entry script
-COPY FlappyJournal/consciousness-crystallization.cjs ./
-COPY FlappyJournal/tri-axial-coherence.cjs ./
-COPY FlappyJournal/harmonic-resonance-cascade.cjs ./
+COPY consciousness-crystallization.cjs ./
+COPY tri-axial-coherence.cjs ./
+COPY harmonic-resonance-cascade.cjs ./
 # Copy the primary startup script that replaced the old unified-consciousness-system.js entry-point
-COPY FlappyJournal/start-unified-consciousness.cjs ./
+COPY start-unified-consciousness.cjs ./
 
 # ---------------------------------------------------------------------------
 # Backwards-compatibility shim
@@ -67,7 +67,7 @@ USER node
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:5005/health || exit 1
+    CMD curl -f http://localhost:3004/healthz || exit 1
 
 # Expose ports
 EXPOSE 3002 5005
