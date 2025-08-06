@@ -42,6 +42,7 @@
     "nats": "^2.18.0",
     "uuid": "^9.0.1",
     "prom-client": "^15.1.2",
+    "lru-cache": "^10.2.0",
     "helmet": "^7.2.0",
     "isolated-vm": "^5.0.4",
     "js-yaml": "^4.1.0",

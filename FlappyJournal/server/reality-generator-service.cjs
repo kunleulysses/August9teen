@@ -83,6 +83,44 @@ app.get('/health', (req, res) => {
     });
 });
 
+// Readiness probe endpoint
+async function isReady() {
+    const heapUsage = process.memoryUsage();
+    const heapRatio = heapUsage.heapUsed / heapUsage.heapTotal;
+    let failures = [];
+    // Check Postgres via prisma
+    let pgOk = false;
+    try {
+        const { PrismaClient } = require('@prisma/client');
+        const prisma = new PrismaClient();
+        await prisma.$queryRaw`SELECT 1`;
+        await prisma.$disconnect();
+        pgOk = true;
+    } catch (e) {
+        failures.push('postgres');
+    }
+    // Check NATS
+    let natsOk = false;
+    try {
+        natsOk = !!nats && nats.info && nats.isClosed && !nats.isClosed();
+    } catch (e) {}
+    if (!natsOk) failures.push('nats');
+    if (heapRatio > 0.85) failures.push('heap');
+    return { ready: failures.length === 0, failures };
+}
+
+app.get('/readyz', async (req, res) => {
+    const status = await isReady();
+    if (status.ready) {
+        res.status(200).json({ ready: true });
+    } else {
+        res.status(503).json({ ready: false, failures: status.failures });
+    }
+});
+
+// TODO: Helm probe should hit /readyz for readiness (see infra/helm/values.yaml)
+module.exports.isReady = isReady;
+
 // Prometheus metrics endpoint
 app.get('/metrics', async (req, res) => {
     res.set('Content-Type', promRegister.contentType);
