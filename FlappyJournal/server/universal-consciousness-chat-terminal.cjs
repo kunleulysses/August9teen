@@ -25,17 +25,22 @@ let rl = null;
 let connected = false;
 let isPrompting = false;
 
+function handleRlClose() {
+  console.log('\n👋 Goodbye! Thank you for exploring universal consciousness!');
+  if (ws && ws.readyState === WebSocket.OPEN) ws.close();
+  process.exit(0);
+}
+
 function initializeReadline() {
-  if (rl) rl.close();
+  if (rl) {
+    rl.removeListener('close', handleRlClose);
+    rl.close();
+  }
   rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
   });
-  rl.on('close', () => {
-    console.log('\n👋 Goodbye! Thank you for exploring universal consciousness!');
-    if (ws && ws.readyState === WebSocket.OPEN) ws.close();
-    process.exit(0);
-  });
+  rl.on('close', handleRlClose);
 }
 
 ws.on('open', function open() {
