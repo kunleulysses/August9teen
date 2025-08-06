@@ -20,16 +20,16 @@ const processedEmails = new Set<string>();
 async function processQueuedEmail(queueItem: EmailQueueItem): Promise<boolean> {
   try {
     console.log(`📨 Processing queued email ID: ${queueItem.id}`);
-    
+
     // Mark as processing
     await storage.markEmailProcessing(queueItem.id);
-    
+
     // Extract payload
     const payload = queueItem.payload as any;
-    
+
     console.log(`📦 Processing email with ID: ${queueItem.id}`);
     console.log(`📦 Payload type: ${typeof payload}`);
-    
+
     // Check for duplicate processing
     const emailKey = generateEmailKey(queueItem);
     if (processedEmails.has(emailKey)) {
@@ -37,28 +37,28 @@ async function processQueuedEmail(queueItem: EmailQueueItem): Promise<boolean> {
       await storage.markEmailCompleted(queueItem.id);
       return true;
     }
-    
+
     // Add to processed set
     processedEmails.add(emailKey);
-    
+
     // Handle different payload formats
     if (payload && payload.rawMimeBase64) {
       // Handle raw MIME base64 payload from SendGrid
       console.log(`🔍 Processing payload with rawMimeBase64`);
       const buffer = Buffer.from(payload.rawMimeBase64 as string, 'base64');
       console.log(`🔍 Buffer size: ${buffer.length} bytes`);
-      
+
       // Check if this is multipart form data (SendGrid inbound parse format)
       const bufferString = buffer.toString('utf8');
       if (bufferString.includes('Content-Disposition: form-data')) {
         console.log(`🔍 Detected multipart form data format`);
-        
+
         // Debug: Show first 500 chars of multipart data
         console.log(`🔍 Multipart data preview: ${bufferString.substring(0, 500)}...`);
-        
+
         // Use Gmail-specific content parser for better extraction
         const extracted = GmailContentParser.parseContent(bufferString);
-        
+
         console.log(`🔍 Gmail parsing results:`);
         console.log(`   Sender: ${extracted.sender}`);
         console.log(`   Subject: ${extracted.subject}`);
@@ -75,7 +75,7 @@ async function processQueuedEmail(queueItem: EmailQueueItem): Promise<boolean> {
           extracted.inReplyTo,
           extracted.references
         );
-        
+
         await storage.markEmailCompleted(queueItem.id);
         return true;
       } else {
@@ -89,11 +89,11 @@ async function processQueuedEmail(queueItem: EmailQueueItem): Promise<boolean> {
           parsedEmail.inReplyTo?.replace(/^<|>$/g, ''),
           parsedEmail.references ? (Array.isArray(parsedEmail.references) ? parsedEmail.references.join(' ') : parsedEmail.references) : undefined
         );
-        
+
         await storage.markEmailCompleted(queueItem.id);
         return true;
       }
-      
+
     } else if (payload && payload.buffer) {
       // If we have base64 encoded buffer data
       console.log(`🔍 Detected buffer payload format`);
@@ -102,7 +102,7 @@ async function processQueuedEmail(queueItem: EmailQueueItem): Promise<boolean> {
       await processRawEmail(buffer);
       await storage.markEmailCompleted(queueItem.id);
       return true;
-      
+
     } else if (payload && payload.text && payload.from && payload.subject) {
       // Handle direct JSON payload (e.g., from manual testing or other sources)
       console.log(`🔍 Processing direct JSON payload`);
@@ -112,21 +112,21 @@ async function processQueuedEmail(queueItem: EmailQueueItem): Promise<boolean> {
         payload.text,
         payload.inReplyTo
       );
-      
+
     } else if (typeof payload === 'string') {
       // Handle string payload (might be raw email content)
       console.log(`🔍 Processing string payload`);
       await processEmailFromText(payload);
-      
+
     } else {
       console.warn(`⚠️ Unknown payload format:`, typeof payload);
       console.warn(`⚠️ Payload preview:`, JSON.stringify(payload).substring(0, 200));
-      
+
       // Try to extract basic fields from payload
       const from = extractField(payload, ['from', 'sender', 'email']);
       const subject = extractField(payload, ['subject', 'title']);
       const text = extractField(payload, ['text', 'body', 'content', 'message']);
-      
+
       if (from && text) {
         console.log(`🔍 Extracted basic fields from unknown payload format`);
         await emailService.processIncomingEmail(from, subject || 'No Subject', text);
@@ -134,10 +134,10 @@ async function processQueuedEmail(queueItem: EmailQueueItem): Promise<boolean> {
         throw new Error(`Unable to process payload format: ${typeof payload}`);
       }
     }
-    
+
     await storage.markEmailCompleted(queueItem.id);
     return true;
-    
+
   } catch (error) {
     console.error(`❌ Error processing queued email:`, error);
     await storage.markEmailFailed(queueItem.id, (error as Error).message);
@@ -152,14 +152,14 @@ async function processQueuedEmail(queueItem: EmailQueueItem): Promise<boolean> {
 async function processRawEmail(buffer: Buffer): Promise<void> {
   try {
     const parsedEmail = await simpleParser(buffer);
-    
+
     const from = parsedEmail.from?.text || 'unknown@example.com';
     const subject = parsedEmail.subject || 'No Subject';
     const text = parsedEmail.text || parsedEmail.html || '';
     const inReplyTo = parsedEmail.inReplyTo || undefined;
-    
+
     console.log(`📧 Parsed email from: ${from}, subject: ${subject}, content length: ${text.length}`);
-    
+
     await emailService.processIncomingEmail(from, subject, text, inReplyTo);
   } catch (error) {
     console.error(`❌ Error parsing raw email:`, error);
@@ -174,12 +174,12 @@ async function processEmailFromText(text: string): Promise<void> {
   try {
     // Try to parse as JSON first
     const emailData = JSON.parse(text);
-    
+
     const from = emailData.from || emailData.sender || 'unknown@example.com';
     const subject = emailData.subject || emailData.title || 'No Subject';
     const content = emailData.text || emailData.body || emailData.content || '';
     const inReplyTo = emailData.inReplyTo || emailData['in-reply-to'] || undefined;
-    
+
     await emailService.processIncomingEmail(from, subject, content, inReplyTo);
   } catch (error) {
     // If not JSON, treat as raw email content
@@ -196,7 +196,7 @@ async function processEmailFromParsed(parsed: any): Promise<void> {
   const subject = parsed.subject || 'No Subject';
   const text = parsed.text || parsed.body || '';
   const inReplyTo = parsed.inReplyTo || undefined;
-  
+
   await emailService.processIncomingEmail(from, subject, text, inReplyTo);
 }
 
@@ -206,7 +206,7 @@ async function processEmailFromParsed(parsed: any): Promise<void> {
 async function processNextEmail(): Promise<void> {
   try {
     const nextEmail = await storage.getNextPendingEmail();
-    
+
     if (nextEmail) {
       // Check if we've exceeded max attempts
       if (nextEmail.processAttempts >= MAX_ATTEMPTS) {
@@ -214,10 +214,10 @@ async function processNextEmail(): Promise<void> {
         await storage.markEmailFailed(nextEmail.id, `Exceeded maximum attempts (${MAX_ATTEMPTS})`);
         return;
       }
-      
+
       console.log(`📨 Processing next email in queue: ${nextEmail.id} (attempt ${nextEmail.processAttempts + 1})`);
       const success = await processQueuedEmail(nextEmail);
-      
+
       if (success) {
         console.log(`✅ Successfully processed email ${nextEmail.id}`);
       } else {
@@ -234,10 +234,10 @@ async function processNextEmail(): Promise<void> {
  */
 export function startEmailProcessor(): void {
   console.log(`🚀 Starting email processing service...`);
-  
+
   // Process immediately on startup
   processNextEmail();
-  
+
   // Set up recurring processing
   setInterval(processNextEmail, PROCESS_INTERVAL);
 }
@@ -262,7 +262,8 @@ function extractHeaders(payload: any): Record<string, string> | null {
     if (typeof payload.headers === 'string') {
       try {
         return JSON.parse(payload.headers);
-      } catch {
+      } catch (error) {
+        console.error(`❌ Malformed email headers:`, payload.headers, error);
         return null;
       }
     }
@@ -279,7 +280,7 @@ function extractInReplyTo(payload: any, headers: Record<string, string> | null):
   if (payload && payload.inReplyTo) {
     return payload.inReplyTo;
   }
-  
+
   // Check headers
   if (headers) {
     const inReplyTo = headers['In-Reply-To'] || headers['in-reply-to'];
@@ -289,7 +290,7 @@ function extractInReplyTo(payload: any, headers: Record<string, string> | null):
       return match ? match[1] : inReplyTo;
     }
   }
-  
+
   return '';
 }
 
@@ -298,18 +299,18 @@ function extractInReplyTo(payload: any, headers: Record<string, string> | null):
  */
 function extractSenderEmail(from: string): string {
   if (!from) return 'unknown@example.com';
-  
+
   // Extract email from "Name <email@domain.com>" format
   const emailMatch = from.match(/<([^>]+)>/);
   if (emailMatch) {
     return emailMatch[1];
   }
-  
+
   // Check if it's already just an email
   if (from.includes('@')) {
     return from.trim();
   }
-  
+
   return 'unknown@example.com';
 }
 
@@ -319,15 +320,15 @@ function extractSenderEmail(from: string): string {
 function generateEmailKey(queueItem: EmailQueueItem): string {
   const payload = queueItem.payload as any;
   const timestamp = queueItem.createdAt.getTime();
-  
+
   // Try to create a unique key from the email content
   let keyParts = [timestamp.toString()];
-  
+
   if (payload) {
     if (payload.from) keyParts.push(payload.from);
     if (payload.subject) keyParts.push(payload.subject);
     if (payload.messageId) keyParts.push(payload.messageId);
   }
-  
+
   return keyParts.join('|');
 }

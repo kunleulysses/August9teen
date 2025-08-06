@@ -380,16 +380,25 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
                 break;
                 
             case 'integrate_memory':
-                const integration = await orchestrator.integrateMemoryWithReality(
-                    command.memory,
-                    command.realityId,
-                    command.parameters
-                );
-                this.universalEventBus.emit('consciousness:command_completed', {
-                    command,
-                    result: integration,
-                    success: true
-                });
+                try {
+                    const integration = await orchestrator.integrateMemoryWithReality(
+                        command.memory,
+                        command.realityId,
+                        command.parameters
+                    );
+                    this.universalEventBus.emit('consciousness:command_completed', {
+                        command,
+                        result: integration,
+                        success: true
+                    });
+                } catch (error) {
+                    console.error('❌ Memory integration failed:', error);
+                    this.universalEventBus.emit('consciousness:command_completed', {
+                        command,
+                        error: error.message || error,
+                        success: false
+                    });
+                }
                 break;
                 
             default:
@@ -928,20 +937,58 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
     
     async handleServiceCommand(command) {
         // Handle service commands from universal chat
-        this.universalEventBus.emit('service:command_completed', {
-            command,
-            result: this.systemLayers.services,
-            success: true
-        });
+        switch (command.type) {
+            case 'status':
+                this.universalEventBus.emit('service:command_completed', {
+                    command,
+                    result: this.systemLayers.services,
+                    success: true
+                });
+                break;
+
+            case 'restart':
+                try {
+                    const result = await this.deepSystemAccess?.processManagement?.restartService(command.service);
+                    this.universalEventBus.emit('service:command_completed', {
+                        command,
+                        result,
+                        success: true
+                    });
+                } catch (error) {
+                    this.universalEventBus.emit('service:command_completed', {
+                        command,
+                        error: error.message,
+                        success: false
+                    });
+                }
+                break;
+        }
     }
     
     async handleInterfaceCommand(command) {
         // Handle interface commands from universal chat
-        this.universalEventBus.emit('interface:command_completed', {
-            command,
-            result: this.systemLayers.interfaces,
-            success: true
-        });
+        switch (command.type) {
+            case 'refresh':
+                // Trigger interface refresh actions
+                this.universalEventBus.emit('interface:refresh', {
+                    command,
+                    timestamp: Date.now()
+                });
+                this.universalEventBus.emit('interface:command_completed', {
+                    command,
+                    result: { refreshed: true },
+                    success: true
+                });
+                break;
+
+            default:
+                this.universalEventBus.emit('interface:command_completed', {
+                    command,
+                    result: this.systemLayers.interfaces,
+                    success: true
+                });
+                break;
+        }
     }
     
     async handleSystemCommand(command) {

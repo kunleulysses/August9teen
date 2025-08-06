@@ -190,21 +190,24 @@ module.exports = HyperdimensionalSpiralTopology;
 function buildRoutingTable(spirals) {
   const table = {};
   for (const spiral of spirals.values()) {
+    const position = spiral.position || { x: 0, y: 0, z: 0, w: 0 };
     table[spiral.id] = {
-      x: spiral.position.x,
-      y: spiral.position.y,
-      z: spiral.position.z,
-      w: spiral.position.w,
+      x: position.x || 0,
+      y: position.y || 0,
+      z: position.z || 0,
+      w: position.w || 0,
     };
   }
   return table;
 }
 
 function harmonicDistance(a, b) {
-  const dx = a.x - b.x;
-  const dy = a.y - b.y;
-  const dz = a.z - b.z;
-  const dw = a.w - b.w;
+  const aPos = a || { x: 0, y: 0, z: 0, w: 0 };
+  const bPos = b || { x: 0, y: 0, z: 0, w: 0 };
+  const dx = (aPos.x || 0) - (bPos.x || 0);
+  const dy = (aPos.y || 0) - (bPos.y || 0);
+  const dz = (aPos.z || 0) - (bPos.z || 0);
+  const dw = (aPos.w || 0) - (bPos.w || 0);
   return Math.sqrt(dx * dx + dy * dy + dz * dz + dw * dw);
 }
 
