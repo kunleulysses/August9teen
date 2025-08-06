@@ -933,6 +933,26 @@ class UniversalSystemTerminal {
                 return;
             }
             console.log('⚠️ Complete integration not available');
+        } else if (cmd === 'modules generated') {
+            if (this.completeIntegration) {
+                const status = this.completeIntegration.getCompleteSystemStatus();
+                const modules = (status.consciousnessModules || []).filter(m =>
+                    m.generated || m.filePath || m.registration
+                );
+
+                console.log(`🧬 Generated Modules (${modules.length}):`);
+                modules.forEach((module, index) => {
+                    const name = module.registration?.registration?.name || module.name || module.fileName;
+                    const statusIcon = (module.integrated || module.status === 'registered') ? '✅' : '⚠️';
+                    console.log(`  ${index + 1}. ${statusIcon} ${name}`);
+                });
+
+                if (modules.length === 0) {
+                    console.log('  No generated modules found');
+                }
+                return;
+            }
+            console.log('⚠️ Complete integration not available');
         }
     }
 
