@@ -5,7 +5,7 @@
  */
 
 const { EventEmitter } = require('events');
-const { PerformanceConfig } = require('../performance-config.cjs');
+const PerformanceConfig = require('../performance-config.cjs');
 
 class SpiralMemoryPerformanceMonitor extends EventEmitter {
     constructor(options = {}) {

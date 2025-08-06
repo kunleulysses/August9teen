@@ -38,20 +38,27 @@ class SpiralMemoryArchitecture extends EventEmitter {
 
         // Performance & Scalability Components
         this.performanceMonitor = performanceMonitor || new SpiralMemoryPerformanceMonitor({
-            metricsRetentionHours: 24,
-            alertThresholds: {
-                operationLatency: 100,
-                cacheHitRate: 0.8,
-                memoryUsage: 0.85,
-                errorRate: 0.05
+            monitoring: {
+                enabled: process.env.SPIRAL_MEMORY_PERFORMANCE_MONITORING === 'enabled',
+                metricsRetentionHours: 24,
+                alertThresholds: {
+                    operationLatency: 100,
+                    cacheHitRate: 0.8,
+                    memoryUsage: 0.85,
+                    errorRate: 0.05
+                },
+                enabledMetrics: ['latency', 'throughput', 'cacheHitRate', 'memoryUsage', 'errorRate']
             }
         });
 
         this.cachingSystem = cachingSystem || new AdvancedCachingSystem({
-            l1MaxSize: 10000,
-            l2MaxSize: 100000,
-            l3MaxSize: 1000000,
-            defaultTTL: 3600000
+            caching: {
+                enabled: process.env.SPIRAL_MEMORY_CACHING === 'enabled',
+                l1MaxSize: 10000,
+                l2MaxSize: 100000,
+                l3MaxSize: 1000000,
+                defaultTTL: 3600000
+            }
         });
 
         // Concurrency control - mutex for critical sections
@@ -179,10 +186,7 @@ class SpiralMemoryArchitecture extends EventEmitter {
         // Start performance monitoring
         this.performanceMonitor.startMonitoring();
         
-        // Initialize caching system
-        this.cachingSystem.initialize().catch(error => {
-            console.error('❌ Failed to initialize caching system:', error.message);
-        });
+        // Note: AdvancedCachingSystem initializes automatically in constructor
     }
 
     registerEventListeners() {
@@ -402,7 +406,6 @@ class SpiralMemoryArchitecture extends EventEmitter {
                     await new Promise(resolve => setImmediate(resolve));
                 }
             }
-            }
 
             // Persist all corrections (with Redis pipeline optimization)
             if (persistPromises.length > 0) {
@@ -563,8 +566,8 @@ class SpiralMemoryArchitecture extends EventEmitter {
                 // Register sigil
                 this.sigilRegistry.set(sigil.signature, memoryNode.id);
 
-                // GC queue update
-                this.gcQueue.update(memoryNode.id, new Date(memoryNode.lastAccessed).getTime());
+                // GC queue update - add to priority queue
+                this.gcQueue.add({ key: memoryNode.id, score: new Date(memoryNode.lastAccessed).getTime() });
 
                 // Update spiral statistics
                 if (this.storage.atomicIncr) {
@@ -1518,8 +1521,8 @@ class SpiralMemoryArchitecture extends EventEmitter {
         // Update access statistics
         memoryNode.lastAccessed = new Date().toISOString();
         memoryNode.accessCount++;
-        // GC heap update
-        this.gcQueue.update(memoryId, new Date(memoryNode.lastAccessed).getTime());
+        // GC heap update - add to priority queue
+        this.gcQueue.add({ key: memoryId, score: new Date(memoryNode.lastAccessed).getTime() });
         this.gcSkipCount.delete(memoryId);
 
         return memoryNode;
