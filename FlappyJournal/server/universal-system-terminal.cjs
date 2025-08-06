@@ -191,7 +191,7 @@ class UniversalSystemTerminal {
             
             this.ws.on('error', (error) => {
                 console.log('⚠️ Consciousness WebSocket error (continuing with unified aggregation):', error.message);
-                resolve(); // Continue even if WebSocket fails
+                reject(error); // Reject on WebSocket failure
             });
             
             this.ws.on('close', () => {
