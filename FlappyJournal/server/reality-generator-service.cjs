@@ -9,6 +9,8 @@ const { Server  } = require('socket.io');
 const AutonomousImaginationEngine = require('./consciousness/autonomous-imagination-engine.cjs');
 const { HolographicConsciousnessRealityGenerator  } = require('./consciousness/holographic-consciousness-reality-generator.cjs');
 const os = require('os');
+const { connect, StringCodec } = require('nats');
+const { randomUUID } = require('crypto');
 
 // Initialize Express app
 const app = express();
@@ -38,6 +40,9 @@ let serviceMetrics = {
         dedicated: DEDICATED_CORES
     }
 };
+const pendingJobs = new Map();
+const sc = StringCodec();
+let js;
 
 // Middleware
 app.use(express.json());
@@ -136,15 +141,21 @@ io.on('connection', (socket) => {
     });
     
     // Handle reality generation requests via WebSocket
-    socket.on('generate-reality', async (data) => {
+    socket.on('generate-reality', async (data = {}) => {
+        let jobId;
         try {
-            const result = await realityGenerator.generateHolographicConsciousnessReality(
-                data.request,
-                data.consciousnessState
-            );
-            
-            socket.emit('reality-generated', result);
+            jobId = randomUUID();
+            pendingJobs.set(jobId, socket);
+            if (js) {
+                await js.publish('reality.gen.request', sc.encode(JSON.stringify({
+                    jobId,
+                    request: data.request,
+                    consciousnessState: data.consciousnessState
+                })));
+            }
+            socket.emit('reality-job', { jobId });
         } catch (error) {
+            pendingJobs.delete(jobId);
             socket.emit('error', { message: error.message });
         }
     });
@@ -161,6 +172,31 @@ const consciousnessSystemStub = {
 };
 // Also broadcast to raw ws clients
 
+async function setupNats() {
+    try {
+        const nc = await connect({ servers: process.env.NATS_URL || 'nats://localhost:4222' });
+        js = nc.jetstream();
+        const sub = await js.subscribe('reality.gen.result', { manualAck: true });
+        (async () => {
+            for await (const msg of sub) {
+                try {
+                    const data = JSON.parse(sc.decode(msg.data));
+                    const sock = pendingJobs.get(data.jobId);
+                    if (sock) {
+                        sock.emit('reality-scene', { jobId: data.jobId, scene: data.scene });
+                        pendingJobs.delete(data.jobId);
+                    }
+                    msg.ack();
+                } catch (err) {
+                    console.error('Error processing reality.gen.result', err);
+                }
+            }
+        })().catch(err => console.error('Subscription failed', err));
+    } catch (err) {
+        console.error('Failed to connect to NATS', err);
+    }
+}
+
 // Initialize services
 async function initializeServices() {
     try {
@@ -172,8 +208,9 @@ async function initializeServices() {
         // Initialize imagination engine
         imaginationEngine = new AutonomousImaginationEngine(consciousnessSystemStub);
 
+        await setupNats();
+
         // --- Raw WebSocket server for ws-based bridge integration ---
-        // let broadcastToRawWSClients; (remove this line, only declare inside the server startup block)
         let broadcastToRawWSClients;
         let wsClients = new Set();
 
