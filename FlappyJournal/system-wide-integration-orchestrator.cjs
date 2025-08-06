@@ -937,11 +937,32 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
     
     async handleServiceCommand(command) {
         // Handle service commands from universal chat
-        this.universalEventBus.emit('service:command_completed', {
-            command,
-            result: this.systemLayers.services,
-            success: true
-        });
+        switch (command.type) {
+            case 'status':
+                this.universalEventBus.emit('service:command_completed', {
+                    command,
+                    result: this.systemLayers.services,
+                    success: true
+                });
+                break;
+
+            case 'restart':
+                try {
+                    const result = await this.deepSystemAccess?.processManagement?.restartService(command.service);
+                    this.universalEventBus.emit('service:command_completed', {
+                        command,
+                        result,
+                        success: true
+                    });
+                } catch (error) {
+                    this.universalEventBus.emit('service:command_completed', {
+                        command,
+                        error: error.message,
+                        success: false
+                    });
+                }
+                break;
+        }
     }
     
     async handleInterfaceCommand(command) {
