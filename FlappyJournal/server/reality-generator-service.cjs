@@ -9,6 +9,18 @@ const { Server  } = require('socket.io');
 const AutonomousImaginationEngine = require('./consciousness/autonomous-imagination-engine.cjs');
 const { HolographicConsciousnessRealityGenerator  } = require('./consciousness/holographic-consciousness-reality-generator.cjs');
 const os = require('os');
+const fs = require('fs');
+const jwt = require('jsonwebtoken');
+
+// Load JWT public key for verifying WebSocket tokens
+let PUBLIC_KEY = process.env.API_JWT_PUBLIC_KEY;
+if (!PUBLIC_KEY) {
+    try {
+        PUBLIC_KEY = fs.readFileSync('./keys/jwtRS256.key.pub', 'utf8');
+    } catch (err) {
+        console.warn('No public key found for JWT verification');
+    }
+}
 
 // Initialize Express app
 const app = express();
@@ -199,7 +211,36 @@ async function initializeServices() {
             // --- Raw WebSocket server for ws-based bridge integration ---
             import('ws').then(wsModule => {
                 const WebSocketServer = wsModule.WebSocketServer || wsModule.Server;
-                const wss = new WebSocketServer({ server, path: '/' });
+                const wss = new WebSocketServer({ noServer: true });
+
+                // Handle upgrade with JWT verification
+                server.on('upgrade', (req, socket, head) => {
+                    try {
+                        const url = new URL(req.url, 'http://localhost');
+                        const token = url.searchParams.get('token');
+
+                        if (!token) {
+                            socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
+                            socket.destroy();
+                            return;
+                        }
+
+                        const payload = jwt.verify(token, PUBLIC_KEY, { algorithms: ['RS256'] });
+                        if (!payload.scope || !payload.scope.includes('metacog.stream')) {
+                            socket.write('HTTP/1.1 403 Forbidden\r\n\r\n');
+                            socket.destroy();
+                            return;
+                        }
+
+                        wss.handleUpgrade(req, socket, head, (ws) => {
+                            ws.auth = payload;
+                            wss.emit('connection', ws, req);
+                        });
+                    } catch (err) {
+                        socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
+                        socket.destroy();
+                    }
+                });
 
                 wss.on('connection', (ws) => {
                     wsClients.add(ws);
