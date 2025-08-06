@@ -933,6 +933,30 @@ class UniversalSystemTerminal {
                 return;
             }
             console.log('⚠️ Complete integration not available');
+        } else if (cmd === 'modules main') {
+            if (this.completeIntegration) {
+                const status = this.completeIntegration.getCompleteSystemStatus();
+                const modules = status.commonJSModules || [];
+
+                console.log(`🧠 consciousness-main Modules (${modules.length}):`);
+                modules.forEach((module, index) => {
+                    const statusIcon = module.integrated ? '✅' : '⚠️';
+                    const chatIcon = module.universalChatAccess ? '💬' : '❌';
+                    const aiIcon = module.aiIntegrated ? '🤖' : '❌';
+                    console.log(`  ${index + 1}. ${statusIcon}${chatIcon}${aiIcon} ${module.name}`);
+                });
+
+                console.log('\n📊 Module Integration Summary:');
+                const integrated = modules.filter(m => m.integrated).length;
+                const chatAccess = modules.filter(m => m.universalChatAccess).length;
+                const aiIntegrated = modules.filter(m => m.aiIntegrated).length;
+
+                console.log(`  Integrated: ${integrated}/${modules.length} (${modules.length ? ((integrated/modules.length)*100).toFixed(1) : '0.0'}%)`);
+                console.log(`  Universal Chat Access: ${chatAccess}/${modules.length} (${modules.length ? ((chatAccess/modules.length)*100).toFixed(1) : '0.0'}%)`);
+                console.log(`  AI Enhanced: ${aiIntegrated}/${modules.length} (${modules.length ? ((aiIntegrated/modules.length)*100).toFixed(1) : '0.0'}%)`);
+                return;
+            }
+            console.log('⚠️ Complete integration not available');
         }
     }
 
