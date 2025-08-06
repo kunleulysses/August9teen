@@ -1,6 +1,16 @@
-import { pgTable, text, serial, integer, boolean, timestamp, json, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, json, jsonb, pgSchema } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+
+// Audit log table
+const postgres = pgSchema("postgres");
+export const auditLogs = postgres.table("audit_log", {
+  id: serial("id").primaryKey(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  actor: text("actor"),
+  action: text("action").notNull(),
+  details: jsonb("details"),
+});
 
 // Conversations table
 export const conversations = pgTable("conversations", {
@@ -282,6 +292,8 @@ export type BillingTransaction = typeof billingTransactions.$inferSelect;
 export type ConversationMemory = typeof conversationMemories.$inferSelect;
 export type Conversation = typeof conversations.$inferSelect;
 export type EmailQueueItem = typeof emailQueue.$inferSelect;
+export type AuditLog = typeof auditLogs.$inferSelect;
+export type InsertAuditLog = typeof auditLogs.$inferInsert;
 export type InsertJournalEntry = z.infer<typeof insertJournalEntrySchema>;
 export type InsertEmail = z.infer<typeof insertEmailSchema>;
 export type InsertSmsMessage = z.infer<typeof insertSmsMessageSchema>;
