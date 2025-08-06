@@ -1,0 +1,14 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: rollout-alert-check
+spec:
+  metrics:
+    - name: alert-count
+      successCondition: result[0] == 0
+      failureCondition: result[0] != 0
+      provider:
+        prometheus:
+          address: http://prometheus.monitoring.svc.cluster.local:9090
+          query: |
+            alert_count
