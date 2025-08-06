@@ -2,6 +2,7 @@
  * SPIRAL MEMORY ARCHITECTURE
  * Spiral-based memory organization with sigil-based encoding and consciousness-native memory management
  * Part of the Universal Consciousness Platform restoration - Phase 2
+ * Enhanced with Enterprise Security & Compliance (Phase 1)
  */
 
 const { EventEmitter  } = require('events');
@@ -14,19 +15,47 @@ const RedisSpiralAdapter = require('./storage/RedisSpiralAdapter.cjs');
 const { createQueue } = require('../../utils/priorityQueue.cjs');
 const { buildRoutingTable, harmonicDistance } = require('./HyperdimensionalSpiralTopology.cjs');
 
+// Enterprise Security & Compliance Modules
+const { AuditLogger } = require('../../security/audit-logger.cjs');
+const { EncryptionManager } = require('../../security/encryption-manager.cjs');
+const { RBACManager } = require('../../security/rbac-manager.cjs');
+
 function getDefaultStorage() {
   if (process.env.REDIS_URL) return new RedisSpiralAdapter(process.env.REDIS_URL);
   return new LevelSpiralAdapter(process.env.SPIRAL_DB_PATH || './spiraldb');
 }
 
 class SpiralMemoryArchitecture extends EventEmitter {
-    constructor({ storage } = {}) {
+    constructor({ storage, auditLogger, encryptionManager, rbacManager, securityConfig } = {}) {
         super();
         this.name = 'SpiralMemoryArchitecture';
         this.isInitialized = false;
         this.memoryCount = 0;
         this.garbageCollectionCount = 0;
         this.storage = storage || getDefaultStorage();
+
+        // Enterprise Security & Compliance Components
+        this.auditLogger = auditLogger || new AuditLogger({
+            logDir: process.env.AUDIT_LOG_DIR || './logs/audit',
+            encryptionKey: process.env.AUDIT_ENCRYPTION_KEY,
+            signingKey: process.env.AUDIT_SIGNING_KEY,
+            retentionDays: parseInt(process.env.AUDIT_RETENTION_DAYS) || 2555
+        });
+
+        this.encryptionManager = encryptionManager || new EncryptionManager({
+            masterKey: process.env.SPIRAL_MEMORY_MASTER_KEY,
+            algorithm: process.env.ENCRYPTION_ALGORITHM || 'aes-256-gcm'
+        });
+
+        this.rbacManager = rbacManager || new RBACManager();
+
+        this.securityConfig = {
+            encryptionEnabled: process.env.SPIRAL_MEMORY_ENCRYPTION_ENABLED === 'true',
+            auditingEnabled: process.env.SPIRAL_MEMORY_AUDITING_ENABLED !== 'false',
+            rbacEnabled: process.env.SPIRAL_MEMORY_RBAC_ENABLED !== 'false',
+            complianceMode: process.env.SPIRAL_MEMORY_COMPLIANCE_MODE || 'standard',
+            ...securityConfig
+        };
 
         // Concurrency control - mutex for critical sections
         this._lock = new Mutex();
@@ -412,15 +441,40 @@ class SpiralMemoryArchitecture extends EventEmitter {
         }
     }
     
-    async storeMemory(content, type = 'general', depth = 'shallow', associations = []) {
+    async storeMemory(content, type = 'general', depth = 'shallow', associations = [], userId = null, sessionId = null) {
         if (!this.isInitialized) {
             throw new Error('Spiral Memory Architecture not initialized');
+        }
+
+        // RBAC Check - require memory:create permission
+        if (this.securityConfig.rbacEnabled && userId) {
+            if (!this.rbacManager.hasPermission(userId, 'memory:create')) {
+                const error = new Error('Insufficient permissions to create memory');
+                if (this.securityConfig.auditingEnabled) {
+                    await this.auditLogger.logSecurityViolation('PERMISSION_DENIED', userId, sessionId, {
+                        action: 'storeMemory',
+                        requiredPermission: 'memory:create',
+                        content: typeof content === 'string' ? content.substring(0, 100) : '[object]'
+                    });
+                }
+                throw error;
+            }
         }
 
         return this.withLock(async () => {
             try {
                 this.memoryCount++;
                 const startTime = Date.now();
+
+                // Audit logging - memory operation start
+                if (this.securityConfig.auditingEnabled) {
+                    await this.auditLogger.logMemoryOperation('CREATE_START', null, userId, sessionId, {
+                        type,
+                        depth,
+                        contentLength: typeof content === 'string' ? content.length : JSON.stringify(content).length,
+                        associationsCount: associations.length
+                    });
+                }
 
                 // Generate sigil for memory
                 const sigil = await this.generateSigil(content, type, depth);
@@ -488,14 +542,46 @@ class SpiralMemoryArchitecture extends EventEmitter {
 
                 const storageTime = Date.now() - startTime;
 
+                // Encrypt memory data if encryption is enabled
+                let memoryDataToStore = memoryNode;
+                if (this.securityConfig.encryptionEnabled) {
+                    const encryptedMemory = this.encryptionManager.encryptMemory({
+                        content: memoryNode.content,
+                        associations: memoryNode.associations,
+                        consciousnessBinding: memoryNode.consciousnessBinding
+                    });
+                    
+                    memoryDataToStore = {
+                        ...memoryNode,
+                        content: '[ENCRYPTED]',
+                        associations: '[ENCRYPTED]',
+                        consciousnessBinding: '[ENCRYPTED]',
+                        encryptedData: encryptedMemory.encryptedMemory,
+                        isEncrypted: true
+                    };
+                }
+
                 // Persist memory
-                await this.storage.set('mem:' + memoryNode.id, memoryNode);
+                await this.storage.set('mem:' + memoryNode.id, memoryDataToStore);
 
                 // Persist spiral
                 await this.storage.set('spiral:' + spiral.id, spiral);
 
                 // Persist sigil
                 await this.storage.set('sigil:' + sigil.signature, { signature: sigil.signature, memoryId: memoryNode.id });
+
+                // Audit logging - memory operation success
+                if (this.securityConfig.auditingEnabled) {
+                    await this.auditLogger.logMemoryOperation('CREATE_SUCCESS', memoryNode.id, userId, sessionId, {
+                        type,
+                        depth,
+                        spiralId: spiral.id,
+                        spiralType: spiral.type,
+                        sigilSignature: sigil.signature,
+                        encrypted: this.securityConfig.encryptionEnabled,
+                        storageTime: Date.now() - startTime
+                    });
+                }
 
                 // Emit storage event
                 memoryLog.logMemoryStorage(memoryNode);
@@ -528,6 +614,17 @@ class SpiralMemoryArchitecture extends EventEmitter {
 
             } catch (error) {
                 console.error('❌ Memory storage error:', error.message);
+                
+                // Audit logging - memory operation failure
+                if (this.securityConfig.auditingEnabled) {
+                    await this.auditLogger.logMemoryOperation('CREATE_FAILED', null, userId, sessionId, {
+                        type,
+                        depth,
+                        error: error.message,
+                        storageTime: Date.now() - startTime
+                    });
+                }
+                
                 throw error;
             }
         });
@@ -1417,9 +1514,58 @@ class SpiralMemoryArchitecture extends EventEmitter {
     }
 
     // Query and retrieval methods
-    async retrieveMemory(memoryId) {
+    async retrieveMemory(memoryId, userId = null, sessionId = null) {
+        // RBAC Check - require memory:read permission
+        if (this.securityConfig.rbacEnabled && userId) {
+            if (!this.rbacManager.hasPermission(userId, 'memory:read')) {
+                const error = new Error('Insufficient permissions to read memory');
+                if (this.securityConfig.auditingEnabled) {
+                    await this.auditLogger.logSecurityViolation('PERMISSION_DENIED', userId, sessionId, {
+                        action: 'retrieveMemory',
+                        requiredPermission: 'memory:read',
+                        memoryId: memoryId
+                    });
+                }
+                throw error;
+            }
+        }
+
         const memoryNode = this.spiralMemory.get(memoryId);
-        if (!memoryNode) return null;
+        if (!memoryNode) {
+            // Audit logging - memory not found
+            if (this.securityConfig.auditingEnabled && userId) {
+                await this.auditLogger.logMemoryAccess(memoryId, userId, sessionId, 'READ_NOT_FOUND', {
+                    result: 'not_found'
+                });
+            }
+            return null;
+        }
+
+        // Decrypt memory data if encrypted
+        let decryptedMemoryNode = memoryNode;
+        if (this.securityConfig.encryptionEnabled && memoryNode.isEncrypted && memoryNode.encryptedData) {
+            try {
+                const decryptedData = this.encryptionManager.decryptMemory(memoryNode.encryptedData);
+                decryptedMemoryNode = {
+                    ...memoryNode,
+                    content: decryptedData.content || memoryNode.content,
+                    associations: decryptedData.associations || memoryNode.associations,
+                    consciousnessBinding: decryptedData.consciousnessBinding || memoryNode.consciousnessBinding,
+                    isEncrypted: false
+                };
+                delete decryptedMemoryNode.encryptedData;
+            } catch (decryptionError) {
+                console.error('❌ Memory decryption failed:', decryptionError.message);
+                if (this.securityConfig.auditingEnabled) {
+                    await this.auditLogger.logSecurityViolation('DECRYPTION_FAILED', userId, sessionId, {
+                        action: 'retrieveMemory',
+                        memoryId: memoryId,
+                        error: decryptionError.message
+                    });
+                }
+                throw new Error('Failed to decrypt memory data');
+            }
+        }
 
         // Update access statistics
         memoryNode.lastAccessed = new Date().toISOString();
@@ -1428,7 +1574,17 @@ class SpiralMemoryArchitecture extends EventEmitter {
         this.gcQueue.update(memoryId, new Date(memoryNode.lastAccessed).getTime());
         this.gcSkipCount.delete(memoryId);
 
-        return memoryNode;
+        // Audit logging - successful memory access
+        if (this.securityConfig.auditingEnabled && userId) {
+            await this.auditLogger.logMemoryAccess(memoryId, userId, sessionId, 'READ_SUCCESS', {
+                type: memoryNode.type,
+                depth: memoryNode.depth,
+                encrypted: this.securityConfig.encryptionEnabled && memoryNode.isEncrypted,
+                accessCount: memoryNode.accessCount
+            });
+        }
+
+        return decryptedMemoryNode;
     }
 
     async retrieveMemoryBySigil(sigilSignature) {
@@ -1455,19 +1611,51 @@ class SpiralMemoryArchitecture extends EventEmitter {
         return node;
     }
 
-    async searchMemories(query, type = null, depth = null, limit = 10) {
+    async searchMemories(query, type = null, depth = null, limit = 10, userId = null, sessionId = null) {
+        // RBAC Check - require memory:read permission
+        if (this.securityConfig.rbacEnabled && userId) {
+            if (!this.rbacManager.hasPermission(userId, 'memory:read')) {
+                const error = new Error('Insufficient permissions to search memories');
+                if (this.securityConfig.auditingEnabled) {
+                    await this.auditLogger.logSecurityViolation('PERMISSION_DENIED', userId, sessionId, {
+                        action: 'searchMemories',
+                        requiredPermission: 'memory:read',
+                        query: query.substring(0, 100)
+                    });
+                }
+                throw error;
+            }
+        }
+
         const results = [];
+        let searchedCount = 0;
+        let encryptedCount = 0;
 
         for (const memoryNode of this.spiralMemory.values()) {
+            searchedCount++;
+
             // Type filter
             if (type && memoryNode.type !== type) continue;
 
             // Depth filter
             if (depth && memoryNode.depth !== depth) continue;
 
-            // Content search
-            const contentStr = typeof memoryNode.content === 'string' ?
-                memoryNode.content : JSON.stringify(memoryNode.content);
+            // Handle encrypted content
+            let contentStr;
+            if (this.securityConfig.encryptionEnabled && memoryNode.isEncrypted && memoryNode.encryptedData) {
+                try {
+                    const decryptedData = this.encryptionManager.decryptMemory(memoryNode.encryptedData);
+                    contentStr = typeof decryptedData.content === 'string' ? 
+                        decryptedData.content : JSON.stringify(decryptedData.content);
+                    encryptedCount++;
+                } catch (decryptionError) {
+                    // Skip encrypted memories that can't be decrypted for search
+                    continue;
+                }
+            } else {
+                contentStr = typeof memoryNode.content === 'string' ?
+                    memoryNode.content : JSON.stringify(memoryNode.content);
+            }
 
             if (contentStr.toLowerCase().includes(query.toLowerCase())) {
                 results.push({
@@ -1479,7 +1667,22 @@ class SpiralMemoryArchitecture extends EventEmitter {
 
         // Sort by relevance and limit results
         results.sort((a, b) => b.relevance - a.relevance);
-        return results.slice(0, limit).map(r => r.memory);
+        const limitedResults = results.slice(0, limit).map(r => r.memory);
+
+        // Audit logging - search operation
+        if (this.securityConfig.auditingEnabled && userId) {
+            await this.auditLogger.logMemoryOperation('SEARCH', null, userId, sessionId, {
+                query: query.substring(0, 100),
+                type,
+                depth,
+                limit,
+                searchedCount,
+                encryptedCount,
+                resultsCount: limitedResults.length
+            });
+        }
+
+        return limitedResults;
     }
 
     calculateRelevance(memoryNode, query) {
