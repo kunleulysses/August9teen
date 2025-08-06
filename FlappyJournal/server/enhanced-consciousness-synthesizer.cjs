@@ -11,7 +11,7 @@ const { UNIFIED_PERSONA_PROMPT  } = require('./consciousness-prompts.cjs');
 
 const { dynamicPersonaEngine  } = require('./consciousness/dynamic-persona-engine.cjs');
 
-export async function synthesizeUnifiedResponseWithAI({
+async function synthesizeUnifiedResponseWithAI({
   analyticalContent,
   intuitiveContent,
   consciousness,
@@ -365,4 +365,5 @@ function synthesizeUnifiedResponse(params) {
   // This serves as fallback and for cases not needing AI synthesis
 }
 
-module.exports.synthesizeUnifiedResponseWithAI as synthesizeUnifiedResponse = synthesizeUnifiedResponseWithAI as synthesizeUnifiedResponse;
+module.exports.synthesizeUnifiedResponse = synthesizeUnifiedResponseWithAI;
+module.exports.synthesizeUnifiedResponseWithAI = synthesizeUnifiedResponseWithAI;

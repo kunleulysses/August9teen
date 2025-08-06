@@ -323,8 +323,7 @@ module.exports = class ConsciousnessPersistence extends EventEmitter {
             metrics: this.consciousnessMetrics,
             saveResults
         });
-    }
-}
+    };
 
     /**
      * Initialize backup system (placeholder)
@@ -397,3 +396,4 @@ module.exports = class ConsciousnessPersistence extends EventEmitter {
             metrics: this.getMetrics()
         };
     }
+}

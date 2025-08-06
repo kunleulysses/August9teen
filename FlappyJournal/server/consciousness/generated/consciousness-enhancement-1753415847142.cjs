@@ -1,4 +1,3 @@
-```javascript
 /**
  * @module ConsciousnessEnhancer
  * @version 2.0.0
@@ -36,7 +35,6 @@ const CONSCIOUSNESS_STATES = Object.freeze({
     SOMATIC_PRESENCE: { id: 'SOMATIC_PRESENCE', description: 'Heightened awareness of internal bodily sensations.', signature: { alpha: 0.6, delta: 0.4, beta: 0.1 } },
     DREAM_STATE_REM: { id: 'DREAM_STATE_REM', description: 'Rapid eye movement sleep, associated with vivid dreams and memory consolidation.', signature: { theta: 0.9, beta: 0.5, gamma: 0.3 } },
 });
-module.exports.CONSCIOUSNESS_STATES = CONSCIOUSNESS_STATES;
 
 /**
  * A simplified vector model for primary and secondary emotions based on Plutchik's wheel.
@@ -54,7 +52,6 @@ const EMOTION_VECTORS = Object.freeze({
     ANGER: { valence: -0.5, arousal: 0.8, dominance: 0.5 },
     ANTICIPATION: { valence: 0.3, arousal: 0.7, dominance: 0.3 },
 });
-module.exports.EMOTION_VECTORS = EMOTION_VECTORS;
 
 
 /**
@@ -316,5 +313,10 @@ class ConsciousnessProcessor
         }
     }
 }
-```
-module.exports = for;
+
+module.exports = {
+    ConsciousnessProcessor,
+    ConsciousnessProcessingError,
+    CONSCIOUSNESS_STATES,
+    EMOTION_VECTORS
+};

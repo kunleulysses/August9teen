@@ -12,7 +12,7 @@ const consciousnessSchema = require(
 );
 const { initializeRandomness, secureId  } = require('./utils/random.cjs');
 const { saveReality, savePath, saveField, incrementMetric  } = require('./utils/persistence.cjs');
-const { logger, child as childLogger  } = require('./utils/logger.cjs');
+const { logger, child: childLogger  } = require('./utils/logger.cjs');
 
 class RecursiveHolographicRealityEmbedding extends EventEmitter {
     constructor(maxRecursionDepth = 7) {
@@ -256,7 +256,7 @@ class RecursiveHolographicRealityEmbedding extends EventEmitter {
         };
     }
     
-    connectRealities(parentReality, childReality, recursionDepth) {
+    async connectRealities(parentReality, childReality, recursionDepth) {
         const connectionId = secureId('conn');
 
         const recursionPath = {

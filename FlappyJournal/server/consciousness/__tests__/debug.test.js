@@ -2,7 +2,7 @@
  * Debug test to understand verification issues
  */
 
-const SigilBasedCodeAuthenticator = require('../sigil-based-code-authenticator.cjs');
+import SigilBasedCodeAuthenticator from '../sigil-based-code-authenticator.cjs';
 
 describe('Debug Sigil Verification', () => {
   test('should debug verification process', async () => {

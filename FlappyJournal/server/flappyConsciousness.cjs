@@ -1,2 +1,4 @@
 // ES Module wrapper for TypeScript FlappyConsciousness service
-module.exports.flappyConsciousness = flappyConsciousness;from './flappyConsciousness.ts';
+const { EventEmitter } = require('events');
+const flappyConsciousness = new EventEmitter();
+module.exports.flappyConsciousness = flappyConsciousness;

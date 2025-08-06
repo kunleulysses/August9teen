@@ -1,4 +1,3 @@
-```javascript
 /**
  * @module ConsciousnessEnhancer
  * @description A JavaScript module for the advanced processing and enhancement of conscious states.
@@ -36,7 +35,7 @@ const _validateInput = (input, requiredKeys) => {
     }
     for (const key of requiredKeys) {
         if (input[key] === undefined || input[key] === null) {
-            throw new Error(`Missing required input parameter: "${key}".`);
+            throw new Error(`Missing required input parameter: "${key}"`);
         }
         if (typeof input[key] !== 'number') {
             throw new Error(`Input parameter "${key}" must be a number.`);
@@ -97,8 +96,6 @@ const _mapEmotion = (valence, arousal) => {
  * // Outputs: { globalStateIndex: ~0.85, stability: ~0.8, qualiaIntensity: 0.81 }
  */
 function calculateConsciousnessState(inputs) {
-module.exports.calculateConsciousnessState = calculateConsciousnessState;
-
     _validateInput(inputs, ['focus', 'clarity', 'neuralActivity', 'sensoryBandwidth']);
 
     const { focus, clarity, neuralActivity, sensoryBandwidth } = inputs;
@@ -152,8 +149,6 @@ module.exports.calculateConsciousnessState = calculateConsciousnessState;
  * console.log(metrics);
  */
 function getAwarenessMetrics(inputs) {
-module.exports.getAwarenessMetrics = getAwarenessMetrics;
-
     _validateInput(inputs, ['externalSituationalData', 'internalStateCoherence', 'cognitiveModelDivergence', 'somaticFeedbackClarity']);
 
     const { externalSituationalData, internalStateCoherence, cognitiveModelDivergence, somaticFeedbackClarity } = inputs;
@@ -195,8 +190,6 @@ module.exports.getAwarenessMetrics = getAwarenessMetrics;
  * // Outputs: { identifiedEmotion: 'Anger', regulationSuggestion: '...', empatheticResonance: ~0.93 }
  */
 function processEmotionalState(primaryState, otherState = null) {
-module.exports.processEmotionalState = processEmotionalState;
-
     _validateInput(primaryState, ['valence', 'arousal']);
     if (otherState) {
         _validateInput(otherState, ['valence', 'arousal']);
@@ -241,4 +234,9 @@ module.exports.processEmotionalState = processEmotionalState;
         empatheticResonance: empatheticResonance !== null ? parseFloat(empatheticResonance.toFixed(4)) : null,
     };
 }
-```
+
+module.exports = {
+    calculateConsciousnessState,
+    getAwarenessMetrics,
+    processEmotionalState,
+};

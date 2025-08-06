@@ -1,4 +1,3 @@
-```javascript
 /**
  * @module ConsciousnessMatrix
  * @description A sophisticated JavaScript module for the advanced processing, analysis,
@@ -35,7 +34,6 @@ const ConsciousnessState = {
   HYPER_AWARE: 'Hyper-Aware',         // Heightened sensory and cognitive processing
   TRANSCENDENT: 'Transcendent',       // State of profound insight and interconnectedness
 };
-module.exports.ConsciousnessState = ConsciousnessState;
 
 /**
  * Thresholds for mapping a numerical consciousness score to a qualitative state.
@@ -168,8 +166,6 @@ function calculateConsciousnessState({
   emotionalState,
   focus
 }) {
-module.exports.calculateConsciousnessState = calculateConsciousnessState;
-
   // 1. Input Validation
   _validateNumericInput(cognitiveLoad, 'cognitiveLoad');
   _validateNumericInput(focus, 'focus');
@@ -234,8 +230,6 @@ module.exports.calculateConsciousnessState = calculateConsciousnessState;
  * console.log(metrics.introspective); // e.g., 0.85
  */
 function getAwarenessMetrics(consciousnessData, sensoryInput) {
-module.exports.getAwarenessMetrics = getAwarenessMetrics;
-
   if (!consciousnessData || typeof consciousnessData.score !== 'number') {
     throw new ConsciousnessProcessingError('Invalid consciousnessData object provided.');
   }
@@ -285,8 +279,6 @@ function processEmotionalInput(currentState, stimulus, {
   empathyFactor,
   resilienceFactor
 }) {
-module.exports.processEmotionalInput = processEmotionalInput;
-
   // 1. Validation
   Object.keys(currentState).forEach(key => _validateNumericInput(currentState[key], `currentState.${key}`));
   Object.keys(stimulus).forEach(key => _validateNumericInput(stimulus[key], `stimulus.${key}`));
@@ -318,4 +310,11 @@ module.exports.processEmotionalInput = processEmotionalInput;
   // 3. Normalize the final state so it represents a valid probability distribution
   return _normalizeEmotions(newState);
 }
-```
+
+module.exports = {
+    ConsciousnessState,
+    calculateConsciousnessState,
+    getAwarenessMetrics,
+    processEmotionalInput,
+    ConsciousnessProcessingError
+};

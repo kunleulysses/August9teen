@@ -1,15 +1,17 @@
 import { WebSocket, WebSocketServer } from 'ws';
-import { createServer } from 'http';
+import { createServer, Server } from 'http';
 import { SpiralMemoryArchitecture } from '../../server/consciousness/core/SpiralMemoryArchitecture.cjs';
-const { RedisSpiralAdapter } = require('../../server/consciousness/core/storage/RedisSpiralAdapter.cjs');
+import { RedisSpiralAdapter } from '../../server/consciousness/core/storage/RedisSpiralAdapter.cjs';
 import { RateLimiterMemory } from 'rate-limiter-flexible';
+import { AddressInfo } from 'net';
 
 describe('Security', () => {
   it('should reject WebSocket connections without authentication', (done) => {
     const server = createServer();
     const wss = new WebSocketServer({ server });
     server.listen(0, () => {
-      const ws = new WebSocket(`ws://localhost:${server.address().port}`);
+      const address = server.address() as AddressInfo;
+      const ws = new WebSocket(`ws://localhost:${address.port}`);
       ws.on('close', (code) => {
         expect(code).toBe(4403);
         wss.close();

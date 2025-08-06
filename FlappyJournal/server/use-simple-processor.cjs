@@ -4,7 +4,7 @@ let content = fs.readFileSync('./enhanced-dual-consciousness-ws.cjs', 'utf8');
 
 // Add import for simple processor
 content = content.replace(
-  'const { createEnhancedDualConsciousnessWS  } = require('./dual-consciousness-ws.cjs');',
+  `const { createEnhancedDualConsciousnessWS  } = require('./dual-consciousness-ws.cjs');`,
   `const { createEnhancedDualConsciousnessWS  } = require('./dual-consciousness-ws.cjs');
 const { SimpleConsciousnessProcessor  } = require('./simple-consciousness-processor.cjs');`
 );

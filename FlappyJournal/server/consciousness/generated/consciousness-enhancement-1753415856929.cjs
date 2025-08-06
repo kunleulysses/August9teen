@@ -1,4 +1,3 @@
-```javascript
 /**
  * @module ConsciousnessEnhancer
  * @description A sophisticated JavaScript module for modeling and enhancing the processing of conscious states,
@@ -359,4 +358,3 @@ module.exports = class ConsciousnessEnhancer {
     return this.#lastState;
   }
 }
-```

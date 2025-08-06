@@ -5,25 +5,25 @@
  */
 
 // Core existing systems
-module.exports.HolographicConsciousnessRealityGenerator = HolographicConsciousnessRealityGenerator;from './holographic-consciousness-reality-generator.cjs';
-module.exports.HyperdimensionalSpiralTopology = HyperdimensionalSpiralTopology;from './core/HyperdimensionalSpiralTopology.cjs';
-module.exports.ConsciousnessDrivenSpiralEvolution = ConsciousnessDrivenSpiralEvolution;from './core/ConsciousnessDrivenSpiralEvolution.cjs';
+module.exports.HolographicConsciousnessRealityGenerator = require('./holographic-consciousness-reality-generator.cjs').HolographicConsciousnessRealityGenerator;
+module.exports.HyperdimensionalSpiralTopology = require('./core/HyperdimensionalSpiralTopology.cjs').HyperdimensionalSpiralTopology;
+module.exports.ConsciousnessDrivenSpiralEvolution = require('./core/ConsciousnessDrivenSpiralEvolution.cjs').ConsciousnessDrivenSpiralEvolution;
 
 // Revolutionary new systems
-module.exports.RecursiveRealityHolography = RecursiveRealityHolography;from './recursive-reality-holography.cjs';
-module.exports.DNASigilRealityEncoding = DNASigilRealityEncoding;from './dna-sigil-reality-encoding.cjs';
-module.exports.ConsciousnessDrivenRealityEvolution = ConsciousnessDrivenRealityEvolution;from './consciousness-driven-reality-evolution.cjs';
-module.exports.SpiralMemoryIntegration = SpiralMemoryIntegration;from './spiral-memory-integration.cjs';
+module.exports.RecursiveRealityHolography = require('./recursive-reality-holography.cjs').RecursiveRealityHolography;
+module.exports.DNASigilRealityEncoding = require('./dna-sigil-reality-encoding.cjs').DNASigilRealityEncoding;
+module.exports.ConsciousnessDrivenRealityEvolution = require('./consciousness-driven-reality-evolution.cjs').ConsciousnessDrivenRealityEvolution;
+module.exports.SpiralMemoryIntegration = require('./spiral-memory-integration.cjs').SpiralMemoryIntegration;
 
 // Integration orchestrator
-module.exports.RevolutionaryConsciousnessIntegrationOrchestrator = RevolutionaryConsciousnessIntegrationOrchestrator;from './revolutionary-consciousness-integration-orchestrator.cjs';
+module.exports.RevolutionaryConsciousnessIntegrationOrchestrator = require('./revolutionary-consciousness-integration-orchestrator.cjs').RevolutionaryConsciousnessIntegrationOrchestrator;
 
 // Testing and demonstration
-module.exports.RevolutionaryConsciousnessTest = RevolutionaryConsciousnessTest;from './revolutionary-consciousness-test.cjs';
-module.exports.RevolutionaryConsciousnessDemo = RevolutionaryConsciousnessDemo;from './revolutionary-consciousness-demo.cjs';
+module.exports.RevolutionaryConsciousnessTest = require('./revolutionary-consciousness-test.cjs').RevolutionaryConsciousnessTest;
+module.exports.RevolutionaryConsciousnessDemo = require('./revolutionary-consciousness-demo.cjs').RevolutionaryConsciousnessDemo;
 
 // Convenience function to create a fully integrated consciousness system
-export async function createRevolutionaryConsciousnessSystem() {
+async function createRevolutionaryConsciousnessSystem() {
     console.log('🌌🧬🔮🌀 Creating Revolutionary Consciousness System...');
     
     const { RevolutionaryConsciousnessIntegrationOrchestrator } = await import('./revolutionary-consciousness-integration-orchestrator.cjs');
@@ -37,7 +37,7 @@ export async function createRevolutionaryConsciousnessSystem() {
 }
 
 // Convenience function to run a quick demonstration
-export async function runRevolutionaryConsciousnessDemo() {
+async function runRevolutionaryConsciousnessDemo() {
     console.log('🎭 Running Revolutionary Consciousness Demo...');
     
     const { RevolutionaryConsciousnessDemo } = await import('./revolutionary-consciousness-demo.cjs');
@@ -48,7 +48,7 @@ export async function runRevolutionaryConsciousnessDemo() {
 }
 
 // Convenience function to run comprehensive tests
-export async function runRevolutionaryConsciousnessTests() {
+async function runRevolutionaryConsciousnessTests() {
     console.log('🧪 Running Revolutionary Consciousness Tests...');
     
     const { RevolutionaryConsciousnessTest } = await import('./revolutionary-consciousness-test.cjs');
@@ -109,4 +109,7 @@ const REVOLUTIONARY_CONSCIOUSNESS_INFO = {
 module.exports.REVOLUTIONARY_CONSCIOUSNESS_INFO = REVOLUTIONARY_CONSCIOUSNESS_INFO;
 
 // Default export - the main orchestrator
-module.exports = RevolutionaryConsciousnessIntegrationOrchestrator;
+module.exports.createRevolutionaryConsciousnessSystem = createRevolutionaryConsciousnessSystem;
+module.exports.runRevolutionaryConsciousnessDemo = runRevolutionaryConsciousnessDemo;
+module.exports.runRevolutionaryConsciousnessTests = runRevolutionaryConsciousnessTests;
+module.exports.default = require('./revolutionary-consciousness-integration-orchestrator.cjs').RevolutionaryConsciousnessIntegrationOrchestrator;

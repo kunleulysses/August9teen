@@ -1,4 +1,4 @@
-const { RedisSpiralAdapter } = require('../../server/consciousness/core/storage/RedisSpiralAdapter.cjs');
+import { RedisSpiralAdapter } from '../../server/consciousness/core/storage/RedisSpiralAdapter.cjs';
 
 describe('Redis TLS', () => {
   it('should connect to Redis with TLS', async () => {

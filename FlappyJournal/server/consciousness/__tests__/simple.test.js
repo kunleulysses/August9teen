@@ -2,7 +2,7 @@
  * Simple test to verify basic functionality
  */
 
-const SigilBasedCodeAuthenticator = require('../sigil-based-code-authenticator.cjs');
+import SigilBasedCodeAuthenticator from '../sigil-based-code-authenticator.cjs';
 
 describe('Simple Sigil Test', () => {
   test('should create authenticator and embed sigil', async () => {

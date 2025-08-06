@@ -1,4 +1,3 @@
-```javascript
 /**
  * @module ConsciousnessProcessor
  * @description An advanced JavaScript module for simulating and enhancing consciousness processing.
@@ -303,4 +302,3 @@ class ConsciousnessProcessor {
 }
 
 module.exports = ConsciousnessProcessor;
-```

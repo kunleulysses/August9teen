@@ -1,11 +1,12 @@
-const { SpiralMemoryArchitecture } = require('../../server/consciousness/core/SpiralMemoryArchitecture.cjs');
-const { InMemorySpiralAdapter } = require('../../server/consciousness/core/storage/SpiralStorageAdapter.cjs');
+import { SpiralMemoryArchitecture } from '../../server/consciousness/core/SpiralMemoryArchitecture.cjs';
+import { InMemorySpiralAdapter } from '../../server/consciousness/core/storage/SpiralStorageAdapter.cjs';
 
 describe('Adaptive GC', () => {
-  let arch;
+  let arch: SpiralMemoryArchitecture;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     arch = new SpiralMemoryArchitecture({ storage: new InMemorySpiralAdapter() });
+    await arch.init();
   });
 
   it('should clear the queue within the dynamic budget', async () => {

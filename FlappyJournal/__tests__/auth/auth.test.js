@@ -1,8 +1,8 @@
-const { WebSocket } = require('ws');
-const { createServer } = require('http');
-const request = require('supertest');
-const jwt = require('jsonwebtoken');
-const { execSync } = require('child_process');
+import { WebSocket } from 'ws';
+import { createServer } from 'http';
+import request from 'supertest';
+import jwt from 'jsonwebtoken';
+import { execSync } from 'child_process';
 
 // Test configuration
 const TEST_PORT = 3003; // Different port for testing
@@ -20,7 +20,7 @@ describe('Authentication and Rate Limiting', () => {
   let wsServer;
   let testToken;
 
-  beforeAll(() => {
+  beforeAll(async () => {
     // Set test environment variables
     process.env.JWT_SECRET = JWT_SECRET;
     process.env.ALLOW_ANONYMOUS_WS = 'false';
@@ -28,8 +28,8 @@ describe('Authentication and Rate Limiting', () => {
     process.env.WS_RATE_WINDOW = '10'; // 10 second window
     
     // Import the servers after setting env vars
-    const metricsApp = require('../../server/consciousness/core/secure-metrics-server').default;
-    const wsApp = require('../../server/websocket-server.cjs');
+    const metricsApp = (await import('../../server/consciousness/core/secure-metrics-server')).default;
+    const wsApp = await import('../../server/websocket-server.cjs');
 
     // Start test servers
     httpServer = metricsApp.listen(TEST_PORT);

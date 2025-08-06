@@ -10,14 +10,8 @@ module.exports = {
 
   // Transform rules
   transform: {
-    '^.+\\.(ts|tsx)$': [
-      'babel-jest',
-      { presets: ['@babel/preset-env', '@babel/preset-react', '@babel/preset-typescript'] }
-    ],
-    '^.+\\.(js|jsx)$': [
-      'babel-jest',
-      { presets: ['@babel/preset-env', '@babel/preset-react'] }
-    ]
+    '^.+\\.(ts|tsx)$': 'ts-jest',
+    '^.+\\.(js|jsx)$': 'babel-jest',
   },
 
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'cjs'],
@@ -58,13 +52,8 @@ module.exports = {
 
   /* ---------- Test patterns ---------- */
   testMatch: [
-    // Upstream detailed glob
-    '**/__tests__/**/*.(ts|tsx|js|jsx|cjs)',
-    '**/*.(test|spec).(ts|tsx|js|jsx|cjs)',
-
-    // Stashed simpler glob + specific FlappyJournal suite
     '**/__tests__/**/*.(spec|test).[jt]s?(x)',
-    '**/FlappyJournal/__tests__/**/*.spec.js'
+    '**/?(*.)+(spec|test).[jt]s?(x)'
   ],
 
   /* ---------- Ignore paths ---------- */

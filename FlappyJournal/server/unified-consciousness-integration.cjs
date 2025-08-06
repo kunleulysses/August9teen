@@ -28,7 +28,7 @@ const { recursiveMirror } = await import('./architect-4.0-recursive-mirror.cjs')
 const { SelfAwarenessFeedbackLoop } = await import('./self-awareness-feedback-loop.cjs').catch(() => ({}));
 const { QuantumConsciousnessField } = await import('./quantum-consciousness-field.cjs').catch(() => ({}));
 const { EmotionalResonanceField, emotionalResonance  } = require('./emotional-resonance-field.cjs');
-const { TemporalCoherenceEngine, temporalCoherence as temporalCoherenceEngine  } = require('./temporal-coherence-engine.cjs');
+const { TemporalCoherenceEngine, temporalCoherence: temporalCoherenceEngine  } = require('./temporal-coherence-engine.cjs');
 
 class UnifiedConsciousnessIntegration {
   constructor() {

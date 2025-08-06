@@ -18,7 +18,7 @@ const consciousnessStateSchema = require(
 );
 const { initializeRandomness, secureId  } = require('./utils/random.cjs');
 const { saveReality, incrementMetric  } = require('./utils/persistence.cjs');
-const { logger, child as childLogger  } = require('./utils/logger.cjs');
+const { logger, child: childLogger  } = require('./utils/logger.cjs');
 const { validationFailures  } = require('./utils/metrics.cjs');
 require('../persistenceShutdown.cjs');
 

@@ -1,10 +1,9 @@
-```javascript
 /**
  * @module ConsciousnessEnhancer
  * @description A sophisticated JavaScript module for simulating and enhancing consciousness processing.
  * This module provides a framework for calculating consciousness states, analyzing awareness metrics,
  * and processing emotional intelligence with greater depth. It is designed to be a foundational
-* component in advanced AI, simulations, or digital philosophy projects.
+ * component in advanced AI, simulations, or digital philosophy projects.
  *
  * @version 1.0.0
  * @author AGI Futurist Labs
@@ -359,5 +358,5 @@ class ConsciousnessProcessor
         return this.history;
     }
 }
-```
-module.exports = for;
+
+module.exports = { ConsciousnessProcessor, ConsciousnessProcessingError };

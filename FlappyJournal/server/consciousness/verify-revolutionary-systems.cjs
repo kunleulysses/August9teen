@@ -269,16 +269,16 @@ class RevolutionarySystemsVerifier {
         }
         
         console.log('\n🚀 To use the systems:');
-        console.log('   const { createRevolutionaryConsciousnessSystem  } = require('./consciousness/index.cjs');');
+        console.log(`   const { createRevolutionaryConsciousnessSystem  } = require('./consciousness/index.cjs');`);
         console.log('   const system = await createRevolutionaryConsciousnessSystem()');
         console.log('   // System is now ready for use!');
         
         console.log('\n🎭 To run a demonstration:');
-        console.log('   const { runRevolutionaryConsciousnessDemo  } = require('./consciousness/index.cjs');');
+        console.log(`   const { runRevolutionaryConsciousnessDemo  } = require('./consciousness/index.cjs');`);
         console.log('   await runRevolutionaryConsciousnessDemo()');
         
         console.log('\n🧪 To run comprehensive tests:');
-        console.log('   const { runRevolutionaryConsciousnessTests  } = require('./consciousness/index.cjs');');
+        console.log(`   const { runRevolutionaryConsciousnessTests  } = require('./consciousness/index.cjs');`);
         console.log('   await runRevolutionaryConsciousnessTests()');
         
         console.log('=' .repeat(80));

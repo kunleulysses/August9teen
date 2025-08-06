@@ -3,8 +3,8 @@
  * Verifies that quota tracking works correctly with persistence
  */
 
-const { incrWithinHour, resetQuota, getQuota } = require('../utils/quotaStore.cjs');
-const { PostgresStore } = require('../persistence/PostgresStore.cjs');
+import { incrWithinHour, resetQuota, getQuota } from '../utils/quotaStore.cjs';
+import { PostgresStore } from '../persistence/PostgresStore.cjs';
 
 describe('Quota Store', () => {
   let store;

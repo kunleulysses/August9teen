@@ -1,5 +1,5 @@
-const { SpiralMemoryArchitecture } = require('../../server/consciousness/core/SpiralMemoryArchitecture.cjs');
-const { InMemorySpiralAdapter } = require('../../server/consciousness/core/storage/SpiralStorageAdapter.cjs');
+import { SpiralMemoryArchitecture } from '../../server/consciousness/core/SpiralMemoryArchitecture.cjs';
+import { InMemorySpiralAdapter } from '../../server/consciousness/core/storage/SpiralStorageAdapter.cjs';
 
 describe('Hyperdimensional Topology', () => {
   it('should select the closest, least loaded spiral', async () => {

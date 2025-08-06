@@ -3,8 +3,8 @@
  * Verifies that sigils are properly persisted to PostgreSQL and loaded on restart
  */
 
-const SigilBasedCodeAuthenticator = require('../sigil-based-code-authenticator.cjs');
-const { PostgresStore } = require('../persistence/PostgresStore.cjs');
+import SigilBasedCodeAuthenticator from '../sigil-based-code-authenticator.cjs';
+import { PostgresStore } from '../persistence/PostgresStore.cjs';
 
 describe('Sigil Persistence', () => {
   let authenticator;

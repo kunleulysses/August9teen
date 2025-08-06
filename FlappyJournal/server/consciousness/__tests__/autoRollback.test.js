@@ -4,10 +4,10 @@
  * and performs automatic rollback operations
  */
 
-const { rollback, removeManifestEntry, tagErrorWithFilePath } = require('../utils/runtimeMonitor.cjs');
+import { rollback, removeManifestEntry, tagErrorWithFilePath } from '../utils/runtimeMonitor.cjs';
 // Note: Skipping safeImport tests due to Jest/isolated-vm compatibility issues
 // const { safeImport } = require('../utils/safe-loader.cjs');
-const fs = require('fs').promises;
+import fs from 'fs/promises';
 const path = require('path');
 const os = require('os');
 

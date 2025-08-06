@@ -3,8 +3,8 @@
  * Verifies that the Pino logger is working correctly in our modules
  */
 
-const SelfCodingModule = require('../modules/SelfCodingModule.cjs');
-const CodeGenerationService = require('../services/CodeGenerationService.cjs');
+import SelfCodingModule from '../modules/SelfCodingModule.cjs';
+import CodeGenerationService from '../services/CodeGenerationService.cjs';
 
 describe('Logging Integration', () => {
   test('should create SelfCodingModule without console calls', () => {
@@ -26,8 +26,8 @@ describe('Logging Integration', () => {
     expect(service.name).toBe('CodeGenerationService');
   });
 
-  test('should have logger utility available', () => {
-    const { child } = require('../utils/logger.cjs');
+  test('should have logger utility available', async () => {
+    const { child } = await import('../utils/logger.cjs');
     expect(child).toBeDefined();
     expect(typeof child).toBe('function');
     
