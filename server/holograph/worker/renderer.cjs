@@ -1,4 +1,5 @@
 const { performance } = require('perf_hooks');
+require('../../common/tracing.cjs');
 let gpuMemBytes = 0;
 const ivm = require('isolated-vm');
 const Redis = require('ioredis');
