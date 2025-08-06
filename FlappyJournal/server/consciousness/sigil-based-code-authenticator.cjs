@@ -6,13 +6,16 @@
 
 const { EventEmitter  } = require('events');
 const crypto = require('crypto');
-const { allSigilRecords, addSigilRecord } = require('./utils/sigilRegistryStore.cjs');
 const { sigil_registry_size }           = require('./metrics/extraMetrics.cjs');
+const { LevelDBSigilAdapter } = require('./persistence/LevelDBSigilAdapter.cjs');
+const SigilIdentity = require('../sigil-identity.cjs');
 
 class SigilBasedCodeAuthenticator extends EventEmitter {
-    constructor() {
+    constructor(storageAdapter) {
         super();
         this.name = 'SigilBasedCodeAuthenticator';
+        this.storage = storageAdapter || new LevelDBSigilAdapter();
+        this.sigilIdentity = new SigilIdentity(this.storage);
         this.goldenRatio = 1.618033988749895;
         
         // Sigil generation components
@@ -27,27 +30,7 @@ class SigilBasedCodeAuthenticator extends EventEmitter {
         this.resonanceNetworks = new Map();
 
         // ── preload persisted sigils ──────────────────────────────
-        (async () => {
-            try {
-                const persisted = await allSigilRecords();
-                persisted.forEach(r => {
-                    const key = `${r.sigil.symbol}_${r.authHash}`;
-                    this.authenticatedCode.set(key, r);
-                    this.sigilRegistry.set(r.sigil.symbol, r);
-                    r.resonanceNetworks?.forEach(n => {
-                        if (!this.resonanceNetworks.has(n.name)) {
-                            this.resonanceNetworks.set(n.name, []);
-                        }
-                        this.resonanceNetworks.get(n.name).push(r);
-                    });
-                });
-                if (sigil_registry_size?.set) {
-                    sigil_registry_size.set(this.sigilRegistry.size);
-                }
-            } catch (err) {
-                console.warn('[SigilAuth] preload failed:', err.message);
-            }
-        })();
+        this.preload();
         // ──────────────────────────────────────────────────────────
 
         console.log('🔐 Sigil-Based Code Authenticator initialized with consciousness DNA system');
@@ -306,8 +289,8 @@ ${resonanceNetworks.map(network => ` * • ${network.name}: ${network.frequency}
             this.resonanceNetworks.get(network.name).push(authRecord);
         });
 
-        // Persist to Postgres and bump Prometheus gauge
-        await addSigilRecord(authRecord.sigil.symbol,
+        // Persist to storage and bump Prometheus gauge
+        await this.storage.setSigilRecord(authRecord.sigil.symbol,
                              authRecord.authHash,
                              authRecord);
 
@@ -369,6 +352,29 @@ ${resonanceNetworks.map(network => ` * • ${network.name}: ${network.frequency}
             authenticator: this.name,
             timestamp: Date.now()
         };
+    }
+
+    async preload() {
+        try {
+            await this.storage.db.open();
+            const persisted = await this.storage.allSigilRecords();
+            persisted.forEach(r => {
+                const key = `${r.sigil.symbol}_${r.authHash}`;
+                this.authenticatedCode.set(key, r);
+                this.sigilRegistry.set(r.sigil.symbol, r);
+                r.resonanceNetworks?.forEach(n => {
+                    if (!this.resonanceNetworks.has(n.name)) {
+                        this.resonanceNetworks.set(n.name, []);
+                    }
+                    this.resonanceNetworks.get(n.name).push(r);
+                });
+            });
+            if (sigil_registry_size?.set) {
+                sigil_registry_size.set(this.sigilRegistry.size);
+            }
+        } catch (err) {
+            console.warn('[SigilAuth] preload failed:', err.message);
+        }
     }
 }
 

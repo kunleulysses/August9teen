@@ -14,7 +14,7 @@
     "allowImportingTsExtensions": true,
     "moduleResolution": "bundler",
     "baseUrl": ".",
-    "types": ["node", "vite/client", "./server/types/express.d.ts"],
+    "types": ["node", "./server/types/express.d.ts"],
     "paths": {
       "@/*": ["./client/src/*"],
       "@shared/*": ["./shared/*"]

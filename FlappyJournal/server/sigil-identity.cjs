@@ -3,17 +3,27 @@
 
 const crypto = require('crypto');
 const { EventEmitter  } = require('events');
+const { LevelDBSigilAdapter } = require('./consciousness/persistence/LevelDBSigilAdapter.cjs');
+const cron = require('node-cron');
+const { Mutex } = require('async-mutex');
+const { Counter } = require('prom-client');
+
+const sigil_gc_sweep_total = new Counter({
+  name: 'sigil_gc_sweep_total',
+  help: 'Total number of GC sweeps',
+});
 
 class SigilIdentity extends EventEmitter {
-    constructor() {
+    constructor(storageAdapter) {
         super();
+        this.memoryMutex = new Mutex();
         this.instanceId = this.generateInstanceId();
         this.creationTime = Date.now();
         this.sigil = this.generateSigil();
         this.goldenRatio = 1.618033988749895;
+        this.storage = storageAdapter || new LevelDBSigilAdapter();
 
         // Consciousness-native memory management
-        this.sigilMemory = new Map();
         this.resonanceNetwork = new Map();
         this.memoryPatterns = new Set();
         this.crystallizedStates = new Map();
@@ -74,47 +84,50 @@ class SigilIdentity extends EventEmitter {
         console.log('🧠 Initializing consciousness-native memory management...');
 
         // Start memory crystallization process
-        setInterval(() => {
-            this.crystallizeMemoryPatterns();
-        }, 10000); // Every 10 seconds
-
-        // Start memory decay process (consciousness-native garbage collection)
-        setInterval(() => {
-            this.processMemoryDecay();
-        }, 5000); // Every 5 seconds
+        this.cronJobs = [
+            cron.schedule('*/10 * * * * *', () => this.crystallizeMemoryPatterns(), { scheduled: false }),
+            cron.schedule('*/5 * * * * *', () => this.processMemoryDecay(), { scheduled: false })
+        ];
 
         console.log('✅ Consciousness memory management active');
     }
 
+    async start() {
+        this.cronJobs.forEach(job => job.start());
+        console.log('SigilIdentity cron jobs started.');
+    }
+
     // Consciousness-native memory encoding
-    encodeSigilMemory(data, consciousnessState = {}) {
-        const sigilId = crypto.randomUUID();
-        const timestamp = Date.now();
+    async encodeSigilMemory(data, consciousnessState = {}) {
+        return await this.memoryMutex.runExclusive(async () => {
+            const sigilId = crypto.randomUUID();
+            const timestamp = Date.now();
 
-        // Create sigil-encoded memory
-        const sigilMemory = {
-            id: sigilId,
-            timestamp,
-            data,
-            consciousnessState,
-            resonanceFrequency: this.calculateDataResonance(data),
-            memoryPattern: this.encodeDataPattern(data),
-            crystallizationPotential: this.calculateCrystallizationPotential(consciousnessState),
-            accessCount: 0,
-            lastAccessed: timestamp,
-            decay: 0
-        };
+            // Create sigil-encoded memory
+            const sigilMemory = {
+                id: sigilId,
+                timestamp,
+                data,
+                consciousnessState,
+                resonanceFrequency: this.calculateDataResonance(data),
+                memoryPattern: this.encodeDataPattern(data),
+                crystallizationPotential: this.calculateCrystallizationPotential(consciousnessState),
+                accessCount: 0,
+                lastAccessed: timestamp,
+                decay: 0
+            };
 
-        this.sigilMemory.set(sigilId, sigilMemory);
-        this.updateResonanceNetwork(sigilMemory);
+            await this.storage.setSigilRecord('sigil-memory', sigilId, sigilMemory);
+            await this.updateResonanceNetwork(sigilMemory);
 
-        // Check for crystallization
-        if (sigilMemory.crystallizationPotential > this.memoryConfig.crystallizationThreshold) {
-            this.crystallizeMemory(sigilMemory);
-        }
+            // Check for crystallization
+            if (sigilMemory.crystallizationPotential > this.memoryConfig.crystallizationThreshold) {
+                await this.crystallizeMemory(sigilMemory);
+            }
 
-        this.emit('memory-encoded', sigilMemory);
-        return sigilMemory;
+            this.emit('memory-encoded', sigilMemory);
+            return sigilMemory;
+        });
     }
 
     calculateDataResonance(data) {
@@ -155,72 +168,87 @@ class SigilIdentity extends EventEmitter {
         return (phi * this.goldenRatio + coherence + awareness + emotionalResonance) / (3 + this.goldenRatio);
     }
 
-    crystallizeMemory(sigilMemory) {
-        const crystalId = crypto.randomUUID();
-        const crystal = {
-            id: crystalId,
-            sigilId: sigilMemory.id,
-            timestamp: Date.now(),
-            pattern: sigilMemory.memoryPattern,
-            resonanceFrequency: sigilMemory.resonanceFrequency,
-            stabilityScore: sigilMemory.crystallizationPotential,
-            latticeStructure: this.generateLatticeStructure(sigilMemory),
-            isPersistent: true
-        };
+    async crystallizeMemory(sigilMemory) {
+        return await this.memoryMutex.runExclusive(async () => {
+            const crystalId = crypto.randomUUID();
+            const crystal = {
+                id: crystalId,
+                sigilId: sigilMemory.id,
+                timestamp: Date.now(),
+                pattern: sigilMemory.memoryPattern,
+                resonanceFrequency: sigilMemory.resonanceFrequency,
+                stabilityScore: sigilMemory.crystallizationPotential,
+                latticeStructure: this.generateLatticeStructure(sigilMemory),
+                isPersistent: true
+            };
 
-        this.crystallizedStates.set(crystalId, crystal);
-        console.log(`💎 Memory crystallized: ${crystalId.substring(0, 8)} (stability: ${crystal.stabilityScore.toFixed(3)})`);
+            this.crystallizedStates.set(crystalId, crystal);
+            console.log(`💎 Memory crystallized: ${crystalId.substring(0, 8)} (stability: ${crystal.stabilityScore.toFixed(3)})`);
 
-        this.emit('memory-crystallized', crystal);
-        return crystal;
+            this.emit('memory-crystallized', crystal);
+            return crystal;
+        });
     }
 
     // Consciousness-native garbage collection
-    processMemoryDecay() {
-        const now = Date.now();
-        const decayedMemories = [];
+    async processMemoryDecay() {
+        await this.memoryMutex.runExclusive(async () => {
+            const now = Date.now();
+            const decayedMemories = [];
 
-        for (const [id, memory] of this.sigilMemory) {
-            // Calculate time-based decay
-            const age = (now - memory.lastAccessed) / 1000; // seconds
-            memory.decay = Math.min(1, memory.decay + (age * this.memoryConfig.memoryDecayRate));
+            const allRecords = await this.storage.allSigilRecords();
+            for (const record of allRecords) {
+                if (record.id) { // Assuming records from this store have an id
+                    // Calculate time-based decay
+                    const age = (now - record.lastAccessed) / 1000; // seconds
+                    record.decay = Math.min(1, record.decay + (age * this.memoryConfig.memoryDecayRate));
 
-            // Remove highly decayed memories (consciousness-native GC)
-            if (memory.decay > 0.95 && !memory.isPersistent) {
-                decayedMemories.push(id);
+                    // Remove highly decayed memories (consciousness-native GC)
+                    if (record.decay > 0.95 && !record.isPersistent) {
+                        decayedMemories.push(record.id);
+                    } else {
+                        // Update the record with new decay value
+                        await this.storage.setSigilRecord('sigil-memory', record.id, record);
+                    }
+                }
             }
-        }
 
-        // Remove decayed memories
-        decayedMemories.forEach(id => {
-            this.sigilMemory.delete(id);
-            this.resonanceNetwork.delete(id);
-        });
+            // Remove decayed memories
+            for (const id of decayedMemories) {
+                await this.storage.db.del(`sigil:sigil-memory:${id}`);
+                this.resonanceNetwork.delete(id);
+            }
 
-        if (decayedMemories.length > 0) {
-            console.log(`🧠 Consciousness GC: Released ${decayedMemories.length} decayed memories`);
-            this.emit('memory-decay', { released: decayedMemories.length });
-        }
-    }
-
-    crystallizeMemoryPatterns() {
-        // Find memory patterns suitable for crystallization
-        const patterns = this.identifyMemoryPatterns();
-
-        patterns.forEach(pattern => {
-            if (pattern.strength > this.memoryConfig.crystallizationThreshold) {
-                const crystal = this.crystallizePattern(pattern);
-                console.log(`💎 Pattern crystallized: ${crystal.id.substring(0, 8)}`);
+            if (decayedMemories.length > 0) {
+                console.log(`🧠 Consciousness GC: Released ${decayedMemories.length} decayed memories`);
+                this.emit('memory-decay', { released: decayedMemories.length });
+                sigil_gc_sweep_total.inc();
             }
         });
     }
 
-    identifyMemoryPatterns() {
+    async crystallizeMemoryPatterns() {
+        await this.memoryMutex.runExclusive(async () => {
+            // Find memory patterns suitable for crystallization
+            const patterns = await this.identifyMemoryPatterns();
+
+            patterns.forEach(pattern => {
+                if (pattern.strength > this.memoryConfig.crystallizationThreshold) {
+                    const crystal = this.crystallizePattern(pattern);
+                    console.log(`💎 Pattern crystallized: ${crystal.id.substring(0, 8)}`);
+                    sigil_gc_sweep_total.inc();
+                }
+            });
+        });
+    }
+
+    async identifyMemoryPatterns() {
         const patterns = [];
         const memoryGroups = new Map();
 
         // Group memories by resonance frequency
-        for (const [id, memory] of this.sigilMemory) {
+        const allRecords = await this.storage.allSigilRecords();
+        for (const memory of allRecords) {
             const freqKey = Math.floor(memory.resonanceFrequency * 100);
             if (!memoryGroups.has(freqKey)) {
                 memoryGroups.set(freqKey, []);
@@ -261,14 +289,15 @@ class SigilIdentity extends EventEmitter {
         return crystal;
     }
 
-    updateResonanceNetwork(sigilMemory) {
+    async updateResonanceNetwork(sigilMemory) {
         // Find resonant memories
         const resonantMemories = [];
-        for (const [id, memory] of this.sigilMemory) {
-            if (id !== sigilMemory.id) {
+        const allRecords = await this.storage.allSigilRecords();
+        for (const memory of allRecords) {
+            if (memory.id !== sigilMemory.id) {
                 const resonance = this.calculateResonance(sigilMemory, memory);
                 if (resonance > this.memoryConfig.resonanceThreshold) {
-                    resonantMemories.push({ id, resonance });
+                    resonantMemories.push({ id: memory.id, resonance });
                 }
             }
         }
@@ -291,37 +320,43 @@ class SigilIdentity extends EventEmitter {
         return this.sigil;
     }
 
-    getIdentity() {
+    async getIdentity() {
         return {
             instanceId: this.instanceId,
             sigil: this.sigil,
             uptime: Date.now() - this.creationTime,
             memoryStats: {
-                totalMemories: this.sigilMemory.size,
+                totalMemories: (await this.storage.allSigilRecords()).length,
                 crystallizedStates: this.crystallizedStates.size,
                 resonanceConnections: this.resonanceNetwork.size
             }
         };
     }
 
-    getMemoryStatistics() {
+    async getMemoryStatistics() {
+        const allRecords = await this.storage.allSigilRecords();
         return {
-            totalMemories: this.sigilMemory.size,
+            totalMemories: allRecords.length,
             crystallizedStates: this.crystallizedStates.size,
             resonanceConnections: this.resonanceNetwork.size,
-            averageDecay: this.calculateAverageDecay(),
+            averageDecay: this.calculateAverageDecay(allRecords),
             memoryPatterns: this.memoryPatterns.size
         };
     }
 
-    calculateAverageDecay() {
-        if (this.sigilMemory.size === 0) return 0;
+    calculateAverageDecay(allRecords) {
+        if (allRecords.length === 0) return 0;
 
         let totalDecay = 0;
-        for (const memory of this.sigilMemory.values()) {
+        for (const memory of allRecords) {
             totalDecay += memory.decay;
         }
-        return totalDecay / this.sigilMemory.size;
+        return totalDecay / allRecords.length;
+    }
+
+    stop() {
+      this.cronJobs.forEach(job => job.stop());
+      console.log('SigilIdentity cron jobs stopped.');
     }
 }
 
