@@ -5,6 +5,19 @@
  */
 
 import { EventEmitter } from 'events';
+import client from 'prom-client';
+
+const eventQueueSizeGauge = new client.Gauge({
+    name: 'event_queue_size',
+    help: 'Number of events in queue',
+    labelNames: ['priority']
+});
+
+const eventProcessedTotal = new client.Counter({
+    name: 'event_processed_total',
+    help: 'Total events processed',
+    labelNames: ['status']
+});
 
 export class PriorityEventBus extends EventEmitter {
     constructor() {
@@ -126,7 +139,7 @@ export class PriorityEventBus extends EventEmitter {
      */
     async processEvent(eventData) {
         const startTime = Date.now();
-        
+
         try {
             // Route through load balancer for optimal distribution
             const routingStrategy = this.messageRouter.selectRoutingStrategy(eventData);
@@ -142,10 +155,12 @@ export class PriorityEventBus extends EventEmitter {
             const latency = Date.now() - startTime;
             this.performanceMonitor.recordEvent(eventData, latency);
             this.updateProcessingStats(latency);
-            
+            eventProcessedTotal.labels({ status: 'success' }).inc();
+
         } catch (error) {
             console.error(`Error processing event ${eventData.event}:`, error);
-            
+            eventProcessedTotal.labels({ status: 'error' }).inc();
+
             // Emit error event for monitoring
             super.emit('event:processing:error', {
                 originalEvent: eventData,
@@ -205,6 +220,7 @@ export class PriorityEventBus extends EventEmitter {
      * Get performance metrics
      */
     getPerformanceMetrics() {
+        eventQueueSizeGauge.labels({ priority: 'HIGH' }).set(this.priorityQueues.HIGH.length);
         return {
             ...this.processingStats,
             isProcessing: this.isProcessing,
