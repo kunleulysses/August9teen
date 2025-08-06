@@ -1,0 +1,20 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: holograph-broker-partition
+  namespace: default
+spec:
+  appinfo:
+    appns: default
+    applabel: app=holograph-broker
+    appkind: statefulset
+  chaosServiceAccount: litmus-admin
+  experiments:
+    - name: pod-network-partition
+      spec:
+        components:
+          env:
+            - name: NETWORK_AFFECTED_PERCENT
+              value: '100'
+            - name: TOTAL_CHAOS_DURATION
+              value: '60'
