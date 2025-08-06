@@ -45,6 +45,10 @@ if (argvArgs.includes('--rpc') && argvArgs[argvArgs.indexOf('--rpc') + 1] === 'g
         try {
             // Initialise minimal integration context
             const integration = new CompleteUniversalSystemIntegration();
+            // Ensure integration fully initializes before status check
+            if (typeof integration.initialize === 'function') {
+                await integration.initialize();
+            }
             // Allow subsystems to bootstrap (shorter than full 10s terminal wait)
             // give subsystems more time to register modules
             await new Promise(r => setTimeout(r, 10000));
