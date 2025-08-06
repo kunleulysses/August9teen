@@ -1,0 +1,46 @@
+name: Daily Restore Smoke Test
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    env:
+      NAMESPACE: restore-${{ github.run_id }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: v1.30.0
+
+      - name: Configure Kubernetes credentials
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
+
+      - name: Create fresh namespace
+        id: create-ns
+        run: |
+          kubectl create namespace "$NAMESPACE"
+          echo "name=$NAMESPACE" >> "$GITHUB_OUTPUT"
+
+      - name: Restore latest snapshot
+        run: ./scripts/restore-latest-snapshot.sh "${{ steps.create-ns.outputs.name }}"
+
+      - name: Run smoke tests
+        run: npm test -- FlappyJournal/server/tests/health/basic-health-check.test.ts
+
+      - name: Monitor restore logs
+        run: |
+          kubectl logs -n "${{ steps.create-ns.outputs.name }}" --all-containers > restore.log
+          grep -q "Restore completed" restore.log
+
+      - name: Cleanup namespace
+        if: always()
+        run: kubectl delete namespace "${{ steps.create-ns.outputs.name }}"
