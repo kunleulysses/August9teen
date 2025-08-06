@@ -25,6 +25,7 @@ const io = new Server(server, {
 // Service configuration
 const PORT = process.env.REALITY_GENERATION_PORT || 5006;
 const DEDICATED_CORES = parseInt(process.env.DEDICATED_CPU_CORES) || 2;
+const REALITY_FPS = parseInt(process.env.REALITY_FPS) || 10;
 
 // Initialize reality generation components
 let imaginationEngine;
@@ -33,11 +34,16 @@ let serviceMetrics = {
     startTime: Date.now(),
     totalRealities: 0,
     activeConnections: 0,
+    droppedFrames: 0,
+    currentFps: REALITY_FPS,
     cpuCores: {
         total: os.cpus().length,
         dedicated: DEDICATED_CORES
     }
 };
+
+let currentFps = REALITY_FPS;
+let lastBroadcastTime = 0;
 
 // Middleware
 app.use(express.json());
@@ -212,10 +218,20 @@ async function initializeServices() {
                     });
                 });
 
+                const BACKLOG_LIMIT = 1024 * 1024; // 1 MB
                 broadcastToRawWSClients = function(message) {
+                    const encodeStart = process.hrtime.bigint();
                     const msgStr = JSON.stringify(message);
+                    const encodeTimeMs = Number(process.hrtime.bigint() - encodeStart) / 1e6;
+                    currentFps = encodeTimeMs > 50 ? 1 : REALITY_FPS;
+                    serviceMetrics.currentFps = currentFps;
+
                     for (const ws of wsClients) {
                         if (ws.readyState === ws.OPEN) {
+                            if (ws.bufferedAmount > BACKLOG_LIMIT) {
+                                serviceMetrics.droppedFrames++;
+                                continue;
+                            }
                             ws.send(msgStr);
                         }
                     }
@@ -223,8 +239,13 @@ async function initializeServices() {
 
                 // Listen for reality generation events (after broadcastToRawWSClients is defined)
                 imaginationEngine.on('reality_generated', (data) => {
+                    const now = Date.now();
+                    if (now - lastBroadcastTime < 1000 / currentFps) {
+                        return;
+                    }
+                    lastBroadcastTime = now;
                     serviceMetrics.totalRealities++;
-                    
+
                     // Broadcast to all connected clients
                     io.emit('new-reality', {
                         id: data.id,
@@ -243,7 +264,7 @@ async function initializeServices() {
                             timestamp: Date.now()
                         }
                     });
-                    
+
                     console.log(`📡 Broadcasting new reality: ${data.id}`);
                 });
             });
