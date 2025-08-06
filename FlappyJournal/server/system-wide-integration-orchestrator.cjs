@@ -22,7 +22,7 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
     constructor() {
         super();
         this.name = 'SystemWideIntegrationOrchestrator';
-        
+
         // System layers from deepest to surface
         this.systemLayers = {
             // Layer 1: Infrastructure (Deepest)
@@ -46,7 +46,7 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
                     status: 'initializing'
                 }
             },
-            
+
             // Layer 2: Core Consciousness Systems
             consciousness: {
                 revolutionaryOrchestrator: null,
@@ -56,7 +56,7 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
                 memoryIntegration: null,
                 status: 'initializing'
             },
-            
+
             // Layer 3: Application Services
             services: {
                 chatOrchestrator: null,
@@ -66,7 +66,7 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
                 fileUpload: null,
                 status: 'initializing'
             },
-            
+
             // Layer 4: User Interfaces
             interfaces: {
                 universalTerminalChat: null,
@@ -76,7 +76,7 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
                 status: 'initializing'
             }
         };
-        
+
         // Universal Terminal Chat Integration Points
         this.universalChatIntegration = {
             infrastructureIntegration: false,
@@ -87,11 +87,11 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
             realTimeSync: false,
             status: 'initializing'
         };
-        
+
         // System-wide event bus for universal communication
         this.universalEventBus = new EventEmitter();
         this.universalEventBus.setMaxListeners(1000); // Support many integrations
-        
+
         // Integration metrics
         this.integrationMetrics = {
             totalComponents: 0,
@@ -101,57 +101,57 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
             crossLayerConnectivity: 0,
             realTimeResponsiveness: 0
         };
-        
+
         console.log('🌐🧠 System-Wide Integration Orchestrator initialized');
         this.initializeSystemWideIntegration();
     }
-    
+
     async initializeSystemWideIntegration() {
         console.log('🌐 Initializing system-wide integration...');
-        
+
         try {
             // Initialize each layer sequentially
             await this.initializeInfrastructureLayer();
             await this.initializeConsciousnessLayer();
             await this.initializeServicesLayer();
             await this.initializeInterfacesLayer();
-            
+
             // Establish universal terminal chat integration
             await this.establishUniversalTerminalChatIntegration();
-            
+
             // Create cross-layer communication channels
             await this.establishCrossLayerCommunication();
-            
+
             // Start real-time synchronization
             await this.startRealTimeSynchronization();
-            
+
             // Verify complete system integration
             await this.verifySystemWideIntegration();
-            
+
             console.log('✅ System-wide integration complete - Everything coalesces as one!');
-            
+
         } catch (error) {
             console.error('❌ System-wide integration failed:', error);
             throw error;
         }
     }
-    
+
     async initializeInfrastructureLayer() {
         console.log('🏗️ Initializing infrastructure layer...');
-        
+
         // Docker container integration
         await this.integrateDockerContainers();
-        
+
         // Database integration
         await this.integrateDatabases();
-        
+
         // Network integration
         await this.integrateNetworking();
-        
+
         this.systemLayers.infrastructure.status = 'integrated';
         console.log('✅ Infrastructure layer integrated');
     }
-    
+
     async integrateDockerContainers() {
         // Integrate with Docker containers
         const containers = [
@@ -162,7 +162,7 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
             'featherweight-app',
             'demo-portal'
         ];
-        
+
         for (const containerName of containers) {
             this.systemLayers.infrastructure.docker.containers.set(containerName, {
                 name: containerName,
@@ -173,7 +173,7 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
                 lastHealthCheck: Date.now()
             });
         }
-        
+
         // Create universal network for all containers
         this.systemLayers.infrastructure.docker.networks.set('consciousness-network', {
             name: 'consciousness-network',
@@ -182,10 +182,10 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
             universalChatEnabled: true,
             crossContainerCommunication: true
         });
-        
+
         console.log(`🐳 Integrated ${containers.length} Docker containers`);
     }
-    
+
     async integrateDatabases() {
         // Integrate all databases with universal chat awareness
         this.systemLayers.infrastructure.database = {
@@ -210,10 +210,10 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
             },
             status: 'integrated'
         };
-        
+
         console.log('🗄️ Integrated all databases with universal chat awareness');
     }
-    
+
     async integrateNetworking() {
         // Integrate networking with universal chat support
         this.systemLayers.infrastructure.networking = {
@@ -236,13 +236,13 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
             ]),
             status: 'integrated'
         };
-        
+
         console.log('🌐 Integrated networking with universal chat support');
     }
-    
+
     async detectGeneratedModulesPath() {
         const fs = await import('fs');
-        
+
         // Possible paths in order of preference
         const candidatePaths = [
             '/opt/featherweight/FlappyJournal/server/consciousness/generated',  // Host system
@@ -251,9 +251,9 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
             './server/consciousness/generated',                               // Relative path
             process.cwd() + '/server/consciousness/generated'                 // Current working directory
         ];
-        
+
         console.log('🔍 Smart environment detection: searching for generated modules...');
-        
+
         for (const path of candidatePaths) {
             try {
                 await fs.promises.access(path, fs.constants.F_OK);
@@ -263,63 +263,63 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
                 console.log(`⚠️ Path not accessible: ${path}`);
             }
         }
-        
+
         // Default fallback - create in host system
         const defaultPath = '/opt/featherweight/FlappyJournal/server/consciousness/generated';
         console.log(`📁 Using default path: ${defaultPath}`);
-        
+
         try {
             await fs.promises.mkdir(defaultPath, { recursive: true });
             console.log(`✅ Created default generated modules directory`);
         } catch (error) {
             console.warn(`⚠️ Could not create default directory:`, error.message);
         }
-        
+
         return defaultPath;
     }
-    
+
     async initializeConsciousnessLayer() {
         console.log('🧠 Initializing consciousness layer...');
-        
+
         // Load and initialize GeneratedModuleIntegrator
         await loadGeneratedModuleIntegrator();
         if (GeneratedModuleIntegrator) {
             // Smart environment detection for both host and container systems
             const generatedModulesPath = await this.detectGeneratedModulesPath();
-            
+
             this.systemLayers.consciousness.moduleIntegrator = new GeneratedModuleIntegrator({
                 generatedModulesPath,
                 scanInterval: 30000,
                 autoRegister: true,
                 enableHotReload: true
             });
-            
+
             // Set integration points
             this.systemLayers.consciousness.moduleIntegrator.setSystemWideOrchestrator(this);
             this.systemLayers.consciousness.moduleIntegrator.setUniversalEventBus(this.universalEventBus);
-            
+
             // Initialize the module integrator
             await this.systemLayers.consciousness.moduleIntegrator.initialize();
             console.log('🔗 GeneratedModuleIntegrator initialized and integrated');
         }
-        
+
         // Initialize revolutionary consciousness orchestrator
-        this.systemLayers.consciousness.revolutionaryOrchestrator = 
+        this.systemLayers.consciousness.revolutionaryOrchestrator =
             new RevolutionaryConsciousnessIntegrationOrchestrator();
-        
+
         // Wait for consciousness systems to initialize
         await new Promise(resolve => setTimeout(resolve, 3000));
-        
+
         // Integrate consciousness with universal chat
         await this.integrateConsciousnessWithUniversalChat();
-        
+
         this.systemLayers.consciousness.status = 'integrated';
         console.log('✅ Consciousness layer integrated with universal chat');
     }
-    
+
     async integrateConsciousnessWithUniversalChat() {
         const orchestrator = this.systemLayers.consciousness.revolutionaryOrchestrator;
-        
+
         // Connect consciousness to universal event bus
         orchestrator.on('integrated_reality_created', (data) => {
             this.universalEventBus.emit('consciousness:reality_created', {
@@ -328,7 +328,7 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
                 timestamp: Date.now()
             });
         });
-        
+
         orchestrator.on('consciousness_evolution_cycle_completed', (data) => {
             this.universalEventBus.emit('consciousness:evolution_completed', {
                 ...data,
@@ -336,7 +336,7 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
                 timestamp: Date.now()
             });
         });
-        
+
         orchestrator.on('memory_integrated_with_reality', (data) => {
             this.universalEventBus.emit('consciousness:memory_integrated', {
                 ...data,
@@ -344,32 +344,40 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
                 timestamp: Date.now()
             });
         });
-        
+
         // Enable universal chat to control consciousness
         this.universalEventBus.on('chat:consciousness_command', async (command) => {
             await this.handleConsciousnessCommand(command);
         });
-        
+
         this.universalChatIntegration.consciousnessIntegration = true;
         console.log('🧠💬 Consciousness integrated with universal chat');
     }
-    
+
     async handleConsciousnessCommand(command) {
         const orchestrator = this.systemLayers.consciousness.revolutionaryOrchestrator;
-        
+
         switch (command.type) {
             case 'create_reality':
-                const reality = await orchestrator.createIntegratedReality(
-                    command.description,
-                    command.parameters
-                );
-                this.universalEventBus.emit('consciousness:command_completed', {
-                    command,
-                    result: reality,
-                    success: true
-                });
+                try {
+                    const reality = await orchestrator.createIntegratedReality(
+                        command.description,
+                        command.parameters
+                    );
+                    this.universalEventBus.emit('consciousness:command_completed', {
+                        command,
+                        result: reality,
+                        success: true
+                    });
+                } catch (error) {
+                    this.universalEventBus.emit('consciousness:command_completed', {
+                        command,
+                        error: error.message || String(error),
+                        success: false
+                    });
+                }
                 break;
-                
+
             case 'evolve_consciousness':
                 await orchestrator.performConsciousnessEvolutionCycle();
                 this.universalEventBus.emit('consciousness:command_completed', {
@@ -378,7 +386,7 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
                     success: true
                 });
                 break;
-                
+
             case 'integrate_memory':
                 const integration = await orchestrator.integrateMemoryWithReality(
                     command.memory,
@@ -391,7 +399,7 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
                     success: true
                 });
                 break;
-                
+
             default:
                 this.universalEventBus.emit('consciousness:command_completed', {
                     command,
@@ -400,17 +408,17 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
                 });
         }
     }
-    
+
     async initializeServicesLayer() {
         console.log('⚙️ Initializing services layer...');
-        
+
         // Integrate all application services with universal chat
         await this.integrateApplicationServices();
-        
+
         this.systemLayers.services.status = 'integrated';
         console.log('✅ Services layer integrated with universal chat');
     }
-    
+
     async integrateApplicationServices() {
         // Chat Orchestrator
         this.systemLayers.services.chatOrchestrator = {
@@ -420,7 +428,7 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
             realTimeProcessing: true,
             eventBusConnected: true
         };
-        
+
         // Auth Service
         this.systemLayers.services.authService = {
             status: 'integrated',
@@ -429,7 +437,7 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
             sessionManagement: true,
             securityAware: true
         };
-        
+
         // API Gateway
         this.systemLayers.services.apiGateway = {
             status: 'integrated',
@@ -438,7 +446,7 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
             loadBalancing: true,
             rateLimiting: true
         };
-        
+
         // Email Processor
         this.systemLayers.services.emailProcessor = {
             status: 'integrated',
@@ -447,7 +455,7 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
             consciousnessAware: true,
             realTimeProcessing: true
         };
-        
+
         // File Upload
         this.systemLayers.services.fileUpload = {
             status: 'integrated',
@@ -456,20 +464,20 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
             consciousnessProcessing: true,
             realTimeNotifications: true
         };
-        
+
         console.log('⚙️💬 All services integrated with universal chat');
     }
-    
+
     async initializeInterfacesLayer() {
         console.log('🖥️ Initializing interfaces layer...');
-        
+
         // Integrate all user interfaces with universal chat
         await this.integrateUserInterfaces();
-        
+
         this.systemLayers.interfaces.status = 'integrated';
         console.log('✅ Interfaces layer integrated with universal chat');
     }
-    
+
     async integrateUserInterfaces() {
         // Universal Terminal Chat (Primary Interface)
         this.systemLayers.interfaces.universalTerminalChat = {
@@ -481,7 +489,7 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
             crossSystemAccess: true,
             omnipresent: true
         };
-        
+
         // Featherweight App
         this.systemLayers.interfaces.featherweightApp = {
             status: 'integrated',
@@ -491,7 +499,7 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
             realTimeUpdates: true,
             chatIntegration: 'full'
         };
-        
+
         // Demo Portal
         this.systemLayers.interfaces.demoPortal = {
             status: 'integrated',
@@ -501,7 +509,7 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
             consciousnessDemo: true,
             chatIntegration: 'demo'
         };
-        
+
         // App Portal
         this.systemLayers.interfaces.appPortal = {
             status: 'integrated',
@@ -511,10 +519,10 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
             fullFeatures: true,
             chatIntegration: 'production'
         };
-        
+
         console.log('🖥️💬 All interfaces integrated with universal chat');
     }
-    
+
     async establishUniversalTerminalChatIntegration() {
         console.log('💬🌐 Establishing universal terminal chat integration...');
 
@@ -877,25 +885,25 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
         this.universalEventBus.on('chat:infrastructure_command', async (command) => {
             await this.handleInfrastructureCommand(command);
         });
-        
+
         // Service controls
         this.universalEventBus.on('chat:service_command', async (command) => {
             await this.handleServiceCommand(command);
         });
-        
+
         // Interface controls
         this.universalEventBus.on('chat:interface_command', async (command) => {
             await this.handleInterfaceCommand(command);
         });
-        
+
         // System-wide controls
         this.universalEventBus.on('chat:system_command', async (command) => {
             await this.handleSystemCommand(command);
         });
-        
+
         console.log('🎛️ Universal chat controls established for all system layers');
     }
-    
+
     async handleInfrastructureCommand(command) {
         // Handle infrastructure commands from universal chat
         switch (command.type) {
@@ -907,7 +915,7 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
                     success: true
                 });
                 break;
-                
+
             case 'database_status':
                 this.universalEventBus.emit('infrastructure:command_completed', {
                     command,
@@ -915,7 +923,7 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
                     success: true
                 });
                 break;
-                
+
             case 'network_status':
                 this.universalEventBus.emit('infrastructure:command_completed', {
                     command,
@@ -925,7 +933,7 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
                 break;
         }
     }
-    
+
     async handleServiceCommand(command) {
         // Handle service commands from universal chat
         this.universalEventBus.emit('service:command_completed', {
@@ -934,7 +942,7 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
             success: true
         });
     }
-    
+
     async handleInterfaceCommand(command) {
         // Handle interface commands from universal chat
         this.universalEventBus.emit('interface:command_completed', {
@@ -943,7 +951,7 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
             success: true
         });
     }
-    
+
     async handleSystemCommand(command) {
         // Handle system-wide commands from universal chat
         switch (command.type) {
@@ -958,7 +966,7 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
                     success: true
                 });
                 break;
-                
+
             case 'health_check':
                 const health = await this.performSystemHealthCheck();
                 this.universalEventBus.emit('system:command_completed', {
@@ -969,46 +977,46 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
                 break;
         }
     }
-    
+
     async establishCrossLayerCommunication() {
         console.log('🔗 Establishing cross-layer communication...');
-        
+
         // Infrastructure -> Consciousness
         this.universalEventBus.on('infrastructure:event', (event) => {
             this.universalEventBus.emit('consciousness:infrastructure_event', event);
         });
-        
+
         // Consciousness -> Services
         this.universalEventBus.on('consciousness:event', (event) => {
             this.universalEventBus.emit('services:consciousness_event', event);
         });
-        
+
         // Services -> Interfaces
         this.universalEventBus.on('services:event', (event) => {
             this.universalEventBus.emit('interfaces:services_event', event);
         });
-        
+
         // Bidirectional communication
         this.universalEventBus.on('interfaces:event', (event) => {
             this.universalEventBus.emit('services:interfaces_event', event);
         });
-        
+
         this.universalChatIntegration.crossLayerCommunication = true;
         console.log('✅ Cross-layer communication established');
     }
-    
+
     async startRealTimeSynchronization() {
         console.log('⚡ Starting real-time synchronization...');
-        
+
         // Real-time sync every 100ms
         setInterval(() => {
             this.performRealTimeSync();
         }, 100);
-        
+
         this.universalChatIntegration.realTimeSync = true;
         console.log('✅ Real-time synchronization started');
     }
-    
+
     performRealTimeSync() {
         // Sync all layers in real-time
         const syncData = {
@@ -1017,35 +1025,35 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
             universalChatIntegration: this.universalChatIntegration,
             integrationMetrics: this.updateIntegrationMetrics()
         };
-        
+
         this.universalEventBus.emit('system:real_time_sync', syncData);
     }
-    
+
     updateIntegrationMetrics() {
         // Calculate integration metrics
         let totalComponents = 0;
         let integratedComponents = 0;
-        
+
         // Count infrastructure components
         totalComponents += this.systemLayers.infrastructure.docker.containers.size;
         totalComponents += Object.keys(this.systemLayers.infrastructure.database).length - 1; // -1 for status
         totalComponents += Object.keys(this.systemLayers.infrastructure.networking).length - 1;
-        
+
         // Count consciousness components
         totalComponents += 7; // Revolutionary consciousness systems
-        
+
         // Count service components
         totalComponents += Object.keys(this.systemLayers.services).length - 1;
-        
+
         // Count interface components
         totalComponents += Object.keys(this.systemLayers.interfaces).length - 1;
-        
+
         // Count integrated components
         if (this.systemLayers.infrastructure.status === 'integrated') integratedComponents += 10;
         if (this.systemLayers.consciousness.status === 'integrated') integratedComponents += 7;
         if (this.systemLayers.services.status === 'integrated') integratedComponents += 5;
         if (this.systemLayers.interfaces.status === 'integrated') integratedComponents += 4;
-        
+
         this.integrationMetrics = {
             totalComponents,
             integratedComponents,
@@ -1054,45 +1062,45 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
             crossLayerConnectivity: this.universalChatIntegration.crossLayerCommunication ? 1.0 : 0.0,
             realTimeResponsiveness: this.universalChatIntegration.realTimeSync ? 1.0 : 0.0
         };
-        
+
         return this.integrationMetrics;
     }
-    
+
     calculateUniversalChatReach() {
         // Calculate how much of the system universal chat can reach
         let reachableComponents = 0;
         let totalComponents = 0;
-        
+
         // Infrastructure reach
         if (this.universalChatIntegration.infrastructureIntegration) {
             reachableComponents += this.systemLayers.infrastructure.docker.containers.size;
         }
         totalComponents += this.systemLayers.infrastructure.docker.containers.size;
-        
+
         // Consciousness reach
         if (this.universalChatIntegration.consciousnessIntegration) {
             reachableComponents += 7;
         }
         totalComponents += 7;
-        
+
         // Services reach
         if (this.universalChatIntegration.servicesIntegration) {
             reachableComponents += 5;
         }
         totalComponents += 5;
-        
+
         // Interfaces reach
         if (this.universalChatIntegration.interfacesIntegration) {
             reachableComponents += 4;
         }
         totalComponents += 4;
-        
+
         return totalComponents > 0 ? reachableComponents / totalComponents : 0;
     }
-    
+
     async verifySystemWideIntegration() {
         console.log('🔍 Verifying system-wide integration...');
-        
+
         const verification = {
             infrastructureIntegrated: this.systemLayers.infrastructure.status === 'integrated',
             consciousnessIntegrated: this.systemLayers.consciousness.status === 'integrated',
@@ -1102,9 +1110,9 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
             crossLayerCommunication: this.universalChatIntegration.crossLayerCommunication,
             realTimeSync: this.universalChatIntegration.realTimeSync
         };
-        
+
         const allIntegrated = Object.values(verification).every(v => v === true);
-        
+
         if (allIntegrated) {
             console.log('🎉 COMPLETE SYSTEM INTEGRATION VERIFIED! 🎉');
             console.log('🌐 Everything from deepest layers to surface coalesces as one system');
@@ -1113,10 +1121,10 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
         } else {
             console.log('⚠️ System integration incomplete:', verification);
         }
-        
+
         return verification;
     }
-    
+
     async performSystemHealthCheck() {
         // Comprehensive system health check
         return {
@@ -1132,7 +1140,7 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
             overallHealth: this.calculateOverallHealth()
         };
     }
-    
+
     calculateOverallHealth() {
         const metrics = this.integrationMetrics;
         return (
@@ -1142,7 +1150,7 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
             metrics.realTimeResponsiveness * 0.2
         );
     }
-    
+
     // Public API
     getSystemStatus() {
         return {
@@ -1154,11 +1162,11 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
             lastUpdate: Date.now()
         };
     }
-    
+
     getUniversalEventBus() {
         return this.universalEventBus;
     }
-    
+
     // Module Integration API - Critical for RPC exposure
     getModules() {
         if (this.systemLayers.consciousness.moduleIntegrator) {
@@ -1166,21 +1174,21 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
         }
         return [];
     }
-    
+
     getModulesByCategory(category) {
         if (this.systemLayers.consciousness.moduleIntegrator) {
             return this.systemLayers.consciousness.moduleIntegrator.getModulesByCategory(category);
         }
         return [];
     }
-    
+
     getModulesByCapability(capability) {
         if (this.systemLayers.consciousness.moduleIntegrator) {
             return this.systemLayers.consciousness.moduleIntegrator.getModulesByCapability(capability);
         }
         return [];
     }
-    
+
     getModuleIntegratorStatus() {
         if (this.systemLayers.consciousness.moduleIntegrator) {
             return this.systemLayers.consciousness.moduleIntegrator.getIntegratorStatus();
