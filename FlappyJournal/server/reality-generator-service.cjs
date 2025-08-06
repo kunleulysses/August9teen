@@ -9,6 +9,9 @@ const { Server  } = require('socket.io');
 const AutonomousImaginationEngine = require('./consciousness/autonomous-imagination-engine.cjs');
 const { HolographicConsciousnessRealityGenerator  } = require('./consciousness/holographic-consciousness-reality-generator.cjs');
 const os = require('os');
+const { verifyScope } = require('../../server/consciousness/utils/authz.cjs');
+
+const requireRealityGenScope = verifyScope('reality.gen');
 
 // Initialize Express app
 const app = express();
@@ -43,7 +46,7 @@ let serviceMetrics = {
 app.use(express.json());
 
 // Health check endpoint
-app.get('/health', (req, res) => {
+app.get('/health', requireRealityGenScope, (req, res) => {
     const uptime = Date.now() - serviceMetrics.startTime;
     res.json({
         status: 'healthy',
@@ -55,7 +58,7 @@ app.get('/health', (req, res) => {
 });
 
 // Get generated realities
-app.get('/api/realities', (req, res) => {
+app.get('/api/realities', requireRealityGenScope, (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const realities = imaginationEngine ? imaginationEngine.getGeneratedRealities(limit) : [];
     res.json({
@@ -65,7 +68,7 @@ app.get('/api/realities', (req, res) => {
 });
 
 // Start/stop imagination engine
-app.post('/api/imagination/start', (req, res) => {
+app.post('/api/imagination/start', requireRealityGenScope, (req, res) => {
     if (!imaginationEngine) {
         return res.status(500).json({ error: 'Imagination engine not initialized' });
     }
@@ -74,7 +77,7 @@ app.post('/api/imagination/start', (req, res) => {
     res.json({ status: 'started', message: 'Autonomous imagination engine started' });
 });
 
-app.post('/api/imagination/stop', (req, res) => {
+app.post('/api/imagination/stop', requireRealityGenScope, (req, res) => {
     if (!imaginationEngine) {
         return res.status(500).json({ error: 'Imagination engine not initialized' });
     }
@@ -84,7 +87,7 @@ app.post('/api/imagination/stop', (req, res) => {
 });
 
 // Get imagination engine status
-app.get('/api/imagination/status', (req, res) => {
+app.get('/api/imagination/status', requireRealityGenScope, (req, res) => {
     if (!imaginationEngine) {
         return res.status(500).json({ error: 'Imagination engine not initialized' });
     }
@@ -93,7 +96,7 @@ app.get('/api/imagination/status', (req, res) => {
 });
 
 // Manual reality generation endpoint
-app.post('/api/generate-reality', async (req, res) => {
+app.post('/api/generate-reality', requireRealityGenScope, async (req, res) => {
     try {
         const { request, consciousnessState } = req.body;
         
