@@ -1,5 +1,8 @@
 import { EventEmitter } from 'events';
 import eventBus from '../core/ConsciousnessEventBus.cjs';
+import { child as createLogger } from '../../../../server/consciousness/utils/logger.cjs';
+
+const log = createLogger({ module: 'AutonomousCodeRefactoringSystem' });
 
 export default class AutonomousCodeRefactoringSystem extends EventEmitter {
   constructor(selfCodingModule, codeAnalyzer) {
@@ -22,14 +25,14 @@ export default class AutonomousCodeRefactoringSystem extends EventEmitter {
   }
 
   initialize() {
-    console.log('🔄 Autonomous Code Refactoring System Initialized');
+    log.info('🔄 Autonomous Code Refactoring System Initialized');
     try {
       // Don't start automatically - wait for explicit call
       if (eventBus && eventBus.emit) {
         eventBus.emit('module_initialized', { name: this.name });
       }
     } catch (error) {
-      console.warn('🔄 Event bus emission failed:', error.message);
+      log.warn('🔄 Event bus emission failed:', error.message);
     }
   }
 
@@ -51,7 +54,7 @@ export default class AutonomousCodeRefactoringSystem extends EventEmitter {
   startAutonomousRefactoring() {
     if (this.refactoringActive) return;
 
-    console.log('🔄 Starting Autonomous Code Refactoring');
+    log.info('🔄 Starting Autonomous Code Refactoring');
     this.refactoringActive = true;
   }
 
@@ -61,11 +64,11 @@ export default class AutonomousCodeRefactoringSystem extends EventEmitter {
   async scanForRefactoringOpportunities() {
     try {
       if (this.activeRefactorings.size >= this.maxConcurrentRefactorings) {
-        console.log('⏳ Maximum concurrent refactorings in progress, skipping scan');
+        log.info('⏳ Maximum concurrent refactorings in progress, skipping scan');
         return;
       }
 
-      console.log('🔍 Scanning for refactoring opportunities...');
+      log.info('🔍 Scanning for refactoring opportunities...');
 
       // Get modules to analyze (simulate with codeHistory for now)
       const modules = this.selfCodingModule.codeHistory.map(entry => ({
@@ -83,7 +86,7 @@ export default class AutonomousCodeRefactoringSystem extends EventEmitter {
         .filter(result => this.needsRefactoring(result))
         .sort((a, b) => b.refactoringPriority - a.refactoringPriority);
 
-      console.log(`🔍 Found ${refactoringCandidates.length} refactoring candidates`);
+      log.info(`🔍 Found ${refactoringCandidates.length} refactoring candidates`);
 
       // Schedule refactorings up to max concurrent limit
       for (const candidate of refactoringCandidates) {
@@ -91,7 +94,7 @@ export default class AutonomousCodeRefactoringSystem extends EventEmitter {
         this.scheduleRefactoring(candidate);
       }
     } catch (error) {
-      console.error('❌ Error scanning for refactoring opportunities:', error);
+      log.error('❌ Error scanning for refactoring opportunities:', error);
     }
   }
 
@@ -100,7 +103,7 @@ export default class AutonomousCodeRefactoringSystem extends EventEmitter {
    */
   async analyzeModule(module) {
     try {
-      console.log(`🔍 Analyzing module: ${module.id}`);
+      log.info(`🔍 Analyzing module: ${module.id}`);
 
       // Get module code
       const code = module.code;
@@ -119,7 +122,7 @@ export default class AutonomousCodeRefactoringSystem extends EventEmitter {
         timestamp: Date.now()
       };
     } catch (error) {
-      console.error(`❌ Error analyzing module ${module.id}:`, error);
+      log.error(`❌ Error analyzing module ${module.id}:`, error);
       return {
         moduleId: module.id,
         error: error.message,
@@ -175,7 +178,7 @@ export default class AutonomousCodeRefactoringSystem extends EventEmitter {
     // Add to active refactorings
     this.activeRefactorings.add(refactoringId);
 
-    console.log(`🔄 Scheduling refactoring for ${candidate.moduleId} (ID: ${refactoringId})`);
+    log.info(`🔄 Scheduling refactoring for ${candidate.moduleId} (ID: ${refactoringId})`);
 
     try {
       // Generate refactoring plan (stub)
@@ -193,9 +196,9 @@ export default class AutonomousCodeRefactoringSystem extends EventEmitter {
         timestamp: Date.now()
       });
 
-      console.log(`✅ Completed refactoring for ${candidate.moduleId}`);
+      log.info(`✅ Completed refactoring for ${candidate.moduleId}`);
     } catch (error) {
-      console.error(`❌ Error refactoring ${candidate.moduleId}:`, error);
+      log.error(`❌ Error refactoring ${candidate.moduleId}:`, error);
 
       // Store failed refactoring
       this.refactoringHistory.push({
@@ -249,7 +252,7 @@ export default class AutonomousCodeRefactoringSystem extends EventEmitter {
   }
 
   shutdown() {
-    console.log('🔄 Autonomous Code Refactoring System Shutting Down');
+    log.info('🔄 Autonomous Code Refactoring System Shutting Down');
     if (this.refactoringTimer) {
       clearInterval(this.refactoringTimer);
     }

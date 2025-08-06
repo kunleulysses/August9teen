@@ -1,57 +1,79 @@
-import { EventEmitter } from 'events';
+import client from 'prom-client';
 
-class SelfCodingMetrics extends EventEmitter {
-  constructor() {
-    super();
-    this.reset();
-  }
-  reset() {
-    this.activeGenerations = 0;
-    this.generatedTotal = 0;
-    this.errorsTotal = 0;
-    this.lastGenerationTs = 0;
-    this.cyclomaticSum = 0;
-    this.cognitiveSum = 0;
-    this.complexitySamples = 0;
-    this.testsPassed = 0;
-    this.testsRun = 0;
-  }
+// Gauges and counters for self-coding process
+const activeGenerations = new client.Gauge({
+  name: 'selfcoding_active_generations',
+  help: 'Number of active self-coding generations'
+});
 
-  markGenerationStart() {
-    this.activeGenerations += 1;
-  }
-  markGenerationEnd({ complexity }) {
-    this.activeGenerations -= 1;
-    this.generatedTotal += 1;
-    this.lastGenerationTs = Date.now();
-    if (complexity) {
-      this.cyclomaticSum += complexity.cyclomatic || 0;
-      this.cognitiveSum += complexity.cognitive || 0;
-      this.complexitySamples += 1;
-    }
-  }
-  markError() { this.errorsTotal += 1; }
-  markTest(result) {
-    this.testsRun += 1;
-    if (result) this.testsPassed += 1;
-  }
+const generatedTotal = new client.Counter({
+  name: 'selfcoding_generated_total',
+  help: 'Total number of completed self-coding generations'
+});
 
-  getPrometheusText() {
-    const avgCyclo = this.complexitySamples ? this.cyclomaticSum / this.complexitySamples : 0;
-    const avgCog   = this.complexitySamples ? this.cognitiveSum / this.complexitySamples : 0;
-    const passRate = this.testsRun ? this.testsPassed / this.testsRun : 0;
-    const lines = [
-      `selfcoding_active_generations ${this.activeGenerations}`,
-      `selfcoding_generated_total ${this.generatedTotal}`,
-      `selfcoding_errors_total ${this.errorsTotal}`,
-      `selfcoding_avg_cyclomatic ${avgCyclo.toFixed(2)}`,
-      `selfcoding_avg_cognitive ${avgCog.toFixed(2)}`,
-      `selfcoding_test_pass_rate ${passRate.toFixed(2)}`,
-      `selfcoding_last_generation_ts ${this.lastGenerationTs}`
-    ];
-    return lines.join('\n') + '\n';
+const errorsTotal = new client.Counter({
+  name: 'selfcoding_errors_total',
+  help: 'Total number of self-coding errors'
+});
+
+const avgCyclomatic = new client.Gauge({
+  name: 'selfcoding_avg_cyclomatic',
+  help: 'Average cyclomatic complexity of generated code'
+});
+
+const avgCognitive = new client.Gauge({
+  name: 'selfcoding_avg_cognitive',
+  help: 'Average cognitive complexity of generated code'
+});
+
+const testPassRate = new client.Gauge({
+  name: 'selfcoding_test_pass_rate',
+  help: 'Ratio of passed tests to total tests for self-coding'
+});
+
+const lastGenerationTs = new client.Gauge({
+  name: 'selfcoding_last_generation_ts',
+  help: 'Timestamp of the last self-coding generation'
+});
+
+let cyclomaticSum = 0;
+let cognitiveSum = 0;
+let complexitySamples = 0;
+let testsRun = 0;
+let testsPassed = 0;
+
+function markGenerationStart() {
+  activeGenerations.inc();
+}
+
+function markGenerationEnd({ complexity } = {}) {
+  activeGenerations.dec();
+  generatedTotal.inc();
+  lastGenerationTs.set(Date.now());
+  if (complexity) {
+    cyclomaticSum += complexity.cyclomatic || 0;
+    cognitiveSum += complexity.cognitive || 0;
+    complexitySamples += 1;
+    avgCyclomatic.set(cyclomaticSum / complexitySamples);
+    avgCognitive.set(cognitiveSum / complexitySamples);
   }
 }
 
-const metrics = new SelfCodingMetrics();
-export default metrics;
+function markError() {
+  errorsTotal.inc();
+}
+
+function markTest(result) {
+  testsRun += 1;
+  if (result) testsPassed += 1;
+  const rate = testsRun ? testsPassed / testsRun : 0;
+  testPassRate.set(rate);
+}
+
+export default {
+  markGenerationStart,
+  markGenerationEnd,
+  markError,
+  markTest,
+};
+
