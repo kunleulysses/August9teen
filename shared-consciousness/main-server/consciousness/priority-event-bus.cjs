@@ -6,6 +6,7 @@
 
 import { EventEmitter } from 'events';
 import pkg from 'pg';
+import brokerBus from './BrokerBus.cjs';
 const { Pool } = pkg;
 
 export class PriorityEventBus extends EventEmitter {
@@ -79,6 +80,11 @@ export class PriorityEventBus extends EventEmitter {
         if (requiredScope && (!Array.isArray(userScopes) || !userScopes.includes(requiredScope))) {
             this.logScopeDrop(event, data?.ctx?.user?.id, requiredScope, userScopes);
             return false;
+        }
+
+        if (process.env.BROKER_MODE === 'nats') {
+            brokerBus.publish(event, { data, priority });
+            return true;
         }
 
         const eventData = {

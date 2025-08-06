@@ -6,6 +6,7 @@
 
 const { EventEmitter  } = require('events');
 const { Pool } = require('pg');
+const brokerBus = require('./BrokerBus.cjs');
 
 class PriorityEventBus extends EventEmitter {
     constructor() {
@@ -78,6 +79,11 @@ class PriorityEventBus extends EventEmitter {
         if (requiredScope && (!Array.isArray(userScopes) || !userScopes.includes(requiredScope))) {
             this.logScopeDrop(event, data?.ctx?.user?.id, requiredScope, userScopes);
             return false;
+        }
+
+        if (process.env.BROKER_MODE === 'nats') {
+            brokerBus.publish(event, { data, priority });
+            return true;
         }
 
         const eventData = {
