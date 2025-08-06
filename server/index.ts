@@ -7,6 +7,7 @@ import { addConversationRoutes } from "./add-conversation-routes";
 import { startEmailProcessor } from "./email-processor";
 import { startEmailScheduler } from "./scheduler";
 import { initUnifiedChatWS } from "./unified-chat-ws";
+import { startUserEraseWorker } from "./user-eraser";
 import rateLimit from 'express-rate-limit';
 
 import { Registry, collectDefaultMetrics } from 'prom-client';
@@ -142,6 +143,9 @@ app.use((req, res, next) => {
   
   // Start the scheduler for daily inspiration emails
   startEmailScheduler();
+
+  // Start worker to erase user data
+  startUserEraseWorker();
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;

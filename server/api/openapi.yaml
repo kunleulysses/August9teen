@@ -90,3 +90,17 @@ paths:
                 properties:
                   error:
                     type: string
+  /v1/user/{uid}:
+    delete:
+      summary: Mark user for erasure
+      parameters:
+        - in: path
+          name: uid
+          schema:
+            type: integer
+          required: true
+      responses:
+        '202':
+          description: User marked for deletion
+        '404':
+          description: User not found

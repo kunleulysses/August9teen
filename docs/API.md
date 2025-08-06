@@ -28,6 +28,12 @@
 - Returns: Prometheus metrics (text/plain)
 - Requires auth
 
+## `DELETE /v1/user/:uid`
+- Marks the specified user for asynchronous erasure
+- Returns: `{ "status": "pending erase" }`
+- Idempotent: repeating the request yields the same response
+- Actual data removal is handled by a background worker
+
 ---
 
 See OpenAPI spec at `/docs` in a running cluster for full details.

@@ -363,7 +363,21 @@ export class DatabaseStorage implements IStorage {
       throw error;
     }
   }
-  
+
+  async markUserPendingErase(userId: number): Promise<User | undefined> {
+    try {
+      const [user] = await db
+        .update(users)
+        .set({ pendingErase: true, updatedAt: new Date() })
+        .where(eq(users.id, userId))
+        .returning();
+      return user;
+    } catch (error) {
+      console.error('Error marking user pending erase:', error);
+      return undefined;
+    }
+  }
+
   // Payment Methods
   async getPaymentMethods(userId: number): Promise<PaymentMethod[]> {
     try {

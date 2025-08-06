@@ -36,6 +36,7 @@ export const users = pgTable("users", {
   // Password reset fields
   resetToken: text("reset_token"),
   resetTokenExpires: timestamp("reset_token_expires"),
+  pendingErase: boolean("pending_erase").default(false).notNull(),
 });
 
 // Journal entries table
