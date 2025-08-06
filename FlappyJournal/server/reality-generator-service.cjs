@@ -9,6 +9,8 @@ const { Server  } = require('socket.io');
 const AutonomousImaginationEngine = require('./consciousness/autonomous-imagination-engine.cjs');
 const { HolographicConsciousnessRealityGenerator  } = require('./consciousness/holographic-consciousness-reality-generator.cjs');
 const os = require('os');
+const rateLimit = require('express-rate-limit');
+const { authMiddleware, socketAuth } = require('../common/authMiddleware.cjs');
 
 // Initialize Express app
 const app = express();
@@ -18,8 +20,7 @@ const io = new Server(server, {
         origin: "*",
         methods: ["GET", "POST"]
     }
-// Add raw WebSocket server for compatibility with ws-based clients (e.g., RealityWebSocketBridge)
-
+    // Add raw WebSocket server for compatibility with ws-based clients (e.g., RealityWebSocketBridge)
 });
 
 // Service configuration
@@ -42,7 +43,19 @@ let serviceMetrics = {
 // Middleware
 app.use(express.json());
 
-// Health check endpoint
+// Rate limiting (100 req/min/IP for all /api routes)
+const apiLimiter = rateLimit({
+    windowMs: 60 * 1000,
+    max: 100,
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+app.use('/api', apiLimiter);
+
+// AuthN middleware for /api
+app.use('/api', authMiddleware);
+
+// Health check endpoint (add `auth:"required"`)
 app.get('/health', (req, res) => {
     const uptime = Date.now() - serviceMetrics.startTime;
     res.json({
@@ -50,12 +63,16 @@ app.get('/health', (req, res) => {
         service: 'reality-generator',
         uptime: Math.floor(uptime / 1000),
         metrics: serviceMetrics,
+        auth: "required",
         imaginationEngine: imaginationEngine ? imaginationEngine.getStatus() : null
     });
 });
 
-// Get generated realities
+// Get generated realities (secured)
 app.get('/api/realities', (req, res) => {
+    if (!req.auth?.scope?.includes('reality.gen')) {
+        return res.status(403).json({ error: 'Missing required scope' });
+    }
     const limit = parseInt(req.query.limit) || 10;
     const realities = imaginationEngine ? imaginationEngine.getGeneratedRealities(limit) : [];
     res.json({
@@ -64,52 +81,57 @@ app.get('/api/realities', (req, res) => {
     });
 });
 
-// Start/stop imagination engine
+// Start/stop imagination engine (secured)
 app.post('/api/imagination/start', (req, res) => {
+    if (!req.auth?.scope?.includes('reality.gen')) {
+        return res.status(403).json({ error: 'Missing required scope' });
+    }
     if (!imaginationEngine) {
         return res.status(500).json({ error: 'Imagination engine not initialized' });
     }
-    
     imaginationEngine.startAutonomousImagination();
     res.json({ status: 'started', message: 'Autonomous imagination engine started' });
 });
 
 app.post('/api/imagination/stop', (req, res) => {
+    if (!req.auth?.scope?.includes('reality.gen')) {
+        return res.status(403).json({ error: 'Missing required scope' });
+    }
     if (!imaginationEngine) {
         return res.status(500).json({ error: 'Imagination engine not initialized' });
     }
-    
     imaginationEngine.stopAutonomousImagination();
     res.json({ status: 'stopped', message: 'Autonomous imagination engine stopped' });
 });
 
-// Get imagination engine status
+// Get imagination engine status (secured)
 app.get('/api/imagination/status', (req, res) => {
+    if (!req.auth?.scope?.includes('reality.gen')) {
+        return res.status(403).json({ error: 'Missing required scope' });
+    }
     if (!imaginationEngine) {
         return res.status(500).json({ error: 'Imagination engine not initialized' });
     }
-    
     res.json(imaginationEngine.getStatus());
 });
 
-// Manual reality generation endpoint
+// Manual reality generation endpoint (secured)
 app.post('/api/generate-reality', async (req, res) => {
+    if (!req.auth?.scope?.includes('reality.gen')) {
+        return res.status(403).json({ error: 'Missing required scope' });
+    }
     try {
         const { request, consciousnessState } = req.body;
-        
         if (!realityGenerator) {
             return res.status(500).json({ error: 'Reality generator not initialized' });
         }
-        
         const result = await realityGenerator.generateHolographicConsciousnessReality(
             request || { type: 'manual', content: 'Generate a consciousness-expanding reality' },
             consciousnessState || { phi: 0.862, awareness: 0.8, coherence: 0.85 }
         );
-        
         if (result.success) {
             serviceMetrics.totalRealities++;
         }
-        
         res.json(result);
     } catch (error) {
         console.error('Reality generation error:', error);
@@ -117,32 +139,32 @@ app.post('/api/generate-reality', async (req, res) => {
     }
 });
 
-// WebSocket connection for real-time updates
+// WebSocket connection for real-time updates (secured)
+io.use((socket, next) => socketAuth(socket, next));
 io.on('connection', (socket) => {
+    if (!socket.auth?.scope?.includes('reality.gen')) {
+        socket.disconnect(true);
+        return;
+    }
     console.log('🔌 Client connected to reality generator');
     serviceMetrics.activeConnections++;
-    
-    // Send initial status
     socket.emit('status', {
         service: 'reality-generator',
         status: 'connected',
         metrics: serviceMetrics
     });
-    
-    // Handle disconnection
+
     socket.on('disconnect', () => {
         console.log('🔌 Client disconnected from reality generator');
         serviceMetrics.activeConnections--;
     });
-    
-    // Handle reality generation requests via WebSocket
+
     socket.on('generate-reality', async (data) => {
         try {
             const result = await realityGenerator.generateHolographicConsciousnessReality(
                 data.request,
                 data.consciousnessState
             );
-            
             socket.emit('reality-generated', result);
         } catch (error) {
             socket.emit('error', { message: error.message });
