@@ -11,6 +11,10 @@ const { HolographicConsciousnessRealityGenerator  } = require('./consciousness/h
 const os = require('os');
 const rateLimit = require('express-rate-limit');
 const { authMiddleware, socketAuth } = require('../common/authMiddleware.cjs');
+const { connectNats, sc } = require('../common/natsClient.cjs');
+const { v4: uuidv4 } = require('uuid');
+
+const BROKER_MODE = process.env.BROKER_MODE || 'on';
 
 // Initialize Express app
 const app = express();
@@ -30,6 +34,7 @@ const DEDICATED_CORES = parseInt(process.env.DEDICATED_CPU_CORES) || 2;
 // Initialize reality generation components
 let imaginationEngine;
 let realityGenerator;
+let nats;
 let serviceMetrics = {
     startTime: Date.now(),
     totalRealities: 0,
@@ -37,8 +42,10 @@ let serviceMetrics = {
     cpuCores: {
         total: os.cpus().length,
         dedicated: DEDICATED_CORES
-    }
+    },
+    nats: "disconnected"
 };
+const pendingHttpJobs = new Map(); // jobId -> res
 
 // Middleware
 app.use(express.json());
@@ -55,7 +62,7 @@ app.use('/api', apiLimiter);
 // AuthN middleware for /api
 app.use('/api', authMiddleware);
 
-// Health check endpoint (add `auth:"required"`)
+// Health check endpoint (add `auth:"required"`, nats status)
 app.get('/health', (req, res) => {
     const uptime = Date.now() - serviceMetrics.startTime;
     res.json({
@@ -64,6 +71,7 @@ app.get('/health', (req, res) => {
         uptime: Math.floor(uptime / 1000),
         metrics: serviceMetrics,
         auth: "required",
+        nats: serviceMetrics.nats,
         imaginationEngine: imaginationEngine ? imaginationEngine.getStatus() : null
     });
 });
@@ -115,37 +123,54 @@ app.get('/api/imagination/status', (req, res) => {
     res.json(imaginationEngine.getStatus());
 });
 
-// Manual reality generation endpoint (secured)
+// Manual reality generation endpoint (secured, now async via NATS)
 app.post('/api/generate-reality', async (req, res) => {
     if (!req.auth?.scope?.includes('reality.gen')) {
         return res.status(403).json({ error: 'Missing required scope' });
     }
     try {
-        const { request, consciousnessState } = req.body;
-        if (!realityGenerator) {
-            return res.status(500).json({ error: 'Reality generator not initialized' });
+        const jobId = uuidv4();
+        const msg = {
+            jobId,
+            request: req.body.request || { type: 'manual', content: 'Generate a consciousness-expanding reality' },
+            consciousnessState: req.body.consciousnessState || { phi: 0.862, awareness: 0.8, coherence: 0.85 },
+            auth: { sub: req.auth.sub, scope: req.auth.scope },
+            ts: Date.now()
+        };
+        if (BROKER_MODE === "off") {
+            // Fallback: run directly (for dev)
+            const result = await realityGenerator.generateHolographicConsciousnessReality(
+                msg.request, msg.consciousnessState
+            );
+            res.status(result.success ? 200 : 500).json({ jobId, ...result });
+            return;
         }
-        const result = await realityGenerator.generateHolographicConsciousnessReality(
-            request || { type: 'manual', content: 'Generate a consciousness-expanding reality' },
-            consciousnessState || { phi: 0.862, awareness: 0.8, coherence: 0.85 }
-        );
-        if (result.success) {
-            serviceMetrics.totalRealities++;
-        }
-        res.json(result);
+        // Publish to NATS
+        await nats.publish('reality.gen.request', sc.encode(JSON.stringify(msg)));
+        pendingHttpJobs.set(jobId, res);
+        // Timeout after 10s
+        setTimeout(() => {
+            if (pendingHttpJobs.has(jobId)) {
+                pendingHttpJobs.get(jobId).status(504).json({ jobId, success: false, error: "Timeout" });
+                pendingHttpJobs.delete(jobId);
+            }
+        }, 10000);
+        res.status(202).json({ jobId });
     } catch (error) {
-        console.error('Reality generation error:', error);
+        console.error('NATS queueing error:', error);
         res.status(500).json({ error: error.message });
     }
 });
 
 // WebSocket connection for real-time updates (secured)
 io.use((socket, next) => socketAuth(socket, next));
+const authorisedSockets = new Set();
 io.on('connection', (socket) => {
     if (!socket.auth?.scope?.includes('reality.gen')) {
         socket.disconnect(true);
         return;
     }
+    authorisedSockets.add(socket);
     console.log('🔌 Client connected to reality generator');
     serviceMetrics.activeConnections++;
     socket.emit('status', {
@@ -155,22 +180,92 @@ io.on('connection', (socket) => {
     });
 
     socket.on('disconnect', () => {
+        authorisedSockets.delete(socket);
         console.log('🔌 Client disconnected from reality generator');
         serviceMetrics.activeConnections--;
     });
 
     socket.on('generate-reality', async (data) => {
         try {
-            const result = await realityGenerator.generateHolographicConsciousnessReality(
-                data.request,
-                data.consciousnessState
-            );
-            socket.emit('reality-generated', result);
+            // Use NATS job for async
+            const jobId = uuidv4();
+            const msg = {
+                jobId,
+                request: data.request,
+                consciousnessState: data.consciousnessState,
+                auth: socket.auth,
+                ts: Date.now()
+            };
+            if (BROKER_MODE === "off") {
+                const result = await realityGenerator.generateHolographicConsciousnessReality(
+                    msg.request, msg.consciousnessState
+                );
+                socket.emit('reality-generated', { jobId, ...result });
+                return;
+            }
+            await nats.publish('reality.gen.request', sc.encode(JSON.stringify(msg)));
+            // WS expects result via result subscription below
         } catch (error) {
             socket.emit('error', { message: error.message });
         }
     });
 });
+
+// NATS setup and result subscription
+async function initializeServices() {
+    try {
+        nats = (await connectNats()).nats;
+        serviceMetrics.nats = nats ? "connected" : "disconnected";
+
+        // Subscribe to results
+        const sub = nats.subscribe('reality.gen.result');
+        (async () => {
+            for await (const m of sub) {
+                try {
+                    const result = JSON.parse(sc.decode(m.data));
+                    // HTTP response flow
+                    if (result.jobId && pendingHttpJobs.has(result.jobId)) {
+                        pendingHttpJobs.get(result.jobId)
+                            .status(result.success ? 200 : 500)
+                            .json(result);
+                        pendingHttpJobs.delete(result.jobId);
+                    }
+                    // WebSocket broadcast
+                    for (const socket of authorisedSockets) {
+                        try {
+                            if (socket.connected && socket.auth?.scope?.includes('reality.gen')) {
+                                socket.emit('reality-generated', result);
+                            }
+                        } catch (e) {}
+                    }
+                } catch (e) {
+                    console.error('Result msg parse error:', e);
+                }
+            }
+        })();
+
+        // Boot rest of system
+        realityGenerator = new HolographicConsciousnessRealityGenerator();
+        imaginationEngine = new AutonomousImaginationEngine();
+
+        server.listen(PORT, () => {
+            console.log(`✨ Reality Generator Service running on port ${PORT}`);
+        });
+
+    } catch (error) {
+        console.error('❌ Failed to initialize Reality Generator Service:', error);
+        process.exit(1);
+    }
+}
+
+process.on('SIGTERM', () => { try { server.close(()=>process.exit(0)); } catch{} });
+process.on('uncaughtException', err => { console.error(err); process.exit(1); });
+process.on('unhandledRejection', err => { console.error(err); process.exit(1); });
+
+initializeServices();
+
+// Export for testing
+module.exports.app = app;
 
 // Initialize consciousness system stub (for standalone operation)
 const consciousnessSystemStub = {
