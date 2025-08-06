@@ -1,6 +1,6 @@
 const { fileURLToPath  } = require('url');
 const { dirname, join  } = require('path');
-const { promises as fs  } = require('fs');
+const fs = require('fs').promises;
 const { createRequire  } = require('module');
 const { EventEmitter  } = require('./consciousness/base/EventEmitter.cjs');
 

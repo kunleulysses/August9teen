@@ -178,9 +178,9 @@ class DormantModuleActivator extends EventEmitter {
     
     // Check for dormant indicators
     const dormantIndicators = [
-      const { createRequire  } = require('module');
-const require = createRequire(import.meta.url);
-const pkg = require('../../package.json');
+      `const { createRequire  } = require('module');`,
+      `const require = createRequire(import.meta.url);`,
+      `const pkg = require('../../package.json');`
 
 /**
  * Activate dormant modules based on activateModules array in package.json scripts.

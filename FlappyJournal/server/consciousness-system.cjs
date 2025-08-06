@@ -1,7 +1,7 @@
 const { EventEmitter  } = require('events');
 const { fileURLToPath  } = require('url');
 const { dirname, join  } = require('path');
-const { promises as fs  } = require('fs');
+const fs = require('fs').promises;
 const express = require('express');
 const http = require('http');
 const { WebSocketServer  } = require('ws');

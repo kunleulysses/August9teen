@@ -1,6 +1,6 @@
 const AutoIntegrationService = require('./consciousness/services/AutoIntegrationService.cjs');
 const { EventEmitter  } = require('events');
-const { promises as fs  } = require('fs');
+const { promises: fs  } = require('fs');
 
 async function testAutoIntegration() {
     console.log('🧪 Testing Auto-Integration System (Simple Test)...\n');

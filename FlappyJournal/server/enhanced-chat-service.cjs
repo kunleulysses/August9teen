@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const jwksClient = require('jwks-rsa');
 const pool = require('./db.cjs');
 const OpenAI = require('openai');
-const { promises as fs  } = require('fs');
+const { promises: fs  } = require('fs');
 const path = require('path');
 const { fileURLToPath  } = require('url');
 

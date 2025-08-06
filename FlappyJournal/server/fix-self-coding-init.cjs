@@ -1,4 +1,4 @@
-const { promises as fs  } = require('fs');
+const fs = require('fs').promises;
 const { fileURLToPath  } = require('url');
 const { dirname, join  } = require('path');
 

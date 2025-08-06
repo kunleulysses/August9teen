@@ -1,5 +1,5 @@
 const express = require('express');
-const { promises as fs  } = require('fs');
+const fs = require('fs').promises;
 const path = require('path');
 
 // Simple markdown to HTML converter

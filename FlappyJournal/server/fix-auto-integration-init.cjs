@@ -1,5 +1,5 @@
-const { promises as fs  } = require('fs');
-const { fileURLToPath  } = require('url');
+const fs = require('fs').promises;
+const { fileURLToPath } = require('url');
 const { dirname, join  } = require('path');
 
 const __filename = fileURLToPath(import.meta.url);

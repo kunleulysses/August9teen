@@ -1,4 +1,4 @@
-const { sign, verify } = require('../server/consciousness/core/security/eventSign.cjs');
+import { sign, verify } from '../server/consciousness/core/security/eventSign.cjs';
 
 describe('eventSign CJS', () => {
   it('should sign and verify a payload', () => {

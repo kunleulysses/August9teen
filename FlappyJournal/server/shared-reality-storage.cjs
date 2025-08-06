@@ -5,7 +5,7 @@
  */
 
 const { EventEmitter  } = require('events');
-const { promises as fs  } = require('fs');
+const { promises: fs  } = require('fs');
 const { dirname  } = require('path');
 
 class SharedRealityStorage extends EventEmitter {

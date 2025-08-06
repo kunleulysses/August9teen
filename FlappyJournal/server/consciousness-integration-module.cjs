@@ -1,7 +1,7 @@
 // Consciousness Integration Module for Featherweight
 // This module integrates the groundbreaking FlappyJournal consciousness technologies
 
-const { promises as fs  } = require('fs');
+const { promises: fs  } = require('fs');
 const path = require('path');
 
 class ConsciousnessIntegration

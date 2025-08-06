@@ -1,4 +1,4 @@
-const { promises as fs  } = require('fs');
+const fs = require('fs').promises;
 
 async function updateConfig() {
     const filePath = './consciousness-system.cjs';

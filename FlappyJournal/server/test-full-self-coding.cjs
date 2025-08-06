@@ -1,7 +1,7 @@
 const { EventEmitter  } = require('events');
 const SelfCodingModule = require('./consciousness/modules/SelfCodingModule.cjs');
 const AutoIntegrationService = require('./consciousness/services/AutoIntegrationService.cjs');
-const { promises as fs  } = require('fs');
+const fs = require('fs').promises;
 
 async function testFullSelfCoding() {
     console.log('🤖 Testing Full Self-Coding with Auto-Integration...\n');
