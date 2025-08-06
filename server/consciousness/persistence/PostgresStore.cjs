@@ -12,6 +12,7 @@ require('../../common/tracing.cjs');
 const { trace } = require('@opentelemetry/api');
 const pkg = require('pg');
 const { Pool } = pkg;
+const { scenesCache, pathsCache, fieldsCache } = require('../utils/cache.cjs');
 
 const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/postgres';
 
@@ -81,19 +82,37 @@ class PostgresStore {
   async get(id) {
     return this._withSpan('PostgresStore.get', async () => {
       await this.ready;
+      const cache = this._selectCache(id);
+      if (cache) {
+        const cached = cache.get(id);
+        if (cached !== undefined) return cached;
+      }
+
       const { rows } = await this.pool.query('SELECT value FROM consciousness_kv WHERE id = $1', [id]);
-      return rows[0]?.value ?? undefined;
+      const value = rows[0]?.value ?? undefined;
+      if (cache && value !== undefined) cache.set(id, value);
+      return value;
     });
   }
 
   async set(id, value) {
     return this._withSpan('PostgresStore.set', async () => {
       await this.ready;
+      const cache = this._selectCache(id);
+      if (cache) cache.set(id, value);
+
       await this.pool.query(
         'INSERT INTO consciousness_kv (id, value) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET value = EXCLUDED.value',
         [id, value]
       );
     });
+  }
+
+  _selectCache(id) {
+    if (id.startsWith('scene:')) return scenesCache;
+    if (id.startsWith('path:')) return pathsCache;
+    if (id.startsWith('field:')) return fieldsCache;
+    return null;
   }
 
   async delete(id) {
