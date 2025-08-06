@@ -9,6 +9,8 @@ const { Server  } = require('socket.io');
 const AutonomousImaginationEngine = require('./consciousness/autonomous-imagination-engine.cjs');
 const { HolographicConsciousnessRealityGenerator  } = require('./consciousness/holographic-consciousness-reality-generator.cjs');
 const os = require('os');
+const path = require('path');
+const { Worker } = require('worker_threads');
 
 // Initialize Express app
 const app = express();
@@ -38,6 +40,12 @@ let serviceMetrics = {
         dedicated: DEDICATED_CORES
     }
 };
+
+// Background worker for scene cleanup
+const sceneDeletionWorker = new Worker(path.join(__dirname, 'sceneDeletionWorker.cjs'));
+sceneDeletionWorker.on('error', err => {
+    console.error('Scene deletion worker error:', err);
+});
 
 // Middleware
 app.use(express.json());
@@ -115,6 +123,17 @@ app.post('/api/generate-reality', async (req, res) => {
         console.error('Reality generation error:', error);
         res.status(500).json({ error: error.message });
     }
+});
+
+// Delete a scene
+app.delete('/scene/:id', (req, res) => {
+    const { id } = req.params;
+    if (!id) {
+        return res.status(400).json({ error: 'Scene ID required' });
+    }
+
+    sceneDeletionWorker.postMessage({ sceneId: id });
+    res.status(202).json({ status: 'queued', sceneId: id });
 });
 
 // WebSocket connection for real-time updates
