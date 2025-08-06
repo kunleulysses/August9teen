@@ -20,6 +20,8 @@ const {
   wsBacklogBytes,
   frameDropTotal
 } = require('../common/metrics.cjs');
+const { startTracing, shutdownTracing } = require('../common/tracing.cjs');
+startTracing('reality-generator-service');
 
 const BROKER_MODE = process.env.BROKER_MODE || 'on';
 
@@ -358,7 +360,8 @@ async function initializeServices() {
     }
 }
 
-process.on('SIGTERM', () => { try { server.close(()=>process.exit(0)); } catch{} });
+process.on('SIGTERM', () => { try { server.close(()=>process.exit(0)); } catch{}; shutdownTracing(); });
+process.on('SIGINT',  () => { try { server.close(()=>process.exit(0)); } catch{}; shutdownTracing(); });
 process.on('uncaughtException', err => { console.error(err); process.exit(1); });
 process.on('unhandledRejection', err => { console.error(err); process.exit(1); });
 
