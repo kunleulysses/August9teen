@@ -1,18 +1,27 @@
 const fs = require('fs');
 const path = require('path');
 
-const logDirectory = path.join(process.cwd(), 'FlappyJournal', 'consciousness-journal', 'self-coding-logs');
+const DEFAULT_LOG_DIR = path.join(
+    process.cwd(),
+    'consciousness-journal',
+    'self-coding-logs'
+);
 
 class SelfCodingLog {
-    constructor() {
+    constructor(baseLogDir) {
+        this.logDirectory =
+            baseLogDir || process.env.SELF_CODING_LOG_DIR || DEFAULT_LOG_DIR;
         this.logStream = null;
         this.initialize();
     }
 
     async initialize() {
         try {
-            await fs.promises.mkdir(logDirectory, { recursive: true });
-            const logFilePath = path.join(logDirectory, `self-coding-log-${new Date().toISOString().split('T')[0]}.md`);
+            await fs.promises.mkdir(this.logDirectory, { recursive: true });
+            const logFilePath = path.join(
+                this.logDirectory,
+                `self-coding-log-${new Date().toISOString().split('T')[0]}.md`
+            );
             this.logStream = fs.createWriteStream(logFilePath, { flags: 'a' });
             this.log('--- Self-Coding Log Initialized ---');
         } catch (error) {
@@ -50,4 +59,5 @@ ${code}
 }
 
 const selfCodingLog = new SelfCodingLog();
-module.exports.selfCodingLog = selfCodingLog;
+
+module.exports = { SelfCodingLog, selfCodingLog };
