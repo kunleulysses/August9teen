@@ -380,16 +380,25 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
                 break;
                 
             case 'integrate_memory':
-                const integration = await orchestrator.integrateMemoryWithReality(
-                    command.memory,
-                    command.realityId,
-                    command.parameters
-                );
-                this.universalEventBus.emit('consciousness:command_completed', {
-                    command,
-                    result: integration,
-                    success: true
-                });
+                try {
+                    const integration = await orchestrator.integrateMemoryWithReality(
+                        command.memory,
+                        command.realityId,
+                        command.parameters
+                    );
+                    this.universalEventBus.emit('consciousness:command_completed', {
+                        command,
+                        result: integration,
+                        success: true
+                    });
+                } catch (error) {
+                    console.error('❌ Memory integration failed:', error);
+                    this.universalEventBus.emit('consciousness:command_completed', {
+                        command,
+                        error: error.message || error,
+                        success: false
+                    });
+                }
                 break;
                 
             default:
