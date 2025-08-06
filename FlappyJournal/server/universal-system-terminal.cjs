@@ -624,8 +624,12 @@ class UniversalSystemTerminal {
                         return;
                     }
                 }
-
-                console.log('⚠️ Deep system access not available for stats');
+                // Fallback to direct Docker command when deep access is unavailable
+                const { stdout } = await execAsync(
+                    `docker stats --no-stream --format "CPU: {{.CPUPerc}}\nMemory: {{.MemPerc}}\nNetIO: {{.NetIO}}" ${container}`
+                );
+                console.log(`📊 Stats for ${container}:`);
+                console.log(stdout.trim());
             } catch (error) {
                 console.error('❌ Docker stats failed:', error.message);
             }
