@@ -4,7 +4,6 @@ const eventBus = require('../core/ConsciousnessEventBus.cjs');
 // New dependencies
 const recast = require('recast');
 const astTypes = require('ast-types');
-const jscpd = require('jscpd');
 const prettier = require('prettier');
 
 class AutonomousCodeRefactoringSystem extends EventEmitter {
@@ -270,17 +269,27 @@ class AutonomousCodeRefactoringSystem extends EventEmitter {
 
       for (const step of plan.actions) {
         if (step.action === 'extract-functions') {
+          const b = astTypes.builders;
           // Split functions >40 lines into helpers
           astTypes.visit(ast, {
             visitFunctionDeclaration(path) {
               const node = path.node;
               const lines = node.body.loc ? node.body.loc.end.line - node.body.loc.start.line : 0;
-              if (lines > 40) {
-                // Extract inner blocks as new helper functions
-                // For demo, just flag that we'd extract (real code could be added)
-                node.body.body.unshift(
-                  recast.parse('/* TODO: Extract inner logic into helpers */').program.body[0]
+              if (lines > 40 && node.id) {
+                const helperName = `${node.id.name}Helper`;
+                const helperFn = b.functionDeclaration(
+                  b.identifier(helperName),
+                  node.params,
+                  node.body
                 );
+                const callExpr = b.returnStatement(
+                  b.callExpression(
+                    b.identifier(helperName),
+                    node.params.map(p => b.identifier(p.name))
+                  )
+                );
+                node.body = b.blockStatement([callExpr]);
+                path.insertBefore(helperFn);
                 transformed = true;
               }
               this.traverse(path);
@@ -288,6 +297,7 @@ class AutonomousCodeRefactoringSystem extends EventEmitter {
           });
         }
         if (step.action === 'flatten-nesting') {
+          const b = astTypes.builders;
           // Convert nested if/else >3 levels into guard-clauses
           astTypes.visit(ast, {
             visitIfStatement(path) {
@@ -297,32 +307,53 @@ class AutonomousCodeRefactoringSystem extends EventEmitter {
                 depth++;
                 p = p.parentPath;
               }
-              if (depth > 3) {
-                // Insert TODO for guard clause (real transformation would restructure)
-                path.node.consequent.body.unshift(
-                  recast.parse('/* TODO: Convert to guard clause */').program.body[0]
+              if (depth >= 3) {
+                const test = path.node.test;
+                const guard = b.ifStatement(
+                  b.unaryExpression('!', test, true),
+                  b.blockStatement([b.returnStatement()])
                 );
+                const body = path.node.consequent.type === 'BlockStatement'
+                  ? path.node.consequent.body
+                  : [path.node.consequent];
+                path.replace(guard, ...body);
                 transformed = true;
+                return false;
               }
               this.traverse(path);
             }
           });
         }
         if (step.action === 'deduplicate') {
-          // Use jscpd to detect duplicate fragments
-          const detector = new jscpd.JSCPD({
-            path: [],
-            minLines: 5,
-            reporters: [],
-            silent: true
+          const b = astTypes.builders;
+          const groups = new Map();
+          astTypes.visit(ast, {
+            visitFunctionDeclaration(path) {
+              const bodyCode = recast.print(path.node.body).code;
+              if (!groups.has(bodyCode)) groups.set(bodyCode, []);
+              groups.get(bodyCode).push(path);
+              this.traverse(path);
+            }
           });
-          const result = await detector.detectInFiles([{ content: code, filename: candidate.moduleId }]);
-          if (result.duplicates && result.duplicates.length > 0) {
-            // Insert comment for deduplication
-            ast.program.body.unshift(
-              recast.parse('/* TODO: Deduplicate repeated code using helpers */').program.body[0]
-            );
-            transformed = true;
+          for (const paths of groups.values()) {
+            if (paths.length > 1) {
+              const first = paths[0];
+              const helperName = `dedupHelper${Math.floor(Math.random() * 1e6)}`;
+              const params = first.node.params.map(p => b.identifier(p.name));
+              const helperFn = b.functionDeclaration(b.identifier(helperName), first.node.params, first.node.body);
+              first.insertBefore(helperFn);
+              first.node.body = b.blockStatement([
+                b.returnStatement(b.callExpression(b.identifier(helperName), params))
+              ]);
+              for (let i = 1; i < paths.length; i++) {
+                const p = paths[i];
+                const args = p.node.params.map(param => b.identifier(param.name));
+                p.node.body = b.blockStatement([
+                  b.returnStatement(b.callExpression(b.identifier(helperName), args))
+                ]);
+              }
+              transformed = true;
+            }
           }
         }
         if (step.action === 'lint-fix') {
