@@ -59,8 +59,8 @@ module.exports = {
 
   // Test patterns
   testMatch: [
-    "**/__tests__/**/*.(ts|tsx|js|jsx)",
-    "**/*.(test|spec).(ts|tsx|js|jsx)"
+    "**/__tests__/**/*.(ts|tsx|js|jsx|cjs)",
+    "**/*.(test|spec).(ts|tsx|js|jsx|cjs)"
   ],
   modulePathIgnorePatterns: [
     "<rootDir>/FlappyJournal hey/",
