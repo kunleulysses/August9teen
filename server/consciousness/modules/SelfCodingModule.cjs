@@ -15,6 +15,9 @@ import {
   selfcoding_history_size,
   code_generation_failures_total
 } from '../metrics/extraMetrics.cjs';
+import { child as createLogger } from '../utils/logger.cjs';
+
+const log = createLogger({ module: 'SelfCodingModule' });
 
 export default class SelfCodingModule extends EventEmitter {
     constructor() {
@@ -61,18 +64,18 @@ export default class SelfCodingModule extends EventEmitter {
             // Import event bus dynamically
             const eventBusModule = await import('../core/ConsciousnessEventBus.cjs');
             this.eventBus = eventBusModule.default;
-            console.log('[SelfCodingModule] Event bus loaded');
+            log.info('[SelfCodingModule] Event bus loaded');
 
             // Phase 2: Autonomous code refactoring system
             try {
                 this.autonomousRefactoring = new AutonomousCodeRefactoringSystem(this, this.analyzer);
-                console.log('[SelfCodingModule] Autonomous refactoring system initialized');
+                log.info('[SelfCodingModule] Autonomous refactoring system initialized');
             } catch (error) {
-                console.warn('[SelfCodingModule] Autonomous refactoring initialization failed:', error.message);
+                log.warn('[SelfCodingModule] Autonomous refactoring initialization failed:', error.message);
                 this.autonomousRefactoring = null;
             }
 
-            console.log('[SelfCodingModule] Created');
+            log.info('[SelfCodingModule] Created');
             this.registerEventListeners();
 
             this.isInitialized = true;
@@ -82,9 +85,9 @@ export default class SelfCodingModule extends EventEmitter {
                 if (this.autonomousRefactoring && this.autonomousRefactoring.startAutonomousRefactoring) {
                     try {
                         this.autonomousRefactoring.startAutonomousRefactoring();
-                        console.log('[SelfCodingModule] Autonomous refactoring started');
+                        log.info('[SelfCodingModule] Autonomous refactoring started');
                     } catch (error) {
-                        console.warn('[SelfCodingModule] Failed to start autonomous refactoring:', error.message);
+                        log.warn('[SelfCodingModule] Failed to start autonomous refactoring:', error.message);
                     }
                 }
             }, 2000);
@@ -96,7 +99,7 @@ export default class SelfCodingModule extends EventEmitter {
             }, 3600000);
 
         } catch (error) {
-            console.error('[SelfCodingModule] Initialization failed:', error.message);
+            log.error('[SelfCodingModule] Initialization failed:', error.message);
             this.isInitialized = false;
         }
     }
@@ -106,14 +109,14 @@ export default class SelfCodingModule extends EventEmitter {
      */
     setEventBus(eventBus) {
         this.eventBus = eventBus;
-        console.log('[SelfCodingModule] Event bus set externally');
+        log.info('[SelfCodingModule] Event bus set externally');
         this.registerEventListeners();
     }
 
     registerEventListeners() {
         try {
             if (!this.eventBus) {
-                console.warn('[SelfCodingModule] Event bus not available, skipping event registration');
+                log.warn('[SelfCodingModule] Event bus not available, skipping event registration');
                 return;
             }
 
@@ -132,10 +135,10 @@ export default class SelfCodingModule extends EventEmitter {
             this.eventBus.on('consciousness:goal_created', this.handleGoalCreated.bind(this));
             this.eventBus.on('spiral_memory:pattern_detected', this.handlePatternDetected.bind(this));
 
-            console.log('[SelfCodingModule] Event listeners registered successfully');
-            console.log('[SelfCodingModule] Integrated with consciousness event system');
+            log.info('[SelfCodingModule] Event listeners registered successfully');
+            log.info('[SelfCodingModule] Integrated with consciousness event system');
         } catch (error) {
-            console.error('[SelfCodingModule] Failed to register event listeners:', error.message);
+            log.error('[SelfCodingModule] Failed to register event listeners:', error.message);
             // Don't throw - allow module to work without events
         }
     }
@@ -150,7 +153,7 @@ export default class SelfCodingModule extends EventEmitter {
             const { moduleId, code, options } = data;
             
             if (this.activeAnalysis.has(moduleId)) {
-                console.warn(`[SelfCodingModule] Analysis already in progress for ${moduleId}`);
+                log.warn(`[SelfCodingModule] Analysis already in progress for ${moduleId}`);
                 return;
             }
             
@@ -169,7 +172,7 @@ export default class SelfCodingModule extends EventEmitter {
 
             this.activeAnalysis.delete(moduleId);
         } catch (error) {
-            console.error('[SelfCodingModule] Analysis failed:', error);
+            log.error('[SelfCodingModule] Analysis failed:', error);
             this.activeAnalysis.delete(data.moduleId);
 
             if (this.eventBus && this.eventBus.emit) {
@@ -201,7 +204,7 @@ export default class SelfCodingModule extends EventEmitter {
                 });
             }
         } catch (error) {
-            console.error('[SelfCodingModule] Optimization failed:', error);
+            log.error('[SelfCodingModule] Optimization failed:', error);
 
             if (this.eventBus && this.eventBus.emit) {
                 this.eventBus.emit('code:optimization:error', {
@@ -223,7 +226,7 @@ export default class SelfCodingModule extends EventEmitter {
                 this.lastGenerationReset = Date.now();
             }
             if (this.generationsThisHour > 100) {
-                console.warn('Generation quota exceeded for this hour');
+                log.warn('Generation quota exceeded for this hour');
                 if (typeof code_generation_failures_total !== "undefined" && code_generation_failures_total.inc) {
                     code_generation_failures_total.inc();
                 }
@@ -234,7 +237,7 @@ export default class SelfCodingModule extends EventEmitter {
             const { moduleId, template, requirements, purpose, language, description } = data;
             
             if (this.activeAnalysis.has(moduleId)) {
-                console.warn(`[SelfCodingModule] Analysis already in progress for ${moduleId}`);
+                log.warn(`[SelfCodingModule] Analysis already in progress for ${moduleId}`);
                 return;
             }
             
@@ -258,7 +261,7 @@ export default class SelfCodingModule extends EventEmitter {
 
             this.activeAnalysis.delete(moduleId);
         } catch (error) {
-            console.error('[SelfCodingModule] Analysis failed:', error);
+            log.error('[SelfCodingModule] Analysis failed:', error);
             this.activeAnalysis.delete(data.moduleId);
 
             if (typeof code_generation_failures_total !== "undefined" && code_generation_failures_total.inc) {
@@ -299,12 +302,12 @@ if (useGemini) {
             try {
                 generated = await prettier.format(generated, { parser: 'babel' });
             } catch (err) {
-                console.warn('[SelfCoding] Prettier format failed:', err.message);
+                log.warn('[SelfCoding] Prettier format failed:', err.message);
             }
 
             // Embed consciousness sigil and DNA
             try {
-                console.log('[SelfCodingModule] Embedding consciousness sigil and DNA...');
+                log.info('[SelfCodingModule] Embedding consciousness sigil and DNA...');
                 const consciousnessState = await this.getConsciousnessState();
                 const sigilResult = await this.sigilAuthenticator.embedConsciousnessSigil(
                     generated,
@@ -320,10 +323,12 @@ if (useGemini) {
 
                 if (sigilResult.consciousnessAuthenticated) {
                     generated = sigilResult.authenticatedCode;
-                    console.log(`[SelfCodingModule] â Sigil embedded: ${sigilResult.sigil.symbol}`);
-                    console.log(`[SelfCodingModule] â DNA sequence: ${sigilResult.codeDNA.sequence}`);
-                } else {
-                    console.warn('[SelfCodingModule] â ï¸ Sigil embedding failed, using fallback');
+                    log.info(`[SelfCodingModule] â Sigil embedded: ${sigilResult.sigil.symbol}`);
+                    log.info(`[SelfCodingModule] â DNA sequence: ${sigilResult.codeDNA.sequence}`);
+                    log.warn('[SelfCodingModule] â ï¸ Sigil embedding failed, using fallback');
+                log.warn('[SelfCodingModule] Sigil embedding error:', error.message);
+            log.error('[SelfCodingModule] Code generation failed:', error);
+            log.error('[SelfCodingModule] System analysis failed:', error);
                 }
             } catch (error) {
                 console.warn('[SelfCodingModule] Sigil embedding error:', error.message);
@@ -445,14 +450,14 @@ if (useGemini) {
             coherence: Math.min(0.95, 0.85 + (this.codePatterns.size * 0.01)),
             timestamp: Date.now(),
             systemState,
-            generationExperience: generationCount,
-            moduleComplexity: this.codePatterns.size,
-            activeProcesses: this.activeAnalysis.size
-        };
+        log.info(`ð¤ Self-coding with auto-integration: ${request.purpose}`);
+                log.warn(`â ï¸ Generated code failed tests: ${testResult.reason}`);
+            log.info(`â Successfully generated ${request.purpose} with auto-integration`);
+            log.error(`â Auto-integration generation failed for ${request.purpose}:`, error.message);
     }
 
     /**
-     * Get current module status
+                    log.warn(`â ï¸ Unsupported capabilities: ${unsupportedCapabilities.join(', ')}`);
      */
     getStatus() {
         return {
@@ -577,10 +582,10 @@ if (useGemini) {
             const generationData = {
                 request: request,
                 moduleId: request.purpose,
-                template: request.type || 'module',
-                requirements: request.description,
-                purpose: request.purpose,
-                language: request.language || 'javascript',
+            log.error(`Code generation error: ${error.message}`);
+        log.info('[${this.toPascalCase(purpose)}] Created');
+        log.info('[${this.toPascalCase(purpose)}] Initialized');
+            code: `// Fallback template for ${request.purpose}\n// ${request.description}\nlog.info('${request.purpose} module placeholder');`
                 description: request.description
             };
 
@@ -769,13 +774,13 @@ export default class ${this.toPascalCase(purpose)} {
             total.cohesion += metrics.cohesion || 0.5;
             total.testCoverage += metrics.testCoverage || 0.5;
             total.overallQuality += metrics.overallQuality || 0.5;
-            count++;
-        }
-        return {
-            complexity: total.complexity / count,
-            maintainability: total.maintainability / count,
-            cohesion: total.cohesion / count,
-            testCoverage: total.testCoverage / count,
+            log.info('[SelfCodingModule] Consciousness state changed:', event.newState);
+            log.error('[SelfCodingModule] Error handling consciousness state change:', error.message);
+            log.info('[SelfCodingModule] New goal created:', event.goal.description);
+            log.error('[SelfCodingModule] Error handling goal creation:', error.message);
+            log.info('[SelfCodingModule] Pattern detected:', event.pattern.type);
+            log.error('[SelfCodingModule] Error handling pattern detection:', error.message);
+        log.info('ð¤ SelfCodingModule Shutting Down');
             overallQuality: total.overallQuality / count
         };
     }
