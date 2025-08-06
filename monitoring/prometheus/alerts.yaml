@@ -1,0 +1,27 @@
+groups:
+  - name: system.rules
+    rules:
+      - alert: SceneGenLatencyP95High
+        expr: histogram_quantile(0.95, rate(scene_gen_latency_ms_bucket[5m])) > 1000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Scene generation latency p95 above 1s"
+          description: "p95 of scene_gen_latency_ms exceeded 1s"
+
+      - alert: HeapUsageHigh
+        expr: heap_usage > 0.8
+        labels:
+          severity: warning
+        annotations:
+          summary: "Heap usage above 80%"
+          description: "Heap usage is {{ $value | humanizePercentage }}"
+
+      - alert: JetstreamPendingHigh
+        expr: jetstream_pending > 50000
+        labels:
+          severity: warning
+        annotations:
+          summary: "Jetstream pending messages exceed 50k"
+          description: "Jetstream has {{ $value }} pending messages"
