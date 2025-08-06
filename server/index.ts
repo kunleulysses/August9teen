@@ -15,6 +15,28 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+async function getJetStreamPending() {
+  try {
+    if (typeof globalThis.getJetStreamPending === 'function') {
+      return await globalThis.getJetStreamPending();
+    }
+  } catch {
+    /* ignore */
+  }
+  return 0;
+}
+
+app.use(async (_req, res, next) => {
+  const pending = await getJetStreamPending();
+  const mem = process.memoryUsage();
+  const heapRatio = mem.heapUsed / mem.heapTotal;
+  if (pending > 10000 || heapRatio > 0.8) {
+    res.set('Retry-After', '1');
+    return res.status(429).send('overloaded');
+  }
+  next();
+});
+
 // Prometheus metrics setup
 const promRegistry = new Registry();
 collectDefaultMetrics({ register: promRegistry });
