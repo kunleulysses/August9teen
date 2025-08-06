@@ -115,7 +115,15 @@ class UniversalSystemTerminal {
             } catch (error) {
                 console.warn('⚠️ Consciousness orchestrator initialization failed:', error.message);
             }
-            
+
+            // Initialize complete universal system integration
+            try {
+                this.completeIntegration = new CompleteUniversalSystemIntegration();
+                console.log('✅ Complete universal integration initialized');
+            } catch (error) {
+                console.warn('⚠️ Complete universal integration initialization failed:', error.message);
+            }
+
             // Initialize unified chat aggregation for multi-container access
             await this.initializeUnifiedChatAggregation();
             
