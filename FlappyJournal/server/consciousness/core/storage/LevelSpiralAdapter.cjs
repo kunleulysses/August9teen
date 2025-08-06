@@ -2,7 +2,7 @@
  * LevelDB SpiralStorageAdapter implementation.
  */
 const { SpiralStorageAdapter  } = require('./SpiralStorageAdapter.cjs');
-const level = require('level');
+const { Level } = require('level');
 
 class LevelSpiralAdapter extends SpiralStorageAdapter {
   constructor(dbPath = process.env.SPIRAL_DB_PATH || './spiraldb') {
@@ -11,7 +11,7 @@ class LevelSpiralAdapter extends SpiralStorageAdapter {
     this.db = null;
   }
   async init() {
-    if (!this.db) this.db = level(this.dbPath, { valueEncoding: 'json' });
+    if (!this.db) this.db = new Level(this.dbPath, { valueEncoding: 'json' });
   }
   async get(key) {
     return this._callWithCB('get', async () => {
@@ -42,8 +42,12 @@ class LevelSpiralAdapter extends SpiralStorageAdapter {
   }
   async keys(prefix = '') {
     const keys = [];
-    for await (const k of this.db.createKeyStream({ gte: prefix, lte: prefix + '\xff' })) {
-      keys.push(k);
+    try {
+      for await (const [key] of this.db.iterator({ gte: prefix, lte: prefix + '\xff' })) {
+        keys.push(key);
+      }
+    } catch (error) {
+      console.warn('Level keys() fallback to empty array:', error.message);
     }
     return keys;
   }

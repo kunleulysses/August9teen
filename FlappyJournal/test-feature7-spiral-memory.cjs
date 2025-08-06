@@ -209,7 +209,7 @@ async function testFeature7Operation() {
 }
 
 // Run the test
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (require.main === module) {
     testFeature7Operation()
         .then(result => {
             console.log('\n🏁 Test Complete');
