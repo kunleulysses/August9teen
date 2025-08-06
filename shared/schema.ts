@@ -12,6 +12,15 @@ export const auditLogs = postgres.table("audit_log", {
   details: jsonb("details"),
 });
 
+// Reality access log table
+export const realityAccessLogs = postgres.table("reality_access_log", {
+  id: serial("id").primaryKey(),
+  sceneId: text("scene_id").notNull(),
+  userId: integer("user_id"),
+  accessedAt: timestamp("accessed_at").defaultNow().notNull(),
+  action: text("action").notNull(),
+});
+
 // Conversations table
 export const conversations = pgTable("conversations", {
   id: serial("id").primaryKey(),
@@ -294,6 +303,8 @@ export type Conversation = typeof conversations.$inferSelect;
 export type EmailQueueItem = typeof emailQueue.$inferSelect;
 export type AuditLog = typeof auditLogs.$inferSelect;
 export type InsertAuditLog = typeof auditLogs.$inferInsert;
+export type RealityAccessLog = typeof realityAccessLogs.$inferSelect;
+export type InsertRealityAccessLog = typeof realityAccessLogs.$inferInsert;
 export type InsertJournalEntry = z.infer<typeof insertJournalEntrySchema>;
 export type InsertEmail = z.infer<typeof insertEmailSchema>;
 export type InsertSmsMessage = z.infer<typeof insertSmsMessageSchema>;

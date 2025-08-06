@@ -35,4 +35,21 @@ logger.audit = async function (action, { actor, details } = {}) {
   await writeAuditLog({ actor, action, details });
 };
 
+async function writeRealityAccessLog({ sceneId, userId, action }) {
+  if (!pool) return;
+  try {
+    await pool.query(
+      'INSERT INTO postgres.reality_access_log (scene_id, user_id, action) VALUES ($1, $2, $3)',
+      [sceneId, userId || null, action]
+    );
+  } catch (err) {
+    logger.error({ err }, 'failed to write reality access log');
+  }
+}
+
+logger.realityAccess = async function (sceneId, action, { userId } = {}) {
+  logger.info({ sceneId, userId }, `reality_access:${action}`);
+  await writeRealityAccessLog({ sceneId, userId, action });
+};
+
 module.exports = logger;
