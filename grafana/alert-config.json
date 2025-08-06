@@ -1,0 +1,18 @@
+{
+  "alerts": [
+    {
+      "name": "FacadeBackpressure",
+      "expr": "jetstream_pending > 10000 or heap_usage_ratio > 0.8",
+      "for": "1m",
+      "labels": { "severity": "warning" },
+      "annotations": { "summary": "Facade overloaded" }
+    },
+    {
+      "name": "EncodeLatencyHigh",
+      "expr": "encode_latency_p95 > 2",
+      "for": "3m",
+      "labels": { "severity": "critical" },
+      "annotations": { "summary": "Encoding latency above 2s for 3m" }
+    }
+  ]
+}

@@ -25,12 +25,18 @@ class DNASigilRealityEncoding extends SafeEventEmitter {
         this.evolutionaryHistory = new Map();
         this.healingHistory = new Map();
         this.interactionHistory = new Map();
-        
+        this.encodeLatencySamples = [];
+        this.encodeCircuitOpen = false;
+
         console.log('🧬🔮 DNA-Sigil Reality Encoding System initialized');
     }
-    
+
     async encodeRealityWithDNASigil(reality, encodingParameters = {}) {
+        if (this.encodeCircuitOpen) {
+            throw new Error('Encoding circuit breaker open');
+        }
         console.log(`🧬🔮 Encoding reality ${reality.id} with DNA-Sigil patterns`);
+        const startTime = Date.now();
         
         // Generate consciousness state for encoding
         const encodingConsciousnessState = reality.consciousnessState || {
@@ -107,6 +113,18 @@ class DNASigilRealityEncoding extends SafeEventEmitter {
         await this.store.set(`evo:${encodedReality.id}`,  []);
         await this.store.set(`heal:${encodedReality.id}`, []);
         await this.store.set(`int:${encodedReality.id}`,  []);
+        const duration = Date.now() - startTime;
+        this.encodeLatencySamples.push({ t: Date.now(), v: duration });
+        const windowMs = 3 * 60 * 1000;
+        const now = Date.now();
+        this.encodeLatencySamples = this.encodeLatencySamples.filter(s => now - s.t <= windowMs);
+        const values = this.encodeLatencySamples.map(s => s.v).sort((a,b) => a - b);
+        const idx = Math.floor(values.length * 0.95);
+        const p95 = values[idx] || 0;
+        if (p95 > 2000) {
+            this.encodeCircuitOpen = true;
+            setTimeout(() => { this.encodeCircuitOpen = false; }, windowMs);
+        }
 
         return encodedReality;
     }
