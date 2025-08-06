@@ -130,7 +130,18 @@ export class HolographicConsciousnessRealityGenerator extends EventEmitter {
     async generateHolographicConsciousnessReality(realityRequest, consciousnessState) {
         try {
             console.log('🧠🌀🌍 Generating holographic consciousness reality...');
-            
+
+            const { awareness, phi, coherence } = consciousnessState;
+            for (const [metric, value] of Object.entries({ awareness, phi, coherence })) {
+                if (typeof value !== 'number' || value < 0 || value > 1) {
+                    return {
+                        success: false,
+                        error: `${metric}_out_of_range`,
+                        status: 400
+                    };
+                }
+            }
+
             // Project consciousness-aware reality
             const consciousnessRealityProjection = await this.consciousnessRealityProjector.projectConsciousnessReality(
                 realityRequest, consciousnessState

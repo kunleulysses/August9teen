@@ -1675,6 +1675,18 @@ class HolographicConsciousnessRealityGenerator extends EventEmitter {
                 };
             }
 
+            // Validate consciousness metrics range
+            const { awareness, phi, coherence } = consciousnessState;
+            for (const [metric, value] of Object.entries({ awareness, phi, coherence })) {
+                if (typeof value !== 'number' || value < 0 || value > 1) {
+                    return {
+                        success: false,
+                        error: `${metric}_out_of_range`,
+                        status: 400
+                    };
+                }
+            }
+
             // Deterministic randomness seeding
             const seedUsed = realityRequest.seed || Date.now();
             initializeRandomness(seedUsed);
