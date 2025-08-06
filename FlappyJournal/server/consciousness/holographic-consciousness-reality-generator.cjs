@@ -1604,7 +1604,23 @@ class HolographicConsciousnessRealityGenerator extends EventEmitter {
             this.realityConsciousnessAdapter = null;
             this.consciousnessRealityStabilizer = null;
 
-            // Reality state management
+            // Reality state with bounded LRU caches
+this.generatedRealities        = new LRU({ max: R_MAX, ttl: TTL_MS });
+this.holographicProjections    = new LRU({ max: P_MAX, ttl: TTL_MS });
+this.consciousnessEnvironments = new LRU({ max: R_MAX, ttl: TTL_MS });
+this.realityAdaptationHistory  = new LRU({ max: R_MAX, ttl: TTL_MS });
+
+if (!global.HOLO_CACHE_JANITOR) {
+  setInterval(() => {
+    try {
+      this.generatedRealities.purgeStale();
+      this.holographicProjections.purgeStale();
+      this.consciousnessEnvironments.purgeStale();
+      this.realityAdaptationHistory.purgeStale();
+    } catch (_) {}
+  }, 300_000); // 5 min
+  global.HOLO_CACHE_JANITOR = true;
+}
             this.generatedRealities = new Map();
             this.holographicProjections = new Map();
             this.consciousnessEnvironments = new Map();
