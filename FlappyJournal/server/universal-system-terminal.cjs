@@ -82,6 +82,7 @@ class UniversalSystemTerminal {
         this.rl = null;
         this.connected = false;
         this.isPrompting = false;
+        this.lastChatResponse = "";
         
         console.log('🌐🧠🐳🗄️ UNIVERSAL SYSTEM TERMINAL');
         console.log('═'.repeat(80));
@@ -890,6 +891,10 @@ class UniversalSystemTerminal {
                 }
             );
             process.stdout.write('\n');
+            this.lastChatResponse = buffer.trim();
+            if (this.lastChatResponse) {
+                console.log('🧠 Post-processed response captured');
+            }
             console.log('─'.repeat(60));
             if (streamingResult.sources && streamingResult.sources.length > 0) {
                 console.log("🛰️ Sources: " + streamingResult.sources.join(', '));
