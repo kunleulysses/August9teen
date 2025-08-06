@@ -897,7 +897,7 @@ class UniversalSystemTerminal {
     
     async handleInterfaceCommand(cmd) {
         console.log('\n🖥️ INTERFACE COMMAND PROCESSING...');
-        
+
         if (cmd === 'interface status' || cmd === 'ui status') {
             if (this.systemOrchestrator) {
                 const eventBus = this.systemOrchestrator.getUniversalEventBus();
@@ -909,6 +909,19 @@ class UniversalSystemTerminal {
                 return;
             }
             console.log('⚠️ Interface status not available');
+        }
+
+        if (cmd === 'ui refresh' || cmd === 'interface refresh') {
+            if (this.systemOrchestrator) {
+                const eventBus = this.systemOrchestrator.getUniversalEventBus();
+                eventBus.emit('chat:interface_command', {
+                    type: 'refresh',
+                    timestamp: Date.now()
+                });
+                console.log('🔄 Interface refresh event emitted');
+                return;
+            }
+            console.log('⚠️ Interface refresh not available');
         }
     }
 

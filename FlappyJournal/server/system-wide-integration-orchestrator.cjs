@@ -967,11 +967,28 @@ class SystemWideIntegrationOrchestrator extends EventEmitter {
     
     async handleInterfaceCommand(command) {
         // Handle interface commands from universal chat
-        this.universalEventBus.emit('interface:command_completed', {
-            command,
-            result: this.systemLayers.interfaces,
-            success: true
-        });
+        switch (command.type) {
+            case 'refresh':
+                // Trigger interface refresh actions
+                this.universalEventBus.emit('interface:refresh', {
+                    command,
+                    timestamp: Date.now()
+                });
+                this.universalEventBus.emit('interface:command_completed', {
+                    command,
+                    result: { refreshed: true },
+                    success: true
+                });
+                break;
+
+            default:
+                this.universalEventBus.emit('interface:command_completed', {
+                    command,
+                    result: this.systemLayers.interfaces,
+                    success: true
+                });
+                break;
+        }
     }
     
     async handleSystemCommand(command) {
