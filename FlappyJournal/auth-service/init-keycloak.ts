@@ -29,6 +29,8 @@ export async function initializeKeycloak(): Promise<void> {
       { name: 'viewer', description: 'Viewer with read-only access' },
       { name: 'user', description: 'Standard user access' },
       { name: 'premium', description: 'Premium user with enhanced features' },
+      { name: 'spiral.read', description: 'Read access to spiral subjects' },
+      { name: 'spiral.write', description: 'Write access to spiral subjects' },
     ];
 
     for (const role of roles) {
