@@ -47,34 +47,8 @@ async function testCompleteSelfCodingSystem() {
             log(`❌ Original module error: ${error.message}`);
         }
         
-        // Test 2: SelfCodingModuleFixed
-        log('\n2. Testing SelfCodingModuleFixed...');
-        try {
-            const { default: SelfCodingModuleFixed } = await import('./consciousness/modules/SelfCodingModuleFixed.cjs');
-            const fixedCoder = new SelfCodingModuleFixed();
-            
-            await new Promise(resolve => {
-                if (fixedCoder.isInitialized) resolve();
-                else fixedCoder.once('initialized', resolve);
-            });
-            
-            const result = await fixedCoder.generateCode({
-                purpose: 'auto-test-module',
-                description: 'Module for testing auto-integration',
-                template: 'class'
-            });
-            
-            log(`✅ Fixed module generation: ${result.success ? 'SUCCESS' : 'FAILED'}`);
-            if (result.success) {
-                log(`   Generated ${result.code.length} characters`);
-                log(`   Saved to: ${result.savedTo}`);
-            }
-        } catch (error) {
-            log(`❌ Fixed module error: ${error.message}`);
-        }
-        
-        // Test 3: Auto-Integration Service
-        log('\n3. Testing Auto-Integration Service...');
+        // Test 2: Auto-Integration Service
+        log('\n2. Testing Auto-Integration Service...');
         try {
             const { default: AutoIntegrationService } = await import('./consciousness/services/AutoIntegrationService.cjs');
             const autoIntegration = new AutoIntegrationService();
@@ -95,8 +69,8 @@ async function testCompleteSelfCodingSystem() {
             log(`❌ Auto-integration error: ${error.message}`);
         }
         
-        // Test 4: Check for auto-testing infrastructure
-        log('\n4. Checking Auto-Testing Infrastructure...');
+        // Test 3: Check for auto-testing infrastructure
+        log('\n3. Checking Auto-Testing Infrastructure...');
         try {
             // Check if test files exist
             const testFiles = [
@@ -122,8 +96,8 @@ async function testCompleteSelfCodingSystem() {
             log(`❌ Auto-testing check error: ${error.message}`);
         }
         
-        // Test 5: Generated files verification
-        log('\n5. Verifying Generated Files...');
+        // Test 4: Generated files verification
+        log('\n4. Verifying Generated Files...');
         try {
             const autonomousFiles = await fs.readdir('./generated/autonomous');
             const generatedFiles = await fs.readdir('./generated');
@@ -145,8 +119,8 @@ async function testCompleteSelfCodingSystem() {
             log(`❌ File verification error: ${error.message}`);
         }
         
-        // Test 6: Real-time logging verification
-        log('\n6. Verifying Real-time Logging...');
+        // Test 5: Real-time logging verification
+        log('\n5. Verifying Real-time Logging...');
         try {
             const logPath = './FlappyJournal/consciousness-journal/self-coding-logs/self-coding-log-2025-07-20.md';
             const logContent = await fs.readFile(logPath, 'utf8');
@@ -172,8 +146,8 @@ async function testCompleteSelfCodingSystem() {
             log(`❌ Logging verification error: ${error.message}`);
         }
         
-        // Test 7: Event bus integration
-        log('\n7. Testing Event Bus Integration...');
+        // Test 6: Event bus integration
+        log('\n6. Testing Event Bus Integration...');
         try {
             const { default: eventBus } = await import('./consciousness/core/ConsciousnessEventBus.cjs');
             
