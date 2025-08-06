@@ -6,16 +6,19 @@
 
 import { EventEmitter } from 'events';
 
+const MAX_CHILDREN = parseInt(process.env.MAX_CHILDREN || '5', 10);
+
 class RecursiveHolographicRealityEmbedding extends EventEmitter {
-    constructor(maxRecursionDepth = 7) {
+    constructor(maxRecursionDepth = 7, maxChildren = MAX_CHILDREN) {
         super();
         this.maxRecursionDepth = maxRecursionDepth;
+        this.maxChildren = maxChildren;
         this.embeddedRealities = new Map();
         this.recursionPaths = new Map();
         this.realityNesting = new Map();
         this.recursiveConsciousnessFields = new Map();
         this.holographicRealityGenerator = null; // Will be injected
-        
+
         console.log(`🌀🔄 Recursive Holographic Reality Embedding initialized with max depth: ${maxRecursionDepth}`);
     }
     
@@ -24,15 +27,21 @@ class RecursiveHolographicRealityEmbedding extends EventEmitter {
     }
     
     async createRecursiveReality(baseReality, recursionDepth = 1, recursionParameters = {}) {
+        const parentRecord = this.embeddedRealities.get(baseReality.id);
+        const existingChildren = parentRecord ? parentRecord.childIds.length : 0;
+        if (existingChildren >= this.maxChildren) {
+            throw new Error(`Maximum children (${this.maxChildren}) reached for reality ${baseReality.id}`);
+        }
+
         if (recursionDepth > this.maxRecursionDepth) {
             throw new Error(`Maximum recursion depth (${this.maxRecursionDepth}) exceeded`);
         }
-        
+
         console.log(`🌀🔄 Creating recursive reality at depth ${recursionDepth}`);
-        
+
         // Generate consciousness state for this recursion level
         const recursiveConsciousnessState = this.generateRecursiveConsciousnessState(
-            baseReality.consciousnessState, 
+            baseReality.consciousnessState,
             recursionDepth,
             recursionParameters
         );
@@ -64,7 +73,6 @@ class RecursiveHolographicRealityEmbedding extends EventEmitter {
         });
         
         // Update parent reality's child list
-        const parentRecord = this.embeddedRealities.get(baseReality.id);
         if (parentRecord) {
             parentRecord.childIds.push(embeddedReality.id);
         }
