@@ -693,13 +693,40 @@ class UniversalSystemTerminal {
                 console.error('❌ Database status failed:', error.message);
             }
         } else if (cmd.startsWith('db query ')) {
-            const sql = cmd.replace('db query ', '');
+            const raw = cmd.replace('db query ', '').trim();
+            const [sqlPart, paramsPart] = raw.split('|').map(s => s.trim());
+            const sql = sqlPart;
+            let params = [];
+
+            if (!sql) {
+                console.log('⚠️ No SQL provided');
+                return;
+            }
+
+            // Only allow read-only queries for safety
+            if (!sql.toLowerCase().startsWith('select')) {
+                console.log('⚠️ Only SELECT queries are allowed');
+                return;
+            }
+
+            if (paramsPart) {
+                try {
+                    params = JSON.parse(paramsPart);
+                    if (!Array.isArray(params)) {
+                        params = [params];
+                    }
+                } catch (parseErr) {
+                    console.log('⚠️ Invalid parameters. Use JSON array after |');
+                    return;
+                }
+            }
+
             try {
                 if (this.systemOrchestrator) {
                     const dbAccess = this.systemOrchestrator.getDeepSystemAccess()?.databaseConnections;
                     if (dbAccess?.postgres) {
                         console.log(`🔍 Executing PostgreSQL query: ${sql}`);
-                        const result = await dbAccess.postgres.query(sql);
+                        const result = await dbAccess.postgres.query(sql, params);
                         console.log(`✅ Query executed. Rows returned: ${result.rowCount || 0}`);
                         if (result.rows && result.rows.length > 0) {
                             console.log('📋 Results:');
