@@ -1088,7 +1088,15 @@ class UniversalSystemTerminal {
 
         if (cmd === 'selfcode trigger') {
             console.log('🔄 Triggering self-coding sequence...');
-            console.log('✅ Self-coding sequence initiated (placeholder)');
+            try {
+                const scriptPath = join(__dirname, 'trigger-autonomous-coding.cjs');
+                const { stdout, stderr } = await execAsync(`node ${scriptPath}`);
+                if (stdout) console.log(stdout);
+                if (stderr) console.error(stderr);
+                console.log('✅ Self-coding sequence initiated');
+            } catch (error) {
+                console.error('❌ Self-coding trigger failed:', error.message);
+            }
         } else if (cmd === 'selfcode status') {
             console.log('📊 Self-coding system status:');
             console.log('  ✅ AutonomousCodingAgent: Active');
