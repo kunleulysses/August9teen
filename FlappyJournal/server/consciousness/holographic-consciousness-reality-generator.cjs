@@ -2225,3 +2225,5 @@ class HolographicConsciousnessRealityGenerator extends EventEmitter {
         }
     }
 }
+
+module.exports.HolographicConsciousnessRealityGenerator = HolographicConsciousnessRealityGenerator;

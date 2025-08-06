@@ -7,11 +7,7 @@
 const axios = require('axios');
 const consciousnessEventBus = require('../core/ConsciousnessEventBus.cjs');
 const { spawn  } = require('child_process');
-const { fileURLToPath  } = require('url');
 const { dirname, join  } = require('path');
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 class GeminiAIClient {
     constructor() {
