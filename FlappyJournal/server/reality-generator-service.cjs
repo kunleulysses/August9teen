@@ -13,6 +13,13 @@ const rateLimit = require('express-rate-limit');
 const { authMiddleware, socketAuth } = require('../common/authMiddleware.cjs');
 const { connectNats, sc } = require('../common/natsClient.cjs');
 const { v4: uuidv4 } = require('uuid');
+const {
+  register: promRegister,
+  broadcastQueueLen,
+  broadcastFps,
+  wsBacklogBytes,
+  frameDropTotal
+} = require('../common/metrics.cjs');
 
 const BROKER_MODE = process.env.BROKER_MODE || 'on';
 
@@ -74,6 +81,13 @@ app.get('/health', (req, res) => {
         nats: serviceMetrics.nats,
         imaginationEngine: imaginationEngine ? imaginationEngine.getStatus() : null
     });
+});
+
+// Prometheus metrics endpoint
+app.get('/metrics', async (req, res) => {
+    res.set('Content-Type', promRegister.contentType);
+    res.set('Access-Control-Allow-Origin', '*');
+    res.send(await promRegister.metrics());
 });
 
 // Get generated realities (secured)
@@ -162,7 +176,61 @@ app.post('/api/generate-reality', async (req, res) => {
     }
 });
 
-// WebSocket connection for real-time updates (secured)
+// --- Adaptive FPS + Broadcast Queue ---
+const broadcastQueue = [];
+const MAX_FPS = parseInt(process.env.MAX_FPS) || 10;
+const MIN_FPS = parseInt(process.env.MIN_FPS) || 1;
+const BACKLOG_THRESHOLD_BYTES = parseInt(process.env.BACKLOG_THRESHOLD_BYTES) || 500_000;
+let fps = MAX_FPS;
+let lastBroadcast = Date.now();
+
+function updateWsMetrics() {
+  let totalBacklog = 0;
+  for (const socket of authorisedSockets) {
+    try { totalBacklog += socket.conn.transport?.ws?.bufferedAmount || 0; } catch {}
+  }
+  wsBacklogBytes.set(totalBacklog);
+  broadcastFps.set(fps);
+  broadcastQueueLen.set(broadcastQueue.length);
+}
+
+async function broadcastLoop() {
+  while (true) {
+    let now = Date.now();
+    // Adaptive FPS
+    let totalBacklog = 0;
+    for (const socket of authorisedSockets) {
+      try { totalBacklog += socket.conn.transport?.ws?.bufferedAmount || 0; } catch {}
+    }
+    // Throttle FPS if backlog high, else ramp up
+    if (totalBacklog > BACKLOG_THRESHOLD_BYTES) {
+      fps = Math.max(MIN_FPS, Math.floor(fps / 2));
+    } else if (fps < MAX_FPS) {
+      fps = Math.min(MAX_FPS, fps + 1);
+    }
+    // Drop oldest if queue too long
+    while (broadcastQueue.length > 1000) {
+      broadcastQueue.shift();
+      frameDropTotal.inc();
+    }
+    // Pop and emit
+    if (broadcastQueue.length > 0) {
+      const msg = broadcastQueue.shift();
+      for (const socket of authorisedSockets) {
+        try {
+          if (socket.connected && socket.auth?.scope?.includes('reality.gen')) {
+            socket.emit('reality-generated', msg);
+          }
+        } catch {}
+      }
+    }
+    updateWsMetrics();
+    const elapsed = Date.now() - now;
+    await new Promise(r => setTimeout(r, Math.max(0, 1000/fps - elapsed)));
+  }
+}
+setImmediate(broadcastLoop);
+
 io.use((socket, next) => socketAuth(socket, next));
 const authorisedSockets = new Set();
 io.on('connection', (socket) => {
@@ -200,7 +268,7 @@ io.on('connection', (socket) => {
                 const result = await realityGenerator.generateHolographicConsciousnessReality(
                     msg.request, msg.consciousnessState
                 );
-                socket.emit('reality-generated', { jobId, ...result });
+                broadcastQueue.push({ jobId, ...result });
                 return;
             }
             await nats.publish('reality.gen.request', sc.encode(JSON.stringify(msg)));
@@ -230,14 +298,8 @@ async function initializeServices() {
                             .json(result);
                         pendingHttpJobs.delete(result.jobId);
                     }
-                    // WebSocket broadcast
-                    for (const socket of authorisedSockets) {
-                        try {
-                            if (socket.connected && socket.auth?.scope?.includes('reality.gen')) {
-                                socket.emit('reality-generated', result);
-                            }
-                        } catch (e) {}
-                    }
+                    // WebSocket adaptive broadcast: enqueue for next frame
+                    broadcastQueue.push(result);
                 } catch (e) {
                     console.error('Result msg parse error:', e);
                 }
