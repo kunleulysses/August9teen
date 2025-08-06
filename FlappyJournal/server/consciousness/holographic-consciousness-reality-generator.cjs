@@ -1621,10 +1621,7 @@ if (!global.HOLO_CACHE_JANITOR) {
   }, 300_000); // 5 min
   global.HOLO_CACHE_JANITOR = true;
 }
-            this.generatedRealities = new Map();
-            this.holographicProjections = new Map();
-            this.consciousnessEnvironments = new Map();
-            this.realityAdaptationHistory = [];
+            
 
             logger.info('🧠🌀🌍 Holographic Consciousness Reality Generator initialized');
         this.registerEventListeners();
