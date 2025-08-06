@@ -223,9 +223,13 @@ class UniversalSystemTerminal {
     
     setupUniversalEventBusIntegration() {
         if (!this.systemOrchestrator) return;
-        
+
         const eventBus = this.systemOrchestrator.getUniversalEventBus();
-        
+        if (!eventBus) {
+            console.log('⚠️ Universal event bus unavailable');
+            return;
+        }
+
         // Listen for system events
         eventBus.on('system:real_time_sync', (data) => {
             // Real-time system updates (silent unless requested)
