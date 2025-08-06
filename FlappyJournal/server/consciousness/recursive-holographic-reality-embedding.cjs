@@ -4,22 +4,25 @@
  * Implements 7-layer recursive reality embedding with bidirectional connections
  */
 
-const { EventEmitter  } = require('events');
-const { validate  } = require('./utils/validation.cjs');
-const { initializeRandomness, secureId  } = require('./utils/random.cjs');
-const { saveReality, savePath, saveField, incrementMetric  } = require('./utils/persistence.cjs');
-const { logger, child as childLogger  } = require('./utils/logger.cjs');
+const { EventEmitter } = require('events');
+const { validate } = require('./utils/validation.cjs');
+const { initializeRandomness, secureId } = require('./utils/random.cjs');
+const { saveReality, savePath, saveField, incrementMetric } = require('./utils/persistence.cjs');
+const { logger, child as childLogger } = require('./utils/logger.cjs');
+
+const MAX_CHILDREN = parseInt(process.env.MAX_CHILDREN || '5', 10);
 
 class RecursiveHolographicRealityEmbedding extends EventEmitter {
-    constructor(maxRecursionDepth = 7) {
+    constructor(maxRecursionDepth = 7, maxChildren = MAX_CHILDREN) {
         super();
         this.maxRecursionDepth = maxRecursionDepth;
+        this.maxChildren = maxChildren;
         this.embeddedRealities = new Map();
         this.recursionPaths = new Map();
         this.realityNesting = new Map();
         this.recursiveConsciousnessFields = new Map();
         this.holographicRealityGenerator = null; // Will be injected
-        
+
         console.log(`🌀🔄 Recursive Holographic Reality Embedding initialized with max depth: ${maxRecursionDepth}`);
     }
     
@@ -41,6 +44,12 @@ class RecursiveHolographicRealityEmbedding extends EventEmitter {
 
         // Deterministic randomness seeding for this recursion context
         initializeRandomness(`${baseReality.id}_${recursionDepth}`);
+
+        const parentRecord = this.embeddedRealities.get(baseReality.id);
+        const existingChildren = parentRecord ? parentRecord.childIds.length : 0;
+        if (existingChildren >= this.maxChildren) {
+            throw new Error(`Maximum children (${this.maxChildren}) reached for reality ${baseReality.id}`);
+        }
 
         const log = childLogger({ recursionDepth, parentId: baseReality.id });
         log.info(`🌀🔄 Creating recursive reality at depth ${recursionDepth}`);
@@ -84,9 +93,8 @@ class RecursiveHolographicRealityEmbedding extends EventEmitter {
             recursiveConsciousnessState,
             createdAt: Date.now()
         });
-        
+
         // Update parent reality's child list
-        const parentRecord = this.embeddedRealities.get(baseReality.id);
         if (parentRecord) {
             parentRecord.childIds.push(embeddedReality.id);
         }
