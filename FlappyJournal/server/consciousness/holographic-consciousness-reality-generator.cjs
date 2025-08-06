@@ -5,10 +5,17 @@
  * Value: $1.2B+ (Consciousness reality generation)
  */
 
+const path = require('path');
 const { EventEmitter  } = require('events');
 const eventBus = require('./core/ConsciousnessEventBus.cjs');
 const { cognitiveLog  } = require('./modules/CognitiveLog.cjs');
-const { validate  } = require('./utils/validation.cjs');
+const { validate  } = require(path.join(__dirname, '../../../server/consciousness/utils/validation.cjs'));
+const realityRequestSchema = require(
+    path.join(__dirname, '../../../server/consciousness/schemas/reality-request.schema.json')
+);
+const consciousnessStateSchema = require(
+    path.join(__dirname, '../../../server/consciousness/schemas/consciousness-state.schema.json')
+);
 const { initializeRandomness, secureId  } = require('./utils/random.cjs');
 const { saveReality, incrementMetric  } = require('./utils/persistence.cjs');
 const { logger, child as childLogger  } = require('./utils/logger.cjs');
@@ -1664,8 +1671,8 @@ class HolographicConsciousnessRealityGenerator extends EventEmitter {
         try {
             // Validate input schemas
             try {
-                validate('https://flappyjournal.dev/schema/reality-request.json', realityRequest);
-                validate('https://flappyjournal.dev/schema/consciousness-state.json', consciousnessState);
+                validate(realityRequestSchema.$id, realityRequest);
+                validate(consciousnessStateSchema.$id, consciousnessState);
             } catch (error) {
                 validationFailures.inc();
                 return {

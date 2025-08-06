@@ -4,8 +4,12 @@
  * Implements 7-layer recursive reality embedding with bidirectional connections
  */
 
+const path = require('path');
 const { EventEmitter  } = require('events');
-const { validate  } = require('./utils/validation.cjs');
+const { validate  } = require(path.join(__dirname, '../../../server/consciousness/utils/validation.cjs'));
+const consciousnessSchema = require(
+    path.join(__dirname, '../../../server/consciousness/schemas/consciousness-state.schema.json')
+);
 const { initializeRandomness, secureId  } = require('./utils/random.cjs');
 const { saveReality, savePath, saveField, incrementMetric  } = require('./utils/persistence.cjs');
 const { logger, child as childLogger  } = require('./utils/logger.cjs');
@@ -34,7 +38,7 @@ class RecursiveHolographicRealityEmbedding extends EventEmitter {
 
         // Validate baseReality.consciousnessState
         try {
-            validate('https://flappyjournal.dev/schema/consciousness-state.json', baseReality.consciousnessState);
+            validate(consciousnessSchema.$id, baseReality.consciousnessState);
         } catch (error) {
             throw new Error('SchemaValidationError (base reality consciousnessState): ' + error.message);
         }
@@ -54,7 +58,7 @@ class RecursiveHolographicRealityEmbedding extends EventEmitter {
 
         // Validate generated recursiveConsciousnessState
         try {
-            validate('https://flappyjournal.dev/schema/consciousness-state.json', recursiveConsciousnessState);
+            validate(consciousnessSchema.$id, recursiveConsciousnessState);
         } catch (error) {
             throw new Error('SchemaValidationError (recursiveConsciousnessState): ' + error.message);
         }
