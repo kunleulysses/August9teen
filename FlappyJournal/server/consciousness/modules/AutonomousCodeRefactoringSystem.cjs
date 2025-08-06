@@ -149,7 +149,7 @@ class AutonomousCodeRefactoringSystem extends EventEmitter {
     const { analysis } = analysisResult;
 
     // Check against thresholds
-    if (analysis.enhanced?.complexityMetrics?.cyclomaticComplexity > this.refactoringThresholds.complexity) {
+    if (analysis.enhanced?.complexityMetrics?.cyclomaticComplexity > this.refactoringThresholds.cyclomaticComplexity) {
       return true;
     }
 
