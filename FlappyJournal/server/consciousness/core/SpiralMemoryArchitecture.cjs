@@ -1821,7 +1821,7 @@ class SpiralMemoryArchitecture extends EventEmitter {
     }
 }
 
-module.exports = SpiralMemoryArchitecture;
+module.exports = { SpiralMemoryArchitecture };
 
 SpiralMemoryArchitecture.prototype.checkStorageHealth = async function() {
   const res = await this.storage.redis.ping();

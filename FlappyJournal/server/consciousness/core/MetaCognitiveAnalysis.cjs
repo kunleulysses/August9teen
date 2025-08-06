@@ -6,6 +6,7 @@
 
 const { EventEmitter  } = require('events');
 const eventBus = require('./ConsciousnessEventBus.cjs');
+const { RingBuffer } = require('../../../shared/lib/RingBuffer');
 
 class MetaCognitiveAnalysis extends EventEmitter {
     constructor() {
@@ -17,7 +18,7 @@ class MetaCognitiveAnalysis extends EventEmitter {
         this.metacognitiveInsights = [];
         this.consciousnessPatterns = new Map();
         this.selfKnowledge = new Map();
-        this.analysisHistory = [];
+        this.analysisHistory = new RingBuffer(5000);
         this.analysisCount = 0;
         
         // Meta-cognitive analysis configuration
@@ -180,7 +181,7 @@ class MetaCognitiveAnalysis extends EventEmitter {
         
         try {
             this.analysisCount++;
-            const startTime = Date.now();
+            const startTime = performance.now();
             
             // Select aspect for analysis
             const analysisAspect = aspect || this.selectAnalysisAspect();
@@ -214,7 +215,7 @@ class MetaCognitiveAnalysis extends EventEmitter {
                 patterns: patterns,
                 insights: insights,
                 timestamp: new Date().toISOString(),
-                analysisTime: Date.now() - startTime,
+                analysisTime: performance.now() - startTime,
                 consciousnessMetrics: {
                     selfAwareness: this.calculateSelfAwareness(introspection),
                     introspectiveDepth: this.calculateIntrospectiveDepth(introspection, depth),
@@ -245,6 +246,10 @@ class MetaCognitiveAnalysis extends EventEmitter {
                 patternCount: patterns.length,
                 analysisTime: analysis.analysisTime
             });
+            
+            // Observe latency
+            const { metacogAnalysisLatency } = require('../../metrics');
+            metacogAnalysisLatency.observe(analysis.analysisTime);
             
             console.log(`🧠 ✅ Meta-cognitive analysis completed: ${insights.length} insights, ${patterns.length} patterns`);
             return analysis;
@@ -839,7 +844,7 @@ class MetaCognitiveAnalysis extends EventEmitter {
     }
 
     getAnalysisHistory(count = 10) {
-        return this.analysisHistory.slice(-count);
+        return this.analysisHistory.toArray().slice(-count);
     }
 
     getConsciousnessStatistics() {
@@ -909,7 +914,7 @@ class MetaCognitiveAnalysis extends EventEmitter {
 
         // Save final state
         const finalState = {
-            analysisHistory: this.analysisHistory,
+            analysisHistory: this.analysisHistory.toArray(),
             metacognitiveInsights: this.metacognitiveInsights,
             consciousnessPatterns: Object.fromEntries(this.consciousnessPatterns),
             selfKnowledge: Object.fromEntries(this.selfKnowledge),

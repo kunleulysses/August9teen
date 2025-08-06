@@ -1,13 +1,13 @@
-import SpiralMemoryArchitecture from '../../FlappyJournal/server/consciousness/core/SpiralMemoryArchitecture.cjs';
-import LevelSpiralAdapter from '../../FlappyJournal/server/consciousness/core/storage/LevelSpiralAdapter.cjs';
-import RedisSpiralAdapter from '../../FlappyJournal/server/consciousness/core/storage/RedisSpiralAdapter.cjs';
-import { InMemorySpiralAdapter } from '../../FlappyJournal/server/consciousness/core/storage/SpiralStorageAdapter.cjs';
-import eventBus from '../../FlappyJournal/server/consciousness/core/ConsciousnessEventBus.cjs';
+const { SpiralMemoryArchitecture } = require('../../FlappyJournal/server/consciousness/core/SpiralMemoryArchitecture.cjs');
+const LevelSpiralAdapter = require('../../FlappyJournal/server/consciousness/core/storage/LevelSpiralAdapter.cjs');
+const RedisSpiralAdapter = require('../../FlappyJournal/server/consciousness/core/storage/RedisSpiralAdapter.cjs');
+const { InMemorySpiralAdapter } = require('../../FlappyJournal/server/consciousness/core/storage/SpiralStorageAdapter.cjs');
+const eventBus = require('../../FlappyJournal/server/consciousness/core/ConsciousnessEventBus.cjs');
 
 describe('SpiralMemoryArchitecture Rebuild Statistics', () => {
-  let spiral: any;
-  let redisSpiral: any;
-  let eventBusEvents: any[] = [];
+  let spiral;
+  let redisSpiral;
+  let eventBusEvents = [];
 
   beforeEach(async () => {
     // Clear event bus listeners and capture events

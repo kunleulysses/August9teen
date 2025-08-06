@@ -4,6 +4,8 @@
 const { SpiralStorageAdapter  } = require('./SpiralStorageAdapter.cjs');
 const Redis = require('ioredis');
 const fs = require('fs');
+const msgpack = require('msgpack5')();
+const lz4 = require('lz4js');
 
 class RedisSpiralAdapter extends SpiralStorageAdapter {
   constructor(redisUrl = process.env.REDIS_URL, tlsCaPath = process.env.REDIS_CA) {
@@ -26,15 +28,19 @@ class RedisSpiralAdapter extends SpiralStorageAdapter {
   async get(key) {
     return this._callWithCB('get', async () => {
       const t = Date.now();
-      const value = await this.redis.get(key);
+      const value = await this.redis.getBuffer(key); // Use getBuffer for binary data
       this.recordLatency('get', Date.now() - t);
-      return value ? JSON.parse(value) : undefined;
+      if (!value) return undefined;
+      const decompressed = lz4.decompress(value);
+      return msgpack.decode(decompressed);
     });
   }
   async set(key, value) {
     return this._callWithCB('set', async () => {
       const t = Date.now();
-      await this.redis.set(key, JSON.stringify(value));
+      const buf = msgpack.encode(value);
+      const compressed = lz4.compress(buf);
+      await this.redis.set(key, compressed);
       this.recordLatency('set', Date.now() - t);
     });
   }

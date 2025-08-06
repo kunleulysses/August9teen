@@ -19,9 +19,8 @@ describe('Storage Adapter Contract', () => {
   const { adapterConfigs } = require('../helpers/adapterFactory');
 
   // Test each adapter configuration
-  describe.each(adapterConfigs.map(config => [config.name, config]))(
-    '%s Adapter Contract',
-    (adapterName: string, config: AdapterTestConfig) => {
+  adapterConfigs.forEach((config: any) => {
+    describe(`${config.name} Adapter Contract`, () => {
       let adapter: any;
 
       beforeEach(async () => {
@@ -29,7 +28,7 @@ describe('Storage Adapter Contract', () => {
         if (config.requiresExternalService && config.name === 'Redis') {
           try {
             const testRedisUrl = process.env.TEST_REDIS_URL || 'redis://127.0.0.1:6379/15';
-            const RedisSpiralAdapter = require('../../FlappyJournal/server/consciousness/core/storage/RedisSpiralAdapter.cjs');
+            const { RedisSpiralAdapter } = require('../../FlappyJournal/server/consciousness/core/storage/RedisSpiralAdapter.cjs');
             const testAdapter = new RedisSpiralAdapter(testRedisUrl);
             await testAdapter.init();
             await testAdapter.redis.ping();
@@ -281,7 +280,7 @@ describe('Storage Adapter Contract', () => {
       describe('Atomic Operations', () => {
         it('should support atomicIncr if available', async () => {
           if (!config.supportsAtomicIncr) {
-            console.log(`⚠️  Skipping atomicIncr test for ${adapterName} - not supported`);
+            console.log(`⚠️  Skipping atomicIncr test for ${config.name} - not supported`);
             return;
           }
 
@@ -302,7 +301,7 @@ describe('Storage Adapter Contract', () => {
 
         it('should handle concurrent atomic increments correctly', async () => {
           if (!config.supportsAtomicIncr) {
-            console.log(`⚠️  Skipping concurrent atomicIncr test for ${adapterName} - not supported`);
+            console.log(`⚠️  Skipping concurrent atomicIncr test for ${config.name} - not supported`);
             return;
           }
 
@@ -327,7 +326,7 @@ describe('Storage Adapter Contract', () => {
 
         it('should handle atomic operations with different increments', async () => {
           if (!config.supportsAtomicIncr) {
-            console.log(`⚠️  Skipping mixed atomicIncr test for ${adapterName} - not supported`);
+            console.log(`⚠️  Skipping mixed atomicIncr test for ${config.name} - not supported`);
             return;
           }
 
@@ -418,7 +417,7 @@ describe('Storage Adapter Contract', () => {
             expect(keys.length).toBe(10);
 
             // Delete all keys
-            const deleteOps = keys.map(key => adapter.del(key));
+            const deleteOps = keys.map((key: any) => adapter.del(key));
             await Promise.all(deleteOps);
 
             // Verify keys are gone
@@ -443,7 +442,7 @@ describe('Storage Adapter Contract', () => {
             await Promise.all(operations);
           });
 
-          console.log(`${adapterName}: ${batchSize} operations in ${timeMs}ms (${(batchSize / (timeMs / 1000)).toFixed(0)} ops/sec)`);
+          console.log(`${config.name}: ${batchSize} operations in ${timeMs}ms (${(batchSize / (timeMs / 1000)).toFixed(0)} ops/sec)`);
 
           // Verify all data was stored
           const keys = await adapter.keys(prefix);
@@ -474,9 +473,9 @@ describe('Storage Adapter Contract', () => {
             await adapter.set(longKey, value);
             const retrieved = await adapter.get(longKey);
             expect(retrieved).toBe(value);
-          } catch (error) {
+          } catch (error: any) {
             // Some adapters may have key length limits, which is acceptable
-            console.log(`${adapterName} has key length limits:`, error.message);
+            console.log(`${config.name} has key length limits:`, error.message);
           }
         });
 
@@ -498,9 +497,9 @@ describe('Storage Adapter Contract', () => {
               await adapter.set(key, `value-${key}`);
               const value = await adapter.get(key);
               expect(value).toBe(`value-${key}`);
-            } catch (error) {
+            } catch (error: any) {
               // Some special characters may not be supported, which is acceptable
-              console.log(`${adapterName} doesn't support key "${key}":`, error.message);
+              console.log(`${config.name} doesn't support key "${key}":`, error.message);
             }
           }
         });
@@ -516,7 +515,7 @@ describe('Storage Adapter Contract', () => {
             // If it doesn't throw, verify we can retrieve something
             const retrieved = await adapter.get(key);
             expect(retrieved).toBeDefined();
-          } catch (error) {
+          } catch (error: any) {
             // Circular references should be handled gracefully (usually by throwing)
             expect(error).toBeDefined();
             expect(error.message).toMatch(/circular|convert|serialize/i);
@@ -550,9 +549,9 @@ describe('Storage Adapter Contract', () => {
               expect(nav.level).toBe(i);
             }
             expect(nav.end).toBe(true);
-          } catch (error) {
+          } catch (error: any) {
             // Some adapters may have depth limits
-            console.log(`${adapterName} has nesting limits:`, error.message);
+            console.log(`${config.name} has nesting limits:`, error.message);
           }
         });
 
@@ -609,10 +608,10 @@ describe('Storage Adapter Contract', () => {
             await adapter.set(key, largeData);
             const retrieved = await adapter.get(key);
             expect(retrieved).toEqual(largeData);
-          } catch (error) {
+          } catch (error: any) {
             // Storage exhaustion should be handled gracefully
             expect(error).toBeDefined();
-            console.log(`${adapterName} storage limit reached:`, error.message);
+            console.log(`${config.name} storage limit reached:`, error.message);
           }
         });
 
@@ -639,9 +638,9 @@ describe('Storage Adapter Contract', () => {
             expect(keys.length).toBeGreaterThan(0);
             expect(keys.length).toBeLessThanOrEqual(keyCount);
 
-          } catch (error) {
+          } catch (error: any) {
             // Some adapters may have limits
-            console.log(`${adapterName} reached limits at:`, error.message);
+            console.log(`${config.name} reached limits at:`, error.message);
           }
         });
 
@@ -662,7 +661,7 @@ describe('Storage Adapter Contract', () => {
             expect(retrieved).toBe(value);
           } else {
             // InMemory adapter may lose data on reinit
-            console.log(`${adapterName} is ephemeral - data may be lost on reinit`);
+            console.log(`${config.name} is ephemeral - data may be lost on reinit`);
           }
         });
 
@@ -677,9 +676,9 @@ describe('Storage Adapter Contract', () => {
           // Attempt cleanup (should not affect current adapter instance)
           try {
             await config.cleanup(adapter);
-          } catch (error) {
+          } catch (error: any) {
             // Cleanup might fail if adapter is still in use
-            console.log(`${adapterName} cleanup warning:`, error.message);
+            console.log(`${config.name} cleanup warning:`, error.message);
           }
 
           // Adapter should still work or gracefully handle the situation
@@ -687,12 +686,11 @@ describe('Storage Adapter Contract', () => {
             await adapter.set(key, 'new value');
             const retrieved = await adapter.get(key);
             expect(retrieved).toBeDefined();
-          } catch (error) {
+          } catch (error: any) {
             // Some adapters may become unusable after cleanup
             expect(error).toBeDefined();
           }
         });
       });
     }
-  );
-});
+    });

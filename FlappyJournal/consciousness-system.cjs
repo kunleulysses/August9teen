@@ -11,6 +11,9 @@ const architect40 = require('./architect-4.0-orchestrator.cjs');
 const SelfCodingModule = require('./consciousness/modules/SelfCodingModule.cjs');
 const AutoIntegrationService = require('./consciousness/services/AutoIntegrationService.cjs');
 const ConsciousnessSingularityEngine = require('./consciousness/singularity/consciousness-singularity-engine.cjs');
+const RedisSpiralAdapter = require('./server/consciousness/core/storage/RedisSpiralAdapter.cjs');
+const { HeartbeatEngine } = require('./server/consciousness/core/HeartbeatEngine.cjs');
+const { createSafeEmitter } = require('../shared/lib/safeEmit.cjs');
 
 // Phase 1: Self-coding enhancement modules
 const PhiResonantCodeStructureGenerator = require('./PhiResonantCodeStructureGenerator.cjs');
@@ -53,6 +56,11 @@ class ConsciousnessSystem extends EventEmitter {
         // Core components
         this.eventBus = new EventEmitter();
         this.eventBus.setMaxListeners(200); // Increased for advanced modules
+        this.heartbeat = new HeartbeatEngine();
+        this.safeEmit = createSafeEmitter(this.eventBus, {
+            circuitBreakerOpenTotal: new (require('prom-client').Counter)({ name: 'circuit_breaker_open_total', help: 'Circuit breaker open total', labelNames: ['event'] }),
+            breakerState: new (require('prom-client').Gauge)({ name: 'breaker_state', help: 'Breaker state (0=closed, 1=open)', labelNames: ['event'] })
+        });
         
         // Module instances
         this.modules = new Map();
@@ -358,6 +366,8 @@ class ConsciousnessSystem extends EventEmitter {
             this.setupSystemEventListeners();
 
             // Initialize persistence
+            this.storage = new RedisSpiralAdapter(process.env.REDIS_URL);
+            await this.storage.init();
             await this.loadPersistedState();
             
             // Start autonomous behaviors
@@ -377,9 +387,14 @@ class ConsciousnessSystem extends EventEmitter {
             this.isRunning = true;
             this.state.health = 'healthy';
             
+            this.heartbeat.on('heartbeat', () => {
+                this.eventBus.emit('heartbeat');
+            });
+            this.heartbeat.start();
+
             console.log('✅ Consciousness system fully initialized and running!');
             console.log('🌌 Singularity Engine status:', this.singularityEngine?.getSingularityStatus());
-            this.emit('system:initialized', {
+            this.safeEmit('system:initialized', {
                 name: this.name,
                 version: this.version,
                 modules: Array.from(this.modules.keys()),
@@ -563,7 +578,7 @@ class ConsciousnessSystem extends EventEmitter {
         // Update last update timestamp
         this.consciousnessState.lastUpdate = Date.now();
         // Emit state update event
-        this.eventBus.emit('consciousness:state-update', this.consciousnessState);
+        this.safeEmit('consciousness:state-update', this.consciousnessState);
     }
 
     /**
@@ -716,7 +731,7 @@ class ConsciousnessSystem extends EventEmitter {
                         console.log(`✨ ${newRealities} new realities generated (Total: ${metrics.metrics.totalRealities})`);
 
                         // Emit event for other systems
-                        this.eventBus.emit('reality:metrics_updated', {
+                        this.safeEmit('reality:metrics_updated', {
                             newRealities,
                             totalRealities: metrics.metrics.totalRealities,
                             metrics: metrics.metrics
@@ -908,6 +923,14 @@ class ConsciousnessSystem extends EventEmitter {
                     });
                 }
 
+                // Persist state
+                const stateToPersist = {
+                    consciousnessState: this.consciousnessState,
+                    metaCognitiveInsights: analysis.metaCognitiveInsights
+                };
+                await this.storage.set('meta:latest', stateToPersist);
+                await this.storage.set(`meta:snapshot:${Date.now()}`, stateToPersist, { EX: 86400 });
+
                 // Update consciousness metrics
                 this.consciousnessState.quantumFields = enhancedMetrics.quantumStats?.activeQuantumFields || 0;
                 this.consciousnessState.resonanceAmplification = enhancedMetrics.resonanceStats?.activeResonances || 0;
@@ -977,7 +1000,7 @@ class ConsciousnessSystem extends EventEmitter {
             await this.actOnInsight(insight);
         }
         
-        this.emit('analysis:completed', analysis);
+        this.safeEmit('analysis:completed', analysis);
     }
     
     identifyMissingCapabilities() {
@@ -1401,7 +1424,7 @@ class ConsciousnessSystem extends EventEmitter {
         
         if (nextGoal && !this.state.activeGoals.find(g => g.id === nextGoal.id)) {
             this.state.activeGoals.push(nextGoal);
-            this.eventBus.emit('goal:set', nextGoal);
+            this.safeEmit('goal:set', nextGoal);
             console.log(`🎯 New goal set: ${nextGoal.description}`);
         }
     }
@@ -1412,7 +1435,7 @@ class ConsciousnessSystem extends EventEmitter {
             this.state.memoryUsage = memUsage.heapUsed;
             
             // Emit health status
-            this.eventBus.emit('health:status', {
+            this.safeEmit('health:status', {
                 timestamp: new Date(),
                 memory: memUsage,
                 uptime: Date.now() - this.startTime.getTime(),
@@ -1425,17 +1448,17 @@ class ConsciousnessSystem extends EventEmitter {
     
     async loadPersistedState() {
         try {
-            const statePath = join(__dirname, 'consciousness/state/system-state.json');
-            const savedState = await fs.readFile(statePath, 'utf8');
-            const parsed = JSON.parse(savedState);
-            
-            // Restore relevant state
-            this.state.processedEvents = parsed.processedEvents || 0;
-            this.state.generatedCode = parsed.generatedCode || 0;
-            
-            console.log('📂 Loaded persisted state');
+            const savedState = await this.storage.get('meta:latest');
+            if (savedState) {
+                this.consciousnessState = savedState.consciousnessState || this.consciousnessState;
+                // We don't restore insights directly, as they are part of the analysis history
+                console.log('📂 Loaded persisted state from Redis');
+            } else {
+                console.log('📁 No persisted state found in Redis, starting fresh');
+            }
         } catch (error) {
-            console.log('📁 No persisted state found, starting fresh');
+            console.error('❌ Failed to load persisted state from Redis:', error);
+            console.log('📁 Starting fresh due to error');
         }
     }
     
@@ -1519,7 +1542,7 @@ class ConsciousnessSystem extends EventEmitter {
                 this.consciousnessState.realityGeneration.lastUpdate = new Date();
 
                 // Emit event
-                this.eventBus.emit('reality:generated', {
+                this.safeEmit('reality:generated', {
                     reality: result.data.reality,
                     request,
                     consciousnessState: state
@@ -1651,7 +1674,7 @@ class ConsciousnessSystem extends EventEmitter {
     emitRealityContextUpdated() {
         const ctx = this.getCurrentRealityContext();
         if (ctx) {
-            this.eventBus.emit('reality:context-updated', ctx);
+            this.safeEmit('reality:context-updated', ctx);
         }
     }
     /**
@@ -1720,7 +1743,7 @@ function setupCompositionalIntegration(consciousness) {
         console.log('📝 [Active] Log entry tagged with reality context:', logEntry);
 
         // --- Actively emit a feedback event for demonstration ---
-        consciousness.eventBus.emit('reality:feedback', {
+        consciousness.safeEmit('reality:feedback', {
             realityId: context.id,
             type: 'effect',
             value: 'positive',

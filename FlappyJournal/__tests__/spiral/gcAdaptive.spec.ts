@@ -1,8 +1,8 @@
 const { SpiralMemoryArchitecture } = require('../../server/consciousness/core/SpiralMemoryArchitecture.cjs');
-import { InMemorySpiralAdapter } from '../../server/consciousness/core/storage/SpiralStorageAdapter.cjs';
+const { InMemorySpiralAdapter } = require('../../server/consciousness/core/storage/SpiralStorageAdapter.cjs');
 
 describe('Adaptive GC', () => {
-  let arch: SpiralMemoryArchitecture;
+  let arch;
 
   beforeEach(() => {
     arch = new SpiralMemoryArchitecture({ storage: new InMemorySpiralAdapter() });

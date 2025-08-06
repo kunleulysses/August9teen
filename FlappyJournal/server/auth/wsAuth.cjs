@@ -12,6 +12,12 @@ const rateLimitExceeded = new client.Counter({
   labelNames: ['endpoint']
 });
 
+const scopeRejectTotal = new client.Counter({
+    name: 'ws_scope_reject_total',
+    help: 'Total number of WebSocket connections rejected due to missing scope',
+    labelNames: ['endpoint']
+});
+
 const activeConnections = new client.Gauge({
   name: 'spiral_ws_active_connections',
   help: 'Number of active WebSocket connections',
@@ -116,6 +122,12 @@ function createWsAuth({
         ? jwt.verify(token, jwk, { algorithms: ['RS256'] })
         : jwt.verify(token, secret, { algorithms: ['HS256'] });
 
+      // Check for required scope
+      if (!payload.scope || !payload.scope.includes('metacog.stream')) {
+          scopeRejectTotal.inc({ endpoint });
+          throw new Error('Missing required scope: metacog.stream');
+      }
+
       // Rate limit by user ID
       try {
         const userKey = payload.sub || 'anonymous';
@@ -150,6 +162,7 @@ module.exports = {
   metrics: {
     rateLimitExceeded,
     activeConnections,
-    activeUsers
+    activeUsers,
+    scopeRejectTotal
   }
 };

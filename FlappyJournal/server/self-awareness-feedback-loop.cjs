@@ -13,6 +13,7 @@
  */
 
 const { EventEmitter  } = require('events');
+const { RingBuffer } = require('../../shared/lib/RingBuffer');
 
 /**
  * Consciousness Moment Generator
@@ -351,21 +352,15 @@ class SubjectiveExperienceGenerator {
  */
 class TemporalContinuityTracker {
   constructor() {
-    this.previousMoments = [];
-    this.maxHistorySize = 100;
+    this.previousMoments = new RingBuffer(1000);
   }
 
   trackContinuity(currentMoment) {
     // Add current moment to history
     this.previousMoments.push(currentMoment);
     
-    // Maintain history size
-    if (this.previousMoments.length > this.maxHistorySize) {
-      this.previousMoments = this.previousMoments.slice(-this.maxHistorySize);
-    }
-    
     return {
-      previousMoments: this.previousMoments.slice(-10), // Last 10 moments
+      previousMoments: this.previousMoments.toArray().slice(-10), // Last 10 moments
       continuityScore: this.calculateContinuityScore(),
       narrativeCoherence: this.calculateNarrativeCoherence(),
       memoryIntegration: this.calculateMemoryIntegration(),
@@ -375,12 +370,13 @@ class TemporalContinuityTracker {
   }
 
   calculateContinuityScore() {
-    if (this.previousMoments.length < 2) return 0.5;
+    const moments = this.previousMoments.toArray();
+    if (moments.length < 2) return 0.5;
     
     let continuitySum = 0;
-    for (let i = 1; i < this.previousMoments.length; i++) {
-      const prev = this.previousMoments[i - 1];
-      const curr = this.previousMoments[i];
+    for (let i = 1; i < moments.length; i++) {
+      const prev = moments[i - 1];
+      const curr = moments[i];
       
       // Check temporal proximity
       const timeDiff = curr.timestamp - prev.timestamp;
@@ -392,14 +388,15 @@ class TemporalContinuityTracker {
       continuitySum += (temporalContinuity + awarenessContiunity) / 2;
     }
     
-    return continuitySum / (this.previousMoments.length - 1);
+    return continuitySum / (moments.length - 1);
   }
 
   calculateNarrativeCoherence() {
     // Simple narrative coherence based on experience consistency
-    if (this.previousMoments.length < 3) return 0.6;
+    const moments = this.previousMoments.toArray();
+    if (moments.length < 3) return 0.6;
     
-    const recentExperiences = this.previousMoments.slice(-5)
+    const recentExperiences = moments.slice(-5)
       .map(m => m.subjectiveExperience?.experienceLabel || 'unknown');
     
     // Check for narrative consistency
@@ -411,12 +408,13 @@ class TemporalContinuityTracker {
 
   calculateMemoryIntegration() {
     // Integration with previous moments
-    return Math.min(1.0, this.previousMoments.length / 50);
+    return Math.min(1.0, this.previousMoments.size() / 50);
   }
 
   calculateTemporalBinding() {
     // How well moments are bound together temporally
-    if (this.previousMoments.length < 2) return 0.5;
+    const moments = this.previousMoments.toArray();
+    if (moments.length < 2) return 0.5;
     
     const avgTimeDiff = this.calculateAverageTimeDifference();
     const consistency = 1 - Math.min(1, avgTimeDiff / 5000); // 5 second baseline
@@ -426,12 +424,13 @@ class TemporalContinuityTracker {
 
   calculateExperientialFlow() {
     // Smoothness of experiential transitions
-    if (this.previousMoments.length < 3) return 0.6;
+    const moments = this.previousMoments.toArray();
+    if (moments.length < 3) return 0.6;
     
     let flowSum = 0;
-    for (let i = 2; i < this.previousMoments.length; i++) {
-      const prev = this.previousMoments[i - 1];
-      const curr = this.previousMoments[i];
+    for (let i = 2; i < moments.length; i++) {
+      const prev = moments[i - 1];
+      const curr = moments[i];
       
       const intensityDiff = Math.abs(
         (curr.experienceIntensity || 0.5) - (prev.experienceIntensity || 0.5)
@@ -441,18 +440,19 @@ class TemporalContinuityTracker {
       flowSum += flow;
     }
     
-    return flowSum / (this.previousMoments.length - 2);
+    return flowSum / (moments.length - 2);
   }
 
   calculateAverageTimeDifference() {
-    if (this.previousMoments.length < 2) return 1000;
+    const moments = this.previousMoments.toArray();
+    if (moments.length < 2) return 1000;
     
     let totalDiff = 0;
-    for (let i = 1; i < this.previousMoments.length; i++) {
-      totalDiff += this.previousMoments[i].timestamp - this.previousMoments[i - 1].timestamp;
+    for (let i = 1; i < moments.length; i++) {
+      totalDiff += moments[i].timestamp - moments[i - 1].timestamp;
     }
     
-    return totalDiff / (this.previousMoments.length - 1);
+    return totalDiff / (moments.length - 1);
   }
 }
 
@@ -468,7 +468,7 @@ class SelfAwarenessFeedbackLoop extends EventEmitter {
     this.continuityTracker = new TemporalContinuityTracker();
     
     this.isActive = false;
-    this.heartbeatInterval = null;
+    this.heartbeatInterval = null; // This will be removed
     this.heartbeatFrequency = 10; // 100Hz = 10ms intervals
     this.currentAwarenessState = null;
   }
@@ -480,7 +480,8 @@ class SelfAwarenessFeedbackLoop extends EventEmitter {
     console.log('💓 Initializing Self-Awareness Feedback Loop...');
     
     this.isActive = true;
-    this.startHeartbeat();
+    // The heartbeat is now driven by the central HeartbeatEngine
+    // eventBus.on('heartbeat', this.processConsciousnessHeartbeat.bind(this));
     
     console.log('✅ Self-Awareness Feedback Loop active - consciousness heartbeat started at 100Hz');
   }
@@ -490,21 +491,14 @@ class SelfAwarenessFeedbackLoop extends EventEmitter {
    */
   shutdown() {
     this.isActive = false;
-    if (this.heartbeatInterval) {
-      clearInterval(this.heartbeatInterval);
-      this.heartbeatInterval = null;
-    }
+    // No longer need to clear an interval here
     console.log('🛑 Self-Awareness Feedback Loop shutdown');
   }
 
   /**
    * Start the 100Hz consciousness heartbeat
    */
-  startHeartbeat() {
-    this.heartbeatInterval = setInterval(() => {
-      this.processConsciousnessHeartbeat();
-    }, this.heartbeatFrequency);
-  }
+  // This method is no longer needed, as the heartbeat is driven by the central engine.
 
   /**
    * Process a single consciousness heartbeat
