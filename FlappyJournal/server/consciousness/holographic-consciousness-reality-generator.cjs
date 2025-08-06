@@ -12,6 +12,13 @@ const { validate  } = require('./utils/validation.cjs');
 const { initializeRandomness, secureId  } = require('./utils/random.cjs');
 const { saveReality, incrementMetric  } = require('./utils/persistence.cjs');
 const { logger, child as childLogger  } = require('./utils/logger.cjs');
+// ── Caching ───────────────────────────────────────────────
+const LRU = require('lru-cache');
+// Cache sizes configurable via ENV
+const R_MAX   = parseInt(process.env.REALITY_CACHE_MAX)  || 5000;  // realities & envs
+const P_MAX   = parseInt(process.env.PROJECTION_CACHE_MAX || process.env.REALITY_CACHE_MAX || 5000);
+const F_MAX   = parseInt(process.env.FIELD_CACHE_MAX)    || 10000; // fields / paths
+const TTL_MS  = parseInt(process.env.CACHE_TTL_MS)       || 3600000; // 1 hour default
 const { validationFailures  } = require('./utils/metrics.cjs');
 require('../persistenceShutdown.cjs');
 
