@@ -5,11 +5,13 @@
  */
 
 import { EventEmitter } from 'events';
+import Cursor from 'pg-cursor';
+import { PostgresStore } from '../../../../server/consciousness/persistence/PostgresStore.cjs';
 import eventBus from './ConsciousnessEventBus.cjs';
 import { memoryLog } from '../modules/MemoryLog.cjs';
 
 class SpiralMemoryArchitecture extends EventEmitter {
-    constructor() {
+    constructor({ store } = {}) {
         super();
         this.name = 'SpiralMemoryArchitecture';
         this.isInitialized = false;
@@ -18,6 +20,7 @@ class SpiralMemoryArchitecture extends EventEmitter {
         this.memorySpirals = new Map();
         this.memoryCount = 0;
         this.garbageCollectionCount = 0;
+        this.store = store || new PostgresStore();
 
         // Enhanced spiral memory configuration with deep context expansion
         this.memoryConfig = {
@@ -156,7 +159,10 @@ class SpiralMemoryArchitecture extends EventEmitter {
         try {
             // Initialize spiral memory structures
             await this.initializeSpiralMemory();
-            
+
+            // Hydrate memory map from persistent store
+            await this.hydrateFromStore();
+
             this.isInitialized = true;
             console.log('✅ Spiral Memory Architecture initialized successfully');
             
@@ -173,7 +179,42 @@ class SpiralMemoryArchitecture extends EventEmitter {
             this.isInitialized = false;
         }
     }
-    
+
+    async hydrateFromStore() {
+        try {
+            await this.store.ready;
+            const client = await this.store.pool.connect();
+            try {
+                const cursor = client.query(new Cursor("SELECT value FROM consciousness_kv WHERE id LIKE 'memory:%'"));
+                const read = () => new Promise((resolve, reject) => {
+                    cursor.read(100, (err, rows) => {
+                        if (err) reject(err);
+                        else resolve(rows);
+                    });
+                });
+                while (true) {
+                    const rows = await read();
+                    if (!rows.length) break;
+                    for (const row of rows) {
+                        const mem = row.value;
+                        this.spiralMemory.set(mem.id, mem);
+                        if (mem?.sigil?.signature) {
+                            this.sigilRegistry.set(mem.sigil.signature, mem.id);
+                        }
+                    }
+                }
+                cursor.close(() => client.release());
+                this.memoryCount = this.spiralMemory.size;
+                console.log(`🌀 Hydrated ${this.memoryCount} memories from Postgres`);
+            } catch (err) {
+                client.release();
+                throw err;
+            }
+        } catch (error) {
+            console.error('❌ Failed to hydrate memories from Postgres:', error.message);
+        }
+    }
+
     async storeMemory(content, type = 'general', depth = 'shallow', associations = []) {
         if (!this.isInitialized) {
             throw new Error('Spiral Memory Architecture not initialized');
@@ -242,7 +283,10 @@ class SpiralMemoryArchitecture extends EventEmitter {
             this.updateConsciousnessMetrics(memoryNode, 'stored');
             
             const storageTime = Date.now() - startTime;
-            
+
+            // Persist memory node
+            await this.store.set('memory:' + memoryNode.id, memoryNode);
+
             // Emit storage event
             memoryLog.logMemoryStorage(memoryNode);
 
