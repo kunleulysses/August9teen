@@ -5,6 +5,7 @@
  */
 
 import { EventEmitter } from 'events';
+import brokerBus from './BrokerBus.cjs';
 
 export class PriorityEventBus extends EventEmitter {
     constructor() {
@@ -59,6 +60,11 @@ export class PriorityEventBus extends EventEmitter {
      * Emit event with explicit priority
      */
     emitWithPriority(event, data, priority = 'MEDIUM') {
+        if (process.env.BROKER_MODE === 'nats') {
+            brokerBus.publish(event, { data, priority });
+            return true;
+        }
+
         const eventData = {
             event,
             data,
@@ -66,7 +72,7 @@ export class PriorityEventBus extends EventEmitter {
             timestamp: Date.now(),
             id: this.generateEventId()
         };
-        
+
         // Add to appropriate priority queue
         if (this.priorityQueues[priority]) {
             this.priorityQueues[priority].push(eventData);
@@ -75,12 +81,12 @@ export class PriorityEventBus extends EventEmitter {
             // Fallback to standard emit for unknown priorities
             return super.emit(event, data);
         }
-        
+
         // Start processing if not already running
         if (!this.isProcessing) {
             this.processQueue();
         }
-        
+
         return true;
     }
 
