@@ -38,11 +38,11 @@ module.exports = {
   // Coverage configuration for spiral memory architecture
   collectCoverage: true,
   collectCoverageFrom: [
-    'FlappyJournal/server/consciousness/core/SpiralMemoryArchitecture.cjs',
-    'FlappyJournal/server/consciousness/core/SpiralMemoryFacade.cjs',
-    'FlappyJournal/server/consciousness/core/ConsciousnessEventBus.cjs',
-    'FlappyJournal/server/consciousness/core/utils/*.cjs',
-    'FlappyJournal/server/consciousness/core/security/*.{cjs,ts}',
+    'server/consciousness/core/SpiralMemoryArchitecture.cjs',
+    'server/consciousness/core/SpiralMemoryFacade.cjs',
+    'server/consciousness/core/ConsciousnessEventBus.cjs',
+    'server/consciousness/core/utils/*.cjs',
+    'server/consciousness/core/security/*.{cjs,ts}',
     '!**/*.test.*',   // exclude tests
     '!**/__tests__/**' // exclude test files
   ],
@@ -79,6 +79,6 @@ module.exports = {
     "<rootDir>/FlappyJournal/featherweight-app/",
     "<rootDir>/__tests__/spiral/flaky/", // quarantine flaky tests until fixed
     "<rootDir>/__tests__/helpers/", // helper utilities, not test files
-    "<rootDir>/FlappyJournal/server/consciousness/__tests__/logging.test.js" // module dependency issues
+    "<rootDir>/server/consciousness/__tests__/logging.test.js" // module dependency issues
   ]
 };

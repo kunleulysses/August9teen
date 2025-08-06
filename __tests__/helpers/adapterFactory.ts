@@ -3,9 +3,9 @@
  * Provides standardized creation and cleanup utilities for all storage adapters
  */
 
-const LevelSpiralAdapter = require('../../FlappyJournal/server/consciousness/core/storage/LevelSpiralAdapter.cjs');
-const RedisSpiralAdapter = require('../../FlappyJournal/server/consciousness/core/storage/RedisSpiralAdapter.cjs');
-const { InMemorySpiralAdapter } = require('../../FlappyJournal/server/consciousness/core/storage/SpiralStorageAdapter.cjs');
+const LevelSpiralAdapter = require('../../server/consciousness/core/storage/LevelSpiralAdapter.cjs');
+const RedisSpiralAdapter = require('../../server/consciousness/core/storage/RedisSpiralAdapter.cjs');
+const { InMemorySpiralAdapter } = require('../../server/consciousness/core/storage/SpiralStorageAdapter.cjs');
 const fs = require('fs');
 const path = require('path');
 

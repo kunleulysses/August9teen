@@ -2,8 +2,8 @@
  * Migration script: copies spiral memory data from LevelDB to Redis.
  * Usage: MIGRATE_TO_REDIS=true npm run spiral:migrate
  */
-import LevelSpiralAdapter from '../FlappyJournal/server/consciousness/core/storage/LevelSpiralAdapter.cjs';
-import RedisSpiralAdapter from '../FlappyJournal/server/consciousness/core/storage/RedisSpiralAdapter.cjs';
+import LevelSpiralAdapter from '../server/consciousness/core/storage/LevelSpiralAdapter.cjs';
+import RedisSpiralAdapter from '../server/consciousness/core/storage/RedisSpiralAdapter.cjs';
 
 if (!process.env.MIGRATE_TO_REDIS) {
   console.log('Set MIGRATE_TO_REDIS=true to run this migration.');

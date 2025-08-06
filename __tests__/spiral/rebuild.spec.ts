@@ -1,8 +1,8 @@
-const { SpiralMemoryArchitecture } = require('../../FlappyJournal/server/consciousness/core/SpiralMemoryArchitecture.cjs');
-const LevelSpiralAdapter = require('../../FlappyJournal/server/consciousness/core/storage/LevelSpiralAdapter.cjs');
-const RedisSpiralAdapter = require('../../FlappyJournal/server/consciousness/core/storage/RedisSpiralAdapter.cjs');
-const { InMemorySpiralAdapter } = require('../../FlappyJournal/server/consciousness/core/storage/SpiralStorageAdapter.cjs');
-const eventBus = require('../../FlappyJournal/server/consciousness/core/ConsciousnessEventBus.cjs');
+const { SpiralMemoryArchitecture } = require('../../server/consciousness/core/SpiralMemoryArchitecture.cjs');
+const LevelSpiralAdapter = require('../../server/consciousness/core/storage/LevelSpiralAdapter.cjs');
+const RedisSpiralAdapter = require('../../server/consciousness/core/storage/RedisSpiralAdapter.cjs');
+const { InMemorySpiralAdapter } = require('../../server/consciousness/core/storage/SpiralStorageAdapter.cjs');
+const eventBus = require('../../server/consciousness/core/ConsciousnessEventBus.cjs');
 
 describe('SpiralMemoryArchitecture Rebuild Statistics', () => {
   let spiral;

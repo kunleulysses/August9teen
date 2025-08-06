@@ -3,19 +3,19 @@ const path = require('path');
 const { EventEmitter } = require('events');
 
 const mockEventBus = new EventEmitter();
-jest.mock('../FlappyJournal/server/consciousness/core/ConsciousnessEventBus.cjs', () => ({
+jest.mock('../server/consciousness/core/ConsciousnessEventBus.cjs', () => ({
   __esModule: true,
   default: mockEventBus
 }));
 
 // Mock refactoring system to avoid heavy dependencies
-jest.mock('../FlappyJournal/server/consciousness/modules/AutonomousCodeRefactoringSystem.cjs', () => {
+jest.mock('../server/consciousness/modules/AutonomousCodeRefactoringSystem.cjs', () => {
   return function() {
     return { startAutonomousRefactoring: jest.fn() };
   };
 });
 
-jest.mock('../FlappyJournal/server/consciousness/sigil-based-code-authenticator.cjs', () => {
+jest.mock('../server/consciousness/sigil-based-code-authenticator.cjs', () => {
   return function() {
     return {
       embedConsciousnessSigil: async (code) => ({
@@ -47,12 +47,12 @@ describe('SelfCodingModule', () => {
     if (module) {
       module.shutdown();
     }
-    const { selfCodingLog } = require('../FlappyJournal/server/consciousness/modules/SelfCodingLog.cjs');
+    const { selfCodingLog } = require('../server/consciousness/modules/SelfCodingLog.cjs');
     selfCodingLog.shutdown();
   });
 
   test('generates code, writes logs, and emits integration events', async () => {
-    const SelfCodingModule = require('../FlappyJournal/server/consciousness/modules/SelfCodingModule.cjs');
+    const SelfCodingModule = require('../server/consciousness/modules/SelfCodingModule.cjs');
     module = new SelfCodingModule();
     await new Promise(resolve => setTimeout(resolve, 10));
 

@@ -9,7 +9,7 @@ echo "🚀 Deploying CPU Optimization for Consciousness System"
 echo "====================================================="
 
 # Configuration
-CONSCIOUSNESS_DIR="/opt/featherweight/FlappyJournal/server"
+CONSCIOUSNESS_DIR="/opt/featherweight/server"
 SERVICE_NAME="consciousness-conversations-enhanced"
 OPTIMIZED_SERVICE_NAME="consciousness-optimized"
 BACKUP_DIR="/tmp/consciousness-backup-$(date +%Y%m%d-%H%M%S)"
@@ -106,11 +106,11 @@ setup_permissions() {
     log_info "Setting up file permissions for linode-transfer user..."
     
     # Ensure linode-transfer user owns the consciousness files
-    chown -R linode-transfer:linode-transfer /opt/featherweight/FlappyJournal/server/
+    chown -R linode-transfer:linode-transfer /opt/featherweight/server/
     
     # Set appropriate permissions
-    chmod +x /opt/featherweight/FlappyJournal/server/consciousness-startup-optimized.js
-    chmod +x /opt/featherweight/FlappyJournal/server/consciousness-cluster-manager.js
+    chmod +x /opt/featherweight/server/consciousness-startup-optimized.js
+    chmod +x /opt/featherweight/server/consciousness-cluster-manager.js
     
     log_success "File permissions configured"
 }

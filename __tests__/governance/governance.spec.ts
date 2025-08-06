@@ -1,4 +1,4 @@
-import governance from '../../FlappyJournal/server/consciousness/core/governance/GovernanceEngine.js';
+import governance from '../../server/consciousness/core/governance/GovernanceEngine.js';
 
 describe('GovernanceEngine', () => {
   it('can create, vote, tally, close, and update policy', () => {

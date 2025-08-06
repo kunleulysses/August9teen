@@ -6,7 +6,7 @@
  * Usage: node bin/spiral-repair.js [options]
  */
 
-const SpiralMemoryArchitecture = require('../FlappyJournal/server/consciousness/core/SpiralMemoryArchitecture.cjs');
+const SpiralMemoryArchitecture = require('../server/consciousness/core/SpiralMemoryArchitecture.cjs');
 const { performance } = require('perf_hooks');
 
 class SpiralRepairTool {
@@ -24,7 +24,7 @@ class SpiralRepairTool {
             console.log('🌀 Initializing Spiral Memory Architecture...');
             
             // Create architecture with in-memory storage for testing
-            const { InMemorySpiralAdapter } = require('../FlappyJournal/server/consciousness/core/storage/SpiralStorageAdapter.cjs');
+            const { InMemorySpiralAdapter } = require('../server/consciousness/core/storage/SpiralStorageAdapter.cjs');
             this.facade = { arch: new SpiralMemoryArchitecture({ storage: new InMemorySpiralAdapter() }) };
             
             // Wait for initialization to complete

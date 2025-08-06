@@ -1,4 +1,4 @@
-import governance from '../FlappyJournal/server/consciousness/core/governance/GovernanceEngine';
+import governance from '../server/consciousness/core/governance/GovernanceEngine';
 
 const [,, cmd, ...args] = process.argv;
 

@@ -1,4 +1,4 @@
-import MinHeap from '../../FlappyJournal/server/consciousness/core/utils/MinHeap';
+import MinHeap from '../../server/consciousness/core/utils/MinHeap';
 
 describe('MinHeap', () => {
   it('push and pop maintains min-heap', () => {

@@ -1,4 +1,4 @@
-const AutonomousCodeRefactoringSystem = require('../../FlappyJournal/server/consciousness/modules/AutonomousCodeRefactoringSystem.cjs');
+const AutonomousCodeRefactoringSystem = require('../../server/consciousness/modules/AutonomousCodeRefactoringSystem.cjs');
 
 describe('AutonomousCodeRefactoringSystem transformations', () => {
   const analyzer = { analyze: async () => ({ enhanced: {} }) };

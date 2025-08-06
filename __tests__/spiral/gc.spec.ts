@@ -1,9 +1,9 @@
-import SpiralMemoryArchitecture from '../../FlappyJournal/server/consciousness/core/SpiralMemoryArchitecture.cjs';
+import SpiralMemoryArchitecture from '../../server/consciousness/core/SpiralMemoryArchitecture.cjs';
 
 describe('GC time-budget', () => {
   it('collects within budget and does not crash', async () => {
     jest.setTimeout(10000);
-    const { InMemorySpiralAdapter } = require('../../FlappyJournal/server/consciousness/core/storage/SpiralStorageAdapter.cjs');
+    const { InMemorySpiralAdapter } = require('../../server/consciousness/core/storage/SpiralStorageAdapter.cjs');
     const spiral = new SpiralMemoryArchitecture({ storage: new InMemorySpiralAdapter() });
     await spiral.initialize();
 

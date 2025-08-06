@@ -1,4 +1,4 @@
-import { propertyTestReversibility } from '../../FlappyJournal/server/consciousness/core/math/topologyProof';
+import { propertyTestReversibility } from '../../server/consciousness/core/math/topologyProof';
 
 describe('HyperdimensionalSpiralTopology property tests', () => {
   it('reversible foldTraversal', () => {

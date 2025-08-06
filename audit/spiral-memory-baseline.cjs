@@ -45,14 +45,14 @@ async function runtimeSnapshot() {
 
   try {
     // Dynamically import spiral modules
-    const SpiralMemoryArchitecture = require("../FlappyJournal/server/consciousness/core/SpiralMemoryArchitecture.cjs").default;
-    const eventBus = require("../FlappyJournal/server/consciousness/core/ConsciousnessEventBus.cjs").default || require("../FlappyJournal/server/consciousness/core/ConsciousnessEventBus.cjs");
+    const SpiralMemoryArchitecture = require("../server/consciousness/core/SpiralMemoryArchitecture.cjs").default;
+    const eventBus = require("../server/consciousness/core/ConsciousnessEventBus.cjs").default || require("../server/consciousness/core/ConsciousnessEventBus.cjs");
     let SpiralMemoryIntegration, HyperdimensionalSpiralTopology;
     try {
-      SpiralMemoryIntegration = require("../FlappyJournal/server/consciousness/spiral-memory-integration.cjs").SpiralMemoryIntegration;
+      SpiralMemoryIntegration = require("../server/consciousness/spiral-memory-integration.cjs").SpiralMemoryIntegration;
     } catch (e) {}
     try {
-      HyperdimensionalSpiralTopology = require("../FlappyJournal/server/consciousness/core/HyperdimensionalSpiralTopology.cjs").default;
+      HyperdimensionalSpiralTopology = require("../server/consciousness/core/HyperdimensionalSpiralTopology.cjs").default;
     } catch (e) {}
 
     // Instantiate SpiralMemoryArchitecture
@@ -116,8 +116,8 @@ async function runtimeSnapshot() {
     }
 
     // Restart simulation: re-require modules and assert persistence
-    delete require.cache[require.resolve("../FlappyJournal/server/consciousness/core/SpiralMemoryArchitecture.cjs")];
-    const SpiralMemoryArchitecture2 = require("../FlappyJournal/server/consciousness/core/SpiralMemoryArchitecture.cjs").default;
+    delete require.cache[require.resolve("../server/consciousness/core/SpiralMemoryArchitecture.cjs")];
+    const SpiralMemoryArchitecture2 = require("../server/consciousness/core/SpiralMemoryArchitecture.cjs").default;
     const spiral2 = new SpiralMemoryArchitecture2();
     await spiral2.initialize && spiral2.initialize();
     spiralMetrics.afterRestart = spiral2.getMemoryStatistics ? spiral2.getMemoryStatistics() : {};
@@ -132,7 +132,7 @@ async function runtimeSnapshot() {
 async function staticScan() {
   // Event key extraction
   const searchDirs = [
-    "FlappyJournal/server",
+    "server",
     "FlappyJournal/shared-consciousness",
     "shared-consciousness",
     "shared"

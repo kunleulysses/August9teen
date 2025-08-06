@@ -1,4 +1,4 @@
-import SpiralMemoryFacade from '../../FlappyJournal/server/consciousness/core/SpiralMemoryFacade.cjs';
+import SpiralMemoryFacade from '../../server/consciousness/core/SpiralMemoryFacade.cjs';
 
 describe('Tenant isolation', () => {
   it('memory is only visible to correct tenant', async () => {

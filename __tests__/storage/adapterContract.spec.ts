@@ -28,7 +28,7 @@ describe('Storage Adapter Contract', () => {
         if (config.requiresExternalService && config.name === 'Redis') {
           try {
             const testRedisUrl = process.env.TEST_REDIS_URL || 'redis://127.0.0.1:6379/15';
-            const { RedisSpiralAdapter } = require('../../FlappyJournal/server/consciousness/core/storage/RedisSpiralAdapter.cjs');
+            const { RedisSpiralAdapter } = require('../../server/consciousness/core/storage/RedisSpiralAdapter.cjs');
             const testAdapter = new RedisSpiralAdapter(testRedisUrl);
             await testAdapter.init();
             await testAdapter.redis.ping();

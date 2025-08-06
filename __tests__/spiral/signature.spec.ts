@@ -1,4 +1,4 @@
-import { sign, verify } from '../../FlappyJournal/server/consciousness/core/security/eventSign';
+import { sign, verify } from '../../server/consciousness/core/security/eventSign';
 
 describe('Event signature', () => {
   it('signs and verifies payloads', () => {

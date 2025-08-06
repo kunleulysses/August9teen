@@ -10,6 +10,6 @@ const num = Number(process.argv[2] || 4);
 
 for (let i = 0; i < num; ++i) {
   const env = { ...process.env, SHARD_ID: i };
-  fork(path.join(__dirname, '../FlappyJournal/server/consciousness/core/spiral-metrics-server.cjs'), [], { env });
+  fork(path.join(__dirname, '../server/consciousness/core/spiral-metrics-server.cjs'), [], { env });
   console.log(`Launched spiral-metrics-server for shard ${i}`);
 }

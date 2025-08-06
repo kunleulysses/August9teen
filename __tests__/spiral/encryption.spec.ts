@@ -1,4 +1,4 @@
-import { encrypt, decrypt } from '../../FlappyJournal/server/consciousness/core/security/crypto';
+import { encrypt, decrypt } from '../../server/consciousness/core/security/crypto';
 
 describe('Encryption', () => {
   it('encrypt/decrypt round-trip', () => {

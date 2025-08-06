@@ -1,7 +1,7 @@
-import SpiralMemoryArchitecture from '../../FlappyJournal/server/consciousness/core/SpiralMemoryArchitecture.cjs';
-import LevelSpiralAdapter from '../../FlappyJournal/server/consciousness/core/storage/LevelSpiralAdapter.cjs';
-import RedisSpiralAdapter from '../../FlappyJournal/server/consciousness/core/storage/RedisSpiralAdapter.cjs';
-import { InMemorySpiralAdapter } from '../../FlappyJournal/server/consciousness/core/storage/SpiralStorageAdapter.cjs';
+import SpiralMemoryArchitecture from '../../server/consciousness/core/SpiralMemoryArchitecture.cjs';
+import LevelSpiralAdapter from '../../server/consciousness/core/storage/LevelSpiralAdapter.cjs';
+import RedisSpiralAdapter from '../../server/consciousness/core/storage/RedisSpiralAdapter.cjs';
+import { InMemorySpiralAdapter } from '../../server/consciousness/core/storage/SpiralStorageAdapter.cjs';
 
 describe('SpiralMemoryArchitecture Concurrency Guards', () => {
   let spiral: any;

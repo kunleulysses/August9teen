@@ -2,7 +2,7 @@
  * Bench harness for SpiralMemoryArchitecture.
  * Creates 10,000 memories, logs p95 store latency and GC pause.
  */
-import SpiralMemoryArchitecture from '../FlappyJournal/server/consciousness/core/SpiralMemoryArchitecture.cjs';
+import SpiralMemoryArchitecture from '../server/consciousness/core/SpiralMemoryArchitecture.cjs';
 
 function percentile(arr, p) {
   arr.sort((a, b) => a - b);
