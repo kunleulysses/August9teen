@@ -933,6 +933,21 @@ class UniversalSystemTerminal {
                 return;
             }
             console.log('⚠️ Complete integration not available');
+        } else if (cmd === 'modules core') {
+            if (this.completeIntegration) {
+                const status = this.completeIntegration.getCompleteSystemStatus();
+                const modules = (status.consciousnessModules || []).filter(m => m.classification === 'consciousness-core');
+
+                console.log(`🧠 Consciousness-Core Modules (${modules.length}):`);
+                modules.forEach((module, index) => {
+                    const statusIcon = module.integrated ? '✅' : '⚠️';
+                    const chatIcon = module.universalChatAccess ? '💬' : '❌';
+                    const aiIcon = module.aiIntegrated ? '🤖' : '❌';
+                    console.log(`  ${index + 1}. ${statusIcon}${chatIcon}${aiIcon} ${module.name}`);
+                });
+                return;
+            }
+            console.log('⚠️ Complete integration not available');
         }
     }
 
