@@ -1,57 +1,113 @@
+> Status: Complete
+
 # 01 – Structured Logging (Pino + OTEL)
 
 **Objective:**  
-Replace `console.log` with structured logger and OpenTelemetry export.
+Replace all `console.log` and ad-hoc logging with structured JSON logs using `pino`, and export logs and traces to 
+OpenTelemetry for full-stack observability.
 
 **Why it matters:**  
-Enables parsing, tracing, and alerting in production.
+Structured logs are machine-parseable, enable live alerting, and allow correlation of logs, traces, and metrics 
+in modern distributed systems (Grafana, Datadog, etc).
 
 ---
 
 ## Preconditions
 
-- Install `pino`, `@opentelemetry/api`, `@opentelemetry/sdk-node`
-- Access to main entrypoint
+- On a feature branch.
+- Install dependencies:
+  ```sh
+  npm install pino @opentelemetry/api @opentelemetry/sdk-node pino-otel pino-pretty
+  ```
+- Main entrypoint (e.g., `app.js`, `index.ts`) available for editing.
 
 ---
 
 ## Procedure
 
-### 1. Replace console.log
+### 1. Replace Console Logging
 
+**File:** e.g., `server/consciousness/quantum-consciousness-field-integrator.cjs`
+
+Replace:
+```js
+console.log('Quantum field created', field);
+```
+With:
 ```js
 const pino = require('pino');
 const logger = pino();
 
-logger.info({ msg: 'Quantum event', event, value });
+logger.info({ event: 'quantum_field_created', fieldId: field.id, meta: field });
+logger.error({ err }, 'Quantum field creation failed');
 ```
 
-### 2. Add OTEL instrumentation
+### 2. Add Pino Transport for OTEL
 
-```js
-const { NodeSDK } = require('@opentelemetry/sdk-node');
-const sdk = new NodeSDK();
+**File:** `server/logger.ts`
+```ts
+import pino from 'pino';
+import { createWriteStream } from 'node:fs';
+
+const logger = pino(
+  pino.transport({
+    targets: [
+      {
+        target: 'pino/file',
+        options: { destination: './logs/quantum.log' }
+      },
+      {
+        target: 'pino-otel',
+        options: { serviceName: 'quantum-core' }
+      }
+    ]
+  })
+);
+export default logger;
+```
+
+### 3. Wire Up OpenTelemetry Tracing
+
+**File:** `server/otel.ts`
+```ts
+import { NodeSDK } from '@opentelemetry/sdk-node';
+import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
+const sdk = new NodeSDK({
+  serviceName: 'quantum-core',
+  instrumentations: [getNodeAutoInstrumentations()],
+});
 sdk.start();
 ```
+Add at top of your entrypoint:
+```ts
+import './otel';
+```
 
-### 3. Export logs to OTEL
+### 4. Use Pino Pretty for Local Dev
 
-Configure exporter in code or `otel-config.yml`.
+Add to package.json:
+```json
+"scripts": {
+  "dev": "NODE_ENV=development node app.js | pino-pretty"
+}
+```
 
 ---
 
 ## Verification
 
-- Logs are JSON (not plain text).
-- OTEL traces/metrics visible in backend (Tempo, Jaeger, etc).
-- All tests pass.
+- Run app and check `logs/quantum.log` — logs are in JSON, not plain text.
+- In your OTEL backend (Jaeger/Tempo/Grafana), search for recent traces and logs.
+- Trigger quantum events — confirm they appear with correct metadata.
+- Run regression tests, confirm logs are present and parseable.
 
 ---
 
 ## Rollback / Troubleshooting
 
-- Fallback to `console.log` for debugging if logger breaks boot.
-- Use Pino pretty-print in dev: `pino-pretty`.
+- If logger fails, fallback to `console.log` for quick debug; file a ticket for logger bug.
+- If OTEL export fails, set only pino file target and try again.
+- Use `pino-pretty` for human-readable logs during development.
 
 ---
 
@@ -63,5 +119,5 @@ Configure exporter in code or `otel-config.yml`.
 
 ## Owner / JIRA
 
-- Owner: [assign]
+- Owner: Observability Lead
 - JIRA: Q5-4.1

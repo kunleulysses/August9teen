@@ -1,63 +1,106 @@
+> Status: Complete
+
 # 02 – ESM + CJS Dual Build
 
 **Objective:**  
-Enable build output for both ESM and CommonJS consumers.
+Produce both ESM and CommonJS build outputs for all quantum-core packages, with copy-pasteable configs and
+interop for both modern and legacy consumers.
 
 **Why it matters:**  
-Supports modern and legacy consumers, unlocks toolchain flexibility.
+Some consumers (TS/Node 20, Next.js) require ESM, while many tools and older code require CJS. This ensures
+compatibility and enables migration.
 
 ---
 
 ## Preconditions
 
-- Install `tsup` or `rollup`
-- Entry points standardized
+- On feature branch.
+- Install `tsup`:
+  ```sh
+  npm install --save-dev tsup
+  ```
+- All entry points are TypeScript (e.g., `src/index.ts`).
 
 ---
 
 ## Procedure
 
-### 1. Add build script
+### 1. Create `tsup.config.ts`
 
-In `package.json`:
+**File:** `packages/quantum-core/tsup.config.ts`
 
-```json
-"scripts": {
-  "build": "tsup src/index.ts --format esm,cjs --dts"
-}
+```ts
+import { defineConfig } from 'tsup';
+
+export default defineConfig({
+  entry: ['src/index.ts'],
+  format: ['esm', 'cjs'],
+  dts: true,
+  splitting: false,
+  clean: true,
+  outDir: 'dist',
+  minify: false,
+  target: 'node20',
+});
 ```
 
-### 2. Add exports map
+### 2. Update `package.json` for Build and Exports
+
+**File:** `packages/quantum-core/package.json`
 
 ```json
-"exports": {
-  ".": {
-    "import": "./dist/index.mjs",
-    "require": "./dist/index.js"
+{
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup"
   }
 }
 ```
 
-### 3. Run build
+### 3. Build
 
 ```sh
+cd packages/quantum-core
 npm run build
+ls dist/
+# Should show both .js (CJS), .mjs (ESM), and .d.ts files
+```
+
+### 4. Usage Example
+
+**CJS:**
+```js
+const { generateSpiral } = require('quantum-core');
+```
+
+**ESM:**
+```js
+import { generateSpiral } from 'quantum-core';
 ```
 
 ---
 
 ## Verification
 
-- `dist/` contains both `.js` (CJS) and `.mjs` (ESM) files.
-- Consumers can `require()` or `import` as needed.
-- All tests pass.
+- `dist/` contains `index.js`, `index.mjs`, and `index.d.ts`
+- Both `require()` and `import` work in test scripts
+- All tests pass under both Node `--require` and `--loader`
+- No "Cannot use import statement outside module" errors
 
 ---
 
 ## Rollback / Troubleshooting
 
-- Remove `exports` map if module resolution breaks.
-- Fallback to single format, debug, then re-enable dual build.
+- If consumers break, try removing `"exports"` and `"type": "module"` to isolate
+- For legacy scripts, use only CJS build as fallback
 
 ---
 
@@ -69,5 +112,5 @@ npm run build
 
 ## Owner / JIRA
 
-- Owner: [assign]
+- Owner: Build Systems
 - JIRA: Q5-3.2
