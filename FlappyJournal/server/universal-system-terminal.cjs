@@ -933,6 +933,41 @@ class UniversalSystemTerminal {
                 return;
             }
             console.log('⚠️ Complete integration not available');
+        } else if (cmd.startsWith('modules search ')) {
+            if (this.completeIntegration) {
+                const term = cmd.slice('modules search '.length).trim().toLowerCase();
+                if (!term) {
+                    console.log('⚠️ Please provide a search term');
+                    return;
+                }
+
+                const status = this.completeIntegration.getCompleteSystemStatus();
+                const modules = status.consciousnessModules || [];
+
+                const filtered = modules.filter(module => {
+                    const nameMatch = module.name?.toLowerCase().includes(term);
+                    const capabilityMatch = Object.entries(module).some(([key, value]) => {
+                        if (['name', 'status', 'lastUpdate'].includes(key)) return false;
+                        return typeof value === 'boolean' && value && key.toLowerCase().includes(term);
+                    });
+                    return nameMatch || capabilityMatch;
+                });
+
+                if (filtered.length === 0) {
+                    console.log(`⚠️ No modules found matching "${term}"`);
+                    return;
+                }
+
+                console.log(`🧠 Matching Modules (${filtered.length}):`);
+                filtered.forEach((module, index) => {
+                    const statusIcon = module.integrated ? '✅' : '⚠️';
+                    const chatIcon = module.universalChatAccess ? '💬' : '❌';
+                    const aiIcon = module.aiIntegrated ? '🤖' : '❌';
+                    console.log(`  ${index + 1}. ${statusIcon}${chatIcon}${aiIcon} ${module.name}`);
+                });
+                return;
+            }
+            console.log('⚠️ Complete integration not available');
         }
     }
 
