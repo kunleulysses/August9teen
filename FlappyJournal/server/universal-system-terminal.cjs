@@ -24,6 +24,7 @@ const axios = require('axios');
 
 // Import UnifiedChatAggregator for multi-container chat routing
 const UnifiedChatAggregator = require('./consciousness/core/UnifiedChatAggregator.cjs');
+const architect40 = require('./architect-4.0-orchestrator.cjs');
 
 // Load environment variables
 const envPath = join(__dirname, '..', '.env');
@@ -137,7 +138,18 @@ class UniversalSystemTerminal {
             
             // Setup universal event bus integration
             this.setupUniversalEventBusIntegration();
-            
+
+            // Activate Architect 4.0 systems by default
+            try {
+                const status = architect40.getStatus();
+                if (!status.isActive) {
+                    await architect40.activate();
+                }
+                console.log('🤖 Architect 4.0 systems active');
+            } catch (err) {
+                console.warn('⚠️ Failed to activate Architect 4.0 systems:', err.message);
+            }
+
             // Initialize readline interface
             this.initializeReadline();
             
@@ -1050,9 +1062,17 @@ class UniversalSystemTerminal {
             }
             console.log('⚠️ Architect 4.0 status not available');
         } else if (cmd === 'architect activate') {
-            console.log('🤖 Activating Architect 4.0 autonomous systems...');
-            // This is a placeholder. In a real system, this would trigger a complex process.
-            console.log('✅ Architect 4.0 systems activated (placeholder)');
+            try {
+                const status = architect40.getStatus();
+                if (!status.isActive) {
+                    const result = await architect40.activate();
+                    console.log('✅ Architect 4.0 systems activated:', result.timestamp);
+                } else {
+                    console.log('✅ Architect 4.0 systems already active');
+                }
+            } catch (error) {
+                console.error('❌ Failed to activate Architect 4.0 systems:', error.message);
+            }
         } else if (cmd === 'architect components') {
             console.log('🤖 Architect 4.0 Components:');
             console.log('  • Autonomous Coding Agent');
