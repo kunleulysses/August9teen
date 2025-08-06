@@ -8,6 +8,8 @@ import { startEmailProcessor } from "./email-processor";
 import { startEmailScheduler } from "./scheduler";
 import { initUnifiedChatWS } from "./unified-chat-ws";
 import rateLimit from 'express-rate-limit';
+import SnapshotService from './consciousness/persistence/SnapshotService.cjs';
+import { getStore } from './common/storeFactory.cjs';
 
 import { Registry, collectDefaultMetrics } from 'prom-client';
 
@@ -127,7 +129,14 @@ app.use((req, res, next) => {
   next();
 });
 
+
 (async () => {
+  const spiralMemory: Map<any, any> = (globalThis as any).spiralMemory || new Map();
+  const store = getStore();
+  const snapshotService = new SnapshotService(spiralMemory, store);
+  await snapshotService.restoreIfEmpty();
+  snapshotService.start();
+
   // First register main routes which includes auth setup
   const server = await registerRoutes(app);
   
