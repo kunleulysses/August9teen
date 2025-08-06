@@ -45,9 +45,10 @@ if (argvArgs.includes('--rpc') && argvArgs[argvArgs.indexOf('--rpc') + 1] === 'g
         try {
             // Initialise minimal integration context
             const integration = new CompleteUniversalSystemIntegration();
-            // Allow subsystems to bootstrap (shorter than full 10s terminal wait)
-            // give subsystems more time to register modules
-            await new Promise(r => setTimeout(r, 10000));
+            // Wait for the integration initializer to complete instead of a fixed timeout
+            if (typeof integration.initializeCompleteUniversalIntegration === 'function') {
+                await integration.initializeCompleteUniversalIntegration();
+            }
             const status = integration.getCompleteSystemStatus();
             const modules = status.consciousnessModules || [];
             const result = {
