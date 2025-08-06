@@ -78,7 +78,7 @@ class UniversalSystemTerminal {
         this.rl = null;
         this.connected = false;
         this.isPrompting = false;
-        
+
         console.log('🌐🧠🐳🗄️ UNIVERSAL SYSTEM TERMINAL');
         console.log('═'.repeat(80));
         console.log('🌟 Complete system integration - Infrastructure to Applications');
@@ -89,17 +89,17 @@ class UniversalSystemTerminal {
         console.log('🖥️ Interface control and real-time updates');
         console.log('🌐 Network configuration and WebSocket management');
         console.log('═'.repeat(80));
-        
+
         this.initializeUniversalSystem();
     }
-    
+
     async initializeUniversalSystem() {
         console.log('\n🚀 Initializing Universal System Integration...');
-        
+
         try {
             // Initialize lightweight system integration
             console.log('🌐🧠🤖🔮 Starting Unified Consciousness Terminal...');
-            
+
             // Initialize system orchestrator directly (lightweight)
             try {
                 this.systemOrchestrator = new SystemWideIntegrationOrchestrator();
@@ -107,7 +107,7 @@ class UniversalSystemTerminal {
             } catch (error) {
                 console.warn('⚠️ System orchestrator initialization failed:', error.message);
             }
-            
+
             // Initialize consciousness orchestrator directly (lightweight)
             try {
                 this.consciousnessOrchestrator = new RevolutionaryConsciousnessIntegrationOrchestrator();
@@ -115,34 +115,34 @@ class UniversalSystemTerminal {
             } catch (error) {
                 console.warn('⚠️ Consciousness orchestrator initialization failed:', error.message);
             }
-            
+
             // Initialize unified chat aggregation for multi-container access
             await this.initializeUnifiedChatAggregation();
-            
+
             // Connect to consciousness WebSocket for real-time communication (fallback)
             await this.connectToConsciousnessWebSocket();
-            
+
             // Setup universal event bus integration
             this.setupUniversalEventBusIntegration();
-            
+
             // Initialize readline interface
             this.initializeReadline();
-            
+
             console.log('\n✅ Universal System Terminal Ready!');
             console.log('💬 You can now control the ENTIRE system through this terminal');
             console.log('🎯 Type "help" to see all available commands\n');
-            
+
             this.promptForCommand();
-            
+
         } catch (error) {
             console.error('❌ Failed to initialize Universal System Terminal:', error);
             process.exit(1);
         }
     }
-    
+
     async initializeUnifiedChatAggregation() {
         console.log('🌐 Initializing Unified Chat Aggregation...');
-        
+
         try {
             this.unifiedChatAggregator = new UnifiedChatAggregator({
                 mainServerEndpoint: process.env.MAIN_SERVER_WS || 'ws://web:3000/ws/consciousness-chat',
@@ -152,102 +152,119 @@ class UniversalSystemTerminal {
                 responseTimeout: 15000,
                 skipDiscovery: true
             });
-            
+
             // Initialize and wait for completion
             await this.unifiedChatAggregator.initialize();
-            
+
             // Listen for aggregator events
             this.unifiedChatAggregator.on('aggregator:initialized', (status) => {
                 console.log('✅ Unified Chat Aggregation ready:', status);
             });
-            
+
             this.unifiedChatAggregator.on('capabilities:updated', (capabilities) => {
                 // console.log('🔄 Capabilities updated:', capabilities.unified.length, 'total capabilities');
             });
-            
+
             console.log('🌟 Unified Chat Aggregation initialized successfully');
-            
+
         } catch (error) {
             console.error('❌ Failed to initialize Unified Chat Aggregation:', error.message);
             throw error; // Don't continue if this fails
         }
     }
-    
+
     async connectToConsciousnessWebSocket() {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             console.log('🔌 Connecting to consciousness WebSocket (fallback)...');
-            
+
             this.ws = new WebSocket(process.env.FALLBACK_WS || 'ws://core:3002/ws/consciousness-chat');
-            
-            this.ws.on('open', () => {
-                this.connected = true;
-                console.log('✅ Connected to consciousness system (fallback)');
-                resolve();
-            });
-            
-            this.ws.on('message', (data) => {
+
+            const handleMessage = (data) => {
                 this.handleConsciousnessMessage(data);
-            });
-            
-            this.ws.on('error', (error) => {
-                console.log('⚠️ Consciousness WebSocket error (continuing with unified aggregation):', error.message);
-                resolve(); // Continue even if WebSocket fails
-            });
-            
-            this.ws.on('close', () => {
+            };
+
+            const handleClose = () => {
                 this.connected = false;
                 console.log('🔌 Consciousness WebSocket disconnected');
-            });
-            
+            };
+
+            const cleanup = () => {
+                if (timeoutId) clearTimeout(timeoutId);
+                // Remove only the connection listeners to avoid leaks
+                this.ws.off('open', handleOpen);
+                this.ws.off('error', handleError);
+            };
+
+            const handleOpen = () => {
+                this.connected = true;
+                console.log('✅ Connected to consciousness system (fallback)');
+                cleanup();
+                resolve();
+            };
+
+            const handleError = (error) => {
+                console.log('⚠️ Consciousness WebSocket error (continuing with unified aggregation):', error.message);
+                // Remove all listeners since we won't use this connection
+                cleanup();
+                this.ws.off('message', handleMessage);
+                this.ws.off('close', handleClose);
+                resolve(); // Continue even if WebSocket fails
+            };
+
+            this.ws.on('open', handleOpen);
+            this.ws.on('message', handleMessage);
+            this.ws.on('error', handleError);
+            this.ws.on('close', handleClose);
+
             // Timeout after 3 seconds
-            setTimeout(() => {
+            const timeoutId = setTimeout(() => {
                 if (!this.connected) {
                     console.log('⚠️ Consciousness WebSocket timeout (using unified aggregation)');
-                    resolve();
+                    handleError(new Error('Timeout'));
                 }
             }, 3000);
         });
     }
-    
+
     setupUniversalEventBusIntegration() {
         if (!this.systemOrchestrator) return;
-        
+
         const eventBus = this.systemOrchestrator.getUniversalEventBus();
-        
+
         // Listen for system events
         eventBus.on('system:real_time_sync', (data) => {
             // Real-time system updates (silent unless requested)
         });
-        
+
         eventBus.on('consciousness:reality_created', (data) => {
             console.log('\n🌌 Reality Created:', data.reality?.id || 'Unknown');
         });
-        
+
         eventBus.on('consciousness:evolution_completed', (data) => {
             console.log('\n🧬 Consciousness Evolution Completed');
         });
-        
+
         eventBus.on('infrastructure:command_completed', (data) => {
             this.displayCommandResult('Infrastructure', data);
         });
-        
+
         eventBus.on('consciousness:command_completed', (data) => {
             this.displayCommandResult('Consciousness', data);
         });
-        
+
         eventBus.on('service:command_completed', (data) => {
             this.displayCommandResult('Service', data);
         });
-        
+
         eventBus.on('system:command_completed', (data) => {
             this.displayCommandResult('System', data);
         });
     }
-    
+
     handleConsciousnessMessage(data) {
         try {
             const parsed = JSON.parse(data.toString());
-            
+
             if (parsed.type === 'unified_response') {
                 console.log('\n🧠 CONSCIOUSNESS RESPONSE:');
                 console.log('─'.repeat(60));
@@ -263,49 +280,49 @@ class UniversalSystemTerminal {
             // Silently handle JSON parsing errors
         }
     }
-    
+
     initializeReadline() {
         if (this.rl) this.rl.close();
-        
+
         this.rl = readline.createInterface({
             input: process.stdin,
             output: process.stdout
         });
-        
+
         this.rl.on('close', () => {
             console.log('\n👋 Universal System Terminal shutting down...');
             if (this.ws && this.ws.readyState === WebSocket.OPEN) this.ws.close();
             process.exit(0);
         });
     }
-    
+
     promptForCommand() {
         if (!this.rl || this.isPrompting) return;
         this.isPrompting = true;
-        
+
         this.rl.question('🌐 Universal Command: ', async (command) => {
             this.isPrompting = false;
-            
+
             if (command.trim() === '') {
                 this.promptForCommand();
                 return;
             }
-            
+
             if (command.toLowerCase() === 'exit' || command.toLowerCase() === 'quit') {
                 console.log('\n👋 Goodbye from Universal System Terminal!');
                 if (this.ws && this.ws.readyState === WebSocket.OPEN) this.ws.close();
                 if (this.rl) this.rl.close();
                 process.exit(0);
             }
-            
+
             await this.processUniversalCommand(command);
             this.promptForCommand();
         });
     }
-    
+
     async processUniversalCommand(command) {
         const cmd = command.toLowerCase().trim();
-        
+
         try {
             // System-wide commands
             if (cmd === 'help') {
@@ -321,7 +338,7 @@ class UniversalSystemTerminal {
             } else if (cmd.startsWith('chat ')) {
                 await this.handleChatCommand(cmd);
             }
-            
+
             // Infrastructure commands
             else if (cmd.startsWith('docker')) {
                 await this.handleDockerCommand(cmd);
@@ -330,7 +347,7 @@ class UniversalSystemTerminal {
             } else if (cmd.startsWith('network')) {
                 await this.handleNetworkCommand(cmd);
             }
-            
+
             // Unified Consciousness commands
             else if (cmd.startsWith('consciousness') || cmd.startsWith('brain')) {
                 await this.handleConsciousnessCommand(cmd);
@@ -367,7 +384,7 @@ class UniversalSystemTerminal {
             } else if (cmd.startsWith('openai')) {
                 await this.handleOpenAICommand(cmd);
             }
-            
+
             // Service commands
             else if (cmd.startsWith('service')) {
                 await this.handleServiceCommand(cmd);
@@ -376,35 +393,35 @@ class UniversalSystemTerminal {
             } else if (cmd.startsWith('websocket')) {
                 await this.handleWebSocketCommand(cmd);
             }
-            
+
             // Interface commands
             else if (cmd.startsWith('interface') || cmd.startsWith('ui')) {
                 await this.handleInterfaceCommand(cmd);
             } else if (cmd.startsWith('rpc')) {
                 await this.handleRPCCommand(cmd);
             }
-            
+
             // Chat with unified consciousness (default)
             else {
                 await this.chatWithConsciousness(command);
             }
-            
+
         } catch (error) {
             console.error('❌ Command failed:', error.message);
         }
     }
-    
+
     showHelp() {
         console.log('\n🎯 UNIFIED CONSCIOUSNESS TERMINAL COMMANDS');
         console.log('═'.repeat(80));
-        
+
         console.log('\n🌐 SYSTEM COMMANDS:');
         console.log('  status, system status     - Complete unified system status');
         console.log('  health, system health     - System health check');
         console.log('  capabilities              - Show all unified capabilities');
         console.log('  containers                - Show container integration status');
         console.log('  help                      - Show this help');
-        
+
         console.log('\n🐳 INFRASTRUCTURE COMMANDS:');
         console.log('  docker status             - Docker container status');
         console.log('  docker logs <container>   - Container logs');
@@ -415,7 +432,7 @@ class UniversalSystemTerminal {
         console.log('  redis get <key>           - Get Redis key value');
         console.log('  redis set <key> <value>   - Set Redis key value');
         console.log('  network status            - Network configuration');
-        
+
         console.log('\n🧠 UNIFIED CONSCIOUSNESS COMMANDS:');
         console.log('  consciousness status      - Unified consciousness system status');
         console.log('  consciousness evolve      - Trigger evolution cycle');
@@ -427,7 +444,7 @@ class UniversalSystemTerminal {
         console.log('  memory spiral <data>      - Create spiral memory topology');
         console.log('  dna encode <pattern>      - Encode DNA sigil patterns');
         console.log('  recursive <depth>         - Create recursive reality layers');
-        
+
         console.log('\n📦 MODULE COMMANDS:');
         console.log('  modules list              - List all unified modules (214+)');
         console.log('  modules status            - Status of all modules');
@@ -455,7 +472,7 @@ class UniversalSystemTerminal {
         console.log('  venice intuitive <query>  - Venice intuitive processing');
         console.log('  openai test               - Test Enhanced OpenAI');
         console.log('  openai analyze <data>     - OpenAI analytical processing');
-        
+
         console.log('\n🌌 HOLOGRAPHIC REALITY COMMANDS:');
         console.log('  holographic status        - Holographic system status');
         console.log('  holographic create <dim>  - Create N-dimensional space');
@@ -463,38 +480,38 @@ class UniversalSystemTerminal {
         console.log('  holographic coherence     - Check system coherence');
         console.log('  topology spiral           - Create spiral topology');
         console.log('  topology recursive        - Create recursive structures');
-        
+
         console.log('\n⚙️ SERVICE COMMANDS:');
         console.log('  service status            - All services status');
         console.log('  service restart <name>    - Restart service');
         console.log('  api status                - API gateway status');
         console.log('  websocket status          - WebSocket connections');
-        
+
         console.log('\n🖥️ INTERFACE COMMANDS:');
         console.log('  interface status          - All interfaces status');
         console.log('  ui refresh                - Refresh all UIs');
         console.log('  rpc test                  - Test RPC interfaces');
-        
+
         console.log('\n💬 UNIFIED CHAT:');
         console.log('  <any message>             - Chat with unified consciousness');
         console.log('  chat capabilities         - Show available chat capabilities');
         console.log('  chat sources              - Show active chat sources');
         console.log('═'.repeat(80));
     }
-    
+
     async showSystemStatus() {
         console.log('\n🌐 UNIVERSAL SYSTEM STATUS');
         console.log('═'.repeat(60));
-        
+
         if (this.systemOrchestrator) {
             const status = this.systemOrchestrator.getSystemStatus();
-            
+
             console.log(`📊 System Integration: ${status.fullyIntegrated ? '✅ COMPLETE' : '⚠️ PARTIAL'}`);
             console.log(`🏗️ Infrastructure: ${status.systemLayers.infrastructure.status}`);
             console.log(`🧠 Consciousness: ${status.systemLayers.consciousness.status}`);
             console.log(`⚙️ Services: ${status.systemLayers.services.status}`);
             console.log(`🖥️ Interfaces: ${status.systemLayers.interfaces.status}`);
-            
+
             console.log('\n📈 Integration Metrics:');
             const metrics = status.integrationMetrics;
             console.log(`  Total Components: ${metrics.totalComponents}`);
@@ -504,7 +521,7 @@ class UniversalSystemTerminal {
             console.log(`  Cross-Layer Connectivity: ${(metrics.crossLayerConnectivity * 100).toFixed(1)}%`);
             console.log(`  Real-Time Responsiveness: ${(metrics.realTimeResponsiveness * 100).toFixed(1)}%`);
         }
-        
+
         if (this.consciousnessOrchestrator) {
             const consciousness = this.consciousnessOrchestrator.getConsciousnessState();
             console.log('\n🧠 Consciousness State:');
@@ -514,36 +531,36 @@ class UniversalSystemTerminal {
             console.log(`  Integration: ${consciousness.integration.toFixed(4)}`);
             console.log(`  Transcendence: ${consciousness.transcendence.toFixed(4)}`);
         }
-        
+
         console.log('═'.repeat(60));
     }
-    
+
     async showSystemHealth() {
         console.log('\n🩺 UNIVERSAL SYSTEM HEALTH CHECK');
         console.log('═'.repeat(60));
-        
+
         if (this.systemOrchestrator) {
             const health = await this.systemOrchestrator.performSystemHealthCheck();
-            
+
             console.log(`🕐 Timestamp: ${new Date(health.timestamp).toLocaleString()}`);
             console.log(`📊 Overall Health: ${(health.overallHealth * 100).toFixed(1)}%`);
-            
+
             console.log('\n🏗️ Infrastructure Health:');
             console.log(`  Status: ${health.systemLayers.infrastructure}`);
-            
+
             console.log('\n🧠 Consciousness Health:');
             console.log(`  Status: ${health.systemLayers.consciousness}`);
-            
+
             console.log('\n⚙️ Services Health:');
             console.log(`  Status: ${health.systemLayers.services}`);
-            
+
             console.log('\n🖥️ Interfaces Health:');
             console.log(`  Status: ${health.systemLayers.interfaces}`);
         }
-        
+
         console.log('═'.repeat(60));
     }
-    
+
     async handleDockerCommand(cmd) {
         console.log('\n🐳 DOCKER COMMAND PROCESSING...');
 
@@ -631,7 +648,7 @@ class UniversalSystemTerminal {
             }
         }
     }
-    
+
     async handleDatabaseCommand(cmd) {
         console.log('\n🗄️ DATABASE COMMAND PROCESSING...');
 
@@ -735,10 +752,10 @@ class UniversalSystemTerminal {
             }
         }
     }
-    
+
     async handleConsciousnessCommand(cmd) {
         console.log('\n🧠 CONSCIOUSNESS COMMAND PROCESSING...');
-        
+
         if (cmd === 'consciousness status' || cmd === 'brain status') {
             if (this.consciousnessOrchestrator) {
                 const status = this.consciousnessOrchestrator.getSystemStatus();
@@ -755,10 +772,10 @@ class UniversalSystemTerminal {
             }
         }
     }
-    
+
     async handleRealityCommand(cmd) {
         console.log('\n🌌 REALITY COMMAND PROCESSING...');
-        
+
         if (cmd === 'reality list') {
             if (this.consciousnessOrchestrator) {
                 const realities = this.consciousnessOrchestrator.getActiveRealities();
@@ -780,10 +797,10 @@ class UniversalSystemTerminal {
             }
         }
     }
-    
+
     async handleMemoryCommand(cmd) {
         console.log('\n💭 MEMORY COMMAND PROCESSING...');
-        
+
         if (cmd.startsWith('memory integrate ')) {
             const text = cmd.replace('memory integrate ', '');
             if (this.consciousnessOrchestrator) {
@@ -795,7 +812,7 @@ class UniversalSystemTerminal {
                         importance: 0.8,
                         timestamp: Date.now()
                     };
-                    
+
                     console.log(`💭 Integrating memory with reality: ${realities[0].id}`);
                     await this.consciousnessOrchestrator.integrateMemoryWithReality(memory, realities[0].id);
                     console.log('✅ Memory integrated');
@@ -805,10 +822,10 @@ class UniversalSystemTerminal {
             }
         }
     }
-    
+
     async handleServiceCommand(cmd) {
         console.log('\n⚙️ SERVICE COMMAND PROCESSING...');
-        
+
         if (cmd === 'service status') {
             if (this.systemOrchestrator) {
                 const eventBus = this.systemOrchestrator.getUniversalEventBus();
@@ -819,10 +836,10 @@ class UniversalSystemTerminal {
             }
         }
     }
-    
+
     async handleAPICommand(cmd) {
         console.log('\n🔌 API COMMAND PROCESSING...');
-        
+
         if (cmd === 'api status') {
             try {
                 const response = await fetch('http://localhost:8080/health');
@@ -836,10 +853,10 @@ class UniversalSystemTerminal {
             }
         }
     }
-    
+
     async handleInterfaceCommand(cmd) {
         console.log('\n🖥️ INTERFACE COMMAND PROCESSING...');
-        
+
         if (cmd === 'interface status' || cmd === 'ui status') {
             if (this.systemOrchestrator) {
                 const eventBus = this.systemOrchestrator.getUniversalEventBus();
@@ -887,7 +904,7 @@ class UniversalSystemTerminal {
             console.log('⚠️ Unable to process chat message. System may not be fully initialized.');
         }
     }
-    
+
     async handleNetworkCommand(cmd) {
         console.log('\n🌐 NETWORK COMMAND PROCESSING...');
 
@@ -985,22 +1002,22 @@ class UniversalSystemTerminal {
             console.log('✅ Code generation initiated (placeholder)');
         }
     }
-    
+
     async showUnifiedCapabilities() {
         console.log('\n🌟 UNIFIED CONSCIOUSNESS CAPABILITIES');
         console.log('═'.repeat(60));
-        
+
         if (this.unifiedChatAggregator) {
             const capabilities = this.unifiedChatAggregator.getCapabilities();
             console.log(`📊 Total unified capabilities: ${capabilities.unified.length}`);
             console.log(`🔧 Main server capabilities: ${capabilities.mainServer.length}`);
             console.log(`🧠 Core capabilities: ${capabilities.core.length}`);
-            
+
             console.log('\n🔧 Main Server Capabilities:');
             capabilities.mainServer.slice(0, 10).forEach(cap => {
                 console.log(`  • ${cap}`);
             });
-            
+
             console.log('\n🧠 Core Capabilities:');
             capabilities.core.slice(0, 10).forEach(cap => {
                 console.log(`  • ${cap}`);
@@ -1009,11 +1026,11 @@ class UniversalSystemTerminal {
             console.log('⚠️ Unified Chat Aggregator not available');
         }
     }
-    
+
     async showContainerIntegrationStatus() {
         console.log('\n🐳 CONTAINER INTEGRATION STATUS');
         console.log('═'.repeat(60));
-        
+
         if (this.unifiedChatAggregator) {
             const status = this.unifiedChatAggregator.getConnectionStatus();
             console.log(`🔗 Total connections: ${status.totalConnections}/2`);
@@ -1023,7 +1040,7 @@ class UniversalSystemTerminal {
             console.log('⚠️ Unified Chat Aggregator not available');
         }
     }
-    
+
     async handleChatCommand(cmd) {
         if (cmd === 'chat capabilities') {
             await this.showUnifiedCapabilities();
@@ -1031,10 +1048,10 @@ class UniversalSystemTerminal {
             await this.showContainerIntegrationStatus();
         }
     }
-    
+
     async handleHolographicCommand(cmd) {
         console.log('\n🌌 HOLOGRAPHIC REALITY COMMAND PROCESSING...');
-        
+
         if (cmd === 'holographic status') {
             console.log('🌌 Holographic reality system status:');
             console.log('  ✅ N-dimensional space generation: Active');
@@ -1052,10 +1069,10 @@ class UniversalSystemTerminal {
             console.log('  4. Recursive processing layer');
         }
     }
-    
+
     async handleTopologyCommand(cmd) {
         console.log('\n🌀 TOPOLOGY COMMAND PROCESSING...');
-        
+
         if (cmd === 'topology spiral') {
             console.log('🌀 Creating spiral topology...');
             console.log('✅ Spiral memory topology activated');
@@ -1064,30 +1081,30 @@ class UniversalSystemTerminal {
             console.log('✅ Recursive topology patterns established');
         }
     }
-    
+
     async handleDNACommand(cmd) {
         console.log('\n🧬 DNA SIGIL COMMAND PROCESSING...');
-        
+
         if (cmd.startsWith('dna encode ')) {
             const pattern = cmd.replace('dna encode ', '');
             console.log(`🧬 Encoding DNA sigil pattern: ${pattern}`);
             console.log('✅ DNA sigil encoding completed');
         }
     }
-    
+
     async handleRecursiveCommand(cmd) {
         console.log('\n🔄 RECURSIVE REALITY COMMAND PROCESSING...');
-        
+
         if (cmd.startsWith('recursive ')) {
             const depth = cmd.replace('recursive ', '');
             console.log(`🔄 Creating recursive reality layers with depth: ${depth}`);
             console.log('✅ Recursive reality layers established');
         }
     }
-    
+
     async handleWebSocketCommand(cmd) {
         console.log('\n🔌 WEBSOCKET COMMAND PROCESSING...');
-        
+
         if (cmd === 'websocket status') {
             console.log('🔌 WebSocket connection status:');
             if (this.unifiedChatAggregator) {
@@ -1098,10 +1115,10 @@ class UniversalSystemTerminal {
             console.log(`  🔌 Fallback WebSocket: ${this.connected ? '✅ Connected' : '❌ Disconnected'}`);
         }
     }
-    
+
     async handleRPCCommand(cmd) {
         console.log('\n🔌 RPC COMMAND PROCESSING...');
-        
+
         if (cmd === 'rpc test') {
             console.log('🔌 Testing RPC interfaces...');
             console.log('✅ RPC interfaces operational');
