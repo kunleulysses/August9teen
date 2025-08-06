@@ -5,6 +5,7 @@
  */
 
 import { EventEmitter } from 'events';
+import brokerBus from './BrokerBus.cjs';
 import client from 'prom-client';
 
 const eventQueueSizeGauge = new client.Gauge({
@@ -150,6 +151,9 @@ export class PriorityEventBus extends EventEmitter {
                 // Standard event emission
                 super.emit(eventData.event, eventData.data);
             }
+
+            // Forward to broker bus for external consumers
+            brokerBus.emit(eventData.event, eventData.data);
             
             // Update performance metrics
             const latency = Date.now() - startTime;
@@ -220,7 +224,10 @@ export class PriorityEventBus extends EventEmitter {
      * Get performance metrics
      */
     getPerformanceMetrics() {
-        eventQueueSizeGauge.labels({ priority: 'HIGH' }).set(this.priorityQueues.HIGH.length);
+        for (const [priority, queue] of Object.entries(this.priorityQueues)) {
+            eventQueueSizeGauge.labels({ priority }).set(queue.length);
+        }
+
         return {
             ...this.processingStats,
             isProcessing: this.isProcessing,
