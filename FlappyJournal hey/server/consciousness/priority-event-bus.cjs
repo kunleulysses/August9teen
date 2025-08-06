@@ -5,6 +5,8 @@
  */
 
 import { EventEmitter } from 'events';
+import pkg from 'pg';
+const { Pool } = pkg;
 
 export class PriorityEventBus extends EventEmitter {
     constructor() {
@@ -36,9 +38,21 @@ export class PriorityEventBus extends EventEmitter {
         
         // Increase max listeners for 42-module system
         this.setMaxListeners(1000);
-        
+
+        // Audit log connection
+        if (process.env.DATABASE_URL) {
+            try {
+                this.auditPool = new Pool({ connectionString: process.env.DATABASE_URL });
+            } catch (err) {
+                console.warn('Audit logging disabled:', err.message);
+                this.auditPool = null;
+            }
+        } else {
+            this.auditPool = null;
+        }
+
         console.log('⚡ Priority Event Bus initialized with load balancing');
-        
+
         // Start processing queue
         this.startQueueProcessor();
     }
@@ -59,6 +73,14 @@ export class PriorityEventBus extends EventEmitter {
      * Emit event with explicit priority
      */
     emitWithPriority(event, data, priority = 'MEDIUM') {
+        const requiredScope = data?.requiredScope;
+        const userScopes = data?.ctx?.user?.scopes || [];
+
+        if (requiredScope && (!Array.isArray(userScopes) || !userScopes.includes(requiredScope))) {
+            this.logScopeDrop(event, data?.ctx?.user?.id, requiredScope, userScopes);
+            return false;
+        }
+
         const eventData = {
             event,
             data,
@@ -66,7 +88,7 @@ export class PriorityEventBus extends EventEmitter {
             timestamp: Date.now(),
             id: this.generateEventId()
         };
-        
+
         // Add to appropriate priority queue
         if (this.priorityQueues[priority]) {
             this.priorityQueues[priority].push(eventData);
@@ -75,13 +97,22 @@ export class PriorityEventBus extends EventEmitter {
             // Fallback to standard emit for unknown priorities
             return super.emit(event, data);
         }
-        
+
         // Start processing if not already running
         if (!this.isProcessing) {
             this.processQueue();
         }
-        
+
         return true;
+    }
+
+    logScopeDrop(event, userId, requiredScope, userScopes) {
+        if (!this.auditPool) return;
+        const query = `INSERT INTO audit_log (event_name, user_id, required_scope, user_scopes, dropped_at)
+                       VALUES ($1, $2, $3, $4, NOW())`;
+        this.auditPool
+            .query(query, [event, userId, requiredScope, JSON.stringify(userScopes)])
+            .catch(err => console.error('Failed to log audit entry:', err.message));
     }
 
     /**
