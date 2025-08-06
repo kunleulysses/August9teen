@@ -1,0 +1,10 @@
+{
+  "$id": "reality-request.json",
+  "type": "object",
+  "properties": {
+    "description": { "type": "string" },
+    "parameters": { "type": "object" }
+  },
+  "required": ["description", "parameters"],
+  "additionalProperties": true
+}

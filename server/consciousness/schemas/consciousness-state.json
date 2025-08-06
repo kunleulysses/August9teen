@@ -1,0 +1,11 @@
+{
+  "$id": "consciousness-state.json",
+  "type": "object",
+  "properties": {
+    "phi": { "type": "number" },
+    "awareness": { "type": "number" },
+    "coherence": { "type": "number" }
+  },
+  "required": ["phi", "awareness", "coherence"],
+  "additionalProperties": true
+}
