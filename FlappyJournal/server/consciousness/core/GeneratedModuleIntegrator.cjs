@@ -5,6 +5,7 @@
  */
 
 const fs = require('fs').promises;
+const fsSync = require('fs');
 const path = require('path');
 const { EventEmitter } = require('events');
 
@@ -14,8 +15,20 @@ class GeneratedModuleIntegrator extends EventEmitter {
         this.name = 'GeneratedModuleIntegrator';
         
         // Configuration
+        const envGeneratedPath = process.env.GENERATED_MODULES_PATH;
+        let fileGeneratedPath;
+        try {
+            const configFile = path.resolve(process.cwd(), 'config', 'generated-modules.json');
+            if (fsSync.existsSync(configFile)) {
+                const configData = JSON.parse(fsSync.readFileSync(configFile, 'utf8'));
+                fileGeneratedPath = configData.generatedModulesPath;
+            }
+        } catch (err) {
+            console.warn(`⚠️ Failed to read generated modules config: ${err.message}`);
+        }
+
         this.config = {
-            generatedModulesPath: options.generatedModulesPath || '/app/server/consciousness/generated',
+            generatedModulesPath: options.generatedModulesPath || envGeneratedPath || fileGeneratedPath || '/app/server/consciousness/generated',
             scanInterval: options.scanInterval || 30000, // 30 seconds
             maxModules: options.maxModules || 1000,
             autoRegister: options.autoRegister !== false,
@@ -98,8 +111,9 @@ class GeneratedModuleIntegrator extends EventEmitter {
             await fs.access(this.config.generatedModulesPath);
             console.log(`📁 Generated modules directory verified: ${this.config.generatedModulesPath}`);
         } catch (error) {
-            console.log(`📁 Creating generated modules directory: ${this.config.generatedModulesPath}`);
-            await fs.mkdir(this.config.generatedModulesPath, { recursive: true });
+            const message = `Generated modules directory not found: ${this.config.generatedModulesPath}`;
+            console.error(`❌ ${message}`);
+            throw new Error(message);
         }
     }
     
