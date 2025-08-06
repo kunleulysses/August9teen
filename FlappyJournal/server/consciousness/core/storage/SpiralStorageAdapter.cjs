@@ -15,7 +15,7 @@ class SpiralStorageAdapter {
       this.circuitBreaker = {};
     }
     if (!this.circuitBreaker[method]) {
-      const { withCircuitBreaker } = require('../../utils/circuitBreaker.cjs');
+      const { withCircuitBreaker } = require('../../../utils/circuitBreaker.cjs');
       this.circuitBreaker[method] = withCircuitBreaker(fn, {
         failureThreshold: process.env.CB_FAILURES || 5,
         successThreshold: 1,
