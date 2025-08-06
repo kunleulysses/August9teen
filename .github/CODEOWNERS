@@ -1,0 +1,7 @@
+# Default owners
+* @project-maintainers
+
+# Per-folder ownership
+/server/ @backend-team
+/client/ @frontend-team
+/docs/ @docs-team
