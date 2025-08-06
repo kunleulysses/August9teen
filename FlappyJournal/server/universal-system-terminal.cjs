@@ -817,6 +817,16 @@ class UniversalSystemTerminal {
                     timestamp: Date.now()
                 });
             }
+        } else if (cmd.startsWith('service restart ')) {
+            const serviceName = cmd.replace('service restart ', '').trim();
+            if (this.systemOrchestrator) {
+                const eventBus = this.systemOrchestrator.getUniversalEventBus();
+                eventBus.emit('chat:service_command', {
+                    type: 'restart',
+                    service: serviceName,
+                    timestamp: Date.now()
+                });
+            }
         }
     }
     
