@@ -36,6 +36,9 @@ class DNASigilRealityEncoding extends SafeEventEmitter {
             throw new Error('Encoding circuit breaker open');
         }
         console.log(`🧬🔮 Encoding reality ${reality.id} with DNA-Sigil patterns`);
+        if (this.logger && typeof this.logger.realityAccess === 'function') {
+            await this.logger.realityAccess(reality.id, 'encode', { userId: reality.userId });
+        }
         const startTime = Date.now();
         
         // Generate consciousness state for encoding
@@ -829,7 +832,10 @@ class DNASigilRealityEncoding extends SafeEventEmitter {
     }
     
     // Public API methods
-    getEncodedReality(encodedRealityId) {
+    async getEncodedReality(encodedRealityId) {
+        if (this.logger && typeof this.logger.realityAccess === 'function') {
+            await this.logger.realityAccess(encodedRealityId, 'read');
+        }
         return this.encodedRealities.get(encodedRealityId);
     }
     
