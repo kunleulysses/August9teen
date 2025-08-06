@@ -1,0 +1,13 @@
+filepath,category,notes
+HyperdimensionalSpiralTopology.*,Topology / Geometry,"Integrated into Spiral selection (v1) but not benchmarked standalone"
+QuantumSpiralEntanglementNetwork.cjs,Topology / Geometry,"Integrated into Spiral selection (v1) but not benchmarked standalone"
+HyperdimensionalSpiralTopology.ts,Topology / Geometry,"Integrated into Spiral selection (v1) but not benchmarked standalone"
+QuantumConsciousnessField.cjs,Quantum Field Ops,"Mostly prototype / simulation, minimal tests"
+quantum-consciousness-field-integrator.cjs,Quantum Field Ops,"Mostly prototype / simulation, minimal tests"
+quantum-resonance-dna-fusion-engine.cjs,Quantum Field Ops,"Mostly prototype / simulation, minimal tests"
+sigil-authenticated-quantum-resonance-network.cjs,Network / API,"WS endpoints, no auth or RL"
+quantum-consciousness-network-platform.cjs,Network / API,"WS endpoints, no auth or RL"
+QuantumFieldStorage.ts,Persistence / Storage,"Stub, may reuse Spiral adapters"
+Quantum*Adapter,Persistence / Storage,"Any Quantum*Adapter, TBD – may reuse Spiral adapters"
+holographic-reality-live-metrics.cjs,Metrics & Viz,"Exposes raw websockets without auth"
+test-quantum-*,Tests,"Disabled in CI"

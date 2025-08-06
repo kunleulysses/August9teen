@@ -359,7 +359,7 @@ async function testSpiralMemoryArchitecture() {
 }
 
 // Execute test if run directly
-if (import.meta.url === 'file://' + process.argv[1]) {
+if (require.main === module) {
     testSpiralMemoryArchitecture()
         .then(result => {
             if (result.success) {
