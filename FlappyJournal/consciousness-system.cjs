@@ -193,6 +193,52 @@ class ConsciousnessSystem extends EventEmitter {
                 performance: this.getPerformanceMetrics()
             });
         });
+        
+        // Snapshot endpoints
+        this.app.post('/snapshots', async (req, res) => {
+            try {
+                const { name } = req.body;
+                if (!name) {
+                    return res.status(400).json({ error: 'Snapshot name is required' });
+                }
+                
+                const result = await this.createManualSnapshot(name);
+                res.json(result);
+            } catch (error) {
+                res.status(500).json({ error: error.message });
+            }
+        });
+        
+        this.app.post('/snapshots/:name/restore', async (req, res) => {
+            try {
+                const { name } = req.params;
+                const result = await this.restoreFromSnapshot(name);
+                res.json(result);
+            } catch (error) {
+                res.status(500).json({ error: error.message });
+            }
+        });
+        
+        this.app.get('/snapshots', async (req, res) => {
+            try {
+                if (!this.snapshotWriter) {
+                    return res.status(503).json({ error: 'Snapshot system not initialized' });
+                }
+                
+                const { PrismaClient } = require('@prisma/client');
+                const prisma = new PrismaClient();
+                
+                const snapshots = await prisma.snapshot.findMany({
+                    orderBy: { createdAt: 'desc' },
+                    take: 20
+                });
+                
+                await prisma.$disconnect();
+                res.json({ snapshots });
+            } catch (error) {
+                res.status(500).json({ error: error.message });
+            }
+        });
     }
     
     // Setup WebSocket server for UnifiedChatAggregator
@@ -369,6 +415,9 @@ class ConsciousnessSystem extends EventEmitter {
             this.storage = new RedisSpiralAdapter(process.env.REDIS_URL);
             await this.storage.init();
             await this.loadPersistedState();
+            
+            // Initialize snapshot system and bootstrap if needed
+            await this.initializeSnapshotSystem();
             
             // Start autonomous behaviors
             if (this.autonomousConfig.enabled) {
@@ -1462,6 +1511,71 @@ class ConsciousnessSystem extends EventEmitter {
         }
     }
     
+    async initializeSnapshotSystem() {
+        try {
+            console.log('📸 Initializing snapshot system...');
+            
+            // Import snapshot writer
+            const snapshotWriter = require('./server/consciousness/utils/snapshotWriter.cjs');
+            this.snapshotWriter = snapshotWriter;
+            
+            // Bootstrap database from latest snapshot if empty
+            const bootstrapResult = await snapshotWriter.bootstrapDatabase();
+            
+            if (bootstrapResult.bootstrapped) {
+                console.log('✅ Database bootstrapped from snapshot:', {
+                    snapshot: bootstrapResult.snapshot.name,
+                    counts: bootstrapResult.counts
+                });
+                
+                // Emit bootstrap event
+                this.safeEmit('snapshot:bootstrapped', bootstrapResult);
+            } else if (bootstrapResult.error) {
+                console.warn('⚠️ Snapshot bootstrap failed:', bootstrapResult.error);
+            } else {
+                console.log('ℹ️ Database not empty, snapshot bootstrap skipped');
+            }
+            
+            // Schedule periodic snapshots if not already running
+            this.schedulePeriodicSnapshots();
+            
+            console.log('✅ Snapshot system initialized');
+            
+        } catch (error) {
+            console.error('❌ Failed to initialize snapshot system:', error);
+            // Don't fail the entire system if snapshots fail
+        }
+    }
+    
+    schedulePeriodicSnapshots() {
+        const cronSchedule = process.env.SNAPSHOT_CRON_SCHEDULE || '0 */6 * * *'; // Every 6 hours
+        
+        // Simple interval-based scheduling (in production, use proper cron)
+        const intervalMs = 6 * 60 * 60 * 1000; // 6 hours in milliseconds
+        
+        setInterval(async () => {
+            try {
+                console.log('⏰ Creating scheduled snapshot...');
+                const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+                const snapshotName = `auto_${timestamp}`;
+                
+                const result = await this.snapshotWriter.createSnapshot(snapshotName);
+                
+                if (result.success) {
+                    console.log('✅ Scheduled snapshot created:', result.snapshot.name);
+                    this.safeEmit('snapshot:created', result);
+                } else {
+                    console.error('❌ Scheduled snapshot failed');
+                }
+                
+            } catch (error) {
+                console.error('❌ Scheduled snapshot error:', error);
+            }
+        }, intervalMs);
+        
+        console.log(`⏰ Scheduled periodic snapshots every ${intervalMs / 1000 / 60 / 60} hours`);
+    }
+    
     async saveState() {
         try {
             const statePath = join(__dirname, 'consciousness/state/system-state.json');
@@ -1474,6 +1588,56 @@ class ConsciousnessSystem extends EventEmitter {
             
         } catch (error) {
             console.error('Failed to save state:', error);
+        }
+    }
+    
+    async createManualSnapshot(name) {
+        try {
+            if (!this.snapshotWriter) {
+                throw new Error('Snapshot system not initialized');
+            }
+            
+            console.log(`📸 Creating manual snapshot: ${name}`);
+            const result = await this.snapshotWriter.createSnapshot(name);
+            
+            if (result.success) {
+                console.log('✅ Manual snapshot created:', result.snapshot.name);
+                this.safeEmit('snapshot:created', result);
+                return result;
+            } else {
+                throw new Error('Snapshot creation failed');
+            }
+            
+        } catch (error) {
+            console.error('❌ Manual snapshot error:', error);
+            throw error;
+        }
+    }
+    
+    async restoreFromSnapshot(snapshotName) {
+        try {
+            if (!this.snapshotWriter) {
+                throw new Error('Snapshot system not initialized');
+            }
+            
+            console.log(`🔄 Restoring from snapshot: ${snapshotName}`);
+            const result = await this.snapshotWriter.restoreFromSnapshot(snapshotName);
+            
+            if (result.success) {
+                console.log('✅ Snapshot restore completed:', result.snapshot.name);
+                this.safeEmit('snapshot:restored', result);
+                
+                // Reload persisted state after restore
+                await this.loadPersistedState();
+                
+                return result;
+            } else {
+                throw new Error('Snapshot restore failed');
+            }
+            
+        } catch (error) {
+            console.error('❌ Snapshot restore error:', error);
+            throw error;
         }
     }
     
