@@ -1,0 +1,15 @@
+config:
+  jetstream:
+    enabled: true
+
+extraResources:
+  - apiVersion: jetstream.nats.io/v1beta2
+    kind: Stream
+    metadata:
+      name: reality
+    spec:
+      name: reality
+      subjects:
+        - reality.gen.request
+        - reality.gen.result
+      storage: file

@@ -45,3 +45,16 @@
 ### Rehearsal Schedule
 - Conduct a full rotation rehearsal in staging every March and September.
 - Document lessons learned and update this runbook after each rehearsal.
+
+## NATS JetStream Installation
+
+1. Add the NATS Helm repo:
+   ```bash
+   helm repo add nats https://nats-io.github.io/k8s/helm/charts
+   ```
+2. Install or upgrade the release using the provided values:
+   ```bash
+   helm upgrade --install jetstream nats/nats --namespace nats --create-namespace -f k8s/jetstream/values.yaml
+   ```
+
+This chart enables JetStream and provisions the `reality.gen.request` and `reality.gen.result` subjects.
