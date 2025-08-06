@@ -1050,6 +1050,25 @@ class UniversalSystemTerminal {
             console.log('  2. Consciousness overlay');
             console.log('  3. Memory integration layer');
             console.log('  4. Recursive processing layer');
+        } else if (cmd === 'holographic coherence') {
+            if (this.consciousnessOrchestrator) {
+                const state = this.consciousnessOrchestrator.getConsciousnessState();
+                const metrics = this.consciousnessOrchestrator.getIntegrationMetrics
+                    ? this.consciousnessOrchestrator.getIntegrationMetrics()
+                    : null;
+
+                console.log('🌌 Holographic coherence metrics:');
+                console.log(`  Consciousness coherence: ${state.coherence.toFixed(3)}`);
+                if (metrics) {
+                    console.log(`  System coherence: ${metrics.systemCoherence.toFixed(3)}`);
+                    console.log(`  Integration stability: ${metrics.integrationStability.toFixed(3)}`);
+                }
+                console.log(`  Holographic density: ${state.holographicDensity.toFixed(3)}`);
+                console.log(`  Spiral complexity: ${state.spiralComplexity.toFixed(3)}`);
+                console.log(`  Memory integration: ${state.memoryIntegration.toFixed(3)}`);
+            } else {
+                console.log('⚠️ Consciousness orchestrator not available');
+            }
         }
     }
     
