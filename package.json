@@ -67,6 +67,7 @@
     "swagger-ui-express": "^5.0.1",
     "three": "^0.165.0",
     "winston": "^3.17.0",
+    "ws": "^8.18.3",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
