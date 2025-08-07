@@ -1098,7 +1098,8 @@ module.exports = ${purpose.replace(/[^a-zA-Z0-9]/g, '')};`,
      */
     createFallbackCode(purpose = 'utility', description = 'Generated code') {
         const timestamp = Date.now();
-        const sanitizedPurpose = purpose.replace(/[^a-zA-Z0-9]/g, '');
+        const sanitizedPurpose = (purpose && typeof purpose === 'string') ? 
+            purpose.replace(/[^a-zA-Z0-9]/g, '') : 'utility';
         
         return {
             success: true,
@@ -1111,8 +1112,8 @@ function ${sanitizedPurpose}Function() {
 
 module.exports = { ${sanitizedPurpose}Function };`,
             filename: `fallback-${sanitizedPurpose}-${timestamp}.cjs`,
-            purpose,
-            description,
+            purpose: purpose || 'utility',
+            description: description || 'Generated code',
             timestamp,
             metadata: {
                 type: 'fallback',
