@@ -43,4 +43,9 @@ function createBreaker(fetchFn, opts) {
   });
   return breaker;
 }
-module.exports = { createBreaker };
+function withCircuitBreaker(operation, options = {}) {
+  const breaker = createBreaker(operation, options);
+  return () => breaker.fire();
+}
+
+module.exports = { createBreaker, withCircuitBreaker };

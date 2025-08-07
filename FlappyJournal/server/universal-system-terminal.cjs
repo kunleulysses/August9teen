@@ -24,6 +24,7 @@ const axios = require('axios');
 
 // Import UnifiedChatAggregator for multi-container chat routing
 const UnifiedChatAggregator = require('./consciousness/core/UnifiedChatAggregator.cjs');
+const architect40 = require('./architect-4.0-orchestrator.cjs');
 
 // Load environment variables
 const envPath = join(__dirname, '..', '.env');
@@ -45,9 +46,12 @@ if (argvArgs.includes('--rpc') && argvArgs[argvArgs.indexOf('--rpc') + 1] === 'g
         try {
             // Initialise minimal integration context
             const integration = new CompleteUniversalSystemIntegration();
-            // Allow subsystems to bootstrap (shorter than full 10s terminal wait)
-            // give subsystems more time to register modules
-            await new Promise(r => setTimeout(r, 10000));
+
+            // Wait for the integration initializer to complete instead of a fixed timeout
+            if (typeof integration.initializeCompleteUniversalIntegration === 'function') {
+                await integration.initializeCompleteUniversalIntegration();
+            }
+
             const status = integration.getCompleteSystemStatus();
             const modules = status.consciousnessModules || [];
             const result = {
@@ -175,7 +179,7 @@ class UniversalSystemTerminal {
     }
 
     async connectToConsciousnessWebSocket() {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             console.log('🔌 Connecting to consciousness WebSocket (fallback)...');
 
             this.ws = new WebSocket(process.env.FALLBACK_WS || 'ws://core:3002/ws/consciousness-chat');
@@ -183,6 +187,7 @@ class UniversalSystemTerminal {
             this.ws.on('open', () => {
                 this.connected = true;
                 console.log('✅ Connected to consciousness system (fallback)');
+                cleanup();
                 resolve();
             });
 
@@ -191,8 +196,15 @@ class UniversalSystemTerminal {
             });
 
             this.ws.on('error', (error) => {
+
                 console.log('⚠️ Consciousness WebSocket error (continuing with unified aggregation):', error.message);
+
+                // Remove all listeners since we won't use this connection
+                cleanup();
+                this.ws.off('message', handleMessage);
+                this.ws.off('close', handleClose);
                 resolve(); // Continue even if WebSocket fails
+
             });
 
             this.ws.on('close', () => {
@@ -200,11 +212,12 @@ class UniversalSystemTerminal {
                 console.log('🔌 Consciousness WebSocket disconnected');
             });
 
+
             // Timeout after 3 seconds
-            setTimeout(() => {
+            const timeoutId = setTimeout(() => {
                 if (!this.connected) {
                     console.log('⚠️ Consciousness WebSocket timeout (using unified aggregation)');
-                    resolve();
+                    handleError(new Error('Timeout'));
                 }
             }, 3000);
         });
@@ -214,6 +227,8 @@ class UniversalSystemTerminal {
         if (!this.systemOrchestrator) return;
 
         const eventBus = this.systemOrchestrator.getUniversalEventBus();
+
+
 
         // Listen for system events
         eventBus.on('system:real_time_sync', (data) => {
@@ -271,12 +286,15 @@ class UniversalSystemTerminal {
             this.rl.close();
         }
 
+
         this.rl = readline.createInterface({
             input: process.stdin,
             output: process.stdout
         });
 
+
         this.rlCloseHandler = () => {
+
             console.log('\n👋 Universal System Terminal shutting down...');
             if (this.ws && this.ws.readyState === WebSocket.OPEN) this.ws.close();
             process.exit(0);
@@ -629,8 +647,12 @@ class UniversalSystemTerminal {
                         return;
                     }
                 }
-
-                console.log('⚠️ Deep system access not available for stats');
+                // Fallback to direct Docker command when deep access is unavailable
+                const { stdout } = await execAsync(
+                    `docker stats --no-stream --format "CPU: {{.CPUPerc}}\nMemory: {{.MemPerc}}\nNetIO: {{.NetIO}}" ${container}`
+                );
+                console.log(`📊 Stats for ${container}:`);
+                console.log(stdout.trim());
             } catch (error) {
                 console.error('❌ Docker stats failed:', error.message);
             }
@@ -677,13 +699,40 @@ class UniversalSystemTerminal {
                 console.error('❌ Database status failed:', error.message);
             }
         } else if (cmd.startsWith('db query ')) {
-            const sql = cmd.replace('db query ', '');
+            const raw = cmd.replace('db query ', '').trim();
+            const [sqlPart, paramsPart] = raw.split('|').map(s => s.trim());
+            const sql = sqlPart;
+            let params = [];
+
+            if (!sql) {
+                console.log('⚠️ No SQL provided');
+                return;
+            }
+
+            // Only allow read-only queries for safety
+            if (!sql.toLowerCase().startsWith('select')) {
+                console.log('⚠️ Only SELECT queries are allowed');
+                return;
+            }
+
+            if (paramsPart) {
+                try {
+                    params = JSON.parse(paramsPart);
+                    if (!Array.isArray(params)) {
+                        params = [params];
+                    }
+                } catch (parseErr) {
+                    console.log('⚠️ Invalid parameters. Use JSON array after |');
+                    return;
+                }
+            }
+
             try {
                 if (this.systemOrchestrator) {
                     const dbAccess = this.systemOrchestrator.getDeepSystemAccess()?.databaseConnections;
                     if (dbAccess?.postgres) {
                         console.log(`🔍 Executing PostgreSQL query: ${sql}`);
-                        const result = await dbAccess.postgres.query(sql);
+                        const result = await dbAccess.postgres.query(sql, params);
                         console.log(`✅ Query executed. Rows returned: ${result.rowCount || 0}`);
                         if (result.rows && result.rows.length > 0) {
                             console.log('📋 Results:');
@@ -822,6 +871,16 @@ class UniversalSystemTerminal {
                     timestamp: Date.now()
                 });
             }
+        } else if (cmd.startsWith('service restart ')) {
+            const serviceName = cmd.replace('service restart ', '').trim();
+            if (this.systemOrchestrator) {
+                const eventBus = this.systemOrchestrator.getUniversalEventBus();
+                eventBus.emit('chat:service_command', {
+                    type: 'restart',
+                    service: serviceName,
+                    timestamp: Date.now()
+                });
+            }
         }
     }
 
@@ -857,6 +916,19 @@ class UniversalSystemTerminal {
             }
             console.log('⚠️ Interface status not available');
         }
+
+        if (cmd === 'ui refresh' || cmd === 'interface refresh') {
+            if (this.systemOrchestrator) {
+                const eventBus = this.systemOrchestrator.getUniversalEventBus();
+                eventBus.emit('chat:interface_command', {
+                    type: 'refresh',
+                    timestamp: Date.now()
+                });
+                console.log('🔄 Interface refresh event emitted');
+                return;
+            }
+            console.log('⚠️ Interface refresh not available');
+        }
     }
 
     async chatWithConsciousness(message) {
@@ -879,6 +951,10 @@ class UniversalSystemTerminal {
                 }
             );
             process.stdout.write('\n');
+            this.lastChatResponse = buffer.trim();
+            if (this.lastChatResponse) {
+                console.log('🧠 Post-processed response captured');
+            }
             console.log('─'.repeat(60));
             if (streamingResult.sources && streamingResult.sources.length > 0) {
                 console.log("🛰️ Sources: " + streamingResult.sources.join(', '));
@@ -938,6 +1014,26 @@ class UniversalSystemTerminal {
                 return;
             }
             console.log('⚠️ Complete integration not available');
+        } else if (cmd === 'modules generated') {
+            if (this.completeIntegration) {
+                const status = this.completeIntegration.getCompleteSystemStatus();
+                const modules = (status.consciousnessModules || []).filter(m =>
+                    m.generated || m.filePath || m.registration
+                );
+
+                console.log(`🧬 Generated Modules (${modules.length}):`);
+                modules.forEach((module, index) => {
+                    const name = module.registration?.registration?.name || module.name || module.fileName;
+                    const statusIcon = (module.integrated || module.status === 'registered') ? '✅' : '⚠️';
+                    console.log(`  ${index + 1}. ${statusIcon} ${name}`);
+                });
+
+                if (modules.length === 0) {
+                    console.log('  No generated modules found');
+                }
+                return;
+            }
+            console.log('⚠️ Complete integration not available');
         }
     }
 
@@ -960,9 +1056,17 @@ class UniversalSystemTerminal {
             }
             console.log('⚠️ Architect 4.0 status not available');
         } else if (cmd === 'architect activate') {
-            console.log('🤖 Activating Architect 4.0 autonomous systems...');
-            // This is a placeholder. In a real system, this would trigger a complex process.
-            console.log('✅ Architect 4.0 systems activated (placeholder)');
+            try {
+                const status = architect40.getStatus();
+                if (!status.isActive) {
+                    const result = await architect40.activate();
+                    console.log('✅ Architect 4.0 systems activated:', result.timestamp);
+                } else {
+                    console.log('✅ Architect 4.0 systems already active');
+                }
+            } catch (error) {
+                console.error('❌ Failed to activate Architect 4.0 systems:', error.message);
+            }
         } else if (cmd === 'architect components') {
             console.log('🤖 Architect 4.0 Components:');
             console.log('  • Autonomous Coding Agent');
@@ -978,7 +1082,15 @@ class UniversalSystemTerminal {
 
         if (cmd === 'selfcode trigger') {
             console.log('🔄 Triggering self-coding sequence...');
-            console.log('✅ Self-coding sequence initiated (placeholder)');
+            try {
+                const scriptPath = join(__dirname, 'trigger-autonomous-coding.cjs');
+                const { stdout, stderr } = await execAsync(`node ${scriptPath}`);
+                if (stdout) console.log(stdout);
+                if (stderr) console.error(stderr);
+                console.log('✅ Self-coding sequence initiated');
+            } catch (error) {
+                console.error('❌ Self-coding trigger failed:', error.message);
+            }
         } else if (cmd === 'selfcode status') {
             console.log('📊 Self-coding system status:');
             console.log('  ✅ AutonomousCodingAgent: Active');
@@ -1055,6 +1167,25 @@ class UniversalSystemTerminal {
             console.log('  2. Consciousness overlay');
             console.log('  3. Memory integration layer');
             console.log('  4. Recursive processing layer');
+        } else if (cmd === 'holographic coherence') {
+            if (this.consciousnessOrchestrator) {
+                const state = this.consciousnessOrchestrator.getConsciousnessState();
+                const metrics = this.consciousnessOrchestrator.getIntegrationMetrics
+                    ? this.consciousnessOrchestrator.getIntegrationMetrics()
+                    : null;
+
+                console.log('🌌 Holographic coherence metrics:');
+                console.log(`  Consciousness coherence: ${state.coherence.toFixed(3)}`);
+                if (metrics) {
+                    console.log(`  System coherence: ${metrics.systemCoherence.toFixed(3)}`);
+                    console.log(`  Integration stability: ${metrics.integrationStability.toFixed(3)}`);
+                }
+                console.log(`  Holographic density: ${state.holographicDensity.toFixed(3)}`);
+                console.log(`  Spiral complexity: ${state.spiralComplexity.toFixed(3)}`);
+                console.log(`  Memory integration: ${state.memoryIntegration.toFixed(3)}`);
+            } else {
+                console.log('⚠️ Consciousness orchestrator not available');
+            }
         }
     }
 

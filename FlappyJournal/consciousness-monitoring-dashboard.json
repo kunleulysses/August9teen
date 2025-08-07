@@ -1,7 +1,7 @@
 {
   "dashboard": {
-    "title": "Consciousness Platform - SLA Monitoring",
-    "description": "Monitoring >99.9% uptime and <100ms response-time KPIs",
+    "title": "Consciousness Platform - Enterprise SLA Monitoring",
+    "description": "Monitoring >99.99% uptime, <100ms response-time KPIs, and spiral memory performance",
     "panels": [
       {
         "title": "Venice AI Error Rate",
@@ -28,7 +28,7 @@
         ],
         "thresholds": [
           {"color": "red", "value": 0},
-          {"color": "green", "value": 99.9}
+          {"color": "green", "value": 99.99}
         ]
       },
       {
@@ -45,7 +45,7 @@
           }
         ],
         "yAxes": [
-          {"unit": "ms", "max": 200}
+          {"unit": "ms", "max": 100}
         ]
       },
       {
@@ -60,6 +60,179 @@
         "thresholds": [
           {"color": "red", "value": 50},
           {"color": "green", "value": 100}
+        ]
+      },
+      {
+        "title": "Spiral Memory Operation Latency",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, spiral_memory_operation_duration_ms_bucket{operation=\"store\"})",
+            "legendFormat": "Store 95th percentile"
+          },
+          {
+            "expr": "histogram_quantile(0.95, spiral_memory_operation_duration_ms_bucket{operation=\"retrieve\"})",
+            "legendFormat": "Retrieve 95th percentile"
+          },
+          {
+            "expr": "histogram_quantile(0.95, spiral_memory_operation_duration_ms_bucket{operation=\"search\"})",
+            "legendFormat": "Search 95th percentile"
+          }
+        ],
+        "yAxes": [
+          {"unit": "ms", "max": 100}
+        ],
+        "alert": {
+          "condition": "avg() OF query(A, 5m, now) IS ABOVE 100",
+          "executionErrorState": "alerting",
+          "frequency": "10s",
+          "handler": 1,
+          "name": "Spiral Memory High Latency",
+          "noDataState": "no_data"
+        }
+      },
+      {
+        "title": "Spiral Memory Cache Performance",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "(spiral_memory_cache_hits_total / (spiral_memory_cache_hits_total + spiral_memory_cache_misses_total)) * 100",
+            "legendFormat": "Cache Hit Rate %"
+          }
+        ],
+        "thresholds": [
+          {"color": "red", "value": 0},
+          {"color": "yellow", "value": 80},
+          {"color": "green", "value": 90}
+        ]
+      },
+      {
+        "title": "Spiral Memory Operations Rate",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(spiral_memory_operations_total{operation=\"store\"}[5m])",
+            "legendFormat": "Store ops/sec"
+          },
+          {
+            "expr": "rate(spiral_memory_operations_total{operation=\"retrieve\"}[5m])",
+            "legendFormat": "Retrieve ops/sec"
+          },
+          {
+            "expr": "rate(spiral_memory_operations_total{operation=\"search\"}[5m])",
+            "legendFormat": "Search ops/sec"
+          }
+        ],
+        "yAxes": [
+          {"unit": "ops", "min": 0}
+        ]
+      },
+      {
+        "title": "Spiral Memory Error Rate",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "(rate(spiral_memory_operations_errors_total[5m]) / rate(spiral_memory_operations_total[5m])) * 100",
+            "legendFormat": "Error Rate %"
+          }
+        ],
+        "thresholds": [
+          {"color": "green", "value": 0},
+          {"color": "yellow", "value": 1},
+          {"color": "red", "value": 5}
+        ]
+      },
+      {
+        "title": "Redis Cluster Health",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "redis_cluster_nodes_total{state=\"master\"}",
+            "legendFormat": "Master Nodes"
+          },
+          {
+            "expr": "redis_cluster_nodes_total{state=\"slave\"}",
+            "legendFormat": "Slave Nodes"
+          }
+        ],
+        "thresholds": [
+          {"color": "red", "value": 0},
+          {"color": "yellow", "value": 2},
+          {"color": "green", "value": 3}
+        ]
+      },
+      {
+        "title": "Storage Adapter Performance",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, storage_adapter_operation_duration_ms_bucket{adapter=\"redis\"})",
+            "legendFormat": "Redis 95th percentile"
+          },
+          {
+            "expr": "histogram_quantile(0.95, storage_adapter_operation_duration_ms_bucket{adapter=\"level\"})",
+            "legendFormat": "LevelDB 95th percentile"
+          },
+          {
+            "expr": "histogram_quantile(0.95, storage_adapter_operation_duration_ms_bucket{adapter=\"redis_cluster\"})",
+            "legendFormat": "Redis Cluster 95th percentile"
+          }
+        ],
+        "yAxes": [
+          {"unit": "ms", "max": 50}
+        ]
+      },
+      {
+        "title": "Spiral Topology Calculation Performance",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, spiral_topology_calculation_duration_ms_bucket)",
+            "legendFormat": "95th percentile"
+          },
+          {
+            "expr": "histogram_quantile(0.50, spiral_topology_calculation_duration_ms_bucket)",
+            "legendFormat": "50th percentile"
+          }
+        ],
+        "yAxes": [
+          {"unit": "ms", "max": 1000}
+        ]
+      },
+      {
+        "title": "Memory Usage",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "spiral_memory_nodes_total",
+            "legendFormat": "Total Memory Nodes"
+          },
+          {
+            "expr": "spiral_memory_spirals_total",
+            "legendFormat": "Total Spirals"
+          }
+        ],
+        "yAxes": [
+          {"unit": "short", "min": 0}
+        ]
+      },
+      {
+        "title": "Connection Pool Status",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "storage_connection_pool_active_connections",
+            "legendFormat": "Active Connections"
+          },
+          {
+            "expr": "storage_connection_pool_max_connections",
+            "legendFormat": "Max Connections"
+          }
+        ],
+        "thresholds": [
+          {"color": "green", "value": 0},
+          {"color": "yellow", "value": 80},
+          {"color": "red", "value": 95}
         ]
       }
     ]

@@ -44,3 +44,22 @@ model Metric {
   key   String @id
   value Int
 }
+
+// Snapshot model for database backups
+model Snapshot {
+  id             String   @id @default(uuid())
+  name           String   @unique
+  s3Key          String
+  checksum       String
+  size           Int
+  status         String   @default("PENDING") // PENDING, COMPLETED, FAILED
+  restoreStatus  String?  // SUCCESS, FAILED
+  restoreMessage String?
+  lastRestoredAt DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  schemaVersion  Int      @default(1)
+
+  @@index([status])
+  @@index([lastRestoredAt])
+}

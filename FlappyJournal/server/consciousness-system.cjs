@@ -6,6 +6,8 @@ const express = require('express');
 const http = require('http');
 const { WebSocketServer  } = require('ws');
 const architect40 = require('./architect-4.0-orchestrator.cjs');
+const snapshotSystem = require('./consciousness/scripts/initSnapshotSystem.cjs');
+const SnapshotCron = require('./consciousness/scripts/runSnapshotCron.cjs');
 
 // Import structured logger
 const { child: getLogger } = require('./consciousness/utils/logger.cjs');
@@ -386,8 +388,23 @@ class ConsciousnessSystem extends EventEmitter {
     
     async initialize() {
         try {
-            console.log('📦 Loading consciousness modules...');
-            
+            this.log.info('Initializing consciousness system...');
+            this.state.health = 'initializing';
+
+            // Initialize snapshot system
+            try {
+                await snapshotSystem.initialize();
+                this.log.info('Snapshot system initialized');
+                
+                // Start snapshot cron job
+                this.snapshotCron = new SnapshotCron();
+                this.snapshotCron.start();
+                this.log.info('Snapshot cron job started');
+            } catch (error) {
+                this.log.error({ error }, 'Failed to initialize snapshot system');
+                // Don't fail the entire startup if snapshot system fails
+            }
+
             // Initialize core modules
             await this.initializeCoreModules();
 
@@ -1659,16 +1676,38 @@ class ConsciousnessSystem extends EventEmitter {
     }
     
     async shutdown() {
-        console.log('🔌 Shutting down consciousness system...');
-        
-        // Save state
-        await this.saveState();
-        
-        // Cleanup modules
-        for (const [name, module] of this.modules) {
-            if (module.cleanup && typeof module.cleanup === 'function') {
-                await module.cleanup();
+        this.log.info('Shutting down consciousness system...');
+        this.state.health = 'shutting_down';
+
+        // Stop snapshot cron job
+        if (this.snapshotCron) {
+            try {
+                this.log.info('Stopping snapshot cron job...');
+                this.snapshotCron.stop();
+                this.log.info('Snapshot cron job stopped');
+            } catch (error) {
+                this.log.error({ error }, 'Error stopping snapshot cron job');
             }
+        }
+
+        // Shutdown all modules
+        for (const [name, module] of this.modules) {
+            try {
+                if (typeof module.shutdown === 'function') {
+                    await module.shutdown();
+                    this.log.info(`Module ${name} shutdown complete`);
+                }
+            } catch (error) {
+                this.log.error({ error }, `Error shutting down module ${name}`);
+            }
+        }
+        
+        // Shutdown snapshot system
+        try {
+            await snapshotSystem.shutdown();
+            this.log.info('Snapshot system shutdown complete');
+        } catch (error) {
+            this.log.error({ error }, 'Error shutting down snapshot system');
         }
         
         this.isRunning = false;

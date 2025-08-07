@@ -1,20 +1,27 @@
-const pino = require('pino');
+/**
+ * Simple logger for consciousness utilities
+ */
 
-const pretty = process.env.LOG_PRETTY === 'true';
-
-function injectTraceId(bindings = {}) {
-  // Simple trace ID generation for now
-  const traceId = Math.random().toString(36).substring(2, 15);
-  return traceId ? { ...bindings, traceId } : bindings;
+class Logger {
+  info(message, meta = {}) {
+    console.log(`[INFO] ${message}`, meta);
+  }
+  
+  warn(message, meta = {}) {
+    console.warn(`[WARN] ${message}`, meta);
+  }
+  
+  error(message, meta = {}) {
+    console.error(`[ERROR] ${message}`, meta);
+  }
+  
+  debug(message, meta = {}) {
+    if (process.env.NODE_ENV === 'development' || process.env.DEBUG) {
+      console.log(`[DEBUG] ${message}`, meta);
+    }
+  }
 }
 
-const logger = pino({
-  level: process.env.LOG_LEVEL || 'info',
-  transport: pretty ? { target: 'pino-pretty', options: { colorize: true } } : undefined
-}).child(injectTraceId());
+const logger = new Logger();
 
-function child(bindings) {
-  return logger.child(injectTraceId(bindings));
-}
-
-module.exports = { logger, child };
+module.exports = { logger };
