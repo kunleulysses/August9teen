@@ -1,7 +1,10 @@
-# Default owners
-* @project-maintainers
+# CODEOWNERS
+# Update this file with your GitHub team or users to require reviews on changes.
+# Syntax: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 
-# Per-folder ownership
-/server/ @backend-team
-/client/ @frontend-team
-/docs/ @docs-team
+# Default owners for everything
+*       @your-org/your-team
+
+# Example: generated code area (optional separate owners)
+FlappyJournal/server/generated/**  @your-org/selfcoding-approvers
+

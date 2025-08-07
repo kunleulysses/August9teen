@@ -1,0 +1,38 @@
+name: SelfCoding Demo
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 7 * * *'
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install (optional)
+        run: |
+          npm ci || true
+      - name: Run self-coding demo (DRY_RUN)
+        env:
+          SANDBOX_VERIFY: '1'
+          DRY_RUN: '1'
+          FULLY_AUTONOMOUS: '0'
+          DATABASE_URL: ${{ secrets.DATABASE_URL || '' }}
+          REDIS_URL: ${{ secrets.REDIS_URL || '' }}
+          # Optional PR creation
+          AUTO_PR: ${{ vars.AUTO_PR || '0' }}
+          AUTO_PR_PROVIDER: ${{ vars.AUTO_PR_PROVIDER || '' }}
+          GITHUB_REPO: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/demo-selfcoding.cjs
+      - name: Upload PR artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: selfcoding-pr
+          path: artifacts/selfcoding-pr
+

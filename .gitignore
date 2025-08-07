@@ -27,6 +27,7 @@ Thumbs.db
 # Build artefacts
 public.backup*/
 *.tgz
+artifacts/
 
 # Temporary folders/files
 tmp/
