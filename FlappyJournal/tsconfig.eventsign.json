@@ -1,19 +1,23 @@
 {
-  "extends": "./tsconfig.json",
   "compilerOptions": {
+    "target": "ES2020",
     "module": "CommonJS",
-    "moduleResolution": "node",
-    "outDir": "dist/server/consciousness/core/security",
-    "resolveJsonModule": true,
+    "outDir": "./server/consciousness/core/security/",
+    "rootDir": "./server/consciousness/core/security/",
+    "strict": true,
     "esModuleInterop": true,
-    "target": "es6",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "declaration": false,
+    "sourceMap": false
   },
   "include": [
     "server/consciousness/core/security/eventSign.ts"
   ],
   "exclude": [
     "node_modules",
-    "__tests__"
+    "dist",
+    "**/*.test.*",
+    "**/*.spec.*"
   ]
 }

@@ -1,0 +1,133 @@
+name: Nightly Soak Tests
+
+on:
+  schedule:
+    - cron: '0 3 * * *'  # Run at 3 AM UTC daily
+  workflow_dispatch:  # Allow manual trigger
+    inputs:
+      duration:
+        description: 'Test duration (e.g., 4h, 30m)'
+        required: false
+        default: '4h'
+      vus:
+        description: 'Number of virtual users'
+        required: false
+        default: '50'
+
+jobs:
+  soak_test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300  # 5 hours max
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Start Sigil-DNA API
+        run: |
+          npm run start &
+          echo $! > api.pid
+        env:
+          NODE_ENV: production
+          JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
+          JWT_AUDIENCE: ${{ secrets.JWT_AUDIENCE }}
+          JWT_JWKS_URI: ${{ secrets.JWT_JWKS_URI }}
+          DNASTORE_URL: ${{ secrets.DNASTORE_URL }}
+          
+      - name: Wait for API to be ready
+        run: |
+          timeout 60 bash -c 'until curl -sSf http://localhost:3000/health; do sleep 2; done'
+          
+      - name: Install k6
+        uses: grafana/setup-k6-action@v1
+        
+      - name: Generate test JWT token
+        id: jwt
+        run: |
+          # Generate a test JWT token for soak testing
+          # This would typically use your auth service
+          echo "token=${{ secrets.SOAK_TEST_JWT }}" >> $GITHUB_OUTPUT
+          
+      - name: Run k6 soak test
+        run: |
+          k6 run scripts/soak/k6-sigil-soak.js \
+            --out json=soak-results.json \
+            --out prometheus=soak-metrics.txt
+        env:
+          SIGIL_API_URL: http://localhost:3000
+          SIGIL_TOKEN: ${{ steps.jwt.outputs.token }}
+          SOAK_DURATION: ${{ github.event.inputs.duration || '4h' }}
+          SOAK_VUS: ${{ github.event.inputs.vus || '50' }}
+          
+      - name: Stop API
+        if: always()
+        run: |
+          if [ -f api.pid ]; then
+            kill $(cat api.pid) || true
+          fi
+          
+      - name: Parse test results
+        if: always()
+        run: |
+          if [ -f soak-test-summary.json ]; then
+            echo "## 🚀 Soak Test Results" >> $GITHUB_STEP_SUMMARY
+            echo '```json' >> $GITHUB_STEP_SUMMARY
+            cat soak-test-summary.json >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi
+          
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: soak-test-results-${{ github.run_number }}
+          path: |
+            soak-results.json
+            soak-test-summary.json
+            soak-metrics.txt
+          retention-days: 30
+          
+      - name: Check test thresholds
+        run: |
+          if [ -f soak-test-summary.json ]; then
+            PASSED=$(jq -r '.thresholds_passed' soak-test-summary.json)
+            if [ "$PASSED" != "true" ]; then
+              echo "❌ Soak test thresholds failed!"
+              exit 1
+            else
+              echo "✅ All soak test thresholds passed!"
+            fi
+          fi
+          
+      - name: Notify on failure
+        if: failure()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          text: |
+            🚨 Nightly soak test failed!
+            Duration: ${{ github.event.inputs.duration || '4h' }}
+            VUs: ${{ github.event.inputs.vus || '50' }}
+            Check the logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          
+      - name: Notify on success
+        if: success()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: success
+          text: |
+            ✅ Nightly soak test completed successfully!
+            Duration: ${{ github.event.inputs.duration || '4h' }}
+            VUs: ${{ github.event.inputs.vus || '50' }}
+            All thresholds passed! 🎉
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

@@ -1,5 +1,9 @@
+import { jest, describe, it, expect } from '@jest/globals';
 import { fork } from 'child_process';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 describe('Memory Leak Test', () => {
   it('should not leak memory', (done) => {

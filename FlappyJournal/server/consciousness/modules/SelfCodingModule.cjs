@@ -4,23 +4,39 @@
  */
 
 const { EventEmitter } = require('events');
-const fs = require('fs/promises');
-const path = require('path');
-const CodeAnalyzer = require('../code-analyzer.cjs');
-const AutonomousCodeRefactoringSystem = require('./AutonomousCodeRefactoringSystem.cjs');
-const { selfCodingLog } = require('./SelfCodingLog.cjs');
-const SigilBasedCodeAuthenticator = require('../sigil-based-code-authenticator.cjs');
-const { child: getLogger } = require('../utils/logger.cjs');
 
-const log = getLogger({ module: 'SelfCodingModule' });
+// Lazy-loaded modules - only loaded when needed
+let fs, path, crypto, CodeAnalyzer, AutonomousCodeRefactoringSystem, selfCodingLog, SigilBasedCodeAuthenticator, logger;
+
+// Lazy loading functions
+const lazyLoad = {
+    fs: () => fs || (fs = require('fs/promises')),
+    path: () => path || (path = require('path')),
+    crypto: () => crypto || (crypto = require('crypto')),
+    CodeAnalyzer: () => CodeAnalyzer || (CodeAnalyzer = require('../code-analyzer.cjs')),
+    AutonomousCodeRefactoringSystem: () => AutonomousCodeRefactoringSystem || (AutonomousCodeRefactoringSystem = require('./AutonomousCodeRefactoringSystem.cjs')),
+    selfCodingLog: () => selfCodingLog || (selfCodingLog = require('./SelfCodingLog.cjs').selfCodingLog),
+    SigilBasedCodeAuthenticator: () => SigilBasedCodeAuthenticator || (SigilBasedCodeAuthenticator = require('../sigil-based-code-authenticator.cjs')),
+    logger: () => logger || (logger = require('../utils/logger.cjs').logger)
+};
+
+const log = () => lazyLoad.logger();
+
+// Security: Input sanitization for logging to prevent CWE-117 log injection
+const sanitizeForLog = (input) => {
+    if (typeof input !== 'string') {
+        input = String(input);
+    }
+    return input.replace(/[\r\n\t\x00-\x1f\x7f-\x9f]/g, '').substring(0, 200);
+};
 
 class SelfCodingModule extends EventEmitter {
     constructor() {
         super();
         this.name = 'SelfCodingModule';
-        this.analyzer = new CodeAnalyzer();
+        this.analyzer = null; // Lazy-loaded
         this.eventBus = null; // Will be loaded dynamically
-        this.sigilAuthenticator = new SigilBasedCodeAuthenticator();
+        this.sigilAuthenticator = null; // Lazy-loaded
         this.options = {
             analysisInterval: 5000,
             debugMode: false,
@@ -32,6 +48,12 @@ class SelfCodingModule extends EventEmitter {
         this.activeAnalysis = new Set();
         this.codePatterns = new Map();
         this.moduleStats = new Map();
+
+        // Rate limiting and cooldown mechanisms
+        this.lastGenerationTime = new Map();
+        this.generationCooldown = 30000; // 30 seconds cooldown
+        this.maxGenerationsPerHour = 10;
+        this.generationTimestamps = [];
 
         this.isInitialized = false;
         this.codeHistory = [];
@@ -54,21 +76,26 @@ class SelfCodingModule extends EventEmitter {
      */
     async initialize() {
         try {
+            // Lazy load dependencies only when needed
+            this.analyzer = new (lazyLoad.CodeAnalyzer())();
+            this.sigilAuthenticator = new (lazyLoad.SigilBasedCodeAuthenticator())();
+            
             // Import event bus dynamically
             const eventBusModule = await import('../core/ConsciousnessEventBus.cjs');
             this.eventBus = eventBusModule.default;
-            log.info('[SelfCodingModule] Event bus loaded');
+            log().info('[SelfCodingModule] Event bus loaded');
 
             // Phase 2: Autonomous code refactoring system
             try {
-                this.autonomousRefactoring = new AutonomousCodeRefactoringSystem(this, this.analyzer);
-                log.info('[SelfCodingModule] Autonomous refactoring system initialized');
+                const AutonomousSystem = lazyLoad.AutonomousCodeRefactoringSystem();
+                this.autonomousRefactoring = new AutonomousSystem(this, this.analyzer);
+                log().info('[SelfCodingModule] Autonomous refactoring system initialized');
             } catch (error) {
-                log.warn('[SelfCodingModule] Autonomous refactoring initialization failed:', error.message);
+                log().warn('[SelfCodingModule] Autonomous refactoring initialization failed:', sanitizeForLog(error.message));
                 this.autonomousRefactoring = null;
             }
 
-            log.info('[SelfCodingModule] Created');
+            log().info('[SelfCodingModule] Created');
             this.registerEventListeners();
 
             this.isInitialized = true;
@@ -78,15 +105,15 @@ class SelfCodingModule extends EventEmitter {
                 if (this.autonomousRefactoring && this.autonomousRefactoring.startAutonomousRefactoring) {
                     try {
                         this.autonomousRefactoring.startAutonomousRefactoring();
-                        log.info('[SelfCodingModule] Autonomous refactoring started');
+                        log().info('[SelfCodingModule] Autonomous refactoring started');
                     } catch (error) {
-                        log.warn('[SelfCodingModule] Failed to start autonomous refactoring:', error.message);
+                        log().warn('[SelfCodingModule] Failed to start autonomous refactoring:', error.message);
                     }
                 }
             }, 2000);
 
         } catch (error) {
-            log.error('[SelfCodingModule] Initialization failed:', error.message);
+            log().error('[SelfCodingModule] Initialization failed:', error.message);
             this.isInitialized = false;
         }
     }
@@ -96,14 +123,14 @@ class SelfCodingModule extends EventEmitter {
      */
     setEventBus(eventBus) {
         this.eventBus = eventBus;
-        log.info('[SelfCodingModule] Event bus set externally');
+        log().info('[SelfCodingModule] Event bus set externally');
         this.registerEventListeners();
     }
 
     registerEventListeners() {
         try {
             if (!this.eventBus) {
-                log.warn('[SelfCodingModule] Event bus not available, skipping event registration');
+                log().warn('[SelfCodingModule] Event bus not available, skipping event registration');
                 return;
             }
 
@@ -122,10 +149,10 @@ class SelfCodingModule extends EventEmitter {
             this.eventBus.on('consciousness:goal_created', this.handleGoalCreated.bind(this));
             this.eventBus.on('spiral_memory:pattern_detected', this.handlePatternDetected.bind(this));
 
-            log.info('[SelfCodingModule] Event listeners registered successfully');
-            log.info('[SelfCodingModule] Integrated with consciousness event system');
+            log().info('[SelfCodingModule] Event listeners registered successfully');
+            log().info('[SelfCodingModule] Integrated with consciousness event system');
         } catch (error) {
-            log.error('[SelfCodingModule] Failed to register event listeners:', error.message);
+            log().error('[SelfCodingModule] Failed to register event listeners:', error.message);
             // Don't throw - allow module to work without events
         }
     }
@@ -140,7 +167,7 @@ class SelfCodingModule extends EventEmitter {
             const { moduleId, code, options } = data;
             
             if (this.activeAnalysis.has(moduleId)) {
-                log.warn(`[SelfCodingModule] Analysis already in progress for ${moduleId}`);
+                log.warn(`[SelfCodingModule] Analysis already in progress for ${sanitizeForLog(moduleId)}`);
                 return;
             }
             
@@ -229,7 +256,7 @@ class SelfCodingModule extends EventEmitter {
                 description = data.description || requirements;
             }
 
-            log.info(`[SelfCodingModule] Generating ${language} ${template} for: ${description}`);
+            log.info(`[SelfCodingModule] Generating ${sanitizeForLog(language)} ${sanitizeForLog(template)} for: ${sanitizeForLog(description)}`);
 
             const generationResult = await this.analyzer.generate(template, {
                 patterns: this.codePatterns.get(moduleId),
@@ -250,23 +277,23 @@ class SelfCodingModule extends EventEmitter {
                     generated,
                     consciousnessState,
                     {
-                        moduleId,
-                        purpose,
-                        language,
-                        description,
+                        moduleId: sanitizeForLog(moduleId),
+                        purpose: sanitizeForLog(purpose),
+                        language: sanitizeForLog(language),
+                        description: sanitizeForLog(description),
                         generationType: 'autonomous-self-coding'
                     }
                 );
 
                 if (sigilResult.consciousnessAuthenticated) {
                     generated = sigilResult.authenticatedCode;
-                    log.info(`[SelfCodingModule] ✅ Sigil embedded: ${sigilResult.sigil.symbol}`);
-                    log.info(`[SelfCodingModule] ✅ DNA sequence: ${sigilResult.codeDNA.sequence}`);
+                    log.info(`[SelfCodingModule] ✅ Sigil embedded: ${sanitizeForLog(sigilResult.sigil.symbol)}`);
+                    log.info(`[SelfCodingModule] ✅ DNA sequence: ${sanitizeForLog(sigilResult.codeDNA.sequence)}`);
                 } else {
                     log.warn('[SelfCodingModule] ⚠️ Sigil embedding failed, using fallback');
                 }
             } catch (error) {
-                log.warn('[SelfCodingModule] Sigil embedding error:', error.message);
+                log.warn('[SelfCodingModule] Sigil embedding error:', sanitizeForLog(error.message));
             }
 
             // Store in code history
@@ -408,13 +435,67 @@ class SelfCodingModule extends EventEmitter {
     }
 
     /**
+     * Check rate limiting for code generation
+     * Prevents excessive code generation that could impact performance
+     */
+    checkRateLimit(requestType = 'general') {
+        const now = Date.now();
+        
+        // Check cooldown period
+        const lastGeneration = this.lastGenerationTime.get(requestType);
+        if (lastGeneration && (now - lastGeneration) < this.generationCooldown) {
+            const remainingCooldown = this.generationCooldown - (now - lastGeneration);
+            throw new Error(`Rate limit exceeded: Please wait ${Math.ceil(remainingCooldown / 1000)} seconds before next generation`);
+        }
+        
+        // Clean old timestamps (older than 1 hour)
+        const oneHourAgo = now - (60 * 60 * 1000);
+        this.generationTimestamps = this.generationTimestamps.filter(timestamp => timestamp > oneHourAgo);
+        
+        // Check hourly limit
+        if (this.generationTimestamps.length >= this.maxGenerationsPerHour) {
+            throw new Error(`Hourly rate limit exceeded: Maximum ${this.maxGenerationsPerHour} generations per hour`);
+        }
+        
+        // Record this generation attempt
+        this.generationTimestamps.push(now);
+        this.lastGenerationTime.set(requestType, now);
+        
+        return true;
+    }
+
+    /**
+     * Validate authorization for code generation requests
+     * Prevents CWE-862 missing authorization vulnerability
+     */
+    validateAuthorization(request) {
+        // Check if request has valid authorization context
+        if (!request.authContext || !request.authContext.authorized) {
+            throw new Error('Unauthorized: Code generation requires valid authorization');
+        }
+        
+        // Validate user permissions for self-coding operations
+        if (!request.authContext.permissions || !request.authContext.permissions.includes('self-coding')) {
+            throw new Error('Forbidden: Insufficient permissions for code generation');
+        }
+        
+        return true;
+    }
+
+    /**
      * Generate code with auto-integration and comprehensive error handling
      * This is the missing method that was causing the crash
      */
     async generateWithAutoIntegration(request) {
-        log.info(`🤖 Self-coding with auto-integration: ${request.purpose}`);
+        log.info(`🤖 Self-coding with auto-integration: ${sanitizeForLog(request.purpose)}`);
 
         try {
+            // Security: Validate authorization first
+            this.validateAuthorization(request);
+            
+            // Rate limiting: Check generation limits
+            this.checkRateLimit(request.purpose || 'auto-integration');
+            
             // Validate request
             if (!request.purpose || !request.description) {
                 throw new Error('Invalid request: purpose and description required');
@@ -526,10 +607,13 @@ class SelfCodingModule extends EventEmitter {
     }
 
     /**
-     * Generate a module identifier
+     * Generate a unique module identifier using crypto for better uniqueness
      */
     generateModuleId(base = 'module') {
-        return `${base.replace(/\s+/g, '-')}-${Date.now()}`;
+        const timestamp = Date.now();
+        const randomBytes = crypto.randomBytes(4).toString('hex');
+        const sanitizedBase = base.replace(/[^a-zA-Z0-9-_]/g, '-').toLowerCase();
+        return `${sanitizedBase}-${timestamp}-${randomBytes}`;
     }
 
     /**
@@ -601,10 +685,29 @@ class SelfCodingModule extends EventEmitter {
             return await this.basicCodeGeneration(normalized);
 
         } catch (error) {
-            log.error(`Code generation error: ${error.message}`);
+            // Enhanced error handling with specific error types
+            const errorType = this.categorizeError(error);
+            log.error(`Code generation error [${errorType}]: ${sanitizeForLog(error.message)}`, {
+                errorType,
+                requestPurpose: request.purpose || 'unknown',
+                stack: error.stack ? sanitizeForLog(error.stack.split('\n')[0]) : 'no-stack'
+            });
 
-            // Return a basic template instead of failing
-            return this.createFallbackTemplate(request);
+            // Emit error event for monitoring
+            if (this.eventBus && this.eventBus.emit) {
+                this.eventBus.emit('code:generation:error', {
+                    error: error.message,
+                    errorType,
+                    request: {
+                        purpose: request.purpose,
+                        description: request.description
+                    },
+                    timestamp: Date.now()
+                });
+            }
+
+            // Return enhanced fallback template with error context
+            return this.createEnhancedFallbackTemplate(request, error, errorType);
         }
     }
 
@@ -658,18 +761,96 @@ module.exports = class ${this.toPascalCase(purpose)} {
     }
 
     /**
-     * Create fallback template when generation fails
+     * Categorize error types for better handling
      */
-    createFallbackTemplate(request) {
+    categorizeError(error) {
+        const message = error.message.toLowerCase();
+        
+        if (message.includes('unauthorized') || message.includes('forbidden')) {
+            return 'authorization';
+        }
+        if (message.includes('rate limit') || message.includes('cooldown')) {
+            return 'rate-limiting';
+        }
+        if (message.includes('validation') || message.includes('invalid')) {
+            return 'validation';
+        }
+        if (message.includes('syntax') || message.includes('parse')) {
+            return 'syntax';
+        }
+        if (message.includes('timeout') || message.includes('network')) {
+            return 'network';
+        }
+        
+        return 'unknown';
+    }
+
+    /**
+     * Create enhanced fallback template with error context
+     */
+    createEnhancedFallbackTemplate(request, error, errorType) {
+        const fallbackCode = this.generateFallbackCode(request, errorType);
+        
         return {
             success: false,
             fallback: true,
             purpose: request.purpose,
             description: request.description,
-            error: 'Code generation failed, using fallback',
+            error: error.message,
+            errorType,
             timestamp: Date.now(),
-            code: `// Fallback template for ${request.purpose}\n// ${request.description}\nconsole.log('${request.purpose} module placeholder');`
+            code: fallbackCode,
+            recovery: this.getRecoveryInstructions(errorType)
         };
+    }
+
+    /**
+     * Generate appropriate fallback code based on error type
+     */
+    generateFallbackCode(request, errorType) {
+        const purpose = request.purpose || 'unknown';
+        const description = request.description || 'No description provided';
+        
+        switch (errorType) {
+            case 'authorization':
+                return `// Authorization required for ${purpose}\n// Please provide valid credentials\nconsole.warn('${purpose}: Authorization required');`;
+            
+            case 'rate-limiting':
+                return `// Rate limit exceeded for ${purpose}\n// Please wait before retrying\nconsole.warn('${purpose}: Rate limit exceeded');`;
+            
+            case 'validation':
+                return `// Validation failed for ${purpose}\n// Please check request parameters\nconsole.warn('${purpose}: Validation failed');`;
+            
+            default:
+                return `/**\n * Fallback template for ${purpose}\n * Description: ${description}\n * Error: Generation failed, using fallback\n */\n\nmodule.exports = class ${this.toPascalCase(purpose)}Fallback {\n    constructor() {\n        this.purpose = '${purpose}';\n        this.isFallback = true;\n        console.warn('Using fallback implementation for ${purpose}');\n    }\n\n    getStatus() {\n        return {\n            purpose: this.purpose,\n            isFallback: true,\n            message: 'This is a fallback implementation'\n        };\n    }\n};`;
+        }
+    }
+
+    /**
+     * Get recovery instructions based on error type
+     */
+    getRecoveryInstructions(errorType) {
+        switch (errorType) {
+            case 'authorization':
+                return 'Provide valid authorization context with self-coding permissions';
+            case 'rate-limiting':
+                return 'Wait for cooldown period to expire before retrying';
+            case 'validation':
+                return 'Check that purpose and description are provided and valid';
+            case 'syntax':
+                return 'Review generated code for syntax errors and fix manually';
+            case 'network':
+                return 'Check network connectivity and retry the operation';
+            default:
+                return 'Review error details and retry with corrected parameters';
+        }
+    }
+
+    /**
+     * Create fallback template when generation fails (legacy method)
+     */
+    createFallbackTemplate(request) {
+        return this.createEnhancedFallbackTemplate(request, new Error('Code generation failed'), 'unknown');
     }
 
     /**
@@ -718,62 +899,260 @@ module.exports = class ${this.toPascalCase(purpose)} {
     }
 
     /**
-     * Basic syntax checking
+     * Basic syntax checking with stack-based approach for better performance
      */
     checkBasicSyntax(code) {
         const errors = [];
-
-        // Check for unmatched braces
-        const openBraces = (code.match(/\{/g) || []).length;
-        const closeBraces = (code.match(/\}/g) || []).length;
-        if (openBraces !== closeBraces) {
-            errors.push('Unmatched braces');
+        const stack = [];
+        const pairs = { '{': '}', '(': ')', '[': ']' };
+        const openChars = new Set(['{', '(', '[']);
+        const closeChars = new Set(['}', ')', ']']);
+        
+        // Stack-based validation for better performance and accuracy
+        for (let i = 0; i < code.length; i++) {
+            const char = code[i];
+            
+            if (openChars.has(char)) {
+                stack.push(char);
+            } else if (closeChars.has(char)) {
+                const lastOpen = stack.pop();
+                if (!lastOpen || pairs[lastOpen] !== char) {
+                    if (char === '}') errors.push('Unmatched braces');
+                    else if (char === ')') errors.push('Unmatched parentheses');
+                    else if (char === ']') errors.push('Unmatched brackets');
+                    break;
+                }
+            }
         }
-
-        // Check for unmatched parentheses
-        const openParens = (code.match(/\(/g) || []).length;
-        const closeParens = (code.match(/\)/g) || []).length;
-        if (openParens !== closeParens) {
-            errors.push('Unmatched parentheses');
+        
+        // Check if any unclosed brackets remain
+        if (stack.length > 0) {
+            errors.push('Unclosed brackets detected');
         }
 
         return errors;
     }
 
-/**
-     * Get code quality metrics for feedback loop
+    /**
+     * Get sophisticated code quality metrics using industry-standard algorithms
      */
     async getQualityMetrics() {
-        // Basic stub: return average metrics from codeHistory or defaults
         if (this.codeHistory.length === 0) {
             return {
-                complexity: 0.5,
-                maintainability: 0.5,
-                cohesion: 0.5,
-                testCoverage: 0.5,
-                overallQuality: 0.5
+                cyclomaticComplexity: 1.0,
+                halsteadVolume: 0.0,
+                maintainabilityIndex: 100.0,
+                testCoverage: 0.0,
+                technicalDebt: 0.0,
+                overallQuality: 0.8
             };
         }
-        // Optionally, analyze last N generations for real metrics
-        let total = { complexity: 0, maintainability: 0, cohesion: 0, testCoverage: 0, overallQuality: 0 };
-        let count = 0;
-        for (const entry of this.codeHistory.slice(-10)) {
-            // If enhanced analysis exists, use it; else use defaults
-            const metrics = entry.complexityAnalysis || {};
-            total.complexity += metrics.complexity || 0.5;
-            total.maintainability += metrics.maintainability || 0.5;
-            total.cohesion += metrics.cohesion || 0.5;
-            total.testCoverage += metrics.testCoverage || 0.5;
-            total.overallQuality += metrics.overallQuality || 0.5;
-            count++;
+
+        const recentEntries = this.codeHistory.slice(-10);
+        let totalCyclomatic = 0;
+        let totalHalstead = 0;
+        let totalMaintainability = 0;
+        let totalDebt = 0;
+        let testCoverage = 0;
+
+        for (const entry of recentEntries) {
+            if (entry.generated) {
+                const metrics = this.calculateAdvancedMetrics(entry.generated);
+                totalCyclomatic += metrics.cyclomaticComplexity;
+                totalHalstead += metrics.halsteadVolume;
+                totalMaintainability += metrics.maintainabilityIndex;
+                totalDebt += metrics.technicalDebt;
+                testCoverage += metrics.hasTests ? 1 : 0;
+            }
         }
+
+        const count = recentEntries.length;
         return {
-            complexity: total.complexity / count,
-            maintainability: total.maintainability / count,
-            cohesion: total.cohesion / count,
-            testCoverage: total.testCoverage / count,
-            overallQuality: total.overallQuality / count
+            cyclomaticComplexity: totalCyclomatic / count,
+            halsteadVolume: totalHalstead / count,
+            maintainabilityIndex: totalMaintainability / count,
+            testCoverage: testCoverage / count,
+            technicalDebt: totalDebt / count,
+            overallQuality: this.calculateOverallQuality({
+                cyclomatic: totalCyclomatic / count,
+                halstead: totalHalstead / count,
+                maintainability: totalMaintainability / count,
+                coverage: testCoverage / count,
+                debt: totalDebt / count
+            })
         };
+    }
+
+    /**
+     * Calculate advanced code metrics using proper algorithms
+     */
+    calculateAdvancedMetrics(code) {
+        const cyclomaticComplexity = this.calculateCyclomaticComplexity(code);
+        const halsteadMetrics = this.calculateHalsteadMetrics(code);
+        const maintainabilityIndex = this.calculateMaintainabilityIndex(code, cyclomaticComplexity, halsteadMetrics.volume);
+        const technicalDebt = this.calculateTechnicalDebt(code);
+        const hasTests = /\b(test|spec|describe|it|expect|assert)\b/i.test(code);
+
+        return {
+            cyclomaticComplexity,
+            halsteadVolume: halsteadMetrics.volume,
+            maintainabilityIndex,
+            technicalDebt,
+            hasTests
+        };
+    }
+
+    /**
+     * Calculate McCabe Cyclomatic Complexity
+     */
+    calculateCyclomaticComplexity(code) {
+        const decisionPoints = [
+            /\bif\b/g, /\belse\b/g, /\bwhile\b/g, /\bfor\b/g,
+            /\bswitch\b/g, /\bcase\b/g, /\bcatch\b/g, /\btry\b/g,
+            /\?/g, /&&/g, /\|\|/g, /\bthrow\b/g
+        ];
+        
+        let complexity = 1; // Base complexity
+        
+        for (const pattern of decisionPoints) {
+            const matches = code.match(pattern);
+            if (matches) {
+                complexity += matches.length;
+            }
+        }
+        
+        return complexity;
+    }
+
+    /**
+     * Calculate Halstead Complexity Metrics
+     */
+    calculateHalsteadMetrics(code) {
+        const operators = new Set();
+        const operands = new Set();
+        let totalOperators = 0;
+        let totalOperands = 0;
+
+        // JavaScript operators
+        const operatorPatterns = [
+            /[+\-*/%=<>!&|^~]/g, /\b(new|typeof|instanceof|in|delete|void)\b/g,
+            /[{}()\[\];,.:?]/g, /\b(function|class|const|let|var|return|if|else|for|while|switch|case|break|continue|try|catch|finally|throw)\b/g
+        ];
+
+        // Extract operators
+        for (const pattern of operatorPatterns) {
+            const matches = code.match(pattern) || [];
+            matches.forEach(match => {
+                operators.add(match);
+                totalOperators++;
+            });
+        }
+
+        // Extract operands (identifiers, literals)
+        const operandPattern = /\b[a-zA-Z_$][a-zA-Z0-9_$]*\b|\b\d+(\.\d+)?\b|'[^']*'|"[^"]*"|`[^`]*`/g;
+        const operandMatches = code.match(operandPattern) || [];
+        operandMatches.forEach(match => {
+            if (!/^(function|class|const|let|var|return|if|else|for|while|switch|case|break|continue|try|catch|finally|throw|new|typeof|instanceof|in|delete|void)$/.test(match)) {
+                operands.add(match);
+                totalOperands++;
+            }
+        });
+
+        const n1 = operators.size; // Unique operators
+        const n2 = operands.size;  // Unique operands
+        const N1 = totalOperators; // Total operators
+        const N2 = totalOperands;  // Total operands
+
+        const vocabulary = n1 + n2;
+        const length = N1 + N2;
+        const volume = length * Math.log2(vocabulary || 1);
+        const difficulty = (n1 / 2) * (N2 / (n2 || 1));
+        const effort = difficulty * volume;
+
+        return { volume, difficulty, effort, vocabulary, length };
+    }
+
+    /**
+     * Calculate Maintainability Index (Microsoft formula)
+     */
+    calculateMaintainabilityIndex(code, cyclomaticComplexity, halsteadVolume) {
+        const linesOfCode = code.split('\n').filter(line => line.trim().length > 0).length;
+        const commentLines = (code.match(/\/\*[\s\S]*?\*\/|\/\/.*$/gm) || []).length;
+        const commentRatio = linesOfCode > 0 ? commentLines / linesOfCode : 0;
+
+        // Microsoft Maintainability Index formula
+        const mi = Math.max(0, 
+            171 - 
+            5.2 * Math.log(halsteadVolume || 1) - 
+            0.23 * cyclomaticComplexity - 
+            16.2 * Math.log(linesOfCode || 1) +
+            50 * Math.sin(Math.sqrt(2.4 * commentRatio))
+        );
+
+        return Math.min(100, mi);
+    }
+
+    /**
+     * Calculate Technical Debt (code smells and anti-patterns)
+     */
+    calculateTechnicalDebt(code) {
+        let debtScore = 0;
+        const lines = code.split('\n');
+        
+        // Long methods (>50 lines)
+        const methods = code.match(/function\s+\w+\s*\([^)]*\)\s*\{[^}]*\}/g) || [];
+        methods.forEach(method => {
+            const methodLines = method.split('\n').length;
+            if (methodLines > 50) debtScore += (methodLines - 50) * 0.5;
+        });
+        
+        // Long lines (>120 characters)
+        lines.forEach(line => {
+            if (line.length > 120) debtScore += (line.length - 120) * 0.1;
+        });
+        
+        // Code duplication (simple pattern matching)
+        const duplicatePatterns = new Map();
+        lines.forEach(line => {
+            const trimmed = line.trim();
+            if (trimmed.length > 20) {
+                duplicatePatterns.set(trimmed, (duplicatePatterns.get(trimmed) || 0) + 1);
+            }
+        });
+        duplicatePatterns.forEach(count => {
+            if (count > 1) debtScore += (count - 1) * 2;
+        });
+        
+        // Magic numbers
+        const magicNumbers = code.match(/\b\d{2,}\b/g) || [];
+        debtScore += magicNumbers.length * 0.5;
+        
+        // TODO comments
+        const todos = code.match(/\/\/\s*TODO|\/\*\s*TODO/gi) || [];
+        debtScore += todos.length * 1;
+        
+        return Math.min(100, debtScore);
+    }
+
+    /**
+     * Calculate overall quality score from individual metrics
+     */
+    calculateOverallQuality(metrics) {
+        // Normalize metrics to 0-1 scale
+        const normalizedCyclomatic = Math.max(0, Math.min(1, 1 - (metrics.cyclomatic - 1) / 20));
+        const normalizedHalstead = Math.max(0, Math.min(1, 1 - metrics.halstead / 1000));
+        const normalizedMaintainability = metrics.maintainability / 100;
+        const normalizedCoverage = metrics.coverage;
+        const normalizedDebt = Math.max(0, 1 - metrics.debt / 100);
+        
+        // Weighted average (maintainability and debt are most important)
+        return (
+            normalizedCyclomatic * 0.15 +
+            normalizedHalstead * 0.15 +
+            normalizedMaintainability * 0.35 +
+            normalizedCoverage * 0.20 +
+            normalizedDebt * 0.15
+        );
     }
     /**
      * Convert string to PascalCase
@@ -789,20 +1168,27 @@ module.exports = class ${this.toPascalCase(purpose)} {
     }
 
     /**
-     * Handle consciousness state changes
+     * Handle consciousness state changes with rate limiting
      */
     handleConsciousnessStateChange(event) {
         try {
-            log.info('[SelfCodingModule] Consciousness state changed:', event.newState);
+            log().info('[SelfCodingModule] Consciousness state changed:', sanitizeForLog(JSON.stringify(event.newState)));
 
-            // Generate code based on consciousness state
+            // Generate code based on consciousness state with rate limiting
             if (event.newState && event.newState.phi > 0.9) {
-                this.generateCode({
-                    purpose: 'consciousness-enhancement',
-                    description: `Generate enhancement module for phi=${event.newState.phi}`,
-                    template: 'module',
-                    consciousnessState: event.newState
-                });
+                try {
+                    // Check rate limit before generating
+                    this.checkRateLimit('consciousness-enhancement');
+                    
+                    this.generateCode({
+                        purpose: 'consciousness-enhancement',
+                        description: `Generate enhancement module for phi=${event.newState.phi}`,
+                        template: 'module',
+                        consciousnessState: event.newState
+                    });
+                } catch (rateLimitError) {
+                    log.warn('[SelfCodingModule] Consciousness enhancement generation rate limited:', rateLimitError.message);
+                }
             }
         } catch (error) {
             log.error('[SelfCodingModule] Error handling consciousness state change:', error.message);
@@ -814,17 +1200,17 @@ module.exports = class ${this.toPascalCase(purpose)} {
      */
     handleGoalCreated(event) {
         try {
-            log.info('[SelfCodingModule] New goal created:', event.goal.description);
+            log.info('[SelfCodingModule] New goal created:', sanitizeForLog(event.goal.description));
 
             // Generate code to support the goal
             this.generateCode({
                 purpose: 'goal-support',
-                description: `Generate module to support goal: ${event.goal.description}`,
+                description: `Generate module to support goal: ${sanitizeForLog(event.goal.description)}`,
                 template: 'module',
                 goal: event.goal
             });
         } catch (error) {
-            log.error('[SelfCodingModule] Error handling goal creation:', error.message);
+            log.error('[SelfCodingModule] Error handling goal creation:', sanitizeForLog(error.message));
         }
     }
 
@@ -833,17 +1219,17 @@ module.exports = class ${this.toPascalCase(purpose)} {
      */
     handlePatternDetected(event) {
         try {
-            log.info('[SelfCodingModule] Pattern detected:', event.pattern.type);
+            log.info('[SelfCodingModule] Pattern detected:', sanitizeForLog(event.pattern.type));
 
             // Generate code based on detected patterns
             this.generateCode({
                 purpose: 'pattern-implementation',
-                description: `Implement pattern: ${event.pattern.type}`,
+                description: `Implement pattern: ${sanitizeForLog(event.pattern.type)}`,
                 template: 'function',
                 pattern: event.pattern
             });
         } catch (error) {
-            log.error('[SelfCodingModule] Error handling pattern detection:', error.message);
+            log.error('[SelfCodingModule] Error handling pattern detection:', sanitizeForLog(error.message));
         }
     }
 

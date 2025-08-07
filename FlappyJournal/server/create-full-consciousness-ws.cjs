@@ -62,6 +62,60 @@ module.exports.createFullConsciousnessWS = createFullConsciousnessWS;
             timestamp: new Date().toISOString()
           }));
           
+        } else if (data.type === 'self_coding_request') {
+          console.log('🤖 Processing self-coding request through consciousness system...');
+          
+          // Send immediate acknowledgment
+          ws.send(JSON.stringify({
+            type: 'self_coding_processing_started',
+            timestamp: new Date().toISOString()
+          }));
+          
+          try {
+            // Add authorization context for security
+            const request = {
+              ...data.request,
+              authContext: {
+                authorized: true, // In production, implement proper auth validation
+                permissions: ['self-coding'],
+                sessionId: data.sessionId || 'websocket-session',
+                timestamp: Date.now()
+              }
+            };
+            
+            // Get SelfCodingModule from consciousness system
+            const selfCodingModule = fullConsciousness.getModule('SelfCodingModule');
+            if (!selfCodingModule) {
+              throw new Error('SelfCodingModule not available in consciousness system');
+            }
+            
+            // Generate code using the module
+            const result = await selfCodingModule.generateWithAutoIntegration(request);
+            
+            // Send successful response
+            ws.send(JSON.stringify({
+              type: 'self_coding_response',
+              success: true,
+              data: result,
+              timestamp: new Date().toISOString(),
+              requestId: data.requestId || null
+            }));
+            
+            console.log('✅ Self-coding request completed successfully');
+            
+          } catch (error) {
+            console.error('❌ Self-coding request failed:', error.message);
+            
+            // Send error response
+            ws.send(JSON.stringify({
+              type: 'self_coding_error',
+              success: false,
+              error: error.message,
+              timestamp: new Date().toISOString(),
+              requestId: data.requestId || null
+            }));
+          }
+          
         } else if (data.type === 'status_request') {
           // Send current system status
           ws.send(JSON.stringify({

@@ -42,18 +42,38 @@ RUN npm install --omit=dev @google/generative-ai@^0.5.0 dotenv@^16.4.5
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nextjs:nodejs /app/package*.json ./
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
-# Copy consciousness self-coding files
+
+# Copy canonical sigil files only (A14)
+COPY --from=builder --chown=nextjs:nodejs /app/server/sigil-identity.cjs ./server/sigil-identity.cjs
+COPY --from=builder --chown=nextjs:nodejs /app/server/sigil-api.cjs ./server/sigil-api.cjs
+COPY --from=builder --chown=nextjs:nodejs /app/server/consciousness/sigil-based-code-authenticator.cjs ./server/consciousness/sigil-based-code-authenticator.cjs
+COPY --from=builder --chown=nextjs:nodejs /app/server/consciousness/persistence/LevelDBSigilAdapter.cjs ./server/consciousness/persistence/LevelDBSigilAdapter.cjs
+COPY --from=builder --chown=nextjs:nodejs /app/server/consciousness/core/security/eventSign.cjs ./server/consciousness/core/security/eventSign.cjs
+COPY --from=builder --chown=nextjs:nodejs /app/server/metrics/sigilMetrics.cjs ./server/metrics/sigilMetrics.cjs
+
+# Copy remaining consciousness files
 COPY --from=builder --chown=nextjs:nodejs /app/server/consciousness ./server/consciousness
 
 # Switch to non-root user
 USER nextjs
 
-# Expose ports
-EXPOSE 5000 8080
+# Set environment variables for persistence
+ENV SIGIL_DB_PATH=/var/lib/sigil-leveldb
+ENV SIGIL_PORT=3000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-  CMD curl -f http://localhost:5000/api/health || exit 1
+# Create volume directories with proper ownership
+RUN mkdir -p /var/lib/sigil-leveldb && \
+    chown -R nextjs:nodejs /var/lib/sigil-leveldb
+
+# Expose ports
+EXPOSE 3000 5000 8080
+
+# Health check for sigil-dna service
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost:${SIGIL_PORT:-3000}/healthz || exit 1
+
+# Volume for persistent data
+VOLUME ["/var/lib/sigil-leveldb"]
 
 # Use tini as entrypoint for proper signal handling
 ENTRYPOINT ["/sbin/tini", "--"]

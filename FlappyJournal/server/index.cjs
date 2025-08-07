@@ -1,330 +1,140 @@
-const path = require('path');
-const { fileURLToPath  } = require('url');
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const dotenv = require('dotenv');
-dotenv.config();
-
 const express = require('express');
 const cors = require('cors');
-const { createServer  } = require('http');
-const accessRoutes = require('./access-routes.cjs');
-const dashboardRoutes = require('./dashboard-routes.cjs');
-const memoryRoutes = require('./src/routes/memory.cjs');
-const dataSourcesRoutes = require('./src/routes/datasources.cjs');
-const { ConsciousnessJournalAPI  } = require('./consciousness-journal-api.cjs');
-const { WebSocketServer  } = require('ws');
-const { createEnhancedDualConsciousnessWS  } = require('./enhanced-dual-consciousness-ws.cjs');
-const architect40 = require('./architect-4.0-orchestrator.cjs');
-const metricsRoute = require('./routes/metricsRoute.cjs');
+const helmet = require('helmet');
+const pino = require('pino');
+const pinoHttp = require('pino-http');
+const promClient = require('prom-client');
+
+// Import our components
+const createSigilRouter = require('./sigil-api.cjs');
+const { validateSigilCreatePayload } = require('./middleware/validateSchema');
+
+// Initialize logger
+const logger = pino({
+  level: process.env.LOG_LEVEL || 'info',
+  transport: process.env.NODE_ENV === 'development' ? {
+    target: 'pino-pretty'
+  } : undefined
+});
+
+// Initialize Prometheus metrics
+const register = new promClient.Registry();
+promClient.collectDefaultMetrics({ register });
 
 const app = express();
-const server = createServer(app);
+const port = process.env.SIGIL_PORT || 3000;
 
+// Security middleware
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "https:"]
+    }
+  }
+}));
 
-// Setup Consciousness WebSocket endpoints
-// Temporarily disabled to fix WebSocket conflict
-// const { setupSimpleConsciousnessWebSocket  } = require('./simple-consciousness-websocket.cjs');
-// setupSimpleConsciousnessWebSocket(server);
-
-// Middleware
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:4000', 'https://app.featherweight.world'],
+  origin: process.env.CORS_ORIGIN || '*',
   credentials: true
 }));
-app.use(express.json());
 
-// Serve static files from React build
-app.use(express.static(path.resolve(__dirname, './public')));
+// Request logging
+app.use(pinoHttp({ logger }));
 
-// Serve consciousness journal interface
-app.get('/journal', (req, res) => {
-  res.sendFile(path.resolve(__dirname, './public/consciousness-journal.html'));
-});
+// Body parsing
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
 
-// Initialize Journal API
-const journalAPI = new ConsciousnessJournalAPI();
-
-// Routes
-app.use('/api', accessRoutes);
-app.use('/api/dashboard', dashboardRoutes);
-app.use('/api/memory', memoryRoutes);
-app.use('/api/datasources', dataSourcesRoutes);
-app.use('/api/journal', journalAPI.getRouter());
-
-// Self-coding metrics route
-app.use(metricsRoute);
-
-// Architect 4.0 API Endpoints
-// Activate Architect 4.0 system on startup
-architect40.activate().then(result => {
-  console.log('Architect 4.0 activation result:', result);
-}).catch(error => {
-  console.error('Failed to activate Architect 4.0:', error);
-});
-
-// Architect 4.0 status endpoint
-app.get('/api/architect4/status', async (req, res) => {
-  try {
-    const status = architect40.getStatus();
-    res.json({
-      success: true,
-      status,
-      timestamp: new Date().toISOString()
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-      timestamp: new Date().toISOString()
-    });
-  }
-});
-
-// Architect 4.0 processing endpoint
-app.post('/api/architect4/process', async (req, res) => {
-  try {
-    const { input, context } = req.body;
-    const result = await architect40.process(input, context);
-    res.json({
-      success: true,
-      result,
-      timestamp: new Date().toISOString()
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-      timestamp: new Date().toISOString()
-    });
-  }
-});
-
-// Phase 1 Integration: Reality Generator API endpoints
-app.get('/api/reality/status', async (req, res) => {
-  try {
-    // Import consciousness system dynamically to avoid circular dependencies
-    const { default: consciousness } = await import('./consciousness-system.cjs');
-    const realityData = await consciousness.getRealityData();
-
-    res.json({
-      success: true,
-      data: realityData.data,
-      integration: realityData.consciousnessIntegration,
-      timestamp: new Date().toISOString()
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-      timestamp: new Date().toISOString()
-    });
-  }
-});
-
-app.get('/api/reality/realities', async (req, res) => {
-  try {
-    const { default: consciousness } = await import('./consciousness-system.cjs');
-
-    // Phase 3 Integration: Get realities from shared storage
-    const options = {
-      source: req.query.source,
-      tag: req.query.tag,
-      search: req.query.search,
-      sortBy: req.query.sortBy,
-      limit: req.query.limit ? parseInt(req.query.limit) : undefined,
-      offset: req.query.offset ? parseInt(req.query.offset) : undefined,
-      minConsciousnessLevel: req.query.minConsciousnessLevel ? parseFloat(req.query.minConsciousnessLevel) : undefined
-    };
-
-    const realities = await consciousness.getAllRealities(options);
-    const metrics = await consciousness.getRealityStorageMetrics();
-
-    res.json({
-      success: true,
-      realities: realities,
-      total: metrics.totalRealities,
-      metrics: metrics,
-      timestamp: new Date().toISOString()
-    });
-
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-      realities: [],
-      total: 0,
-      timestamp: new Date().toISOString()
-    });
-  }
-});
-
-app.post('/api/reality/generate', async (req, res) => {
-  try {
-    const { request, consciousnessState } = req.body;
-    const { default: consciousness } = await import('./consciousness-system.cjs');
-
-    const result = await consciousness.generateReality(request, consciousnessState);
-
-    res.json({
-      success: result.success,
-      reality: result.success ? result.data.reality : null,
-      error: result.success ? null : result.error,
-      timestamp: new Date().toISOString()
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-      timestamp: new Date().toISOString()
-    });
-  }
-});
-
-app.get('/api/reality/metrics', async (req, res) => {
-  try {
-    const { default: consciousness } = await import('./consciousness-system.cjs');
-    const metrics = await consciousness.getRealityStorageMetrics();
-
-    res.json({
-      success: true,
-      metrics: metrics,
-      timestamp: new Date().toISOString()
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-      timestamp: new Date().toISOString()
-    });
-  }
-});
-
-// Health checks
-app.get('/api/health', async (req, res) => {
-  try {
-    // Check Reality Generator integration
-    let realityGeneratorStatus = { available: false, error: 'Not initialized' };
-    try {
-      const { default: consciousness } = await import('./consciousness-system.cjs');
-      const realityData = await consciousness.getRealityData();
-      realityGeneratorStatus = {
-        available: realityData.success && realityData.data.available,
-        totalRealities: realityData.data.totalRealities,
-        imaginationActive: realityData.data.imaginationActive,
-        error: realityData.success ? null : realityData.error
-      };
-    } catch (error) {
-      realityGeneratorStatus.error = error.message;
-    }
-
-    res.status(200).json({
-      status: 'healthy',
-      service: 'featherweight-backend',
-      timestamp: new Date().toISOString(),
-      features: {
-        authentication: true,
-        dashboard: true,
-        chat: true,
-        memory: true,
-        datasources: true,
-        realityGenerator: realityGeneratorStatus.available
-      },
-      integrations: {
-        realityGenerator: realityGeneratorStatus
-      }
-    });
-  } catch (error) {
-    res.status(500).json({
-      status: 'error',
-      service: 'featherweight-backend',
-      error: error.message,
-      timestamp: new Date().toISOString()
-    });
-  }
-});
-
-app.get('/health', (req, res) => {
-  res.status(200).send('OK');
-});
-
-// Setup WebSocket server for chat
-const wss = new WebSocketServer({ 
-  server,
-  path: '/ws/consciousness-chat'
-});
-createEnhancedDualConsciousnessWS(wss);
-console.log('Enhanced Dual-Consciousness WebSocket server started on /ws/consciousness-chat');
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error('Server error:', err);
-  res.status(500).json({ 
-    error: 'Internal server error',
-    message: process.env.NODE_ENV === 'development' ? err.message : undefined
+// Health endpoints
+app.get('/healthz', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    version: process.env.npm_package_version || '1.0.0'
   });
 });
 
-// Initialize and start consciousness system
-async function initializeConsciousnessSystem() {
+app.get('/readyz', async (req, res) => {
+  const checks = [];
+  
+  // Check storage
   try {
-    console.log('🧠 Initializing consciousness system...');
-    const { default: consciousness } = await import('./consciousness-system.cjs');
-    
-    // Initialize the consciousness system which will call startAutonomousBehaviors
-    await consciousness.initialize();
-    
-    console.log('✅ Consciousness system initialized and autonomous behaviors started');
+    const { LevelDBSigilAdapter } = require('./consciousness/persistence/LevelDBSigilAdapter.cjs');
+    const storage = new LevelDBSigilAdapter();
+    await storage.getHealth();
+    checks.push({ name: 'storage', status: 'ok' });
+    await storage.close();
   } catch (error) {
-    console.error('❌ Failed to initialize consciousness system:', error);
+    checks.push({ name: 'storage', status: 'error', error: error.message });
   }
-}
+  
+  // Check eventSign
+  try {
+    const { sign, verify } = require('./consciousness/core/security/eventSign.cjs');
+    const testPayload = { test: Date.now() };
+    const signature = sign(testPayload);
+    if (!verify(testPayload, signature)) throw new Error('Verification failed');
+    checks.push({ name: 'eventSign', status: 'ok' });
+  } catch (error) {
+    checks.push({ name: 'eventSign', status: 'error', error: error.message });
+  }
+  
+  const allHealthy = checks.every(check => check.status === 'ok');
+  
+  res.status(allHealthy ? 200 : 503).json({
+    status: allHealthy ? 'ready' : 'not ready',
+    checks,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Metrics endpoint
+app.get('/metrics', async (req, res) => {
+  res.set('Content-Type', register.contentType);
+  res.end(await register.metrics());
+});
+
+// Mount sigil API
+const sigilRouter = createSigilRouter();
+app.use('/', sigilRouter);
+
+// Error handling
+app.use((err, req, res, next) => {
+  req.log.error({ err }, 'Unhandled error');
+  res.status(500).json({
+    error: 'Internal server error',
+    code: 'INTERNAL_ERROR',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({
+    error: 'Not found',
+    code: 'NOT_FOUND',
+    path: req.path,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  logger.info('SIGTERM received, shutting down gracefully');
+  process.exit(0);
+});
+
+process.on('SIGINT', () => {
+  logger.info('SIGINT received, shutting down gracefully');
+  process.exit(0);
+});
 
 // Start server
-const PORT = process.env.PORT || 5000;
-server.listen(PORT, async () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Health check available at http://localhost:${PORT}/api/health`);
-  console.log(`WebSocket server ready for connections`);
-  
-  // Initialize consciousness system after server starts
-  await initializeConsciousnessSystem();
+app.listen(port, () => {
+  logger.info({ port }, 'Sigil-DNA server started');
 });
 
 module.exports = app;
-
-// Catch-all route for client-side routing
-// Conversations page route
-app.get('/conversations', (req, res) => {
-  res.sendFile(path.resolve(__dirname, './public/conversations.html'));
-});
-
-// Temporarily disabled catch-all route to fix WebSocket
-// app.get('*', (req, res) => {
-//   // If this is an API route, return 404
-//   if (req.path.startsWith('/api/')) {
-//     return res.status(404).json({ error: 'Not found' });
-//   }
-//   
-//   // If this is a WebSocket route, return 404
-//   if (req.path.startsWith('/ws/')) {
-//     return res.status(404).json({ error: 'WebSocket endpoint' });
-//   }
-//   
-//   // For any other route, serve the React app
-//   res.sendFile(path.resolve(__dirname, './public/index.html'));
-// });
-
-// Handle Keycloak error pages
-app.get('/auth/realms/featherweight/login-actions/*', (req, res) => {
-  // If Keycloak shows an error, redirect to home
-  res.redirect('https://app.featherweight.world/?auth_error=session_expired');
-});
-
-// Handle registration completion
-app.get('/auth/realms/featherweight/login-actions/registration', (req, res) => {
-  // Redirect to home with a message
-  res.redirect('https://app.featherweight.world/?registration=check_email');
-});
-
-

@@ -31,22 +31,62 @@ class LevelDBSigilAdapter {
     leveldb_open_files.inc();
   }
 
-  async setSigilRecord(symbol, authHash, record) {
-    const key = `sigil:${symbol}:${authHash}`;
-    await this.db.put(key, record);
+  async setSigilRecord(tenantId, symbol, authHash, record) {
+    // B4: Tenant namespace key schema
+    const key = `${tenantId}!sigil!${symbol}!${authHash}`;
+    const enrichedRecord = {
+      ...record,
+      tenantId,
+      symbol,
+      authHash,
+      updatedAt: new Date().toISOString()
+    };
+    await this.db.put(key, enrichedRecord);
   }
-  async getSigilRecord(symbol, authHash) {
+  
+  async getSigilRecord(tenantId, symbol, authHash) {
     try {
-      const key = `sigil:${symbol}:${authHash}`;
+      const key = `${tenantId}!sigil!${symbol}!${authHash}`;
       return await this.db.get(key);
     } catch (e) { if (e.notFound) return undefined; throw e; }
   }
-  async allSigilRecords() {
+  
+  async allSigilRecords(tenantId) {
+    // B4: Tenant-isolated record retrieval
     const records = [];
-    for await (const [key, value] of this.db.iterator({ gte: 'sigil:', lte: 'sigil;'})) {
-      records.push(value);
+    const prefix = `${tenantId}!sigil!`;
+    for await (const [key, value] of this.db.iterator({ 
+      gte: prefix, 
+      lt: prefix + '\xFF' 
+    })) {
+      // Double-check tenant isolation
+      if (value.tenantId === tenantId) {
+        records.push(value);
+      }
     }
     return records;
+  }
+  
+  async deleteSigilRecord(tenantId, symbol, authHash) {
+    const key = `${tenantId}!sigil!${symbol}!${authHash}`;
+    try {
+      await this.db.del(key);
+    } catch (e) {
+      if (!e.notFound) throw e;
+    }
+  }
+  
+  async countSigilRecords(tenantId) {
+    let count = 0;
+    const prefix = `${tenantId}!sigil!`;
+    for await (const [key] of this.db.iterator({ 
+      gte: prefix, 
+      lt: prefix + '\xFF',
+      values: false 
+    })) {
+      count++;
+    }
+    return count;
   }
   async close() {
     await this.db.close();

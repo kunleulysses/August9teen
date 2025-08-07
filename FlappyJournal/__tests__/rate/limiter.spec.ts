@@ -1,3 +1,4 @@
+import { jest, describe, it, beforeEach, expect } from '@jest/globals';
 import { consume } from '../../server/rate/spiralLimiter.cjs';
 
 describe('Rate Limiter', () => {

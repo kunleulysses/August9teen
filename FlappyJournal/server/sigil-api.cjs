@@ -1,53 +1,74 @@
 const express = require('express');
-const fetch = require('node-fetch');
-const { createBreaker } = require('./utils/circuitBreaker.cjs');
+const { jwtMiddleware, requireRole } = require('./auth/jwtMiddleware');
+const { rateLimiter } = require('./middleware/rateLimiter');
+const { SigilEngine } = require('./consciousness/SigilEngine');
+const { LevelDBSigilAdapter } = require('./consciousness/persistence/LevelDBSigilAdapter.cjs');
 
 function createRouter(consciousness) {
   const router = express.Router();
+  
+  // Initialize storage and engine
+  const storage = new LevelDBSigilAdapter();
+  const sigilEngine = new SigilEngine({ storage });
+  
+  // Apply JWT authentication and rate limiting to all sigil routes
+  router.use('/api/consciousness/sigils', jwtMiddleware, rateLimiter);
 
-  const breaker = createBreaker(
-    (url, opts) => fetch(url, opts).then(r => r.json()),
-    { timeout: process.env.DNASTORE_TIMEOUT_MS || 3000 }
-  );
-
-const { sigilEncodeCounter, sigilEncodeDuration, sigilErrorCounter } = require('./metrics/sigilMetrics.cjs');
-
-// Get sigil history
-router.get('/api/consciousness/sigils', async (req, res) => {
-  try {
-    const response = await breaker.fire(`${process.env.DNASTORE_URL}/api/sigils`);
-    if (response.fallback) {
-      req.log.warn({ fallback: true }, 'Circuit breaker fallback');
-      res.status(503).json({ error: 'DNAStore unavailable' });
-      return;
+  // Health check for storage
+  router.get('/health', async (req, res) => {
+    try {
+      const health = await sigilEngine.getHealth();
+      res.json(health);
+    } catch (error) {
+      res.status(500).json({ error: 'Health check failed' });
     }
-    res.json(response);
+  });
+
+const { 
+  sigilEncodeCounter, 
+  sigilEncodeDuration, 
+  storageReadDuration,
+  sigilErrorCounter 
+} = require('./metrics/sigilMetrics.cjs');
+
+const { validateSigilCreatePayload } = require('./middleware/validateSchema');
+const { trackAuthFailure } = require('./monitoring/alertManager');
+
+// Get sigil history (requires authentication)
+router.get('/api/consciousness/sigils', async (req, res) => {
+  const tenantId = req.user.tenantId;
+  const readTimer = storageReadDuration.startTimer();
+  
+  try {
+    const result = await sigilEngine.list({ tenantId });
+    readTimer();
+    res.json(result);
   } catch (error) {
+    readTimer();
+    sigilErrorCounter.inc();
     req.log.error({ err: error }, 'Error fetching sigils');
     res.status(500).json({ error: 'Failed to fetch sigils' });
   }
 });
 
-// Save new sigil
-router.post('/api/consciousness/sigils', async (req, res) => {
-  const end = sigilEncodeDuration.startTimer();
+// Save new sigil (requires authentication and validation)
+router.post('/api/consciousness/sigils', validateSigilCreatePayload, async (req, res) => {
+  const tenantId = req.user.tenantId;
+  const encodeTimer = sigilEncodeDuration.startTimer();
+  
   try {
-    const response = await breaker.fire(`${process.env.DNASTORE_URL}/api/sigils`, {
-      method: 'POST',
-      body: JSON.stringify(req.body),
-      headers: { 'Content-Type': 'application/json' },
+    const result = await sigilEngine.encode(req.body.data, {
+      tenantId,
+      consciousnessState: req.body.consciousnessState
     });
-    if (response.fallback) {
-      req.log.warn({ fallback: true }, 'Circuit breaker fallback');
-      res.status(503).json({ error: 'DNAStore unavailable' });
-      return;
-    }
+    
     sigilEncodeCounter.inc();
-    end();
-    res.json(response);
+    encodeTimer();
+    res.json(result);
   } catch (error) {
     sigilErrorCounter.inc();
-    end();
+    encodeTimer();
+    trackAuthFailure('sigil_encode_error', req);
     req.log.error({ err: error }, 'Error saving sigil');
     res.status(500).json({ error: 'Failed to save sigil' });
   }
