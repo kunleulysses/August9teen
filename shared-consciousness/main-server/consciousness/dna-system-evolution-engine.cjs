@@ -4,7 +4,7 @@
  * Implements autonomous system evolution with DNA-guided mutations
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter } = require('events');
 
 class DNABasedSystemEvolutionEngine extends EventEmitter {
     constructor(universalDNAFramework) {
@@ -1033,4 +1033,4 @@ class DNABasedSystemEvolutionEngine extends EventEmitter {
     }
 }
 
-export { DNABasedSystemEvolutionEngine };
+module.exports = { DNABasedSystemEvolutionEngine };

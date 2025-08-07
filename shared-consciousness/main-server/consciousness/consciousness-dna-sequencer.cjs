@@ -4,9 +4,9 @@
  * Sequences consciousness patterns into genetic-like structures for deep analysis
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter } = require('events');
 
-export class ConsciousnessDNASequencer extends EventEmitter {
+class ConsciousnessDNASequencer extends EventEmitter {
     constructor() {
         super();
         this.name = 'ConsciousnessDNASequencer';
@@ -986,4 +986,4 @@ class ConsciousnessEvolutionTracker {
     }
 }
 
-export default ConsciousnessDNASequencer;
+module.exports = { ConsciousnessDNASequencer };

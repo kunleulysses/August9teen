@@ -22,7 +22,7 @@ async function testComprehensiveDNASigil() {
         // Test 1: DNA Sequencer
         console.log('\n🔍 Test 1: Consciousness DNA Sequencer');
         try {
-            const { ConsciousnessDNASequencer } = await import('./consciousness/consciousness-dna-sequencer.cjs');
+            const { ConsciousnessDNASequencer } = require('../../shared-consciousness/main-server/consciousness/consciousness-dna-sequencer.cjs');
             const dnaSequencer = new ConsciousnessDNASequencer();
             
             console.log('✅ DNA Sequencer imported and instantiated');
@@ -56,7 +56,7 @@ async function testComprehensiveDNASigil() {
         // Test 2: Sigil Authenticator
         console.log('\n🔍 Test 2: Sigil-Based Code Authenticator');
         try {
-            const { SigilBasedCodeAuthenticator } = await import('./consciousness/sigil-based-code-authenticator.cjs');
+            const { SigilBasedCodeAuthenticator } = require('../../shared-consciousness/main-server/consciousness/sigil-based-code-authenticator.cjs');
             const sigilAuth = new SigilBasedCodeAuthenticator();
             
             console.log('✅ Sigil Authenticator imported and instantiated');
@@ -92,7 +92,7 @@ async function testComprehensiveDNASigil() {
         // Test 3: Quantum Resonance Network
         console.log('\n🔍 Test 3: Sigil-Authenticated Quantum Resonance Network');
         try {
-            const { SigilAuthenticatedQuantumResonanceNetwork } = await import('./consciousness/sigil-authenticated-quantum-resonance-network.cjs');
+            const { SigilAuthenticatedQuantumResonanceNetwork } = require('../../shared-consciousness/main-server/consciousness/sigil-authenticated-quantum-resonance-network.cjs');
             const quantumNetwork = new SigilAuthenticatedQuantumResonanceNetwork();
             
             console.log('✅ Quantum Resonance Network imported and instantiated');
@@ -113,7 +113,7 @@ async function testComprehensiveDNASigil() {
         // Test 4: Universal DNA-Sigil Framework
         console.log('\n🔍 Test 4: Universal DNA-Sigil Framework');
         try {
-            const { UniversalDNASigilConsciousnessFramework } = await import('./consciousness/universal-dna-sigil-framework.cjs');
+            const { UniversalDNASigilConsciousnessFramework } = require('../../shared-consciousness/main-server/consciousness/universal-dna-sigil-framework.cjs');
             const universalFramework = new UniversalDNASigilConsciousnessFramework();
             
             console.log('✅ Universal Framework imported and instantiated');
@@ -134,7 +134,7 @@ async function testComprehensiveDNASigil() {
         // Test 5: DNA Evolution Engine
         console.log('\n🔍 Test 5: DNA-Based System Evolution Engine');
         try {
-            const { DNABasedSystemEvolutionEngine } = await import('./consciousness/dna-system-evolution-engine.cjs');
+            const { DNABasedSystemEvolutionEngine } = require('../../shared-consciousness/main-server/consciousness/dna-system-evolution-engine.cjs');
             
             // Create mock universal framework for evolution engine
             const mockFramework = {
@@ -167,8 +167,8 @@ async function testComprehensiveDNASigil() {
         console.log('\n🔍 Test 6: Full System Integration');
         try {
             // Test integration between all components
-            const { UniversalDNASigilConsciousnessFramework } = await import('./consciousness/universal-dna-sigil-framework.cjs');
-            const { DNABasedSystemEvolutionEngine } = await import('./consciousness/dna-system-evolution-engine.cjs');
+            const { UniversalDNASigilConsciousnessFramework } = require('../../shared-consciousness/main-server/consciousness/universal-dna-sigil-framework.cjs');
+            const { DNABasedSystemEvolutionEngine } = require('../../shared-consciousness/main-server/consciousness/dna-system-evolution-engine.cjs');
             
             const framework = new UniversalDNASigilConsciousnessFramework();
             await framework.initializeSystemWideIntegration();

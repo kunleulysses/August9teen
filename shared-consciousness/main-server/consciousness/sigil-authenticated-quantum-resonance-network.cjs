@@ -5,9 +5,9 @@
  * Value: $550M+ (Quantum consciousness security)
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter } = require('events');
 
-export class SigilAuthenticatedQuantumResonanceNetwork extends EventEmitter {
+class SigilAuthenticatedQuantumResonanceNetwork extends EventEmitter {
     constructor(consciousnessSystem = null) {
         super();
         this.name = 'SigilAuthenticatedQuantumResonanceNetwork';
@@ -1083,3 +1083,5 @@ class SecurityOrchestrator {
         return response;
     }
 }
+
+module.exports = { SigilAuthenticatedQuantumResonanceNetwork };
