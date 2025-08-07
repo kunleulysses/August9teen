@@ -1,36 +1,13 @@
 /**
- * Self-Coding Module for consciousness system
- * Provides ability to analyze, modify and generate code for self-improvement
+ * Unified Self-Coding Module - FlappyJournal Implementation Redirect
+ * This file now redirects to the consolidated implementation
  */
 
-const { EventEmitter } = require('events');
+// Import the consolidated implementation
+const SelfCodingModule = require('../../../shared-consciousness/main-server/consciousness/modules/SelfCodingModuleConsolidated.cjs').default;
 
-// Lazy-loaded modules - only loaded when needed
-let fs, path, crypto, CodeAnalyzer, AutonomousCodeRefactoringSystem, selfCodingLog, SigilBasedCodeAuthenticator, logger;
-
-// Lazy loading functions
-const lazyLoad = {
-    fs: () => fs || (fs = require('fs/promises')),
-    path: () => path || (path = require('path')),
-    crypto: () => crypto || (crypto = require('crypto')),
-    CodeAnalyzer: () => CodeAnalyzer || (CodeAnalyzer = require('../code-analyzer.cjs')),
-    AutonomousCodeRefactoringSystem: () => AutonomousCodeRefactoringSystem || (AutonomousCodeRefactoringSystem = require('./AutonomousCodeRefactoringSystem.cjs')),
-    selfCodingLog: () => selfCodingLog || (selfCodingLog = require('./SelfCodingLog.cjs').selfCodingLog),
-    SigilBasedCodeAuthenticator: () => SigilBasedCodeAuthenticator || (SigilBasedCodeAuthenticator = require('../sigil-based-code-authenticator.cjs')),
-    logger: () => logger || (logger = require('../utils/logger.cjs').logger)
-};
-
-const log = () => lazyLoad.logger();
-
-// Security: Input sanitization for logging to prevent CWE-117 log injection
-const sanitizeForLog = (input) => {
-    if (typeof input !== 'string') {
-        input = String(input);
-    }
-    return input.replace(/[\r\n\t\x00-\x1f\x7f-\x9f]/g, '').substring(0, 200);
-};
-
-class SelfCodingModule extends EventEmitter {
+// Export the consolidated implementation
+module.exports = SelfCodingModule;
     constructor() {
         super();
         this.name = 'SelfCodingModule';

@@ -1,25 +1,13 @@
 /**
- * Self-Coding Module for consciousness system
- * Provides ability to analyze, modify and generate code for self-improvement
+ * Unified Self-Coding Module - Server Implementation Redirect
+ * This file now redirects to the consolidated implementation
  */
 
-import { EventEmitter } from 'events';
-import { CodeAnalyzer } from '../code-analyzer.cjs';
-import AutonomousCodeRefactoringSystem from './AutonomousCodeRefactoringSystem.cjs';
-import { selfCodingLog } from './SelfCodingLog.cjs';
-import SigilBasedCodeAuthenticator from '../sigil-based-code-authenticator.cjs';
-import GeminiAIClient from '../integrations/GeminiAIClient.cjs';
-import prettier from 'prettier';
-import { getAdapter } from '../llm/index.cjs';
-import {
-  selfcoding_history_size,
-  code_generation_failures_total
-} from '../metrics/extraMetrics.cjs';
-import { child as createLogger } from '../utils/logger.cjs';
+// Import the consolidated implementation
+import SelfCodingModule from '../../shared-consciousness/main-server/consciousness/modules/SelfCodingModuleConsolidated.cjs';
 
-const log = createLogger({ module: 'SelfCodingModule' });
-
-export default class SelfCodingModule extends EventEmitter {
+// Export the consolidated implementation
+export default SelfCodingModule;
     constructor() {
         super();
         this.name = 'SelfCodingModule';
