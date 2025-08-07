@@ -1,0 +1,308 @@
+{
+  "timestamp": "2025-08-07T21:34:45.571Z",
+  "testResults": {
+    "comprehensive": {
+      "totalTests": 24,
+      "passedTests": 21,
+      "failedTests": 3,
+      "successRate": 87.5,
+      "criticalFailures": 3,
+      "details": [
+        {
+          "test": "Core Generation",
+          "passed": true,
+          "message": "Code generation should succeed",
+          "timestamp": 1754602483922
+        },
+        {
+          "test": "Generated Code Present",
+          "passed": true,
+          "message": "Generated code should be present",
+          "timestamp": 1754602483922
+        },
+        {
+          "test": "Fallback Generation",
+          "passed": true,
+          "message": "Fallback generation should work",
+          "timestamp": 1754602483923
+        },
+        {
+          "test": "Status Compatibility",
+          "passed": true,
+          "message": "Module names should match",
+          "timestamp": 1754602483943
+        },
+        {
+          "test": "Method generateCode Present",
+          "passed": true,
+          "message": "generateCode should be available",
+          "timestamp": 1754602483943
+        },
+        {
+          "test": "Method analyzeCode Present",
+          "passed": true,
+          "message": "analyzeCode should be available",
+          "timestamp": 1754602483943
+        },
+        {
+          "test": "Method healthCheck Present",
+          "passed": true,
+          "message": "healthCheck should be available",
+          "timestamp": 1754602483943
+        },
+        {
+          "test": "Method getStatus Present",
+          "passed": true,
+          "message": "getStatus should be available",
+          "timestamp": 1754602483943
+        },
+        {
+          "test": "Authorization",
+          "passed": false,
+          "error": "Should have rejected unauthorized request",
+          "stack": "Error: Should have rejected unauthorized request\n    at ComprehensiveSelfCodingTestSuite.testSecurityFeatures (/opt/featherweight/FlappyJournal/server/consciousness/modules/comprehensive-self-coding-test-suite.cjs:126:53)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async ComprehensiveSelfCodingTestSuite.runAllTests (/opt/featherweight/FlappyJournal/server/consciousness/modules/comprehensive-self-coding-test-suite.cjs:34:13)\n    at async MasterTestRunner.runComprehensiveTests (/opt/featherweight/FlappyJournal/server/consciousness/modules/run-comprehensive-tests.cjs:61:13)\n    at async MasterTestRunner.runAllTestSuites (/opt/featherweight/FlappyJournal/server/consciousness/modules/run-comprehensive-tests.cjs:34:13)",
+          "timestamp": 1754602483953
+        },
+        {
+          "test": "Rate Limiting",
+          "passed": true,
+          "message": "Should enforce rate limits",
+          "timestamp": 1754602483953
+        },
+        {
+          "test": "Malicious Code Detection",
+          "passed": true,
+          "message": "Should detect potentially malicious code",
+          "timestamp": 1754602483962
+        },
+        {
+          "test": "Syntax Validation",
+          "passed": true,
+          "message": "Should detect syntax errors",
+          "timestamp": 1754602483963
+        },
+        {
+          "test": "Quantum Healing Generation",
+          "passed": true,
+          "message": "Should generate quantum healing code",
+          "timestamp": 1754602483971
+        },
+        {
+          "test": "Quality Metrics",
+          "passed": true,
+          "message": "Should provide quality metrics",
+          "timestamp": 1754602483981
+        },
+        {
+          "test": "Code Analysis",
+          "passed": false,
+          "message": "Should analyze code successfully",
+          "timestamp": 1754602483982
+        },
+        {
+          "test": "WebSocket Connection",
+          "passed": true,
+          "message": "WebSocket should connect successfully",
+          "timestamp": 1754602484024
+        },
+        {
+          "test": "Event Bus Integration",
+          "passed": false,
+          "message": "Should emit events to consciousness system",
+          "timestamp": 1754602484245
+        },
+        {
+          "test": "Self-Awareness Status",
+          "passed": true,
+          "message": "Should provide self-awareness status",
+          "timestamp": 1754602484246
+        },
+        {
+          "test": "Performance Metrics",
+          "passed": true,
+          "message": "Average generation time should be under 5 seconds",
+          "timestamp": 1754602484260
+        },
+        {
+          "test": "Health Check",
+          "passed": true,
+          "message": "Module should report healthy status",
+          "timestamp": 1754602484260
+        },
+        {
+          "test": "Cooldown Enforcement",
+          "passed": true,
+          "message": "Should enforce cooldown period",
+          "timestamp": 1754602484269
+        },
+        {
+          "test": "Hourly Limit Enforcement",
+          "passed": true,
+          "message": "Should enforce hourly limits",
+          "timestamp": 1754602484269
+        },
+        {
+          "test": "Recovery Instructions",
+          "passed": true,
+          "message": "Should provide recovery instructions",
+          "timestamp": 1754602484281
+        },
+        {
+          "test": "Graceful Degradation",
+          "passed": true,
+          "message": "Should handle invalid requests gracefully",
+          "timestamp": 1754602484281
+        }
+      ]
+    },
+    "production": {
+      "totalValidations": 20,
+      "passedValidations": 19,
+      "failedValidations": 1,
+      "readinessScore": 95,
+      "performanceMetrics": {
+        "totalRequests": 15,
+        "successful": 15,
+        "failed": 0,
+        "successRate": 100,
+        "totalTime": 136,
+        "avgResponseTime": 9.066666666666666,
+        "requestsPerSecond": 110.29411764705883
+      },
+      "details": [
+        {
+          "test": "Consolidated Module Exists",
+          "passed": true,
+          "details": null,
+          "timestamp": 1754602484283
+        },
+        {
+          "test": "Redirect File ./SelfCodingModuleFixed.cjs",
+          "passed": true,
+          "details": null,
+          "timestamp": 1754602484283
+        },
+        {
+          "test": "Redirect Configuration ./SelfCodingModuleFixed.cjs",
+          "passed": true,
+          "details": null,
+          "timestamp": 1754602484285
+        },
+        {
+          "test": "Redirect File ./AutonomousCodeRefactoringSystem.cjs",
+          "passed": true,
+          "details": null,
+          "timestamp": 1754602484286
+        },
+        {
+          "test": "Redirect Configuration ./AutonomousCodeRefactoringSystem.cjs",
+          "passed": true,
+          "details": null,
+          "timestamp": 1754602484286
+        },
+        {
+          "test": "Dependency ws",
+          "passed": true,
+          "details": null,
+          "timestamp": 1754602484287
+        },
+        {
+          "test": "Dependency node-cron",
+          "passed": true,
+          "details": null,
+          "timestamp": 1754602484288
+        },
+        {
+          "test": "Dependency winston",
+          "passed": true,
+          "details": null,
+          "timestamp": 1754602484288
+        },
+        {
+          "test": "Authorization Security",
+          "passed": false,
+          "details": null,
+          "timestamp": 1754602484303
+        },
+        {
+          "test": "Rate Limiting Security",
+          "passed": true,
+          "details": null,
+          "timestamp": 1754602484303
+        },
+        {
+          "test": "Load Test Success Rate",
+          "passed": true,
+          "details": null,
+          "timestamp": 1754602484439
+        },
+        {
+          "test": "Average Response Time",
+          "passed": true,
+          "details": null,
+          "timestamp": 1754602484439
+        },
+        {
+          "test": "Requests Per Second",
+          "passed": true,
+          "details": null,
+          "timestamp": 1754602484439
+        },
+        {
+          "test": "Self-Awareness Status",
+          "passed": true,
+          "details": null,
+          "timestamp": 1754602484447
+        },
+        {
+          "test": "Integration Status",
+          "passed": true,
+          "details": null,
+          "timestamp": 1754602484448
+        },
+        {
+          "test": "WebSocket Connections",
+          "passed": true,
+          "details": null,
+          "timestamp": 1754602485476
+        },
+        {
+          "test": "WebSocket Message Handling",
+          "passed": true,
+          "details": null,
+          "timestamp": 1754602485477
+        },
+        {
+          "test": "Memory Leak Prevention",
+          "passed": true,
+          "details": null,
+          "timestamp": 1754602485562
+        },
+        {
+          "test": "Graceful Error Handling",
+          "passed": true,
+          "details": null,
+          "timestamp": 1754602485570
+        },
+        {
+          "test": "Recovery Instructions",
+          "passed": true,
+          "details": null,
+          "timestamp": 1754602485570
+        }
+      ]
+    },
+    "overall": {
+      "overallScore": 91.25,
+      "comprehensiveScore": 87.5,
+      "productionScore": 95,
+      "totalDuration": 1751,
+      "timestamp": "2025-08-07T21:34:45.571Z"
+    }
+  },
+  "summary": {
+    "overallScore": 91.25,
+    "recommendation": "DEPLOY_TO_PRODUCTION",
+    "deploymentReady": true
+  }
+}

@@ -24,3 +24,14 @@ export const sigil_verifications_total = new client.Counter({
   name: 'sigil_verifications_total',
   help: 'Total sigil verifications'
 });
+
+// Quota metrics for self-coding
+export const selfcoding_quota_used = new client.Gauge({
+  name: 'selfcoding_quota_used',
+  help: 'Self-coding requests used in current quota window'
+});
+
+export const selfcoding_quota_limit = new client.Gauge({
+  name: 'selfcoding_quota_limit',
+  help: 'Self-coding quota limit per hour'
+});
