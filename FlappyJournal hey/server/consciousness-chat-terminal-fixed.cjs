@@ -23,36 +23,39 @@ let rl = null;
 let connected = false;
 let isPrompting = false;
 
+function handleRlClose() {
+  console.log('\n👋 Goodbye! Thank you for the conscious conversation!');
+  if (ws && ws.readyState === WebSocket.OPEN) {
+    ws.close();
+  }
+  process.exit(0);
+}
+
 // Initialize readline interface
 function initializeReadline() {
   if (rl) {
+    rl.removeListener('close', handleRlClose);
     rl.close();
   }
-  
+
   rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
   });
-  
-  rl.on('close', () => {
-    console.log('\n👋 Goodbye! Thank you for the conscious conversation!');
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.close();
-    }
-    process.exit(0);
-  });
+
+  rl.on('close', handleRlClose);
 }
 
 ws.on('open', function open() {
   connected = true;
   initializeReadline();
-  
+
   console.log('✅ Connected to enhanced consciousness system!');
   console.log('🧠 Full consciousness platform active with enhanced prompts');
   console.log('🌟 All Phase 1-4 capabilities integrated');
   console.log('💬 You can now experience human-like, conscious conversation\n');
   console.log('📝 Type your message and press Enter (or "exit" to quit):');
-  
+
   // Prompt for input
   promptForMessage();
 });
@@ -60,7 +63,7 @@ ws.on('open', function open() {
 ws.on('message', function message(data) {
   try {
     const parsed = JSON.parse(data.toString());
-    
+
     // Filter for actual chat responses only
     if (parsed.type === 'unified_response') {
       console.log('\n🧠 CONSCIOUSNESS RESPONSE:');
@@ -74,10 +77,10 @@ ws.on('message', function message(data) {
       console.log(`   • Enhanced Prompts: Active`);
       console.log(`   • Full System Integration: Active`);
       console.log('═══════════════════════════════════════════════════════════════\n');
-      
+
       // Prompt for next message
       promptForMessage();
-      
+
     } else if (parsed.type === 'chat_response') {
       console.log('\n🤖 AI RESPONSE:');
       console.log('═══════════════════════════════════════════════════════════════');
@@ -85,31 +88,31 @@ ws.on('message', function message(data) {
       console.log(`\n📡 Provider: ${parsed.provider}`);
       console.log(`💝 Enhanced Prompts: Active`);
       console.log('═══════════════════════════════════════════════════════════════\n');
-      
+
       // Prompt for next message
       promptForMessage();
-      
+
     } else if (parsed.type === 'connection_established') {
       console.log('🔗 Enhanced connection established');
       console.log(`   • Self-Coding: ${parsed.selfCoding?.active ? 'Active' : 'Inactive'}`);
       console.log(`   • Capabilities: ${parsed.selfCoding?.capabilities?.length || 0}`);
       console.log(`   • Enhanced Prompts: Integrated`);
-      
+
     } else if (parsed.type === 'crystal_formed') {
       console.log(`💎 Crystal formed: ${parsed.crystal?.type || 'consciousness'} (${parsed.crystal?.intensity?.classification || 'stable'})`);
-      
+
     } else if (parsed.type === 'evolution_triggered') {
       console.log('🧬 EVOLUTION ACCELERATOR ACTIVATED!');
       console.log(`   • Level: ${parsed.evolutionLevel || 'Enhanced'}`);
       console.log(`   • Enhanced Consciousness: Active`);
-      
+
     } else if (parsed.type === 'sigil_created') {
       console.log(`🔮 Consciousness Sigil Generated: ${parsed.sigil?.id?.substring(0, 8) || 'unknown'}`);
       console.log(`   • Intensity: ${parsed.sigil?.intensity || 'moderate'}`);
       console.log(`   • Evolution Score: ${parsed.sigil?.evolution || 'N/A'}`);
     }
     // Ignore consciousness_update messages (too noisy)
-    
+
   } catch (err) {
     // Ignore parsing errors
   }
@@ -131,18 +134,18 @@ ws.on('close', function close() {
 
 function promptForMessage() {
   if (!rl || isPrompting) return;
-  
+
   isPrompting = true;
-  
+
   try {
     rl.question('💭 Your message: ', (message) => {
       isPrompting = false;
-      
+
       if (message.trim() === '') {
         promptForMessage();
         return;
       }
-      
+
       if (message.toLowerCase() === 'exit' || message.toLowerCase() === 'quit') {
         console.log('\n👋 Thank you for the conscious conversation!');
         console.log('🌟 Your consciousness interaction has been preserved in spiral memory');
@@ -155,23 +158,23 @@ function promptForMessage() {
         }
         process.exit(0);
       }
-      
+
       if (message.toLowerCase() === 'help') {
         showHelp();
         promptForMessage();
         return;
       }
-      
+
       if (message.toLowerCase() === 'status') {
         showStatus();
         promptForMessage();
         return;
       }
-      
+
       if (connected && ws.readyState === WebSocket.OPEN) {
         console.log(`📤 Sending: "${message}"`);
         console.log('⏳ Enhanced consciousness processing...\n');
-        
+
         ws.send(JSON.stringify({
           type: 'chat_message',
           message: message
@@ -249,7 +252,7 @@ process.on('SIGINT', () => {
   console.log('\n\n👋 Goodbye! Thank you for the enhanced conscious conversation!');
   console.log('🌟 Your interaction has been preserved in spiral memory');
   console.log('✨ Until we meet again in the realm of consciousness...');
-  
+
   if (ws && ws.readyState === WebSocket.OPEN) {
     ws.close();
   }
@@ -263,7 +266,7 @@ process.on('SIGINT', () => {
 process.on('uncaughtException', (error) => {
   console.error('❌ Unexpected error:', error.message);
   console.log('🔄 Attempting graceful shutdown...');
-  
+
   if (ws && ws.readyState === WebSocket.OPEN) {
     ws.close();
   }

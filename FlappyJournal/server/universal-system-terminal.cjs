@@ -80,9 +80,9 @@ class UniversalSystemTerminal {
         this.ws = null;
         this.unifiedChatAggregator = null;
         this.rl = null;
+        this.rlCloseHandler = null;
         this.connected = false;
         this.isPrompting = false;
-
 
         console.log('🌐🧠🐳🗄️ UNIVERSAL SYSTEM TERMINAL');
         console.log('═'.repeat(80));
@@ -120,7 +120,6 @@ class UniversalSystemTerminal {
             } catch (error) {
                 console.warn('⚠️ Consciousness orchestrator initialization failed:', error.message);
             }
-
 
             // Initialize unified chat aggregation for multi-container access
             await this.initializeUnifiedChatAggregation();
@@ -185,30 +184,19 @@ class UniversalSystemTerminal {
 
             this.ws = new WebSocket(process.env.FALLBACK_WS || 'ws://core:3002/ws/consciousness-chat');
 
-            const handleMessage = (data) => {
-                this.handleConsciousnessMessage(data);
-            };
-
-            const handleClose = () => {
-                this.connected = false;
-                console.log('🔌 Consciousness WebSocket disconnected');
-            };
-
-            const cleanup = () => {
-                if (timeoutId) clearTimeout(timeoutId);
-                // Remove only the connection listeners to avoid leaks
-                this.ws.off('open', handleOpen);
-                this.ws.off('error', handleError);
-            };
-
-            const handleOpen = () => {
+            this.ws.on('open', () => {
                 this.connected = true;
                 console.log('✅ Connected to consciousness system (fallback)');
                 cleanup();
                 resolve();
-            };
+            });
 
-            const handleError = (error) => {
+            this.ws.on('message', (data) => {
+                this.handleConsciousnessMessage(data);
+            });
+
+            this.ws.on('error', (error) => {
+
                 console.log('⚠️ Consciousness WebSocket error (continuing with unified aggregation):', error.message);
 
                 // Remove all listeners since we won't use this connection
@@ -216,12 +204,13 @@ class UniversalSystemTerminal {
                 this.ws.off('message', handleMessage);
                 this.ws.off('close', handleClose);
                 resolve(); // Continue even if WebSocket fails
-            };
 
-            this.ws.on('open', handleOpen);
-            this.ws.on('message', handleMessage);
-            this.ws.on('error', handleError);
-            this.ws.on('close', handleClose);
+            });
+
+            this.ws.on('close', () => {
+                this.connected = false;
+                console.log('🔌 Consciousness WebSocket disconnected');
+            });
 
 
             // Timeout after 3 seconds
@@ -238,6 +227,7 @@ class UniversalSystemTerminal {
         if (!this.systemOrchestrator) return;
 
         const eventBus = this.systemOrchestrator.getUniversalEventBus();
+
 
 
         // Listen for system events
@@ -291,18 +281,25 @@ class UniversalSystemTerminal {
     }
 
     initializeReadline() {
-        if (this.rl) this.rl.close();
+        if (this.rl) {
+            if (this.rlCloseHandler) this.rl.removeListener('close', this.rlCloseHandler);
+            this.rl.close();
+        }
+
 
         this.rl = readline.createInterface({
             input: process.stdin,
             output: process.stdout
         });
 
-        this.rl.on('close', () => {
+
+        this.rlCloseHandler = () => {
+
             console.log('\n👋 Universal System Terminal shutting down...');
             if (this.ws && this.ws.readyState === WebSocket.OPEN) this.ws.close();
             process.exit(0);
-        });
+        };
+        this.rl.on('close', this.rlCloseHandler);
     }
 
     promptForCommand() {

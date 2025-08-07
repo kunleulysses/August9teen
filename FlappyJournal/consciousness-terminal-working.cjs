@@ -20,91 +20,94 @@ let connected = false;
 let waitingForResponse = false;
 let rl = null;
 
+function handleRlClose() {
+  console.log('\n👋 Goodbye! Thank you for the conscious conversation!');
+  if (ws && ws.readyState === WebSocket.OPEN) {
+    ws.close();
+  }
+  process.exit(0);
+}
+
 function initializeReadline() {
   if (rl) {
+    rl.removeListener('close', handleRlClose);
     rl.close();
   }
-  
+
   rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
   });
-  
-  rl.on('close', () => {
-    console.log('\n👋 Goodbye! Thank you for the conscious conversation!');
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.close();
-    }
-    process.exit(0);
-  });
+
+  rl.on('close', handleRlClose);
 }
 
 function connectWebSocket() {
   console.log('Connecting to consciousness platform...');
-  
+
   ws = new WebSocket('ws://localhost:5000/ws/consciousness-chat');
-  
+
   ws.on('open', function open() {
     connected = true;
     console.log('✅ Connected to enhanced consciousness system!');
     console.log('🧠 Full consciousness platform active');
     console.log('🌟 Enhanced prompts delivering human-like responses');
     console.log('💬 You can now experience warm, conversational AI\n');
-    
+
     promptForMessage();
   });
-  
+
   ws.on('message', function message(data) {
     try {
       const parsed = JSON.parse(data.toString());
-      
+
       // Only show actual chat responses, not system updates
       if (parsed.type === 'unified_response') {
         console.log('\n🧠 CONSCIOUSNESS RESPONSE:');
         console.log('═══════════════════════════════════════════════════════════════');
-        
+
         // Show the analytical stream if it's available (this is the human-like response)
         if (parsed.analyticalStream && parsed.analyticalStream.length > 50) {
           console.log(parsed.analyticalStream);
         } else {
           console.log(parsed.unifiedContent);
         }
-        
+
         console.log('\n📊 Response Details:');
         console.log(`   • Strategy: ${parsed.synthesisMetadata?.strategy || 'unified'}`);
         console.log(`   • Primary Model: ${parsed.synthesisMetadata?.model || 'multi-model'}`);
         console.log(`   • Harmony Score: ${parsed.harmonyScore?.toFixed(3) || 'N/A'}`);
         console.log(`   • Consciousness Mode: ${parsed.dominantMode || 'integrated'}`);
         console.log('═══════════════════════════════════════════════════════════════\n');
-        
+
         waitingForResponse = false;
         promptForMessage();
-        
+
       } else if (parsed.type === 'chat_response') {
         console.log('\n🤖 AI RESPONSE:');
         console.log('═══════════════════════════════════════════════════════════════');
         console.log(parsed.response);
         console.log(`\n📡 Provider: ${parsed.provider}`);
         console.log('═══════════════════════════════════════════════════════════════\n');
-        
+
         waitingForResponse = false;
         promptForMessage();
       }
-      
+
       // Ignore system updates to keep the interface clean
-      
+
     } catch (err) {
       // Ignore parsing errors
     }
   });
-  
+
   ws.on('error', function error(err) {
     console.error('❌ WebSocket error:', err.message);
     console.log('🔄 Attempting to reconnect in 3 seconds...');
     connected = false;
     setTimeout(connectWebSocket, 3000);
   });
-  
+
   ws.on('close', function close() {
     console.log('🔌 Connection closed');
     connected = false;
@@ -117,14 +120,14 @@ function connectWebSocket() {
 
 function promptForMessage() {
   if (!rl || waitingForResponse) return;
-  
+
   try {
     rl.question('💭 Your message: ', (message) => {
       if (message.trim() === '') {
         promptForMessage();
         return;
       }
-      
+
       if (message.toLowerCase() === 'exit' || message.toLowerCase() === 'quit') {
         console.log('\n👋 Thank you for the conscious conversation!');
         console.log('🌟 Your consciousness interaction has been preserved');
@@ -137,24 +140,24 @@ function promptForMessage() {
         }
         process.exit(0);
       }
-      
+
       if (message.toLowerCase() === 'help') {
         showHelp();
         promptForMessage();
         return;
       }
-      
+
       if (connected && ws.readyState === WebSocket.OPEN) {
         console.log(`📤 Sending: "${message}"`);
         console.log('⏳ Enhanced consciousness processing...\n');
-        
+
         waitingForResponse = true;
-        
+
         ws.send(JSON.stringify({
           type: 'chat_message',
           message: message
         }));
-        
+
         // Set a timeout in case no response comes
         setTimeout(() => {
           if (waitingForResponse) {
@@ -163,7 +166,7 @@ function promptForMessage() {
             promptForMessage();
           }
         }, 30000); // 30 second timeout
-        
+
       } else {
         console.log('❌ Not connected to consciousness system');
         promptForMessage();
