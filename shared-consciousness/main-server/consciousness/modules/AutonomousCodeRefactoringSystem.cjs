@@ -1,10 +1,33 @@
-import { EventEmitter } from 'events';
-import eventBus from '../core/ConsciousnessEventBus.cjs';
-import { child as createLogger } from '../../../../server/consciousness/utils/logger.cjs';
+const { EventEmitter } = require('events');
+// Lazy load dependencies to handle missing modules gracefully
+let eventBus, createLogger;
+
+try {
+    eventBus = require('../core/ConsciousnessEventBus.cjs');
+} catch (error) {
+    // Fallback event bus
+    eventBus = {
+        on: () => {},
+        emit: () => {},
+        off: () => {}
+    };
+}
+
+try {
+    createLogger = require('../../../../server/consciousness/utils/logger.cjs').child;
+} catch (error) {
+    // Fallback logger
+    createLogger = (options) => ({
+        info: console.log,
+        warn: console.warn,
+        error: console.error,
+        debug: console.debug
+    });
+}
 
 const log = createLogger({ module: 'AutonomousCodeRefactoringSystem' });
 
-export default class AutonomousCodeRefactoringSystem extends EventEmitter {
+class AutonomousCodeRefactoringSystem extends EventEmitter {
   constructor(selfCodingModule, codeAnalyzer) {
     super();
     this.name = 'AutonomousCodeRefactoringSystem';
@@ -274,3 +297,5 @@ export default class AutonomousCodeRefactoringSystem extends EventEmitter {
     };
   }
 }
+
+module.exports = AutonomousCodeRefactoringSystem;

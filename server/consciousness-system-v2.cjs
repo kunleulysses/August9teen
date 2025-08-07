@@ -1,0 +1,1 @@
+../FlappyJournal/server/consciousness-system-v2.cjs
