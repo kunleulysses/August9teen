@@ -851,6 +851,23 @@ module.exports = ${purpose.replace(/[^a-zA-Z0-9]/g, '')};`,
     }
 
     /**
+     * Handle code analysis (compatibility method for integration tests)
+     */
+    async handleCodeAnalysis(code, options = {}) {
+        try {
+            return await this.analyzeCode(code, options);
+        } catch (error) {
+            this.log.error('Code analysis failed:', error.message);
+            return {
+                success: false,
+                error: error.message,
+                fallback: true,
+                timestamp: Date.now()
+            };
+        }
+    }
+
+    /**
      * Handle code optimization requests
      */
     async handleCodeOptimization(request) {
@@ -875,9 +892,127 @@ module.exports = ${purpose.replace(/[^a-zA-Z0-9]/g, '')};`,
         }
     }
 
+    /**
+     * Set event bus for integration with consciousness systems
+     */
+    setEventBus(eventBus) {
+        this.eventBus = eventBus;
+        this.log.info('🔗 Event bus connected to SelfCodingModule');
+        
+        // Register event listeners for integration
+        if (eventBus && eventBus.on) {
+            eventBus.on('code:generation:request', this.handleCodeGenerationRequest.bind(this));
+            eventBus.on('code:analysis:request', this.handleCodeAnalysisRequest.bind(this));
+            eventBus.on('code:optimization:request', this.handleCodeOptimization.bind(this));
+        }
+    }
+
+    /**
+     * Generate code with auto-integration (consciousness system compatibility)
+     */
+    async generateWithAutoIntegration(type, description, options = {}) {
+        try {
+            this.log.info(`🤖 Self-coding with auto-integration: ${type}`);
+            
+            const result = await this.generateCode(description, {
+                ...options,
+                type,
+                autoIntegration: true
+            });
+            
+            // Emit integration event
+            if (this.eventBus && this.eventBus.emit) {
+                this.eventBus.emit('code:generated:auto-integration', {
+                    type,
+                    description,
+                    result,
+                    timestamp: Date.now()
+                });
+            }
+            
+            return result;
+        } catch (error) {
+            this.log.error(`Auto-integration generation failed for ${type}:`, error.message);
+            throw error;
+        }
+    }
+
+    /**
+     * Handle code generation requests from event bus
+     */
+    async handleCodeGenerationRequest(request) {
+        try {
+            const result = await this.generateCode(request.description, request.options);
+            
+            if (this.eventBus && this.eventBus.emit) {
+                this.eventBus.emit('code:generation:complete', {
+                    requestId: request.id,
+                    result
+                });
+            }
+            
+            return result;
+        } catch (error) {
+            this.log.error('Code generation request failed:', error.message);
+            
+            if (this.eventBus && this.eventBus.emit) {
+                this.eventBus.emit('code:generation:error', {
+                    requestId: request.id,
+                    error: error.message
+                });
+            }
+            
+            throw error;
+        }
+    }
+
+    /**
+     * Get integration status for consciousness systems
+     */
+    getIntegrationStatus() {
+        return {
+            eventBusConnected: !!this.eventBus,
+            autoIntegrationEnabled: true,
+            capabilities: this.capabilities,
+            isInitialized: this.isInitialized,
+            generationsThisHour: this.generationsThisHour,
+            lastGenerationTime: this.lastGenerationTime.size > 0 ? Math.max(...this.lastGenerationTime.values()) : null
+        };
+    }
+
+    /**
+     * Safe self-coding method for error isolation
+     */
+    async safeSelfCoding(request) {
+        try {
+            return await this.generateWithAutoIntegration(
+                request.type || 'utility',
+                request.description || 'Generate utility code',
+                request.options || {}
+            );
+        } catch (error) {
+            this.log.error('Safe self-coding failed:', error.message);
+            // Return safe fallback instead of throwing
+            return {
+                success: false,
+                error: error.message,
+                fallback: true,
+                code: '// Safe fallback code generation failed',
+                timestamp: Date.now()
+            };
+        }
+    }
+
     shutdown() {
         this.log.info('🤖 SelfCodingModule Shutting Down');
         this.isInitialized = false;
+        
+        // Clean up event bus listeners
+        if (this.eventBus && this.eventBus.removeAllListeners) {
+            this.eventBus.removeAllListeners('code:generation:request');
+            this.eventBus.removeAllListeners('code:analysis:request');
+            this.eventBus.removeAllListeners('code:optimization:request');
+        }
         
         // Clean up any active processes
         this.activeAnalysis.clear();
