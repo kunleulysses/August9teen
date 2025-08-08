@@ -8,8 +8,8 @@ try {
   }
   const isWin = process.platform === 'win32';
   const bin = isWin ? 'prisma.cmd' : 'prisma';
-  const cmd = process.platform === 'win32' ? bin : `./node_modules/.bin/${bin}`;
-  const result = spawnSync(cmd, ['db', 'push'], { stdio: 'inherit', shell: process.platform === 'win32' });
+  const cmd = isWin ? bin : `./node_modules/.bin/${bin}`;
+  const result = spawnSync(cmd, ['db', 'push'], { stdio: 'inherit', shell: isWin });
   process.exit(result.status || 0);
 } catch (e) {
   console.error('[postinstall] Prisma push failed:', e.message);
