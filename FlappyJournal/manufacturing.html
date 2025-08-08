@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manufacturing & Logistics - Featherweight Spiral Memory</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Times New Roman', serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            color: #ffffff;
+            line-height: 1.6;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 80px 20px; }
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        .back-btn:hover { background: rgba(255, 255, 255, 0.2); }
+        .hero { text-align: center; margin-bottom: 80px; }
+        .hero h1 { font-size: 48px; margin-bottom: 20px; letter-spacing: 2px; }
+        .hero p { font-size: 20px; color: rgba(255, 255, 255, 0.8); }
+        .use-case {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 40px;
+            transition: all 0.3s ease;
+        }
+        .use-case:hover { transform: translateY(-5px); border-color: rgba(255, 255, 255, 0.2); }
+        .use-case h3 { font-size: 24px; margin-bottom: 16px; color: #40e0ff; }
+        .use-case p { margin-bottom: 16px; }
+        .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px; }
+        .metric { background: rgba(64, 224, 255, 0.1); padding: 20px; border-radius: 8px; text-align: center; }
+        .metric-value { font-size: 32px; font-weight: bold; color: #40e0ff; }
+        .metric-label { font-size: 14px; color: rgba(255, 255, 255, 0.7); }
+    </style>
+</head>
+<body>
+    <a href="javascript:history.back()" class="back-btn">← Back</a>
+    
+    <div class="container">
+        <div class="hero">
+            <h1>🏭 Manufacturing & Logistics</h1>
+            <p>Spiral Memory transforms industrial operations with predictive intelligence and autonomous optimization</p>
+        </div>
+
+        <div class="use-case">
+            <h3>Predictive Supply Chain Management</h3>
+            <p>Spiral Memory analyzes global supply patterns, weather data, geopolitical events, and market fluctuations to predict disruptions weeks before they occur.</p>
+            <div class="metrics">
+                <div class="metric">
+                    <div class="metric-value">85%</div>
+                    <div class="metric-label">Disruption Prediction Accuracy</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">$2.3M</div>
+                    <div class="metric-label">Average Cost Savings per Plant</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="use-case">
+            <h3>Autonomous Quality Control</h3>
+            <p>Real-time defect detection using multi-sensor fusion, learning from every product that passes through the line to continuously improve accuracy.</p>
+            <div class="metrics">
+                <div class="metric">
+                    <div class="metric-value">99.7%</div>
+                    <div class="metric-label">Defect Detection Rate</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">60%</div>
+                    <div class="metric-label">Reduction in Manual Inspection</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="use-case">
+            <h3>Self-Optimizing Production Lines</h3>
+            <p>Production parameters automatically adjust based on material properties, environmental conditions, and demand forecasts to maximize efficiency and minimize waste.</p>
+            <div class="metrics">
+                <div class="metric">
+                    <div class="metric-value">23%</div>
+                    <div class="metric-label">Increase in Overall Equipment Effectiveness</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">18%</div>
+                    <div class="metric-label">Reduction in Material Waste</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="use-case">
+            <h3>Intelligent Warehouse Orchestration</h3>
+            <p>Dynamic routing and inventory placement that adapts to seasonal patterns, order velocity, and fulfillment priorities in real-time.</p>
+            <div class="metrics">
+                <div class="metric">
+                    <div class="metric-value">40%</div>
+                    <div class="metric-label">Faster Order Fulfillment</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">30%</div>
+                    <div class="metric-label">Reduction in Storage Costs</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

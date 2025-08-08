@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Self-Coding Admin</title>
+    <style>
+      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 24px; }
+      label { display:block; margin-top: 12px; font-weight: 600; }
+      input, textarea { width: 100%; max-width: 560px; padding: 8px; }
+      button { margin-top: 10px; padding: 8px 12px; }
+      .row { margin-bottom: 16px; }
+      pre { background:#f6f8fa; padding:12px; max-width: 800px; overflow:auto; }
+    </style>
+  </head>
+  <body>
+    <h1>Self-Coding Admin Console</h1>
+    <div class="row">
+      <label>API Key</label>
+      <input id="apiKey" type="password" placeholder="x-api-key" />
+      <button onclick="saveKey()">Save</button>
+      <small>Stored in localStorage for this browser</small>
+    </div>
+
+    <div class="row">
+      <h2>Metrics</h2>
+      <button onclick="getMetrics()">Fetch Metrics</button>
+      <pre id="metrics"></pre>
+    </div>
+
+    <div class="row">
+      <h2>Pending Approvals</h2>
+      <button onclick="getPending()">Refresh</button>
+      <pre id="pending"></pre>
+    </div>
+
+    <div class="row">
+      <h2>Approve Pending</h2>
+      <label>Request ID</label>
+      <input id="approveId" placeholder="sc_... or pv_..." />
+      <button onclick="approve()">Approve</button>
+      <pre id="approveOut"></pre>
+    </div>
+
+    <div class="row">
+      <h2>Trigger Rollback</h2>
+      <label>Target File (absolute path)</label>
+      <input id="rollbackTarget" placeholder="/abs/path/to/file" />
+      <label>Reason</label>
+      <input id="rollbackReason" placeholder="regression" />
+      <button onclick="rollback()">Rollback</button>
+      <pre id="rollbackOut"></pre>
+    </div>
+
+    <script>
+      const KEY = 'selfcoding_api_key';
+      const apiKeyInput = document.getElementById('apiKey');
+      apiKeyInput.value = localStorage.getItem(KEY) || '';
+
+      function saveKey() {
+        localStorage.setItem(KEY, apiKeyInput.value.trim());
+        alert('Saved');
+      }
+
+      async function getMetrics() {
+        const out = document.getElementById('metrics');
+        out.textContent = 'Loading...';
+        try {
+          const res = await fetch('/api/selfcoding/metrics', { headers: { 'x-api-key': localStorage.getItem(KEY) || '' } });
+          const data = await res.json();
+          out.textContent = JSON.stringify(data, null, 2);
+        } catch (e) { out.textContent = String(e); }
+      }
+
+      async function approve() {
+        const id = document.getElementById('approveId').value.trim();
+        const out = document.getElementById('approveOut');
+        out.textContent = 'Submitting...';
+        try {
+          const res = await fetch('/api/selfcoding/approve', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'x-api-key': localStorage.getItem(KEY) || '' },
+            body: JSON.stringify({ id })
+          });
+          out.textContent = JSON.stringify(await res.json(), null, 2);
+        } catch (e) { out.textContent = String(e); }
+      }
+
+      async function rollback() {
+        const target = document.getElementById('rollbackTarget').value.trim();
+        const reason = document.getElementById('rollbackReason').value.trim() || 'manual';
+        const out = document.getElementById('rollbackOut');
+        out.textContent = 'Submitting...';
+        try {
+          const res = await fetch('/api/selfcoding/regress', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'x-api-key': localStorage.getItem(KEY) || '' },
+            body: JSON.stringify({ target, reason })
+          });
+          out.textContent = JSON.stringify(await res.json(), null, 2);
+        } catch (e) { out.textContent = String(e); }
+      }
+
+      async function getPending() {
+        const out = document.getElementById('pending');
+        out.textContent = 'Loading...';
+        try {
+          const res = await fetch('/api/selfcoding/pending', { headers: { 'x-api-key': localStorage.getItem(KEY) || '' } });
+          const data = await res.json();
+          if (data && data.pending && Array.isArray(data.pending)) {
+            out.textContent = data.pending.map(p => `${p.id} :: ${p.purpose || ''} :: ${p.description || ''}`).join('\n') || '(none)';
+          } else {
+            out.textContent = JSON.stringify(data, null, 2);
+          }
+        } catch (e) { out.textContent = String(e); }
+      }
+    </script>
+  </body>
+  </html>

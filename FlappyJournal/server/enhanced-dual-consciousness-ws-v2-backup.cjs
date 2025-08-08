@@ -37,7 +37,7 @@ module.exports.createEnhancedDualConsciousnessWS = createEnhancedDualConsciousne
             awareness_level: consciousness.currentState?.awareness || 0.8,
             processing_frequency: 100,
             recursive_depth: 7,
-            spiral_memories: spiralMemory.memories?.size || 0
+            spiral_memories: (spiralMemory.memorySpiral && spiralMemory.memorySpiral.size) || 0
           },
           timestamp: new Date().toISOString()
         }));

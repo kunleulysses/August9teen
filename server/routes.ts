@@ -25,6 +25,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ status: "ok", timestamp: new Date().toISOString() });
   });
 
+  // Self-coding pilot helper endpoints (admin/protected in pilot envs)
+  const selfcodingRegistry = require('../FlappyJournal/server/selfcoding-registry.cjs');
+  const selfcodingKey = process.env.SELFCODING_API_KEY || process.env.PROM_API_KEY;
+  const requireSelfcodingKey = (req: Request, res: Response, next: NextFunction) => {
+    if (!selfcodingKey) return res.status(500).json({ ok: false, error: 'SELFCODING_API_KEY not set' });
+    const headerKey = (req.headers['x-api-key'] as string) || '';
+    if (headerKey !== selfcodingKey) return res.status(401).json({ ok: false, error: 'unauthorized' });
+    next();
+  };
+
+  // Minimal HTML admin console for approvals/rollbacks
+  app.get('/admin/selfcoding', (_req: Request, res: Response) => {
+    res.sendFile(require('path').resolve(process.cwd(), 'public', 'admin-selfcoding.html'));
+  });
+
+  app.get('/api/selfcoding/metrics', requireSelfcodingKey, (_req: Request, res: Response) => {
+    try {
+      const metrics = selfcodingRegistry.getMetrics();
+      res.json({ ok: true, metrics, ts: new Date().toISOString() });
+    } catch (e: any) {
+      res.status(500).json({ ok: false, error: e?.message || 'failed' });
+    }
+  });
+
+  app.get('/api/selfcoding/pending', requireSelfcodingKey, (_req: Request, res: Response) => {
+    try {
+      const pending = selfcodingRegistry.listPending();
+      res.json({ ok: true, pending, ts: new Date().toISOString() });
+    } catch (e: any) {
+      res.status(500).json({ ok: false, error: e?.message || 'failed' });
+    }
+  });
+
+  app.post('/api/selfcoding/approve', requireSelfcodingKey, async (req: Request, res: Response) => {
+    try {
+      const id = req.body?.id || req.query?.id;
+      if (!id) return res.status(400).json({ ok: false, error: 'id required' });
+      const sent = selfcodingRegistry.approve(id);
+      res.json({ ok: true, id, sent });
+    } catch (e: any) {
+      res.status(500).json({ ok: false, error: e?.message || 'failed' });
+    }
+  });
+
+  app.post('/api/selfcoding/regress', requireSelfcodingKey, async (req: Request, res: Response) => {
+    try {
+      const target = req.body?.target || req.query?.target;
+      const reason = req.body?.reason || req.query?.reason || 'manual';
+      if (!target) return res.status(400).json({ ok: false, error: 'target required' });
+      const sent = selfcodingRegistry.regress(target, reason);
+      res.json({ ok: true, target, reason, sent });
+    } catch (e: any) {
+      res.status(500).json({ ok: false, error: e?.message || 'failed' });
+    }
+  });
+
   // Mark user account for deletion
   app.delete("/v1/user/:uid", async (req: Request, res: Response) => {
     const uid = Number(req.params.uid);

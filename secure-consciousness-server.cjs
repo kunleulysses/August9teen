@@ -17,6 +17,10 @@ const server = http.createServer((req, res) => {
     const allowedFiles = {
         '/': 'FlappyJournal/new-featherweight-improved.html',
         '/new-featherweight-improved.html': 'FlappyJournal/new-featherweight-improved.html',
+        '/manufacturing.html': 'FlappyJournal/manufacturing.html',
+        '/finance.html': 'FlappyJournal/finance.html',
+        '/blockchain.html': 'FlappyJournal/blockchain.html',
+        '/robotics.html': 'FlappyJournal/robotics.html',
         '/realistic_human_heart.glb': 'FlappyJournal/realistic_human_heart.glb',
         '/server/public/9.png': 'FlappyJournal/server/public/9.png',
         '/server/public/featherweight-logo.png': 'FlappyJournal/server/public/featherweight-logo.png',

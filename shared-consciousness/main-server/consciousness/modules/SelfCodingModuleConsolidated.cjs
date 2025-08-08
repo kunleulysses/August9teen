@@ -294,6 +294,17 @@ class SelfCodingModule extends EventEmitter {
         
         // Initialize metrics to prevent undefined errors
         this.metrics = { selfcoding_history_size: null, code_generation_failures_total: null };
+
+        // Pilot metrics and approval state
+        this.pendingApprovals = new Map(); // id -> { project, request, testResult, scanResult, createdAt }
+        this.requestStartTimes = new Map(); // id -> timestamp
+        this.metricsExt = {
+            successCount: 0,
+            errorCount: 0,
+            integratedCount: 0,
+            rollbackCount: 0,
+            integrationDurations: [] // ms
+        };
     }
 
     async initialize(eventBus) {
@@ -1137,6 +1148,22 @@ module.exports = ${purpose.replace(/[^a-zA-Z0-9]/g, '')};`,
     }
 
     /**
+     * Pilot metrics: success/error/integrated/rollback counts and avg time to integrate
+     */
+    getPilotMetrics() {
+        const times = this.metricsExt.integrationDurations;
+        const avg = times.length ? (times.reduce((a,b)=>a+b,0) / times.length) : 0;
+        return {
+            successCount: this.metricsExt.successCount,
+            errorCount: this.metricsExt.errorCount,
+            integratedCount: this.metricsExt.integratedCount,
+            rollbackCount: this.metricsExt.rollbackCount,
+            avgIntegrationMs: Math.round(avg),
+            samples: times.length
+        };
+    }
+
+    /**
      * Validate generation request
      */
     async validateGenerationRequest(request) {
@@ -1309,6 +1336,47 @@ module.exports = ${purpose.replace(/[^a-zA-Z0-9]/g, '')};`,
             eventBus.on('code:generation:request', this.handleCodeGenerationRequest.bind(this));
             eventBus.on('code:analysis:request', this.handleCodeAnalysisRequest.bind(this));
             eventBus.on('code:optimization:request', this.handleCodeOptimization.bind(this));
+
+            // Metrics + lifecycle listeners
+            eventBus.on('code:generation:request', (req) => {
+                if (req && req.id) this.requestStartTimes.set(req.id, Date.now());
+            });
+            eventBus.on('code:generation:complete', (p) => {
+                this.metricsExt.successCount++;
+            });
+            eventBus.on('code:generation:error', (p) => {
+                this.metricsExt.errorCount++;
+            });
+            eventBus.on('code:integrated', (p) => {
+                this.metricsExt.integratedCount++;
+                const id = p?.request?.id || p?.requestId;
+                const started = id ? this.requestStartTimes.get(id) : undefined;
+                if (started) {
+                    const dt = Date.now() - started;
+                    this.metricsExt.integrationDurations.push(dt);
+                    if (this.metricsExt.integrationDurations.length > 1000) this.metricsExt.integrationDurations.shift();
+                }
+            });
+            eventBus.on('autonomy:rollback:done', () => {
+                this.metricsExt.rollbackCount++;
+            });
+
+            // Approval / rollback control
+            eventBus.on('code:approval:grant', async (msg = {}) => {
+                try {
+                    const id = msg.id;
+                    if (!id || !this.pendingApprovals.has(id)) return;
+                    const entry = this.pendingApprovals.get(id);
+                    entry.request = { ...(entry.request || {}), approved: true };
+                    this.pendingApprovals.delete(id);
+                    await this.integrateGeneratedCode(entry.project, entry.request, { testResult: entry.testResult, scanResult: entry.scanResult });
+                } catch (e) {
+                    this.log.warn('Approval grant failed:', e.message);
+                }
+            });
+            eventBus.on('autonomy:regression', (evt = {}) => {
+                try { this.autoRollback(evt); } catch (_) {}
+            });
         }
     }
 
@@ -1399,6 +1467,29 @@ module.exports = ${purpose.replace(/[^a-zA-Z0-9]/g, '')};`,
             
             this._inIntegration = true;
             this.log.info('Integrating generated code into system');
+
+            // Enforce tests/static scan pass or require approval
+            const requireApprovalEnv = String(process.env.SELFCODING_REQUIRE_APPROVAL || 'false').toLowerCase();
+            const requireApproval = (requireApprovalEnv === 'true' || requireApprovalEnv === '1');
+            const testsPassed = !!(testResult && testResult.passed);
+            const scanPassed = !!(scanResult && scanResult.passed);
+            const alreadyApproved = !!(originalRequest && originalRequest.approved === true);
+            if (!(testsPassed && scanPassed) || (requireApproval && !alreadyApproved)) {
+                // Create PR artifacts to surface details but do not integrate
+                try { await this.writePrArtifacts(generatedProject, originalRequest, { testResult, scanResult }); } catch (_) {}
+                const id = originalRequest?.id || `pending_${Date.now()}`;
+                this.pendingApprovals.set(id, { project: generatedProject, request: originalRequest || { id }, testResult, scanResult, createdAt: Date.now() });
+                if (this.eventBus && this.eventBus.emit) {
+                    this.eventBus.emit('code:approval:required', {
+                        id,
+                        reason: (!testsPassed || !scanPassed) ? 'tests_or_scan_failed' : 'approval_required',
+                        testResult,
+                        scanResult,
+                        request: originalRequest
+                    });
+                }
+                return { success: true, integrated: false, pendingApproval: true };
+            }
 
             const autoPR = process.env.AUTO_PR === '1' || originalRequest?.autoPR === true;
             const dryRun = process.env.DRY_RUN === '1' || originalRequest?.dryRun === true;

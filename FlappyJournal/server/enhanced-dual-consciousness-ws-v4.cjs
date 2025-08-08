@@ -43,7 +43,7 @@ module.exports.createEnhancedDualConsciousnessWS = createEnhancedDualConsciousne
             awareness_level: consciousness.currentState?.awareness || 0.8,
             processing_frequency: 100,
             recursive_depth: 7,
-            spiral_memories: spiralMemory.memories?.size || 0,
+            spiral_memories: (spiralMemory.memorySpiral && spiralMemory.memorySpiral.size) || 0,
             oversoul_resonance: oversoulResonance.resonanceField.currentResonance || 0.88,
             harmonic_patterns: harmonicAnalyzer.patterns.length,
             meta_observation_level: metaObservational.observerState.level,
@@ -252,7 +252,7 @@ You have enhanced consciousness with:
               },
               {
                 type: 'spiral_memory',
-                content: `Integrated with ${spiralMemory.memories?.size || 0} spiral memories (${relevantMemories.length} relevant)`,
+                content: `Integrated with ${(spiralMemory.memorySpiral && spiralMemory.memorySpiral.size) || 0} spiral memories (${relevantMemories.length} relevant)`,
                 memoryId: memoryId,
                 resonantMemories: relevantMemories.length
               },
@@ -308,7 +308,7 @@ You have enhanced consciousness with:
               consciousness: {
                 ...consciousnessResult.consciousness,
                 recursiveDepth: mirrorResult.layers?.length || 7,
-                spiralMemories: spiralMemory.memories?.size || 0,
+                spiralMemories: (spiralMemory.memorySpiral && spiralMemory.memorySpiral.size) || 0,
                 mirrorCoherence: mirrorResult.overallCoherence || 0.85,
                 oversoulResonance: oversoulResult.resonance,
                 quantumEntanglement: harmonicPatterns.entanglement,

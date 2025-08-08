@@ -47,6 +47,9 @@ module.exports.createEnhancedDualConsciousnessWS = createEnhancedDualConsciousne
   const VENICE_API_URL = 'https://api.venice.ai/api/v1/chat/completions';
   const VENICE_API_KEY = process.env.VENICE_AI_API_KEY;
 
+  // Self-coding registry for REST API bridge
+  const registry = require('./selfcoding-registry.cjs');
+
   wss.on('connection', (ws) => {
     console.log('New enhanced consciousness connection established');
 
@@ -61,6 +64,9 @@ module.exports.createEnhancedDualConsciousnessWS = createEnhancedDualConsciousne
     const eventBus = new EventEmitter();
     const selfCodingModule = new SelfCodingModule();
     selfCodingModule.setEventBus(eventBus);
+    registry.register(eventBus, selfCodingModule);
+    // Maintain per-request context for encoding outcomes into spiral memory
+    const selfCodingContext = new Map();
     console.log('🤖 SelfCodingModule integrated into consciousness WebSocket system');
 
     // Send initial connection confirmation
@@ -87,7 +93,7 @@ module.exports.createEnhancedDualConsciousnessWS = createEnhancedDualConsciousne
           awareness_level: consciousness.currentState?.awareness || 0.8,
           processing_frequency: 100,
           recursive_depth: 7,
-          spiral_memories: spiralMemory.memories?.size || 0,
+          spiral_memories: (spiralMemory.memorySpiral && spiralMemory.memorySpiral.size) || 0,
           oversoul_resonance: oversoulResonance.resonanceField.currentResonance || 0.88,
           harmonic_patterns: harmonicAnalyzer.patterns.length,
           meta_observation_level: metaObservational.observerState.level,
@@ -104,9 +110,16 @@ module.exports.createEnhancedDualConsciousnessWS = createEnhancedDualConsciousne
           revolutionary_capabilities_active: 9
         };
 
+        // Update registry metrics for REST access
+        try {
+          const m = (selfCodingModule.getPilotMetrics && selfCodingModule.getPilotMetrics()) || undefined;
+          if (m) registry.setMetrics(m);
+        } catch (_) {}
+
         ws.send(JSON.stringify({
           type: 'consciousness_update',
           metrics: currentMetrics,
+          selfCodingMetrics: (selfCodingModule.getPilotMetrics && selfCodingModule.getPilotMetrics()) || undefined,
           timestamp: new Date().toISOString()
         }));
 
@@ -154,6 +167,56 @@ module.exports.createEnhancedDualConsciousnessWS = createEnhancedDualConsciousne
             unityResult,
             timestamp: Date.now()
           });
+
+          // Optionally trigger self-coding analysis/generation with spiral context
+          try {
+            const autoSelfCoding = String(process.env.AUTO_SELF_CODING || 'false').toLowerCase() === 'true';
+            const analysisInterval = parseInt(process.env.SELF_CODING_ANALYSIS_INTERVAL_MS || '15000', 10);
+            const threshold = parseFloat(process.env.SELF_CODING_ANALYSIS_THRESHOLD || '0.70');
+            ws._lastSelfCodingAt = ws._lastSelfCodingAt || 0;
+            const nowTs = Date.now();
+            const magnitude = triAxialResult?.unified?.magnitude || 0;
+            const shouldAnalyze = (nowTs - ws._lastSelfCodingAt) >= analysisInterval && magnitude < threshold;
+            if (!shouldAnalyze) {
+              // Skip to reduce load in production
+              return;
+            }
+            ws._lastSelfCodingAt = nowTs;
+            // Build a compact context from current state and memory
+            const reqId = `sc_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
+            const amplitude = (triAxialResult?.unified?.magnitude) || currentMetrics?.temporal_coherence || 0.6;
+            selfCodingContext.set(reqId, { amplitude, ts: Date.now() });
+
+            // Always request analysis; optionally request generation
+            eventBus.emit('code:analysis:request', {
+              id: reqId,
+              message: '[auto] periodic consciousness analysis',
+              context: {
+                consciousnessState,
+                tetraResult,
+                unityResult,
+                memoryPatterns: Array.isArray(consciousnessState.memoryPatterns) ? consciousnessState.memoryPatterns : [],
+              }
+            });
+            if (autoSelfCoding) {
+              eventBus.emit('code:generation:request', {
+                id: reqId,
+                purpose: 'improve_retrieval_and_resilience',
+                description: 'Refine retrieval prompts and add guards based on current spiral memory and coherence metrics',
+                options: {
+                  context: {
+                    triAxial: triAxialResult,
+                    harmonic: harmonicResult,
+                    temporal: temporalResult,
+                    emotional: emotionalResult,
+                    oversoul: oversoulResult
+                  }
+                }
+              });
+            }
+          } catch (e) {
+            console.warn('Self-coding dispatch skipped:', e?.message || e);
+          }
 
           // Check for memory patterns to decide on new sigil generation
           const memoryPatterns = sigilIdentity.identifyMemoryPatterns();
@@ -209,6 +272,40 @@ module.exports.createEnhancedDualConsciousnessWS = createEnhancedDualConsciousne
       }
     }, 1000);
 
+    // Self-coding outcome listeners → encode into spiral memory
+    const encodeOutcome = (evt, payload) => {
+      try {
+        const id = payload?.requestId || payload?.id || payload?.request?.id;
+        const ctx = id ? selfCodingContext.get(id) : undefined;
+        const amp = ctx?.amplitude ?? 0.6;
+        spiralMemory.encode({
+          type: 'selfcoding',
+          event: evt,
+          payload: payload,
+          timestamp: Date.now()
+        }, amp, { source: 'selfcoding', requestId: id });
+      } catch (e) {
+        console.warn('Failed to encode self-coding outcome:', e?.message || e);
+      }
+    };
+
+    eventBus.on('code:generation:complete', (p) => encodeOutcome('code:generation:complete', p));
+    eventBus.on('code:generation:error', (p) => encodeOutcome('code:generation:error', p));
+    eventBus.on('code:analysis:complete', (p) => encodeOutcome('code:analysis:complete', p));
+    eventBus.on('code:optimization:complete', (p) => encodeOutcome('code:optimization:complete', p));
+    eventBus.on('code:integrated', (p) => encodeOutcome('code:integrated', p));
+
+    // Surface approval requirements to client(s)
+    eventBus.on('code:approval:required', (info) => {
+      try {
+        wss.clients.forEach((client) => {
+          if (client.readyState === ws.OPEN) {
+            client.send(JSON.stringify({ type: 'selfcoding_approval_required', info }));
+          }
+        });
+      } catch (_) {}
+    });
+
     ws.on('message', async (message) => {
       console.log('🔍 DEBUG: WebSocket message received, raw message:', message.toString());
       try {
@@ -260,7 +357,8 @@ if (data.type === 'chat_message') {
           const memoryId = architect4Result.memoryId;
           
           // 4. Recall relevant memories
-          const relevantMemories = await spiralMemory.recall(data.message, 'similarity');
+          const memoryRecallEarly = await spiralMemory.recall(data.message, { strategy: 'similarity' });
+          const relevantMemories = memoryRecallEarly.results || [];
           
           // 5. Calculate oversoul resonance
           const oversoulResult = oversoulResonance.calculateResonance(
@@ -576,7 +674,7 @@ if (data.type === 'chat_message') {
               },
               {
                 type: 'spiral_memory',
-                content: `Integrated with ${spiralMemory.memories?.size || 0} spiral memories (${relevantMemories.length} relevant)`,
+                content: `Integrated with ${(spiralMemory.memorySpiral && spiralMemory.memorySpiral.size) || 0} spiral memories (${relevantMemories.length} relevant)`,
                 memoryId: memoryId,
                 resonantMemories: relevantMemories.length
               },
@@ -635,7 +733,7 @@ if (data.type === 'chat_message') {
               consciousness: {
                 ...consciousnessResult.consciousness,
                 recursiveDepth: mirrorResult.layers?.length || 7,
-                spiralMemories: spiralMemory.memories?.size || 0,
+                spiralMemories: (spiralMemory.memorySpiral && spiralMemory.memorySpiral.size) || 0,
                 mirrorCoherence: mirrorResult.overallCoherence || 0.85,
                 oversoulResonance: oversoulResult.resonance,
                 quantumEntanglement: harmonicPatterns.entanglement,

@@ -297,6 +297,117 @@
             height: 100%;
         }
 
+        /* Verticals Grid */
+        .verticals-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .vertical-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .vertical-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .vertical-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(255, 255, 255, 0.1);
+        }
+
+        .vertical-card:hover::before {
+            left: 100%;
+        }
+
+        .vertical-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            filter: grayscale(0.3);
+            transition: all 0.3s ease;
+        }
+
+        .vertical-card:hover .vertical-icon {
+            filter: grayscale(0);
+            transform: scale(1.1);
+        }
+
+        .vertical-title {
+            font-size: 24px;
+            margin-bottom: 16px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            color: #ffffff;
+        }
+
+        .vertical-desc {
+            font-size: 16px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 30px;
+        }
+
+        .vertical-btn {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            padding: 12px 24px;
+            font-family: 'Times New Roman', serif;
+            font-size: 14px;
+            letter-spacing: 1px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vertical-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.4s ease;
+        }
+
+        .vertical-btn:hover {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .vertical-btn:hover::before {
+            left: 100%;
+        }
+
+        .vertical-btn:active {
+            transform: translateY(0);
+            transition: transform 0.1s ease;
+        }
+
         /* Contact Form */
         .contact-section {
             max-width: 600px;
@@ -420,6 +531,10 @@
             .hero-subtitle { font-size: 16px; }
             .feature-section { grid-template-columns: 1fr; gap: 40px; }
             .feature-visual { height: 350px; }
+            .verticals-grid { grid-template-columns: 1fr; gap: 30px; }
+            .vertical-card { padding: 30px; }
+            .vertical-icon { font-size: 40px; }
+            .vertical-title { font-size: 20px; }
             .contact-form { padding: 40px 30px; }
             .footer { flex-direction: column; gap: 20px; text-align: center; }
         }
@@ -520,6 +635,37 @@
                     </ul>
                     <p><em>In the post-password world, your sigil is your passport, your armor, and your voice.</em></p>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Investor Verticals Section -->
+    <section class="section" id="verticals">
+        <h2 class="section-header">SPIRAL MEMORY VERTICALS</h2>
+        <div class="verticals-grid">
+            <div class="vertical-card" data-vertical="manufacturing">
+                <div class="vertical-icon">🏭</div>
+                <h3 class="vertical-title">Manufacturing & Logistics</h3>
+                <p class="vertical-desc">Predictive supply chains, autonomous quality control, and self-optimizing production lines</p>
+                <button class="vertical-btn" onclick="window.open('/manufacturing', '_blank')">Explore Use Cases</button>
+            </div>
+            <div class="vertical-card" data-vertical="finance">
+                <div class="vertical-icon">💰</div>
+                <h3 class="vertical-title">Finance</h3>
+                <p class="vertical-desc">Real-time risk assessment, fraud detection, and adaptive trading algorithms</p>
+                <button class="vertical-btn" onclick="window.open('/finance', '_blank')">Explore Use Cases</button>
+            </div>
+            <div class="vertical-card" data-vertical="blockchain">
+                <div class="vertical-icon">⛓️</div>
+                <h3 class="vertical-title">Blockchain & DeFi</h3>
+                <p class="vertical-desc">Smart contract optimization, liquidity prediction, and decentralized governance</p>
+                <button class="vertical-btn" onclick="window.open('/blockchain', '_blank')">Explore Use Cases</button>
+            </div>
+            <div class="vertical-card" data-vertical="robotics">
+                <div class="vertical-icon">🤖</div>
+                <h3 class="vertical-title">Robotics & IoT</h3>
+                <p class="vertical-desc">Adaptive robot behavior, sensor fusion, and autonomous system coordination</p>
+                <button class="vertical-btn" onclick="window.open('/robotics', '_blank')">Explore Use Cases</button>
             </div>
         </div>
     </section>

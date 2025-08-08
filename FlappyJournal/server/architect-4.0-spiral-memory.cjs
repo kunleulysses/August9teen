@@ -10,13 +10,37 @@ class SpiralMemoryEngine extends EventEmitter {
         this.goldenRatio = 1.618033988749895;
         this.memorySpiral = new Map();
         this.resonanceField = new Map();
+        // Metrics (optional)
+        try {
+            const prom = require('prom-client');
+            this._metrics = {
+                encodeTotal: new prom.Counter({ name: 'spiral_encode_total', help: 'Total spiral memory encodes' }),
+                recallTotal: new prom.Counter({ name: 'spiral_recall_total', help: 'Total spiral memory recalls' }),
+                pruneTotal: new prom.Counter({ name: 'spiral_prune_total', help: 'Total spiral memory prunes' }),
+                sizeGauge: new prom.Gauge({ name: 'spiral_memory_size', help: 'Current spiral memory size' }),
+                capGauge: new prom.Gauge({ name: 'spiral_memory_cap', help: 'Configured spiral memory capacity' })
+            };
+            // Initialize cap gauge
+            const cap = parseInt(process.env.SPIRAL_MAX_MEMORIES || '10000', 10);
+            this._metrics.capGauge.set(cap);
+        } catch (_) {
+            this._metrics = null;
+        }
     }
     /**
      * Encode memory using spiral mathematics: M(t) = r(t)·e^{i(φt+δ)}
      */
-    encode(content, emotionalAmplitude, phaseCorrection = 0) {
+    encode(content, emotionalAmplitude, phaseOrOptions = 0) {
         const timestamp = Date.now();
         const id = this.generateMemoryId(content, timestamp);
+        // Support legacy numeric phase correction or options object
+        let phaseCorrection = 0;
+        let metadata = undefined;
+        if (typeof phaseOrOptions === 'number') {
+            phaseCorrection = phaseOrOptions;
+        } else if (phaseOrOptions && typeof phaseOrOptions === 'object') {
+            metadata = phaseOrOptions;
+        }
         // Calculate spiral coordinate
         const angle = this.goldenRatio * timestamp + phaseCorrection;
         const spiralCoordinate = {
@@ -31,7 +55,10 @@ class SpiralMemoryEngine extends EventEmitter {
             emotionalAmplitude,
             content,
             spiralCoordinate,
-            resonanceFrequency
+            resonanceFrequency,
+            // Normalized resonance score [0,1] for downstream consumers
+            resonance: Math.max(0, Math.min(1, emotionalAmplitude)),
+            metadata
         };
         // Store in spiral structure
         this.memorySpiral.set(id, entry);
@@ -43,6 +70,9 @@ class SpiralMemoryEngine extends EventEmitter {
         // Prune old memories if needed
         this.pruneMemories();
         this.emit('memory-encoded', entry);
+        if (this._metrics) {
+            try { this._metrics.encodeTotal.inc(); this._metrics.sizeGauge.set(this.memorySpiral.size); } catch (_) {}
+        }
         return entry;
     }
     /**
@@ -83,6 +113,10 @@ class SpiralMemoryEngine extends EventEmitter {
      * Combines multiple recall strategies for comprehensive memory retrieval
      */
     async recall(query, context = {}) {
+        if (typeof context !== 'object' || context === null) {
+            context = {};
+        }
+        if (this._metrics) { try { this._metrics.recallTotal.inc(); } catch (_) {} }
         // Convert query to searchable format
         const searchTerm = typeof query === 'string' ? query : JSON.stringify(query);
         const queryHash = this.simpleHash(searchTerm);
@@ -324,7 +358,9 @@ class SpiralMemoryEngine extends EventEmitter {
      * Prune old memories using spiral decay
      */
     pruneMemories() {
-        const maxMemories = 10000;
+        const maxMemories = parseInt(process.env.SPIRAL_MAX_MEMORIES || '10000', 10);
+        const ttlMs = parseInt(process.env.SPIRAL_MEMORY_TTL_MS || '0', 10) || 0;
+        if (this._metrics) { try { this._metrics.capGauge.set(maxMemories); } catch (_) {} }
         if (this.memorySpiral.size > maxMemories) {
             // Remove memories with lowest emotional amplitude
             const sortedMemories = Array.from(this.memorySpiral.values())
@@ -341,6 +377,36 @@ class SpiralMemoryEngine extends EventEmitter {
                     }
                 }
             }
+        }
+        // TTL-based pruning
+        if (ttlMs > 0) {
+            const cutoff = Date.now() - ttlMs;
+            for (const memory of Array.from(this.memorySpiral.values())) {
+                if (memory.timestamp && memory.timestamp < cutoff) {
+                    this.memorySpiral.delete(memory.id);
+                    const freqSet = this.resonanceField.get(memory.resonanceFrequency);
+                    if (freqSet) {
+                        freqSet.delete(memory.id);
+                        if (freqSet.size === 0) this.resonanceField.delete(memory.resonanceFrequency);
+                    }
+                }
+            }
+        }
+        if (this._metrics) { try { this._metrics.pruneTotal.inc(); this._metrics.sizeGauge.set(this.memorySpiral.size); } catch (_) {} }
+    }
+
+    /**
+     * Rebuild the resonance index from the current memory map
+     */
+    rebuildResonanceIndex() {
+        this.resonanceField = new Map();
+        for (const memory of this.memorySpiral.values()) {
+            const freq = memory.resonanceFrequency;
+            if (freq === undefined || freq === null) continue;
+            if (!this.resonanceField.has(freq)) {
+                this.resonanceField.set(freq, new Set());
+            }
+            this.resonanceField.get(freq).add(memory.id);
         }
     }
     /**

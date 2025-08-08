@@ -1,0 +1,29 @@
+groups:
+  - name: spiral-memory-alerts
+    rules:
+      - alert: SpiralSnapshotFailures
+        expr: increase(spiral_snapshot_failed_total[5m]) > 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Spiral snapshot failures detected"
+          description: "One or more snapshot operations failed in the last 5m."
+
+      - alert: SpiralRestoreStall
+        expr: increase(spiral_restore_success_total[30m]) == 0
+        for: 30m
+        labels:
+          severity: warning
+        annotations:
+          summary: "No successful spiral restores in 30m"
+          description: "Ensure snapshots are present and restore path works."
+
+      - alert: SpiralMemoryNearCap
+        expr: (spiral_memory_size / clamp_min(spiral_memory_cap, 1)) > 0.9
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Spiral memory size nearing cap"
+          description: "> 90% of configured cap for 10m; consider increasing SPIRAL_MAX_MEMORIES or enabling TTL."

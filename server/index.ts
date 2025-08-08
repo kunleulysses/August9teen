@@ -11,6 +11,9 @@ import { initUnifiedChatWS } from "./unified-chat-ws";
 import { startUserEraseWorker } from "./user-eraser";
 import rateLimit from 'express-rate-limit';
 import SnapshotService from './consciousness/persistence/SnapshotService.cjs';
+// Use the Architect 4.0 spiral memory engine's internal map for snapshots
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { spiralMemory } = require('../FlappyJournal/server/architect-4.0-spiral-memory.cjs');
 import { getStore } from './common/storeFactory.cjs';
 
 import { Registry, collectDefaultMetrics } from 'prom-client';
@@ -155,10 +158,14 @@ app.use((req, res, next) => {
 
 
 (async () => {
-  const spiralMemory: Map<any, any> = (globalThis as any).spiralMemory || new Map();
+  // Persist and restore the actual spiral memory engine's map
+  const spiralMemoryMap: Map<any, any> = spiralMemory?.memorySpiral || new Map();
   const store = getStore();
-  const snapshotService = new SnapshotService(spiralMemory, store);
+  const snapshotService = new SnapshotService(spiralMemoryMap, store);
   await snapshotService.restoreIfEmpty();
+  if (typeof spiralMemory?.rebuildResonanceIndex === 'function') {
+    spiralMemory.rebuildResonanceIndex();
+  }
   snapshotService.start();
 
   // First register main routes which includes auth setup
