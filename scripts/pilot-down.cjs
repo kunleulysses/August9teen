@@ -20,14 +20,13 @@ function parseArgs(argv){const out={};const a=argv.slice(2);for(let i=0;i<a.leng
     const res=spawnSync('docker', downArgs, { stdio:'inherit' });
     if(res.status!==0){ console.error('[pilot:down] docker compose down failed'); process.exit(res.status||1); }
 
-    // Restore .env.docker backup if present
     try{
       if(fs.existsSync(backupFile)){
         await fsp.copyFile(backupFile, dockerEnv);
         await fsp.unlink(backupFile).catch(()=>{});
         console.log('[pilot:down] Restored .env.docker from backup');
       }
-    }catch(_){}
+    }catch(_){ }
 
     console.log('[pilot:down] ✅ Stack stopped.');
   }catch(e){

@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const fsp = require('fs/promises');
-const path = require('path');
 const crypto = require('crypto');
 const { spawnSync } = require('child_process');
 
@@ -18,7 +17,6 @@ function genSecret(){return crypto.randomBytes(24).toString('hex');}
     const dockerEnv='.env.docker';
     const backupFile='.env.docker.bak';
 
-    // Compose requires .env.docker referenced in env_file; generate one per company and swap it in.
     const POSTGRES_DB=args['db-name']||'appdb';
     const POSTGRES_USER=args['db-user']||'postgres';
     const POSTGRES_PASSWORD=args['db-password']||genSecret();
@@ -46,7 +44,6 @@ function genSecret(){return crypto.randomBytes(24).toString('hex');}
       `PILOT_RATE_MESSAGE=${RATE_MSG}`
     ];
 
-    // Write per-company env and swap into .env.docker (backup if exists)
     await fsp.writeFile(envFile, lines.join('\n')+'\n', 'utf8');
     if(fs.existsSync(dockerEnv)){
       await fsp.copyFile(dockerEnv, backupFile);
@@ -57,7 +54,6 @@ function genSecret(){return crypto.randomBytes(24).toString('hex');}
     const res=spawnSync('docker', ['compose','-p',proj,'--env-file',envFile,'up','-d','--build'], { stdio:'inherit' });
     if(res.status!==0){
       console.error('[pilot:up] docker compose up failed');
-      // attempt to restore backup
       try{ if(fs.existsSync(backupFile)) await fsp.copyFile(backupFile, dockerEnv);}catch(_){}
       process.exit(res.status||1);
     }
