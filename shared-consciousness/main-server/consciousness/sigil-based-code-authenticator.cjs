@@ -576,3 +576,4 @@ class ResonanceNetworkMapper {
 }
 
 module.exports = SigilBasedCodeAuthenticator;
+

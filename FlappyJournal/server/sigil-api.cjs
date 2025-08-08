@@ -1,5 +1,5 @@
 const express = require('express');
-const { jwtMiddleware, requireRole } = require('./auth/jwtMiddleware');
+const { jwtMiddleware, requireRole } = require('./auth/jwtMiddleware.cjs');
 const { rateLimiter } = require('./middleware/rateLimiter');
 const { SigilEngine } = require('./consciousness/SigilEngine');
 const { LevelDBSigilAdapter } = require('./consciousness/persistence/LevelDBSigilAdapter.cjs');
