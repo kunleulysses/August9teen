@@ -30,7 +30,9 @@
     "selfcode:dry-run": "node scripts/selfcode-dry-run.cjs",
     "selfcode:auto-pr": "node scripts/selfcode-auto-pr.cjs",
     "start": "npm run start:api",
-    "pilot:provision": "node scripts/provision-pilot.cjs --company=$COMPANY"
+    "pilot:provision": "node scripts/provision-pilot.cjs --company=$COMPANY",
+    "pilot:up": "node scripts/pilot-up.cjs --company=$COMPANY",
+    "pilot:down": "node scripts/pilot-down.cjs --company=$COMPANY"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.859.0",
