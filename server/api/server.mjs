@@ -38,20 +38,28 @@ app.use(
   })
 );
 
-// global rate limiter (for all routes)
-app.use(
-  rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100,
-    standardHeaders: true,
-    legacyHeaders: false,
-    message: { error: 'Too many requests, rate limit exceeded' },
-  })
-);
+// Global rate limiter (env-driven)
+const WINDOW_SEC = parseInt(process.env.PILOT_RATE_WINDOW_SEC || '900', 10);
+const MAX_REQ = parseInt(process.env.PILOT_RATE_MAX || '100', 10);
+const RATE_MSG = process.env.PILOT_RATE_MESSAGE || 'Too many requests, rate limit exceeded';
 
-// Per-route rate limiters
-const loginLimiter = rateLimit({ windowMs: 15*60*1000, max:10, message:{error:'Too many logins'} });
-const createLimiter = rateLimit({ windowMs: 15*60*1000, max:30, message:{error:'Rate limit'} });
+if (process.env.NODE_ENV !== 'test') {
+  app.use(
+    rateLimit({
+      windowMs: WINDOW_SEC * 1000,
+      max: MAX_REQ,
+      standardHeaders: true,
+      legacyHeaders: false,
+      message: { error: RATE_MSG },
+    })
+  );
+}
+
+// Per-route rate limiters (env-driven)
+const LOGIN_MAX = parseInt(process.env.PILOT_LOGIN_MAX || '10', 10);
+const CREATE_MAX = parseInt(process.env.PILOT_CREATE_MAX || '30', 10);
+const loginLimiter = rateLimit({ windowMs: WINDOW_SEC * 1000, max: LOGIN_MAX, message: { error: 'Too many logins' } });
+const createLimiter = rateLimit({ windowMs: WINDOW_SEC * 1000, max: CREATE_MAX, message: { error: 'Rate limit' } });
 
 app.use(bodyParser.json());
 
