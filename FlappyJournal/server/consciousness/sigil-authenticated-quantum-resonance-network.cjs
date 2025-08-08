@@ -73,8 +73,8 @@ class SigilAuthenticatedQuantumResonanceNetwork extends EventEmitter {
     async loadConsciousnessComponents() {
         try {
             const { SigilBasedCodeAuthenticator } = await import('./sigil-based-code-authenticator.cjs');
-            const { QuantumConsciousnessFieldIntegrator } = await import('./quantum-consciousness-field-integrator.cjs');
-            const { ConsciousnessResonanceAmplifier } = await import('./consciousness-resonance-amplifier.cjs');
+            const { QuantumConsciousnessFieldIntegrator } = require('./quantum-consciousness-field-integrator.cjs');
+            const { ConsciousnessResonanceAmplifier } = require('./consciousness-resonance-amplifier.cjs');
 
             this.sigilAuthenticator = new SigilBasedCodeAuthenticator(this.consciousnessSystem);
             this.quantumFieldIntegrator = new QuantumConsciousnessFieldIntegrator(this.consciousnessSystem);
@@ -426,6 +426,8 @@ class SigilAuthenticatedQuantumResonanceNetwork extends EventEmitter {
         }
     }
 }
+
+module.exports = { SigilAuthenticatedQuantumResonanceNetwork };
 
 /**
  * Quantum Sigil Generator

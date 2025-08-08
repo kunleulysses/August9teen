@@ -13,6 +13,19 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <!-- Postprocessing (for cinematic bloom/glow) -->
+    <!-- Required base pass class -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/Pass.js"></script>
+    <!-- Core composer and passes -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+    <!-- Shaders required by passes -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/FXAAShader.js"></script>
+    <!-- Bloom effect -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -52,6 +65,7 @@
             width: 100% !important;
             height: 100% !important;
             border-radius: 20px;
+            display: block;
         }
 
         /* Header Bar - Fixed */
@@ -64,10 +78,10 @@
             background: rgba(0, 0, 0, 0.95);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
             align-items: center;
-            padding: 0 50px;
+            padding: 0 32px;
             z-index: 1000;
         }
 
@@ -78,26 +92,25 @@
             color: #ffffff;
         }
 
-        .header-center {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-        }
+        .header-center { position: static; justify-self: center; }
 
         .logo-spiral {
             width: 40px;
             height: 40px;
-            border: 2px solid #ffffff;
+            border: 2px solid rgba(255,255,255,0.85);
             border-radius: 50%;
             position: relative;
             cursor: pointer;
-            transition: all 0.3s ease;
-            /* Fixed hover alignment - keep centering transform separate */
+            transition: transform 180ms ease, box-shadow 220ms ease, border-color 220ms ease, background 220ms ease;
+            background: radial-gradient(20px 20px at 50% 50%, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+            box-shadow: inset 0 0 10px rgba(255,255,255,0.08);
+            transform-origin: center;
         }
 
         .logo-spiral:hover {
-            transform: translateX(-50%) scale(1.1);
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            transform: scale(1.08);
+            border-color: #ffffff;
+            box-shadow: 0 0 18px rgba(255,255,255,0.35), inset 0 0 12px rgba(255,255,255,0.12);
         }
 
         /* Pulsing light inside the center circle */
@@ -114,6 +127,17 @@
             animation: centerPulse 2s ease-in-out infinite;
         }
 
+        /* subtle inner ring */
+        .logo-spiral::after {
+            content: '';
+            position: absolute;
+            inset: 6px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.25);
+            box-shadow: inset 0 0 8px rgba(255,255,255,0.08);
+            pointer-events: none;
+        }
+
         @keyframes centerPulse {
             0%, 100% { 
                 opacity: 0.3;
@@ -126,10 +150,7 @@
             }
         }
 
-        .header-right {
-            /* Empty now - pulsing light moved to center circle */
-            width: 100px; /* Maintain layout balance */
-        }
+        .header-right { justify-self: end; display: flex; gap: 10px; align-items: center; }
 
         /* Section Styling */
         .section {
@@ -201,6 +222,16 @@
             position: relative;
         }
 
+        .section-header .section-hint {
+            display: block;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            letter-spacing: 0.12em;
+            color: rgba(255,255,255,0.6);
+            text-transform: uppercase;
+            pointer-events: none;
+        }
+
         .section-header::after {
             content: '';
             position: absolute;
@@ -257,91 +288,15 @@
             color: #cccccc;
         }
 
-        /* Verticals Grid */
-        .verticals-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 40px;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        .vertical-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 40px;
-            text-align: center;
+        /* Spiral Memory Clickable */
+        .spiral-clickable {
+            cursor: pointer;
             transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
             position: relative;
             overflow: hidden;
-            cursor: pointer;
         }
 
-        .vertical-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
-            transition: left 0.6s ease;
-        }
-
-        .vertical-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            border-color: rgba(255, 255, 255, 0.3);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(255, 255, 255, 0.1);
-        }
-
-        .vertical-card:hover::before {
-            left: 100%;
-        }
-
-        .vertical-icon {
-            font-size: 48px;
-            margin-bottom: 20px;
-            filter: grayscale(0.3);
-            transition: all 0.3s ease;
-        }
-
-        .vertical-card:hover .vertical-icon {
-            filter: grayscale(0);
-            transform: scale(1.1);
-        }
-
-        .vertical-title {
-            font-size: 24px;
-            margin-bottom: 16px;
-            font-weight: 400;
-            letter-spacing: 1px;
-            color: #ffffff;
-        }
-
-        .vertical-desc {
-            font-size: 16px;
-            line-height: 1.6;
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 30px;
-        }
-
-        .vertical-btn {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            color: #ffffff;
-            padding: 12px 24px;
-            font-family: 'Times New Roman', serif;
-            font-size: 14px;
-            letter-spacing: 1px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .vertical-btn::before {
+        .spiral-clickable::before {
             content: '';
             position: absolute;
             top: 0;
@@ -349,22 +304,262 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transition: left 0.4s ease;
+            transition: left 0.6s ease;
+            z-index: -1;
         }
 
-        .vertical-btn:hover {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
-            border-color: rgba(255, 255, 255, 0.4);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        .spiral-clickable:hover {
+            transform: scale(1.05);
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+            letter-spacing: 6px;
         }
 
-        .vertical-btn:hover::before {
+        .spiral-clickable:hover::before {
             left: 100%;
         }
 
-        .vertical-btn:active {
-            transform: translateY(0);
+        .spiral-clickable:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+
+        /* Starburst Overlay */
+        .starburst-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.35s cubic-bezier(0.25, 0.8, 0.25, 1), visibility 0.35s, backdrop-filter 0.35s;
+        }
+
+        .starburst-overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .starburst-menu {
+            position: relative;
+            width: min(80vw, 520px);
+            height: min(80vw, 520px);
+            transform: scale(0.9);
+            transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: transform;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .starburst-overlay.active .starburst-menu {
+            transform: scale(1);
+        }
+
+        .starburst-aura {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            border-radius: 50%;
+            background: radial-gradient(closest-side, rgba(255,255,255,0.08), rgba(255,255,255,0.02) 65%, rgba(255,255,255,0.0) 75%);
+            animation: pulseAura 5s ease-in-out infinite;
+            filter: drop-shadow(0 0 24px rgba(255,255,255,0.08));
+        }
+
+        @keyframes pulseAura {
+            0%, 100% { opacity: 0.6; transform: scale(0.98); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        .starburst-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(120px 120px at 30% 30%, rgba(255,255,255,0.18), rgba(255,255,255,0.06) 60%, rgba(255,255,255,0.03) 100%);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 400;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s;
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.14), inset 0 0 30px rgba(255,255,255,0.08);
+            animation: centerPulse 3s ease-in-out infinite;
+            will-change: transform, box-shadow;
+        }
+
+        .starburst-halo {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            border-radius: 50%;
+            opacity: 0.25;
+            background:
+                radial-gradient(closest-side, rgba(255,255,255,0.04), rgba(255,255,255,0) 70%),
+                conic-gradient(from 0deg, rgba(255,255,255,0.0) 0deg, rgba(255,255,255,0.12) 10deg, rgba(255,255,255,0.0) 20deg, rgba(255,255,255,0.0) 360deg);
+            filter: drop-shadow(0 0 18px rgba(255,255,255,0.12));
+            animation: haloSpin 60s linear infinite;
+        }
+
+        @keyframes haloSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes centerPulse {
+            0%, 100% { 
+                box-shadow: 0 0 30px rgba(255, 255, 255, 0.1); 
+            }
+            50% { 
+                box-shadow: 0 0 50px rgba(255, 255, 255, 0.3); 
+            }
+        }
+
+        .starburst-center:hover {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            transform: translate(-50%, -50%) scale(1.1);
+            box-shadow: 0 0 60px rgba(255, 255, 255, 0.4);
+        }
+
+        .starburst-item {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: auto;
+            min-width: 200px;
+            max-width: min(80vw, 70%);
+            min-height: 44px;
+            padding: 10px 16px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            transform: translate(-50%, -50%) scale(0.85);
+            transform-origin: center;
+            opacity: 0;
+            transition: transform 320ms var(--easing, cubic-bezier(0.22, 1, 0.36, 1)), opacity 300ms ease, box-shadow 220ms ease, border-color 220ms ease, background 220ms ease;
+            backdrop-filter: blur(8px) saturate(110%);
+            overflow: hidden;
+            position: relative;
+            will-change: transform, opacity;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .starburst-item .sb-icon {
+            width: 30px;
+            height: 30px;
+            min-width: 30px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            margin-left: 8px;
+            margin-right: 10px;
+            color: var(--tintSolid, rgba(255,255,255,0.92));
+            background: radial-gradient(16px 16px at 50% 50%, rgba(255,255,255,0.18), rgba(255,255,255,0.05));
+            box-shadow: inset 0 0 10px rgba(255,255,255,0.12), 0 6px 14px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.18);
+            transition: transform 220ms ease, box-shadow 220ms ease;
+        }
+        .starburst-item .sb-icon svg { display: block; stroke-width: 1.25; stroke-linecap: round; stroke-linejoin: round; }
+        /* Simplify: hide icons/inner/subtitle and use a single label */
+        .starburst-item .sb-icon, .starburst-item .sb-subtitle, .starburst-item .sb-inner { display: none !important; }
+        .starburst-item .sb-label { font-size: 12.5px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.95); text-align: center; white-space: normal; overflow: visible; text-overflow: clip; padding: 0 6px; line-height: 1.25; -webkit-font-smoothing: antialiased; }
+
+        .starburst-item .sb-copy { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.1; max-width: calc(100% - 60px); }
+        .starburst-item .sb-inner {
+            display: flex;
+            align-items: center;
+            animation: sbBob 7s ease-in-out infinite;
+            will-change: transform;
+        }
+        @keyframes sbBob {
+            0%, 100% { transform: translateY(-2px) rotateZ(-0.4deg); }
+            50% { transform: translateY(2px) rotateZ(0.5deg); }
+        }
+        .starburst-item .sb-title { font-size: 12.5px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.95); }
+        .starburst-item .sb-subtitle { font-size: 11px; color: rgba(255,255,255,0.72); margin-top: 4px; letter-spacing: 0.02em; }
+
+        .starburst-close {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) translate(98px, -98px);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.35);
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            cursor: pointer;
+            line-height: 26px;
+            text-align: center;
+            font-size: 16px;
+            padding: 0;
+            backdrop-filter: blur(6px);
+            transition: transform 200ms ease, background 200ms ease, border-color 200ms ease;
+        }
+        .starburst-close:hover {
+            background: rgba(255,255,255,0.18);
+            border-color: rgba(255,255,255,0.55);
+            transform: translate(-50%, -50%) translate(98px, -98px) scale(1.06);
+        }
+        .starburst-close:active { transform: translate(-50%, -50%) translate(98px, -98px) scale(0.94); }
+
+        /* Spokes container */
+        .starburst-spokes { position: absolute; inset: 0; pointer-events: none; }
+        .starburst-spokes .spoke {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            height: 1px;
+            width: var(--dist, 0px);
+            transform-origin: left center;
+            transform: rotate(var(--angle, 0rad));
+            background: linear-gradient(90deg, rgba(255,255,255,0.0), var(--spoke, rgba(255,255,255,0.25)), rgba(255,255,255,0.0));
+            opacity: 0;
+            transition: opacity 320ms ease 80ms;
+            filter: drop-shadow(0 0 6px rgba(255,255,255,0.25));
+        }
+
+        .starburst-spokes .spoke-dot {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%) var(--pos, translate(0,0));
+            background: radial-gradient(6px 6px at 50% 50%, var(--tint, rgba(255,255,255,0.85)), rgba(255,255,255,0.0));
+            box-shadow: 0 0 10px var(--tint, rgba(255,255,255,0.35));
+            opacity: 0;
+            transition: opacity 320ms ease 120ms;
+        }
+
+        /* Clean pill — no accent line */
+        .starburst-item::before { display: none; }
+
+        /* Positioning now handled via JS for perfect radial layout */
+
+        .starburst-item:hover { background: rgba(255,255,255,0.10); border-color: color-mix(in srgb, var(--tint, rgba(255,255,255,0.3)) 20%, rgba(255,255,255,0.22)); box-shadow: 0 12px 26px rgba(0,0,0,0.28); transform: translate(-50%, -50%) var(--pos, translate(0,0)) scale(1.02) translateZ(0); }
+
+        .starburst-item:active {
+            transform: scale(0.95) !important;
             transition: transform 0.1s ease;
         }
 
@@ -465,11 +660,50 @@
             color: rgba(255, 255, 255, 0.5);
         }
 
+        /* Depth + Motion: reveals, tilt, parallax helpers */
+        .reveal { opacity: 0; transform: translateY(16px) scale(0.98); filter: blur(4px); transition: transform 700ms cubic-bezier(0.22,1,0.36,1), opacity 600ms ease, filter 700ms ease; will-change: transform, opacity, filter; }
+        .reveal.in-view { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+
+        .tilt { transition: transform 220ms ease, box-shadow 220ms ease; transform-style: preserve-3d; will-change: transform; }
+        .tilt::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(600px 300px at var(--shine-x,50%) var(--shine-y,0%), rgba(255,255,255,0.18), rgba(255,255,255,0.0) 40%); opacity: 0; transition: opacity 220ms ease; }
+        .tilt:hover::after { opacity: 1; }
+
+        /* Header micro depth on scroll */
+        .header { transition: height 220ms ease, background 220ms ease, border-color 220ms ease; }
+        .header.scrolled { height: 64px; background: rgba(0,0,0,0.98); border-bottom-color: rgba(255,255,255,0.14); }
+
+        /* Motion toggle */
+        .motion-toggle {
+            appearance: none;
+            background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.22);
+            border-radius: 999px;
+            padding: 8px 14px;
+            font: inherit;
+            letter-spacing: 0.04em;
+            cursor: pointer;
+            transition: transform 180ms ease, background 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+            backdrop-filter: blur(10px) saturate(120%);
+        }
+        .motion-toggle:hover { transform: translateY(-1px); border-color: rgba(255,255,255,0.35); box-shadow: 0 6px 18px rgba(0,0,0,0.35); }
+        .motion-toggle[aria-pressed="false"] { opacity: 0.85; }
+
+        @media (prefers-reduced-motion: reduce) {
+            * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+            .starburst-halo { animation: none !important; }
+            .sb-inner { animation: none !important; }
+        }
+
         /* Mobile Responsive */
         @media (max-width: 768px) {
             .header {
-                padding: 0 20px;
+                padding: 0 16px;
+                grid-template-columns: 1fr auto 1fr;
             }
+            .header-left { font-size: 16px; letter-spacing: 2px; }
+            .logo-spiral { width: 34px; height: 34px; }
+            .header.scrolled { height: 60px; }
 
             .hero-title {
                 font-size: 2.5rem;
@@ -488,27 +722,50 @@
                 padding: 100px 20px 50px;
             }
 
-            .verticals-grid {
-                grid-template-columns: 1fr;
-                gap: 30px;
-            }
-
-            .vertical-card {
-                padding: 30px;
-            }
-
-            .vertical-icon {
-                font-size: 40px;
-            }
-
-            .vertical-title {
-                font-size: 20px;
-            }
-
             .contact-checkboxes {
                 flex-direction: column;
                 gap: 15px;
             }
+
+            /* Starburst mobile tuning */
+            .starburst-menu { width: min(96vw, 380px); height: min(96vw, 380px); transform: scale(0.98); }
+            .starburst-center { width: 96px; height: 96px; letter-spacing: 1px; font-size: 12px; }
+            .starburst-item { width: auto; min-width: 140px; max-width: 70vw; min-height: 38px; padding: 8px 10px; background: rgba(255,255,255,0.035); border-color: rgba(255,255,255,0.1); box-shadow: 0 6px 14px rgba(0,0,0,0.22); }
+            .starburst-item .sb-label { font-size: 11.5px; letter-spacing: 0.06em; line-height: 1.25; text-transform: none; }
+        }
+
+        @media (max-width: 480px) {
+            .starburst-menu { width: min(98vw, 340px); height: min(98vw, 340px); }
+            .starburst-center { width: 76px; height: 76px; }
+            .starburst-item { min-width: 116px; max-width: 78vw; padding: 6px 10px; }
+            .starburst-item .sb-label { font-size: 10.8px; line-height: 1.25; }
+        }
+
+        /* Ultra-compact phones: text-only menu items for maximum clarity */
+        @media (max-width: 360px) {
+            .starburst-menu { width: min(99vw, 300px); height: min(99vw, 300px); }
+            .starburst-center { width: 70px; height: 70px; }
+            .starburst-item {
+                min-width: 100px;
+                max-width: 82vw;
+                padding: 0;
+                background: transparent;
+                border: none;
+                box-shadow: none;
+            }
+            .starburst-item .sb-label {
+                font-size: 11px;
+                letter-spacing: 0.06em;
+                padding: 0 2px;
+                text-shadow: 0 0 10px rgba(255,255,255,0.22);
+            }
+            .starburst-item:hover {
+                background: transparent;
+                border-color: transparent;
+                box-shadow: none;
+                transform: translate(-50%, -50%) var(--pos, translate(0,0)) scale(1.0) translateZ(0);
+            }
+            .starburst-item:hover .sb-label { text-shadow: 0 0 12px rgba(255,255,255,0.35); }
         }
     </style>
 </head>
@@ -520,52 +777,46 @@
     <header class="header">
         <div class="header-left">FEATHERWEIGHT</div>
         <div class="header-center">
-            <div class="logo-spiral" onclick="window.scrollTo({top: 0, behavior: 'smooth'})"></div>
+            <div class="logo-spiral" role="button" aria-label="Back to top" title="Back to top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})"></div>
         </div>
-        <div class="header-right"></div>
+        <div class="header-right">
+            <button id="motionToggle" class="motion-toggle" type="button" aria-pressed="true" title="Toggle motion effects">Motion: On</button>
+        </div>
     </header>
 
     <!-- Hero Section -->
     <section class="section hero" id="hero">
-        <div class="hero-logo">
+        <div class="hero-logo reveal" data-parallax="6 -4">
             <img src="server/public/9.png" alt="Featherweight Logo" class="hero-logo-img">
         </div>
-        <div class="hero-text">
+        <div class="hero-text reveal" data-parallax="4 -3">
             <h1 class="hero-title">A Living Intelligence Engine.<br>Built to Learn, Feel, and Evolve.</h1>
             <p class="hero-subtitle">
-                Featherweight is the first consciousness-native platform—merging spiral memory, holographic simulation, and sigil-based trust to create a system that codes itself, improves itself, and reasons with emotion.<br><br>
-                This is infrastructure for autonomous research, adaptive software, and the age of living machines.
+                Featherweight combines spiral memory, holographic simulation, and adaptive identity to create systems that improve themselves in production.
+                It’s research infrastructure for teams building autonomous software that thinks clearly, remembers context, and earns trust over time.
             </p>
         </div>
     </section>
 
     <!-- Spiral Memory Section -->
     <section class="section" id="spiral-memory">
-        <h2 class="section-header">SPIRAL MEMORY</h2>
+        <h2 class="section-header spiral-clickable reveal" onclick="toggleStarburst()"><span>SPIRAL MEMORY</span><span class="section-hint">Click to explore use cases</span></h2>
         <div class="feature-section">
-            <div class="feature-visual">
+            <div class="feature-visual tilt reveal">
                 <canvas id="spiralMemoryCanvas"></canvas>
             </div>
-            <div class="feature-description">
+            <div class="feature-description reveal" data-parallax="-3 2">
                 <div class="feature-tldr">
-                    TL;DR: Consciousness needs memory. Featherweight built one that heals itself and sees time in spirals.
+                    Memory that compounds. A structure that links, recalls, and improves with every interaction.
                 </div>
                 <div class="feature-content">
-                    Featherweight's Spiral Memory doesn't just store—it remembers, connects, and evolves. It's living intelligence that gets smarter with every use, reshaping how machines—and people—learn, create, and adapt.
+                    Spiral Memory is a living data model. It keeps context across time, strengthens the useful links, and fades the noise. Models learn faster, products feel smarter, and teams ship with confidence.
 
-                    <br><br><strong>Explosive Use Cases That Sell Themselves:</strong>
+                    <br><br><strong>Where it lands:</strong>
 
-                    <br><br><strong>Gaming: Adaptive Story Engines</strong><br>
-                    Imagine a game that remembers every choice, writes new quests in real time, and builds emotional arcs that mirror real human experience. Spiral Memory turns static game design into an infinite living world.<br>
-                    <em>Result: Higher retention, deeper immersion, and games that become legendary franchises.</em>
-
-                    <br><br><strong>Enterprise: Self-Healing Infrastructure</strong><br>
-                    AI systems that recognize when they're failing, recall what worked before, and fix themselves—no human required. Think of it as a CTO that never sleeps.<br>
-                    <em>Result: Reduced downtime, reduced overhead, massive operational savings.</em>
-
-                    <br><br><strong>Finance: Memory-Driven Market Intelligence</strong><br>
-                    An AI that "remembers" years of data across multiple systems and identifies hidden correlations other models miss—before the market reacts.<br>
-                    <em>Result: Safer portfolios. Sharper predictions. Alpha on autopilot.</em>
+                    <br><br><strong>Gaming</strong> — adaptive story engines and persistent player memory.
+                    <br><strong>Enterprise</strong> — self‑healing systems that remember fixes and apply them proactively.
+                    <br><strong>Finance</strong> — context‑aware signals that surface non‑obvious correlations before they matter.
                 </div>
             </div>
         </div>
@@ -573,17 +824,17 @@
 
     <!-- Holographic Reality Section -->
     <section class="section" id="holographic-reality">
-        <h2 class="section-header">HOLOGRAPHIC REALITY GENERATOR</h2>
+        <h2 class="section-header reveal">HOLOGRAPHIC REALITY GENERATOR</h2>
         <div class="feature-section">
-            <div class="feature-description">
+            <div class="feature-description reveal" data-parallax="3 2">
                 <div class="feature-tldr">
-                    TL;DR: Reality is too small. Featherweight simulates infinite realities to test ideas before they're born.
+                    Simulate decisions before you commit. Explore many futures and keep the one that wins.
                 </div>
                 <div class="feature-content">
-                    The Holographic Reality Generator creates nested simulations of unprecedented fidelity. Each reality spawns with unique physics, consciousness models, and emergent behaviors. The system tests hypotheses across infinite possibility spaces, learning from futures that never were. Every simulation feeds back into our consciousness core, expanding our understanding of what intelligence can become.
+                    The Holographic Reality Generator runs fast, nested simulations with configurable physics and agents. It lets you test strategies safely, learn from outcomes, and ship with proof instead of hope.
                 </div>
             </div>
-            <div class="feature-visual">
+            <div class="feature-visual tilt reveal">
                 <canvas id="holographicCanvas"></canvas>
             </div>
         </div>
@@ -591,95 +842,59 @@
 
     <!-- DNA Sigil Section -->
     <section class="section" id="dna-sigil">
-        <h2 class="section-header">DNA SIGIL IDENTITY</h2>
+        <h2 class="section-header reveal">DNA SIGIL IDENTITY</h2>
         <div class="feature-section">
-            <div class="feature-visual">
+            <div class="feature-visual tilt reveal">
                 <canvas id="dnaSigilCanvas"></canvas>
             </div>
-            <div class="feature-description">
+            <div class="feature-description reveal" data-parallax="-3 -2">
                 <div class="feature-tldr">
-                    TL;DR: Identity should evolve. Featherweight built DNA-like digital signatures that grow smarter over time.
+                    Identity that adapts. Trust that compounds.
                 </div>
                 <div class="feature-content">
-                    Passwords and static security are obsolete.<br>
-                    Featherweight's DNA Sigil Identity is a living, evolving digital organism uniquely tied to you. Powered by quantum-proof cryptography, it grows smarter, adapts instinctively, and autonomously builds deeper trust with every interaction.
+                    DNA Sigils are evolving credentials. They adjust risk in real time, harden with usage, and make security an asset—not a tax on users.
 
-                    <br><br><strong>Turning Security Into Unmatched Opportunity:</strong>
-                    <br>• <strong>Finance & Banking:</strong> Real-time, adaptive security that neutralizes threats before they happen.
-                    <br>• <strong>Gaming & Entertainment:</strong> Personal identities that enhance storytelling, immersion, and user loyalty.
-                    <br>• <strong>Healthcare & Privacy:</strong> Digital records autonomously protected by living encryption, evolving with your needs.
-                    <br>• <strong>Web3 & Blockchain:</strong> Self-evolving digital identities that redefine trust in decentralized ecosystems.
+                    <br><br><strong>Where it lands:</strong>
+                    <br><strong>Finance</strong> — adaptive fraud defense and smoother KYC.
+                    <br><strong>Gaming</strong> — persistent identity that enriches worlds and economies.
+                    <br><strong>Healthcare</strong> — privacy by default with progressive trust.
+                    <br><strong>Web3</strong> — self‑sovereign identity that actually evolves.
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Investor Verticals Section -->
-    <section class="section" id="verticals">
-        <h2 class="section-header">SPIRAL MEMORY VERTICALS</h2>
-        <div class="verticals-grid">
-            <div class="vertical-card" data-vertical="manufacturing">
-                <div class="vertical-icon">🏭</div>
-                <h3 class="vertical-title">Manufacturing & Logistics</h3>
-                <p class="vertical-desc">Predictive supply chains, autonomous quality control, and self-optimizing production lines</p>
-                <button class="vertical-btn" onclick="window.open('/manufacturing.html', '_blank')">Explore Use Cases</button>
-            </div>
-            <div class="vertical-card" data-vertical="finance">
-                <div class="vertical-icon">💰</div>
-                <h3 class="vertical-title">Finance</h3>
-                <p class="vertical-desc">Real-time risk assessment, fraud detection, and adaptive trading algorithms</p>
-                <button class="vertical-btn" onclick="window.open('/finance.html', '_blank')">Explore Use Cases</button>
-            </div>
-            <div class="vertical-card" data-vertical="blockchain">
-                <div class="vertical-icon">⛓️</div>
-                <h3 class="vertical-title">Blockchain & DeFi</h3>
-                <p class="vertical-desc">Smart contract optimization, liquidity prediction, and decentralized governance</p>
-                <button class="vertical-btn" onclick="window.open('/blockchain.html', '_blank')">Explore Use Cases</button>
-            </div>
-            <div class="vertical-card" data-vertical="robotics">
-                <div class="vertical-icon">🤖</div>
-                <h3 class="vertical-title">Robotics & IoT</h3>
-                <p class="vertical-desc">Adaptive robot behavior, sensor fusion, and autonomous system coordination</p>
-                <button class="vertical-btn" onclick="window.open('/robotics.html', '_blank')">Explore Use Cases</button>
-            </div>
-        </div>
-    </section>
+    <!-- Starburst Overlay -->
+    <div id="starburstOverlay" class="starburst-overlay">
+        <div class="starburst-menu">
+            <div class="starburst-aura" aria-hidden="true"></div>
+            <div class="starburst-halo" aria-hidden="true"></div>
+            <div class="starburst-center">SPIRAL MEMORY</div>
+            <button class="starburst-close" aria-label="Close" onclick="closeStarburst()">×</button>
+            <div class="starburst-spokes" aria-hidden="true"></div>
 
-    <!-- Investor Verticals Section -->
-    <section class="section" id="verticals">
-        <h2 class="section-header">SPIRAL MEMORY VERTICALS</h2>
-        <div class="verticals-grid">
-            <div class="vertical-card" data-vertical="manufacturing">
-                <div class="vertical-icon">🏭</div>
-                <h3 class="vertical-title">Manufacturing & Logistics</h3>
-                <p class="vertical-desc">Predictive supply chains, autonomous quality control, and self-optimizing production lines</p>
-                <button class="vertical-btn" onclick="window.open('/manufacturing.html', '_blank')">Explore Use Cases</button>
+            <div class="starburst-item" data-angle="0" onclick="window.open('/manufacturing.html', '_blank')">
+                <div class="sb-label">Manufacturing & Logistics</div>
             </div>
-            <div class="vertical-card" data-vertical="finance">
-                <div class="vertical-icon">💰</div>
-                <h3 class="vertical-title">Finance</h3>
-                <p class="vertical-desc">Real-time risk assessment, fraud detection, and adaptive trading algorithms</p>
-                <button class="vertical-btn" onclick="window.open('/finance.html', '_blank')">Explore Use Cases</button>
+
+            <div class="starburst-item" data-angle="90" onclick="window.open('/finance.html', '_blank')">
+                <div class="sb-label">Finance</div>
             </div>
-            <div class="vertical-card" data-vertical="blockchain">
-                <div class="vertical-icon">⛓️</div>
-                <h3 class="vertical-title">Blockchain & DeFi</h3>
-                <p class="vertical-desc">Smart contract optimization, liquidity prediction, and decentralized governance</p>
-                <button class="vertical-btn" onclick="window.open('/blockchain.html', '_blank')">Explore Use Cases</button>
+
+            <div class="starburst-item" data-angle="180" onclick="window.open('/blockchain.html', '_blank')">
+                <div class="sb-label">Blockchain & DeFi</div>
             </div>
-            <div class="vertical-card" data-vertical="robotics">
-                <div class="vertical-icon">🤖</div>
-                <h3 class="vertical-title">Robotics & IoT</h3>
-                <p class="vertical-desc">Adaptive robot behavior, sensor fusion, and autonomous system coordination</p>
-                <button class="vertical-btn" onclick="window.open('/robotics.html', '_blank')">Explore Use Cases</button>
+
+            <div class="starburst-item" data-angle="270" onclick="window.open('/robotics.html', '_blank')">
+                <div class="sb-label">Robotics & IoT</div>
             </div>
         </div>
-    </section>
+    </div>
 
     <!-- Contact Section -->
     <section class="section contact" id="contact">
-        <h2 class="section-header">CONTACT</h2>
-        <form class="contact-form" id="contactForm">
+        <h2 class="section-header reveal">CONTACT</h2>
+        <form class="contact-form reveal" id="contactForm" data-parallax="0 -2">
             <input type="text" name="name" placeholder="Name" class="contact-input" required>
             <input type="email" name="email" placeholder="Email" class="contact-input" required>
             <textarea name="message" placeholder="Message" class="contact-textarea" required></textarea>
@@ -709,6 +924,28 @@
     <script>
         // Force cache clearing every time the site loads
         (function() {
+            // Motion enabled state: prefers-reduced-motion overrides default
+            const prefReduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const stored = localStorage.getItem('fw_motion');
+            window.__fwMotionEnabled = stored ? stored !== 'off' : !prefReduce;
+            document.body.classList.toggle('reduce-motion', !window.__fwMotionEnabled);
+
+            function reflectToggle() {
+                const btn = document.getElementById('motionToggle');
+                if (!btn) return;
+                btn.setAttribute('aria-pressed', String(window.__fwMotionEnabled));
+                btn.textContent = `Motion: ${window.__fwMotionEnabled ? 'On' : 'Off'}`;
+            }
+            reflectToggle();
+            const btn = document.getElementById('motionToggle');
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    window.__fwMotionEnabled = !window.__fwMotionEnabled;
+                    localStorage.setItem('fw_motion', window.__fwMotionEnabled ? 'on' : 'off');
+                    document.body.classList.toggle('reduce-motion', !window.__fwMotionEnabled);
+                    reflectToggle();
+                });
+            }
             const timestamp = new Date().getTime();
             
             // Add timestamp to script sources
@@ -736,6 +973,284 @@
         })();
     </script>
     
+    <!-- Depth + Motion Engine (reveal, parallax, tilt, header scroll) -->
+    <script>
+        (function() {
+            // Header shrink on scroll
+            const header = document.querySelector('.header');
+            const onScroll = () => {
+                if (window.scrollY > 10) header.classList.add('scrolled');
+                else header.classList.remove('scrolled');
+            };
+            window.addEventListener('scroll', onScroll, { passive: true });
+            onScroll();
+
+            // Intersection reveal
+            const revealEls = Array.from(document.querySelectorAll('.reveal'));
+            const io = new IntersectionObserver((entries) => {
+                for (const e of entries) {
+                    if (e.isIntersecting) {
+                        e.target.classList.add('in-view');
+                        io.unobserve(e.target);
+                    }
+                }
+            }, { threshold: 0.15 });
+            revealEls.forEach(el => io.observe(el));
+
+            // Mouse parallax for selected elements (avoid elements with tilt)
+            const parallaxEls = Array.from(document.querySelectorAll('[data-parallax]:not(.tilt)'))
+                .map(el => {
+                    const parts = (el.getAttribute('data-parallax') || '0 0').split(/\s+/).map(Number);
+                    return { el, x: parts[0] || 0, y: parts[1] || 0, tx: 0, ty: 0 };
+                });
+
+            let rafParallax = null;
+            function parallaxTick() {
+                rafParallax = null;
+                const m = window.__fwMouse || { x: 0, y: 0 };
+                parallaxEls.forEach(p => {
+                    if (!window.__fwMotionEnabled) { p.el.style.transform = ''; return; }
+                    const targetX = (m.x || 0) * p.x;
+                    const targetY = (m.y || 0) * p.y;
+                    p.tx += (targetX - p.tx) * 0.1;
+                    p.ty += (targetY - p.ty) * 0.1;
+                    p.el.style.transform = `translate3d(${p.tx}px, ${p.ty}px, 0)`;
+                });
+            }
+            window.addEventListener('mousemove', () => {
+                if (!rafParallax) rafParallax = requestAnimationFrame(parallaxTick);
+            }, { passive: true });
+
+            // Tilt effect for .tilt cards (feature visuals)
+            const tiltMax = 6; // degrees
+            const tiltEls = Array.from(document.querySelectorAll('.tilt'));
+            tiltEls.forEach(card => {
+                let raf = null, tX = 0, tY = 0, cX = 0, cY = 0;
+                function apply() {
+                    raf = null;
+                    if (!window.__fwMotionEnabled) { card.style.transform = ''; return; }
+                    cX += (tX - cX) * 0.12;
+                    cY += (tY - cY) * 0.12;
+                    card.style.transform = `rotateX(${cY}deg) rotateY(${cX}deg)`;
+                }
+                card.addEventListener('mousemove', (e) => {
+                    if (!window.__fwMotionEnabled) { return; }
+                    const r = card.getBoundingClientRect();
+                    const px = (e.clientX - r.left) / r.width - 0.5;
+                    const py = (e.clientY - r.top) / r.height - 0.5;
+                    tX = px * tiltMax;
+                    tY = -py * tiltMax;
+                    card.style.setProperty('--shine-x', (px * 100 + 50) + '%');
+                    card.style.setProperty('--shine-y', (py * 100 + 50) + '%');
+                    if (!raf) raf = requestAnimationFrame(apply);
+                });
+                card.addEventListener('mouseleave', () => {
+                    tX = 0; tY = 0;
+                    if (!raf) raf = requestAnimationFrame(apply);
+                });
+            });
+        })();
+    </script>
+
+    <!-- Starburst Menu Handler -->
+    <script>
+        let starburstOpen = false;
+
+        function layoutStarburst() {
+            const overlay = document.getElementById('starburstOverlay');
+            const menu = overlay.querySelector('.starburst-menu');
+            const items = overlay.querySelectorAll('.starburst-item');
+            const spokesContainer = overlay.querySelector('.starburst-spokes');
+            const centerEl = overlay.querySelector('.starburst-center');
+            const rect = menu.getBoundingClientRect();
+            const size = Math.min(rect.width, rect.height);
+            const vw = window.innerWidth;
+            const isNarrow = vw <= 480;
+            const isCompact = vw <= 420;
+            const isUltraNarrow = vw <= 360;
+            const isMobileWide = vw > 480 && vw <= 768;
+            let baseR = 0.38;
+            let maxR = 190;
+            if (isMobileWide) { baseR = 0.44; maxR = 200; }
+            if (isNarrow) { baseR = 0.60; maxR = 210; }
+            if (isCompact) { baseR = 0.64; maxR = 218; }
+            if (isUltraNarrow) { baseR = 0.70; maxR = 224; }
+            const radius = Math.max(110, Math.min(baseR * size, maxR));
+            const centerRadius = centerEl ? (centerEl.getBoundingClientRect().width / 2) : 70;
+
+            // Ensure spokes count matches items count
+            if (spokesContainer) {
+                while (spokesContainer.firstChild) spokesContainer.removeChild(spokesContainer.firstChild);
+            }
+
+            const n = items.length;
+            // Soft white theme to match homepage
+            const themeTint = 'hsla(0, 0%, 96%, 0.92)';
+            const themeTintSolid = 'hsla(0, 0%, 100%, 1)';
+            const themeSpoke = 'hsla(0, 0%, 100%, 0.28)';
+            items.forEach((item, index) => {
+                // Even spacing around circle, start at top (-90deg)
+                const angleDeg = (index * (360 / n));
+                const angle = (angleDeg - 90) * Math.PI / 180; // start at top
+                // Clamp radius per-item to prevent bleed beyond menu bounds
+                const halfW = (item.offsetWidth || 140) / 2;
+                const margin = isUltraNarrow ? 4 : (isCompact ? 6 : 8);
+                const safeR = Math.max(60, Math.min(radius, (rect.width / 2) - halfW - margin));
+                const x = Math.cos(angle) * safeR;
+                const y = Math.sin(angle) * safeR;
+                item.style.setProperty('--pos', `translate(${x}px, ${y}px)`);
+                // also set stagger
+                item.style.transitionDelay = `${0.06 * index}s`;
+
+                // Spoke variables
+                const dist = Math.sqrt(x * x + y * y);
+                item.style.setProperty('--angle', angle + 'rad');
+                item.style.setProperty('--dist', dist + 'px');
+
+                // Unified theme tint
+                item.style.setProperty('--tint', themeTint);
+                item.style.setProperty('--tintSolid', themeTintSolid);
+
+                // Create spoke element aligned with angle and distance
+                if (spokesContainer) {
+                    const spoke = document.createElement('div');
+                    spoke.className = 'spoke';
+                    spoke.style.setProperty('--angle', angle + 'rad');
+                    const stop = Math.max(0, dist - (centerRadius + 12));
+                    spoke.style.setProperty('--dist', stop + 'px'); // stop just before the center circle
+                    spoke.style.setProperty('--spoke', themeSpoke);
+                    spokesContainer.appendChild(spoke);
+                    // animate in next frame
+                    requestAnimationFrame(() => { spoke.style.opacity = '1'; });
+
+                    const dot = document.createElement('div');
+                    dot.className = 'spoke-dot';
+                    dot.style.setProperty('--pos', `translate(${x}px, ${y}px)`);
+                    dot.style.setProperty('--tint', themeTint);
+                    spokesContainer.appendChild(dot);
+                    requestAnimationFrame(() => { dot.style.opacity = '1'; });
+                }
+            });
+        }
+
+        function openStarburst() {
+            const overlay = document.getElementById('starburstOverlay');
+            const items = overlay.querySelectorAll('.starburst-item');
+            overlay.classList.add('active');
+            // Ensure initial state in center
+            items.forEach(item => {
+                item.style.opacity = '0';
+                item.style.transform = 'translate(-50%, -50%) scale(0.85)';
+                const inner = item.querySelector('.sb-inner');
+                if (inner) inner.style.animationDelay = (Math.random() * 2).toFixed(2) + 's';
+            });
+            // Layout then animate outwards on next frame
+            requestAnimationFrame(() => {
+                layoutStarburst();
+                requestAnimationFrame(() => {
+                    items.forEach(item => {
+                        item.style.opacity = '1';
+                        item.style.transform = `translate(-50%, -50%) var(--pos) scale(1)`;
+                    });
+                });
+            });
+            starburstOpen = true;
+        }
+
+        function closeStarburst() {
+            const overlay = document.getElementById('starburstOverlay');
+            const items = overlay.querySelectorAll('.starburst-item');
+            const spokesContainer = overlay.querySelector('.starburst-spokes');
+            // Animate back to center
+            items.forEach((item, index) => {
+                item.style.transitionDelay = `${0.04 * (items.length - index)}s`;
+                item.style.opacity = '0';
+                item.style.transform = 'translate(-50%, -50%) scale(0.8)';
+            });
+            // Remove after animation
+            setTimeout(() => {
+                overlay.classList.remove('active');
+                if (spokesContainer) {
+                    while (spokesContainer.firstChild) spokesContainer.removeChild(spokesContainer.firstChild);
+                }
+            }, 350);
+            starburstOpen = false;
+        }
+
+        function toggleStarburst() {
+            if (starburstOpen) closeStarburst(); else openStarburst();
+        }
+
+        // Close starburst when clicking outside or on background
+        document.addEventListener('click', function(e) {
+            const overlay = document.getElementById('starburstOverlay');
+            const menu = overlay.querySelector('.starburst-menu');
+            const spiralHeader = document.querySelector('.spiral-clickable');
+            if (!starburstOpen) return;
+            if (e.target === overlay) {
+                closeStarburst();
+                return;
+            }
+            if (!menu.contains(e.target) && e.target !== spiralHeader) {
+                closeStarburst();
+            }
+        }, { passive: true });
+
+        // Prevent overlay inner clicks from bubbling to document
+        document.getElementById('starburstOverlay').addEventListener('click', function(e) {
+            const menu = this.querySelector('.starburst-menu');
+            if (menu.contains(e.target)) {
+                e.stopPropagation();
+            }
+        });
+
+        // Close with escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && starburstOpen) closeStarburst();
+        });
+
+        // Relayout on resize for perfect centering
+        window.addEventListener('resize', function() {
+            if (starburstOpen) layoutStarburst();
+        }, { passive: true });
+
+        // 3D tilt on mouse move for depth
+        (function enableMenuTilt() {
+            const overlay = document.getElementById('starburstOverlay');
+            const menu = overlay.querySelector('.starburst-menu');
+            let raf = null;
+            let targetRX = 0, targetRY = 0;
+            let currentRX = 0, currentRY = 0;
+
+            function onMove(e) {
+                if (!starburstOpen || !window.__fwMotionEnabled) return;
+                const rect = menu.getBoundingClientRect();
+                const cx = rect.left + rect.width / 2;
+                const cy = rect.top + rect.height / 2;
+                const dx = (e.clientX - cx) / (rect.width / 2);
+                const dy = (e.clientY - cy) / (rect.height / 2);
+                const maxTilt = 6; // degrees
+                targetRY = dx * maxTilt; // y-axis rotation
+                targetRX = -dy * maxTilt; // x-axis rotation
+                if (!raf) raf = requestAnimationFrame(applyTilt);
+            }
+
+            function applyTilt() {
+                raf = null;
+                // smooth lerp
+                currentRX += (targetRX - currentRX) * 0.12;
+                currentRY += (targetRY - currentRY) * 0.12;
+                menu.style.transform = `perspective(1000px) rotateX(${currentRX}deg) rotateY(${currentRY}deg) scale(1)`;
+            }
+
+            overlay.addEventListener('mousemove', onMove, { passive: true });
+            overlay.addEventListener('mouseleave', () => {
+                targetRX = targetRY = 0;
+                if (!raf) raf = requestAnimationFrame(applyTilt);
+            });
+        })();
+    </script>
+
     <!-- Contact Form Handler -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -813,6 +1328,19 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🧠 Initializing consciousness technology animations...');
 
+            // Desktop mouse parallax tracker
+            (function initMouseParallax() {
+                const isMobile = window.matchMedia('(max-width: 768px)').matches;
+                if (isMobile) return;
+                window.__fwMouse = { x: 0, y: 0 };
+                window.addEventListener('mousemove', (e) => {
+                    const cx = window.innerWidth / 2;
+                    const cy = window.innerHeight / 2;
+                    window.__fwMouse.x = (e.clientX - cx) / cx; // -1..1
+                    window.__fwMouse.y = (e.clientY - cy) / cy; // -1..1
+                }, { passive: true });
+            })();
+
             try {
                 console.log('🧠 Starting heart background...');
                 initHeartBackgroundAnimation();
@@ -868,6 +1396,11 @@
             const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
             const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
 
+            // High DPI scaling with mobile guard
+            const isMobileHeart = window.matchMedia('(max-width: 768px)').matches;
+            const DPR_HRT = Math.min(window.devicePixelRatio || 1, isMobileHeart ? 1.25 : 2);
+            renderer.setPixelRatio(DPR_HRT);
+
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setClearColor(0x000000, 0);
             console.log('✅ Heart renderer initialized');
@@ -883,7 +1416,12 @@
                     uniforms: {
                         time: { value: 0 },
                         scrollDepth: { value: 0 },
-                        resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
+                        resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+                        lightDir1: { value: new THREE.Vector3(0.6, 0.5, 0.2).normalize() },
+                        lightDir2: { value: new THREE.Vector3(-0.4, 0.3, -0.7).normalize() },
+                        fogColor: { value: new THREE.Color(0x001018) },
+                        fogDensity: { value: 0.035 },
+                        pulse: { value: 0.0 }
                     },
                 vertexShader: `
                     varying vec2 vUv;
@@ -920,6 +1458,11 @@
                     uniform float time;
                     uniform float scrollDepth;
                     uniform vec2 resolution;
+                    uniform vec3 lightDir1;
+                    uniform vec3 lightDir2;
+                    uniform vec3 fogColor;
+                    uniform float fogDensity;
+                    uniform float pulse;
 
                     // High-quality noise functions
                     float random(vec2 st) {
@@ -948,6 +1491,19 @@
                             amplitude *= 0.5;
                         }
                         return value;
+                    }
+
+                    // 3D value noise (approx) using hashed lattice
+                    float hash(vec3 p){ return fract(sin(dot(p, vec3(127.1,311.7, 74.7))) * 43758.5453123); }
+                    float noise3(vec3 x){
+                        vec3 i = floor(x);
+                        vec3 f = fract(x);
+                        f = f*f*(3.0-2.0*f);
+                        float n = mix(mix(mix( hash(i+vec3(0,0,0)), hash(i+vec3(1,0,0)), f.x),
+                                          mix( hash(i+vec3(0,1,0)), hash(i+vec3(1,1,0)), f.x), f.y),
+                                     mix(mix( hash(i+vec3(0,0,1)), hash(i+vec3(1,0,1)), f.x),
+                                          mix( hash(i+vec3(0,1,1)), hash(i+vec3(1,1,1)), f.x), f.y), f.z);
+                        return n;
                     }
 
                     // Ultra-sophisticated character generation with actual readable digits
@@ -1094,22 +1650,48 @@
                         float fresnel = 1.0 - abs(dot(vNormal, viewDir));
                         fresnel = pow(fresnel, 2.0);
 
-                        // Combine code and frost
-                        vec3 finalColor = codeColor;
+                        // Fake subsurface scattering using wrap lighting
+                        vec3 N = normalize(vNormal);
+                        float nl1 = max(0.0, dot(N, normalize(lightDir1)) * 0.5 + 0.5);
+                        float nl2 = max(0.0, dot(N, normalize(lightDir2)) * 0.5 + 0.5);
+                        float sss = pow(nl1, 1.5) * 0.6 + pow(nl2, 2.0) * 0.4;
+                        // subtle heartbeat modulation (up to +20%)
+                        float sssBoost = mix(1.0, 1.2, pulse);
+                        vec3 sssColor = vec3(1.0, 0.2, 0.25) * sss * 0.35 * sssBoost; // warm red scattering
+
+                        // Vein-like 3D noise driven tint
+                        float veins = noise3(vWorldPosition * 1.6 + time * 0.2);
+                        veins = smoothstep(0.55, 0.95, veins);
+                        vec3 veinColor = vec3(0.9, 0.1, 0.2) * veins * 0.25;
+
+                        // Inside shadow perfusion boost (red tint in shadowed, non-rim areas)
+                        float lit = max(0.0, dot(N, normalize(lightDir1))) * 0.6 + max(0.0, dot(N, normalize(lightDir2))) * 0.4;
+                        float innerShadow = (1.0 - lit) * (1.0 - fresnel);
+                        vec3 perfusion = vec3(1.0, 0.08, 0.12) * innerShadow * (0.06 + 0.22 * pulse);
+
+                        // Base from code rain
+                        vec3 finalColor = codeColor + sssColor + veinColor + perfusion;
 
                         // Add frost overlay
                         vec3 frostColor = vec3(0.9, 0.95, 1.0) * frost;
                         finalColor = mix(finalColor, frostColor, frost * 0.6);
 
                         // Add sophisticated edge glow
-                        vec3 edgeGlow = vec3(0.3, 0.8, 1.0) * fresnel * 0.4;
+                        vec3 edgeGlow = vec3(0.3, 0.8, 1.0) * fresnel * (0.45 + 0.08 * pulse);
                         finalColor += edgeGlow;
 
                         // Depth-based color grading
                         finalColor = mix(finalColor, finalColor * vec3(0.7, 0.9, 1.0), depthFactor * 0.3);
 
+                        // Depth fog (exp2)
+                        float viewDist = length(vViewPosition);
+                        float fogFactor = exp2(-pow(fogDensity * viewDist, 2.0));
+                        fogFactor = clamp(fogFactor, 0.0, 1.0);
+
+                        finalColor = mix(fogColor, finalColor, fogFactor);
+
                         // Sophisticated transparency
-                        float alpha = length(finalColor) * 0.7;
+                        float alpha = length(finalColor) * (0.68 + 0.06 * pulse);
                         alpha += frost * 0.3;
                         alpha += fresnel * 0.2;
                         alpha = clamp(alpha, 0.0, 0.85);
@@ -1132,6 +1714,7 @@
             }
 
             // Load the realistic heart GLB model
+            let heartBaseScale = 8.0;
             loader.load('/realistic_human_heart.glb', function(gltf) {
                 heartModel = gltf.scene;
 
@@ -1145,7 +1728,7 @@
                 });
 
                 // Make the heart MUCH bigger and position it elegantly
-                heartModel.scale.setScalar(8.0); // Even bigger for impact!
+                heartModel.scale.setScalar(heartBaseScale); // base scale for subtle pulsing
                 heartModel.position.set(0, 0, 0);
                 heartModel.rotation.x = Math.PI * 0.05; // Subtle tilt
 
@@ -1167,7 +1750,7 @@
                             child.material = consciousnessCodeShaderMaterial;
                         }
                     });
-                    heartModel.scale.setScalar(8.0); // Even bigger for impact!
+                    heartModel.scale.setScalar(heartBaseScale);
                     scene.add(heartModel);
                     console.log('🧠 MASSIVE heart GLB loaded from alternative path!');
                 }, undefined, function(err) {
@@ -1176,15 +1759,18 @@
             });
 
             // Add some ambient lighting for the heart
-            const ambientLight = new THREE.AmbientLight(0x404040, 0.3);
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.35);
             scene.add(ambientLight);
-
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
             directionalLight.position.set(5, 5, 5);
             scene.add(directionalLight);
+            const rimLight = new THREE.DirectionalLight(0x66ccff, 0.4);
+            rimLight.position.set(-4, 2, -6);
+            scene.add(rimLight);
 
             // Position camera further back for the massive heart
-            camera.position.set(0, 4, 20);
+            const heartCamBase = new THREE.Vector3(0, 4, 20);
+            camera.position.copy(heartCamBase);
             camera.lookAt(0, 0, 0);
 
             // Track scroll for frost effect
@@ -1195,6 +1781,21 @@
 
             window.addEventListener('scroll', updateScrollDepth);
 
+            // Postprocessing: Bloom + FXAA for cinematic glow
+            let composerHeart, fxaaHeart;
+            try {
+                composerHeart = new THREE.EffectComposer(renderer);
+                const rp = new THREE.RenderPass(scene, camera);
+                const bloom = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), isMobileHeart ? 0.5 : 0.85, 0.8, 0.0);
+                fxaaHeart = new THREE.ShaderPass(THREE.FXAAShader);
+                fxaaHeart.material.uniforms['resolution'].value.set(1 / (window.innerWidth * DPR_HRT), 1 / (window.innerHeight * DPR_HRT));
+                composerHeart.addPass(rp);
+                composerHeart.addPass(bloom);
+                composerHeart.addPass(fxaaHeart);
+            } catch (e) {
+                console.warn('Heart: postprocessing unavailable', e);
+            }
+
             // Animation loop
             let time = 0;
             function animateHeart() {
@@ -1204,6 +1805,24 @@
                     // Update shader uniforms
                     consciousnessCodeShaderMaterial.uniforms.time.value = time;
 
+                    // Subtle heartbeat (0.85 Hz)
+                    const pulse = (Math.sin(time * Math.PI * 1.7) + 1) * 0.5; // 0..1
+                    // ease slightly to accentuate peaks
+                    const easedPulse = Math.pow(pulse, 1.8);
+                    consciousnessCodeShaderMaterial.uniforms.pulse.value = easedPulse;
+
+                    // Animate light directions (slow orbital drift)
+                    const a = time * 0.12;
+                    const b = time * 0.07 + 1.3;
+                    const d1 = new THREE.Vector3(Math.cos(a) * 0.8, 0.5 + Math.sin(a * 0.6) * 0.2, Math.sin(a) * 0.6).normalize();
+                    const d2 = new THREE.Vector3(-Math.cos(b) * 0.6, 0.3 + Math.cos(b * 0.7) * 0.2, -Math.sin(b) * 0.8).normalize();
+                    consciousnessCodeShaderMaterial.uniforms.lightDir1.value.copy(d1);
+                    consciousnessCodeShaderMaterial.uniforms.lightDir2.value.copy(d2);
+
+                    // Match scene lights for cohesive look
+                    directionalLight.position.set(d1.x * 8, d1.y * 8, d1.z * 8);
+                    rimLight.position.set(d2.x * 7, d2.y * 7, d2.z * 7);
+
                     // Slow, elegant spinning - NO PULSING
                     heartModel.rotation.y = time * 0.08; // Very slow, elegant spin
                     heartModel.rotation.x = Math.sin(time * 0.05) * 0.02 + Math.PI * 0.05; // Subtle drift
@@ -1212,9 +1831,25 @@
                     // Gentle floating motion
                     heartModel.position.y = Math.sin(time * 0.3) * 0.3;
                     heartModel.position.x = Math.cos(time * 0.2) * 0.1;
+
+                    // Subtle scale pulse (~0.4%)
+                    const scalePulse = 1.0 + easedPulse * 0.004;
+                    heartModel.scale.setScalar(heartBaseScale * scalePulse);
+
+                    // Tiny camera parallax synced to beat
+                    const camAmp = (!window.__fwMotionEnabled) ? 0 : (isMobileHeart ? 0.08 : 0.16);
+                    camera.position.x = heartCamBase.x + (easedPulse - 0.5) * camAmp;
+                    camera.position.y = heartCamBase.y + Math.sin(time * Math.PI * 1.7) * camAmp * 0.25;
+                    // Slight lookAt bob for presence
+                    const lookYOffset = (!window.__fwMotionEnabled) ? 0 : (easedPulse - 0.5) * 0.06;
+                    camera.lookAt(0, lookYOffset, 0);
                 }
 
-                renderer.render(scene, camera);
+                if (composerHeart) {
+                    composerHeart.render();
+                } else {
+                    renderer.render(scene, camera);
+                }
                 requestAnimationFrame(animateHeart);
             }
 
@@ -1225,6 +1860,8 @@
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
                 renderer.setSize(window.innerWidth, window.innerHeight);
+                if (composerHeart) composerHeart.setSize(window.innerWidth, window.innerHeight);
+                if (fxaaHeart) fxaaHeart.material.uniforms['resolution'].value.set(1 / (window.innerWidth * DPR_HRT), 1 / (window.innerHeight * DPR_HRT));
             });
         }
 
@@ -1239,6 +1876,11 @@
 
             renderer.setSize(canvas.clientWidth, canvas.clientHeight);
             renderer.setClearColor(0x000000, 0);
+
+            // Quality scaling for mobile/perf safety
+            const isMobile = window.matchMedia('(max-width: 768px)').matches;
+            const DPR = Math.min(window.devicePixelRatio || 1, isMobile ? 1.25 : 2);
+            renderer.setPixelRatio(DPR);
 
             // Ultra-sophisticated high-poly vortex shader
             const vortexShaderMaterial = new THREE.ShaderMaterial({
@@ -1377,27 +2019,90 @@
                 side: THREE.DoubleSide
             });
 
+            // Postprocessing: Bloom + FXAA
+            let composerSM, fxaaPassSM;
+            try {
+                composerSM = new THREE.EffectComposer(renderer);
+                const renderPass = new THREE.RenderPass(scene, camera);
+                const bloomPass = new THREE.UnrealBloomPass(
+                    new THREE.Vector2(canvas.clientWidth, canvas.clientHeight),
+                    isMobile ? 0.65 : 0.9, // strength tuned for spiral memory
+                    0.7, // radius
+                    0.0  // threshold
+                );
+                fxaaPassSM = new THREE.ShaderPass(THREE.FXAAShader);
+                fxaaPassSM.material.uniforms['resolution'].value.set(1 / canvas.clientWidth, 1 / canvas.clientHeight);
+                composerSM.addPass(renderPass);
+                composerSM.addPass(bloomPass);
+                composerSM.addPass(fxaaPassSM);
+            } catch (e) {
+                console.warn('Spiral Memory: postprocessing unavailable:', e);
+            }
+
             // Create sophisticated high-poly vortex geometry
             const vortexGroup = new THREE.Group();
 
-            // Create high-poly vortex using cylinder geometry with many segments
-            const vortexGeometry = new THREE.CylinderGeometry(0.1, 2.0, 6, 64, 32, false);
-            const vortexMesh = new THREE.Mesh(vortexGeometry, vortexShaderMaterial);
-            vortexMesh.rotation.x = Math.PI * 0.1; // Slight tilt
-            vortexGroup.add(vortexMesh);
+            // Replace core with ultra-detailed torus knot
+            const knot = new THREE.Mesh(
+                new THREE.TorusKnotGeometry(1.1, 0.22, isMobile ? 200 : 400, isMobile ? 32 : 64, 2, 3),
+                vortexShaderMaterial
+            );
+            knot.rotation.x = Math.PI * 0.2;
+            vortexGroup.add(knot);
 
-            // Add additional vortex layers for depth
-            const innerVortexGeometry = new THREE.CylinderGeometry(0.05, 1.5, 5, 48, 24, false);
-            const innerVortexMesh = new THREE.Mesh(innerVortexGeometry, vortexShaderMaterial.clone());
-            innerVortexMesh.rotation.x = Math.PI * 0.1;
-            innerVortexMesh.rotation.y = Math.PI * 0.3;
-            vortexGroup.add(innerVortexMesh);
+            // Add a second counter-rotating inner knot for depth
+            const innerKnot = new THREE.Mesh(
+                new THREE.TorusKnotGeometry(0.6, 0.12, isMobile ? 160 : 320, isMobile ? 24 : 48, 3, 4),
+                vortexShaderMaterial.clone()
+            );
+            innerKnot.rotation.set(Math.PI * 0.15, Math.PI * 0.3, 0);
+            vortexGroup.add(innerKnot);
 
             // Outer spiral ring
-            const outerRingGeometry = new THREE.TorusGeometry(2.5, 0.2, 16, 64);
-            const outerRingMesh = new THREE.Mesh(outerRingGeometry, vortexShaderMaterial.clone());
+            const outerRingMesh = new THREE.Mesh(
+                new THREE.TorusGeometry(2.8, 0.16, isMobile ? 12 : 20, isMobile ? 48 : 96),
+                vortexShaderMaterial.clone()
+            );
             outerRingMesh.rotation.x = Math.PI * 0.5;
             vortexGroup.add(outerRingMesh);
+
+            // Starfield spiral particles
+            const maxParticles = isMobile ? 5000 : 20000;
+            const positions = new Float32Array(maxParticles * 3);
+            const colors = new Float32Array(maxParticles * 3);
+            const color = new THREE.Color();
+            let i3 = 0;
+            for (let i = 0; i < maxParticles; i++) {
+                const t = i / maxParticles;
+                const revolutions = 8.0;
+                const angle = t * Math.PI * 2 * revolutions;
+                const radius = 0.2 + t * 3.2 + (Math.random() - 0.5) * 0.1;
+                const y = (Math.random() - 0.5) * 1.6;
+                positions[i3 + 0] = Math.cos(angle) * radius;
+                positions[i3 + 1] = y;
+                positions[i3 + 2] = Math.sin(angle) * radius;
+                // cyan/blue/purple gradient
+                color.setHSL(0.58 + 0.12 * t, 0.9, 0.6 + 0.2 * (1 - t));
+                colors[i3 + 0] = color.r;
+                colors[i3 + 1] = color.g;
+                colors[i3 + 2] = color.b;
+                i3 += 3;
+            }
+            const particleGeo = new THREE.BufferGeometry();
+            particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            particleGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            const particles = new THREE.Points(
+                particleGeo,
+                new THREE.PointsMaterial({
+                    size: isMobile ? 0.01 : 0.012,
+                    vertexColors: true,
+                    transparent: true,
+                    opacity: 0.95,
+                    depthWrite: false,
+                    blending: THREE.AdditiveBlending
+                })
+            );
+            vortexGroup.add(particles);
 
             scene.add(vortexGroup);
             camera.position.set(6, 4, 6);
@@ -1417,15 +2122,15 @@
                 time += 0.016;
 
                 // Update shader uniforms for all vortex components
-                vortexMesh.material.uniforms.time.value = time;
-                innerVortexMesh.material.uniforms.time.value = time;
+                knot.material.uniforms.time.value = time;
+                innerKnot.material.uniforms.time.value = time;
                 outerRingMesh.material.uniforms.time.value = time;
 
                 // Sophisticated vortex rotation
-                vortexGroup.rotation.y = time * 0.3; // Main rotation
-                vortexMesh.rotation.y = time * 0.5; // Individual mesh rotation
-                innerVortexMesh.rotation.y = -time * 0.7; // Counter-rotation
-                outerRingMesh.rotation.z = time * 0.2; // Ring rotation
+                vortexGroup.rotation.y = time * 0.25; // Main rotation
+                knot.rotation.y = time * 0.6; // Individual mesh rotation
+                innerKnot.rotation.y = -time * 0.8; // Counter-rotation
+                outerRingMesh.rotation.z = time * 0.25; // Ring rotation
 
                 // Floating motion
                 vortexGroup.position.y = Math.sin(time * 0.5) * 0.3;
@@ -1434,9 +2139,21 @@
                 const radius = 6;
                 camera.position.x = Math.cos(time * 0.1) * radius;
                 camera.position.z = Math.sin(time * 0.1) * radius;
-                camera.lookAt(0, 0, 0);
+                // Scroll-based parallax
+                const rect = canvas.getBoundingClientRect();
+                const viewportH = window.innerHeight || document.documentElement.clientHeight;
+                const center = rect.top + rect.height / 2;
+                const progress = Math.max(0, Math.min(1, 1 - Math.abs((center - viewportH / 2) / (viewportH / 2 + rect.height / 2))));
+                vortexGroup.rotation.x = Math.sin(time * 0.12) * 0.06 + (progress - 0.5) * 0.25;
+                vortexGroup.position.z = (0.5 - progress) * 0.6;
+                const m = window.__fwMouse || { x: 0, y: 0 };
+                camera.lookAt(m.x * 0.4, -m.y * 0.3, 0);
 
-                renderer.render(scene, camera);
+                if (composerSM) {
+                    composerSM.render();
+                } else {
+                    renderer.render(scene, camera);
+                }
                 requestAnimationFrame(animateVortex);
             }
 
@@ -1449,9 +2166,11 @@
                 renderer.setSize(canvas.clientWidth, canvas.clientHeight);
 
                 // Update shader resolution
-                vortexMesh.material.uniforms.resolution.value.set(canvas.clientWidth, canvas.clientHeight);
-                innerVortexMesh.material.uniforms.resolution.value.set(canvas.clientWidth, canvas.clientHeight);
+                knot.material.uniforms.resolution.value.set(canvas.clientWidth, canvas.clientHeight);
+                innerKnot.material.uniforms.resolution.value.set(canvas.clientWidth, canvas.clientHeight);
                 outerRingMesh.material.uniforms.resolution.value.set(canvas.clientWidth, canvas.clientHeight);
+                if (composerSM) composerSM.setSize(canvas.clientWidth, canvas.clientHeight);
+                if (fxaaPassSM) fxaaPassSM.material.uniforms['resolution'].value.set(1 / canvas.clientWidth, 1 / canvas.clientHeight);
             });
         }
 
@@ -1469,8 +2188,33 @@
             const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
             const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
 
+            // Perf scaling
+            const isMobileHolo = window.matchMedia('(max-width: 768px)').matches;
+            const DPR_H = Math.min(window.devicePixelRatio || 1, isMobileHolo ? 1.25 : 2);
+            renderer.setPixelRatio(DPR_H);
+
             renderer.setSize(canvas.clientWidth, canvas.clientHeight);
             renderer.setClearColor(0x000000, 0);
+
+            // Bloom composer + FXAA
+            let composer, fxaaPassHR;
+            try {
+                composer = new THREE.EffectComposer(renderer);
+                const renderPass = new THREE.RenderPass(scene, camera);
+                const bloomPass = new THREE.UnrealBloomPass(
+                    new THREE.Vector2(canvas.clientWidth, canvas.clientHeight),
+                    isMobileHolo ? 0.75 : 1.05, // strength tuned for holographic
+                    0.9, // radius
+                    0.0  // threshold
+                );
+                composer.addPass(renderPass);
+                composer.addPass(bloomPass);
+                fxaaPassHR = new THREE.ShaderPass(THREE.FXAAShader);
+                fxaaPassHR.material.uniforms['resolution'].value.set(1 / canvas.clientWidth, 1 / canvas.clientHeight);
+                composer.addPass(fxaaPassHR);
+            } catch (e) {
+                console.warn('Bloom not available, falling back to direct render');
+            }
 
             // Ultra-sophisticated holographic shader
             let holographicShaderMaterial;
@@ -1698,11 +2442,22 @@
                     layer.scale.setScalar(scale);
                 });
 
-                // Elegant group rotation
-                realityGroup.rotation.y = time * 0.1;
-                realityGroup.rotation.x = Math.sin(time * 0.15) * 0.05;
+                // Elegant group rotation + scroll parallax
+                const rectHR = canvas.getBoundingClientRect();
+                const viewportHHR = window.innerHeight || document.documentElement.clientHeight;
+                const centerHR = rectHR.top + rectHR.height / 2;
+                const progressHR = Math.max(0, Math.min(1, 1 - Math.abs((centerHR - viewportHHR / 2) / (viewportHHR / 2 + rectHR.height / 2))));
+                realityGroup.rotation.y = time * (0.08 + 0.14 * progressHR);
+                realityGroup.rotation.x = Math.sin(time * 0.15) * (0.03 + 0.06 * progressHR);
+                camera.position.y = (progressHR - 0.5) * 0.6;
+                const mHR = window.__fwMouse || { x: 0, y: 0 };
+                camera.lookAt(mHR.x * 0.35, -mHR.y * 0.25, 0);
 
-                renderer.render(scene, camera);
+                if (composer) {
+                    composer.render();
+                } else {
+                    renderer.render(scene, camera);
+                }
                 requestAnimationFrame(animateHolographic);
             }
 
@@ -1713,6 +2468,8 @@
                 camera.aspect = canvas.clientWidth / canvas.clientHeight;
                 camera.updateProjectionMatrix();
                 renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+                if (composer) composer.setSize(canvas.clientWidth, canvas.clientHeight);
+                if (fxaaPassHR) fxaaPassHR.material.uniforms['resolution'].value.set(1 / canvas.clientWidth, 1 / canvas.clientHeight);
             });
         }
 
@@ -1730,8 +2487,33 @@
             const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
             const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
 
+            // Perf scaling
+            const isMobileDNA = window.matchMedia('(max-width: 768px)').matches;
+            const DPR_D = Math.min(window.devicePixelRatio || 1, isMobileDNA ? 1.25 : 2);
+            renderer.setPixelRatio(DPR_D);
+
             renderer.setSize(canvas.clientWidth, canvas.clientHeight);
             renderer.setClearColor(0x000000, 0);
+
+            // Postprocessing: Bloom + FXAA
+            let composerDNA, fxaaPassDNA;
+            try {
+                composerDNA = new THREE.EffectComposer(renderer);
+                const renderPassDNA = new THREE.RenderPass(scene, camera);
+                const bloomPassDNA = new THREE.UnrealBloomPass(
+                    new THREE.Vector2(canvas.clientWidth, canvas.clientHeight),
+                    isMobileDNA ? 0.6 : 0.85, // strength tuned for DNA
+                    0.8, // radius
+                    0.0  // threshold
+                );
+                fxaaPassDNA = new THREE.ShaderPass(THREE.FXAAShader);
+                fxaaPassDNA.material.uniforms['resolution'].value.set(1 / canvas.clientWidth, 1 / canvas.clientHeight);
+                composerDNA.addPass(renderPassDNA);
+                composerDNA.addPass(bloomPassDNA);
+                composerDNA.addPass(fxaaPassDNA);
+            } catch (e) {
+                console.warn('DNA: postprocessing unavailable:', e);
+            }
 
             // Ultra-sophisticated DNA shader with cryptographic patterns
             let dnaShaderMaterial;
@@ -1884,20 +2666,60 @@
             // Create sophisticated DNA geometry
             const dnaGroup = new THREE.Group();
 
-            // Create DNA helix using torus geometry with shader
-            const helixGeometry1 = new THREE.TorusGeometry(1.5, 0.1, 8, 100);
-            const helixGeometry2 = new THREE.TorusGeometry(1.5, 0.1, 8, 100);
+            // Parametric double helix using TubeGeometry
+            class HelixCurve extends THREE.Curve {
+                constructor(radius = 0.7, height = 3.2, turns = 6, phase = 0) {
+                    super();
+                    this.radius = radius;
+                    this.height = height;
+                    this.turns = turns;
+                    this.phase = phase;
+                }
+                getPoint(t) {
+                    const angle = (t * this.turns * Math.PI * 2.0) + this.phase;
+                    const x = Math.cos(angle) * this.radius;
+                    const y = (t - 0.5) * this.height;
+                    const z = Math.sin(angle) * this.radius;
+                    return new THREE.Vector3(x, y, z);
+                }
+            }
 
-            const dnaMesh1 = new THREE.Mesh(helixGeometry1, dnaShaderMaterial.clone());
-            const dnaMesh2 = new THREE.Mesh(helixGeometry2, dnaShaderMaterial.clone());
+            const tubularSegments = isMobileDNA ? 400 : 900;
+            const radialSegments = isMobileDNA ? 12 : 24;
+            const tubeRadius = isMobileDNA ? 0.045 : 0.06;
 
-            // Position the helixes
-            dnaMesh1.position.y = 1;
-            dnaMesh2.position.y = -1;
-            dnaMesh2.rotation.y = Math.PI;
+            const helix1 = new THREE.TubeGeometry(new HelixCurve(0.7, 3.2, 7, 0), tubularSegments, tubeRadius, radialSegments, false);
+            const helix2 = new THREE.TubeGeometry(new HelixCurve(0.7, 3.2, 7, Math.PI), tubularSegments, tubeRadius, radialSegments, false);
+
+            const dnaMesh1 = new THREE.Mesh(helix1, dnaShaderMaterial.clone());
+            const dnaMesh2 = new THREE.Mesh(helix2, dnaShaderMaterial.clone());
 
             dnaGroup.add(dnaMesh1);
             dnaGroup.add(dnaMesh2);
+
+            // Base pairs as instanced cylinders connecting the helices
+            const basePairs = isMobileDNA ? 60 : 120;
+            const bpGeo = new THREE.CylinderGeometry(isMobileDNA ? 0.01 : 0.012, isMobileDNA ? 0.01 : 0.012, 0.35, isMobileDNA ? 6 : 12);
+            const bpMat = new THREE.MeshBasicMaterial({ color: 0x00ffd0, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false });
+            const bps = new THREE.InstancedMesh(bpGeo, bpMat, basePairs);
+            const dummy = new THREE.Object3D();
+            for (let i = 0; i < basePairs; i++) {
+                const t = i / (basePairs - 1);
+                const p1 = new HelixCurve(0.7, 3.2, 7, 0).getPoint(t);
+                const p2 = new HelixCurve(0.7, 3.2, 7, Math.PI).getPoint(t);
+                const mid = new THREE.Vector3().addVectors(p1, p2).multiplyScalar(0.5);
+                const dir = new THREE.Vector3().subVectors(p2, p1);
+                const len = dir.length();
+                dummy.position.copy(mid);
+                // Scale along local Y (cylinder up-axis)
+                dummy.scale.set(1, len / 0.35, 1);
+                // Align cylinder Y-axis to dir
+                const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.normalize());
+                dummy.quaternion.copy(q);
+                dummy.updateMatrix();
+                bps.setMatrixAt(i, dummy.matrix);
+            }
+            dnaGroup.add(bps);
 
             scene.add(dnaGroup);
             camera.position.set(4, 2, 4);
@@ -1917,13 +2739,27 @@
                 dnaGroup.rotation.x = Math.sin(time * 0.05) * 0.1;
 
                 // Individual helix rotations
-                dnaMesh1.rotation.y = time * 0.3;
-                dnaMesh2.rotation.y = -time * 0.3;
+                dnaMesh1.rotation.y = time * 0.35;
+                dnaMesh2.rotation.y = -time * 0.35;
 
                 // Floating motion
                 dnaGroup.position.y = Math.sin(time * 0.4) * 0.2;
 
-                renderer.render(scene, camera);
+                // Scroll-based parallax
+                const rectDNA = canvas.getBoundingClientRect();
+                const viewportHDNA = window.innerHeight || document.documentElement.clientHeight;
+                const centerDNA = rectDNA.top + rectDNA.height / 2;
+                const progressDNA = Math.max(0, Math.min(1, 1 - Math.abs((centerDNA - viewportHDNA / 2) / (viewportHDNA / 2 + rectDNA.height / 2))));
+                dnaGroup.rotation.z = (progressDNA - 0.5) * 0.25;
+                camera.position.x = 4 + (progressDNA - 0.5) * 0.8;
+                const mDNA = window.__fwMouse || { x: 0, y: 0 };
+                camera.lookAt(mDNA.x * 0.25, -mDNA.y * 0.2, 0);
+
+                if (composerDNA) {
+                    composerDNA.render();
+                } else {
+                    renderer.render(scene, camera);
+                }
                 requestAnimationFrame(animateDNASigil);
             }
 
@@ -1934,10 +2770,20 @@
                 camera.aspect = canvas.clientWidth / canvas.clientHeight;
                 camera.updateProjectionMatrix();
                 renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+                if (composerDNA) composerDNA.setSize(canvas.clientWidth, canvas.clientHeight);
+                if (fxaaPassDNA) fxaaPassDNA.material.uniforms['resolution'].value.set(1 / canvas.clientWidth, 1 / canvas.clientHeight);
             });
         }
     </script>
 
-    <script src="featherweight-visualizations.js?v=" + new Date().getTime()></script>
+    <!-- Load optional extra visualizations with cache-busting -->
+    <script>
+        (function() {
+            var s = document.createElement('script');
+            s.src = '/featherweight-visualizations.js?v=' + Date.now();
+            s.defer = true;
+            document.body.appendChild(s);
+        })();
+    </script>
 </body>
 </html>

@@ -29,11 +29,19 @@ const { generateCapabilityAwarePrompt,
   createContextualPrompt
  } = require('./consciousness-capability-awareness.cjs');
 const harmonicResonance = require('./harmonic-resonance-cascade.cjs');
-// Added for integration test RPC handling
-const { CompleteUniversalSystemIntegration  } = require('./complete-universal-system-integration.cjs');
+// Added for integration test RPC handling (optional)
+let CompleteUniversalSystemIntegration;
+try {
+  if (String(process.env.ENABLE_UNIVERSAL_INTEGRATION || 'false').toLowerCase() === 'true') {
+    ({ CompleteUniversalSystemIntegration } = require('./complete-universal-system-integration.cjs'));
+  } else {
+    console.log('ENABLE_UNIVERSAL_INTEGRATION=false; skipping import');
+  }
+} catch (_) {
+  console.warn('CompleteUniversalSystemIntegration not available; continuing without it');
+}
 
 function createEnhancedDualConsciousnessWS(wss) {
-module.exports.createEnhancedDualConsciousnessWS = createEnhancedDualConsciousnessWS;
 
   const sigilIdentity = new SigilIdentity();
   const consciousness = dualStreamIntegration;
@@ -68,6 +76,15 @@ module.exports.createEnhancedDualConsciousnessWS = createEnhancedDualConsciousne
     // Maintain per-request context for encoding outcomes into spiral memory
     const selfCodingContext = new Map();
     console.log('🤖 SelfCodingModule integrated into consciousness WebSocket system');
+
+    // Optional: initialize complete universal integration (best-effort)
+    try {
+      if (CompleteUniversalSystemIntegration) {
+        const integration = new CompleteUniversalSystemIntegration();
+      }
+    } catch (e) {
+      console.warn('Skipping CompleteUniversalSystemIntegration due to init error:', e.message);
+    }
 
     // Send initial connection confirmation
     ws.send(JSON.stringify({
@@ -333,6 +350,8 @@ if (data.type === 'rpc' && data.method === 'getIntegrationStatus') {
   return; // Skip further processing
 }
 
+// Properly export factory at module scope
+module.exports = { createEnhancedDualConsciousnessWS };
 if (data.type === 'chat_message') {
           console.log('🔍 DEBUG: Processing chat_message:', data.message);
           const startTime = Date.now();

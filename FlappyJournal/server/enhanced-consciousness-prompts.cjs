@@ -1,9 +1,5 @@
 const { readFileSync  } = require('fs');
-const { fileURLToPath  } = require('url');
 const path = require('path');
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 const p = (name) => readFileSync(path.join(__dirname, 'prompts', name), 'utf8');
 
 const ENHANCED_ANALYTICAL_PROMPT = p('enhanced-analytical.md');

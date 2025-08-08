@@ -1,6 +1,17 @@
 {
   "include": ["shared/**/*", "server/**/*", "__tests__/**/*", "FlappyJournal/**/*"],
-  "exclude": ["node_modules", "build", "dist"],
+  "exclude": [
+    "node_modules",
+    "build",
+    "dist",
+    "FlappyJournal hey",
+    "FlappyJournal/system-backups",
+    "__tests__/gc",
+    "FlappyJournal/__tests__",
+    "FlappyJournal/tests",
+    "FlappyJournal/test",
+    "FlappyJournal/server/consciousness/__tests__"
+  ],
   "compilerOptions": {
     "incremental": true,
     "tsBuildInfoFile": "./node_modules/typescript/tsbuildinfo",

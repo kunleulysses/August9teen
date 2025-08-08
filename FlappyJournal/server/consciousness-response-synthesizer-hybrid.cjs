@@ -79,7 +79,8 @@ function initializeDynamicSystems() {
   console.log('🧠 Enhanced with: Dynamic AI Selection, Intelligent Memory, Emotional Intelligence, Advanced Synthesis');
 }
 
-export async function synthesizeUnifiedResponse({
+// Converted to CommonJS export
+async function synthesizeUnifiedResponse({
   analyticalContent,
   intuitiveContent,
   consciousness,
@@ -262,6 +263,8 @@ export async function synthesizeUnifiedResponse({
     throw error;
   }
 }
+
+module.exports = { synthesizeUnifiedResponse };
 
 async function executeSynthesisWithFailover({
   analyticalContent,

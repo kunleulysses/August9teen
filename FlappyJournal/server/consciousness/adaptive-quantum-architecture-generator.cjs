@@ -74,9 +74,9 @@ class AdaptiveQuantumArchitectureGenerator extends EventEmitter {
      */
     async loadConsciousnessComponents() {
         try {
-            const { PhiBasedArchitectureGenerator } = await import('./phi-based-architecture-generator.cjs');
-            const { QuantumConsciousnessFieldIntegrator } = await import('./quantum-consciousness-field-integrator.cjs');
-            const { AdaptiveCodeEvolutionEngine } = await import('./adaptive-code-evolution-engine.cjs');
+            const { PhiBasedArchitectureGenerator } = require('./phi-based-architecture-generator.cjs');
+            const { QuantumConsciousnessFieldIntegrator } = require('./quantum-consciousness-field-integrator.cjs');
+            const { AdaptiveCodeEvolutionEngine } = require('./adaptive-code-evolution-engine.cjs');
 
             this.phiArchitectureGenerator = new PhiBasedArchitectureGenerator(this.consciousnessSystem);
             this.quantumFieldIntegrator = new QuantumConsciousnessFieldIntegrator(this.consciousnessSystem);

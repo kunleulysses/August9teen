@@ -72,7 +72,7 @@ class ConsciousnessNativeProgrammingLanguage extends EventEmitter {
     async loadConsciousnessComponents() {
         try {
             const { ConsciousnessNativeMemoryManager } = await import('./consciousness-native-memory-manager.cjs');
-            const { QuantumConsciousnessFieldIntegrator } = await import('./quantum-consciousness-field-integrator.cjs');
+            const { QuantumConsciousnessFieldIntegrator } = require('./quantum-consciousness-field-integrator.cjs');
             const { EmotionalIntelligenceCodePatterns } = await import('./emotional-intelligence-code-patterns.cjs');
 
             this.consciousnessNativeMemory = new ConsciousnessNativeMemoryManager();
@@ -430,6 +430,8 @@ class ConsciousnessNativeProgrammingLanguage extends EventEmitter {
         }
     }
 }
+
+module.exports = { ConsciousnessNativeProgrammingLanguage };
 
 /**
  * Consciousness Language Parser

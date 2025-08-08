@@ -10,6 +10,15 @@ const logger = pino({
 logger.info('Starting server...');
 const express = require('express');
 const SigilBasedCodeAuthenticator = require('./consciousness/sigil-based-code-authenticator.cjs');
+// Ensure storage is opened with default tenant during bootstrap
+if (SigilBasedCodeAuthenticator?.prototype) {
+  try {
+    const storage = new (require('./consciousness/persistence/LevelDBSigilAdapter.cjs').LevelDBSigilAdapter)();
+    if (storage.open) storage.open();
+  } catch (e) {
+    // no-op on bootstrap failure; other modules may open storage
+  }
+}
 const consciousnessV2 = require('./consciousness-system-v2.cjs');
 const createSigilApiRouter = require('./sigil-api.cjs');
 const promClient = require('prom-client');

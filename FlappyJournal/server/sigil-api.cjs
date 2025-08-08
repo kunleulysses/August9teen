@@ -1,14 +1,14 @@
 const express = require('express');
 const { jwtMiddleware, requireRole } = require('./auth/jwtMiddleware.cjs');
-const { rateLimiter } = require('./middleware/rateLimiter');
-const { SigilEngine } = require('./consciousness/SigilEngine');
-const { LevelDBSigilAdapter } = require('./consciousness/persistence/LevelDBSigilAdapter.cjs');
+const { rateLimiter } = require('./middleware/rateLimiter.cjs');
+const { SigilEngine } = require('./consciousness/SigilEngine.cjs');
+const { PostgresSigilAdapter } = require('./consciousness/persistence/PostgresSigilAdapter.cjs');
 
 function createRouter(consciousness) {
   const router = express.Router();
   
   // Initialize storage and engine
-  const storage = new LevelDBSigilAdapter();
+  const storage = new PostgresSigilAdapter();
   const sigilEngine = new SigilEngine({ storage });
   
   // Apply JWT authentication and rate limiting to all sigil routes
@@ -31,8 +31,8 @@ const {
   sigilErrorCounter 
 } = require('./metrics/sigilMetrics.cjs');
 
-const { validateSigilCreatePayload } = require('./middleware/validateSchema');
-const { trackAuthFailure } = require('./monitoring/alertManager');
+const { validateSigilCreatePayload } = require('./middleware/validateSchema.cjs');
+const { trackAuthFailure } = require('./monitoring/alertManager.cjs');
 
 // Get sigil history (requires authentication)
 router.get('/api/consciousness/sigils', async (req, res) => {

@@ -12,6 +12,7 @@
     "test:unit": "jest --runInBand",
     "store:migrate": "node scripts/store-migrator.cjs",
     "start:api": "node server/api/server.mjs",
+    "start:sigil": "node FlappyJournal/server/index.cjs",
     "lint": "eslint . --ignore-pattern FlappyJournal/",
     "type-check": "tsc -p tsconfig.json --noEmit",
     "ci": "npm run lint && npm run type-check && npm run test && npm audit --audit-level=moderate",
@@ -29,7 +30,7 @@
     "selfcode": "npm run self:check && node scripts/selfcode-dry-run.cjs",
     "selfcode:dry-run": "node scripts/selfcode-dry-run.cjs",
     "selfcode:auto-pr": "node scripts/selfcode-auto-pr.cjs",
-    "start": "npm run start:api",
+    "start": "npm run start:sigil",
     "pilot:provision": "node scripts/provision-pilot.cjs --company=$COMPANY",
     "pilot:up": "node scripts/pilot-up.cjs --company=$COMPANY",
     "pilot:down": "node scripts/pilot-down.cjs --company=$COMPANY"

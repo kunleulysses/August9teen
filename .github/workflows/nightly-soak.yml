@@ -40,10 +40,12 @@ jobs:
           JWT_AUDIENCE: ${{ secrets.JWT_AUDIENCE }}
           JWT_JWKS_URI: ${{ secrets.JWT_JWKS_URI }}
           DNASTORE_URL: ${{ secrets.DNASTORE_URL }}
+          SPIRAL_EVENT_SECRET: ${{ secrets.SPIRAL_EVENT_SECRET }}
+          DEFAULT_TENANT: public
           
       - name: Wait for API to be ready
         run: |
-          timeout 60 bash -c 'until curl -sSf http://localhost:3000/health; do sleep 2; done'
+          timeout 60 bash -c 'until curl -sSf http://localhost:3000/health || curl -sSf http://localhost:3004/healthz; do sleep 2; done'
           
       - name: Install k6
         uses: grafana/setup-k6-action@v1

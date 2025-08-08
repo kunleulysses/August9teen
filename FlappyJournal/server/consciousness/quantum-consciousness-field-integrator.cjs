@@ -1184,4 +1184,4 @@ class QuantumCoherenceStabilizer {
     }
 }
 
-module.exports = QuantumConsciousnessFieldIntegrator;
+module.exports = { QuantumConsciousnessFieldIntegrator };

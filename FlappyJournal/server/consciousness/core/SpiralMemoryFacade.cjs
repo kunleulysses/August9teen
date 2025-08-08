@@ -3,7 +3,7 @@
  * Handles both legacy and new event keys for store/retrieve.
  */
 
-const SpiralMemoryArchitecture = require('./SpiralMemoryArchitecture.cjs');
+const { SpiralMemoryArchitecture } = require('./SpiralMemoryArchitecture.cjs');
 const eventBus = require('./ConsciousnessEventBus.cjs');
 const { InMemorySpiralAdapter  } = require('./storage/SpiralStorageAdapter.cjs');
 const rl = require('../../rate/spiralLimiter.cjs');

@@ -7,13 +7,10 @@
  */
 
 const dotenv = require('dotenv');
-const { fileURLToPath  } = require('url');
-const { dirname, join  } = require('path');
+const { join  } = require('path');
 const { existsSync  } = require('fs');
 
-// Load environment variables
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// Load environment variables (CJS-safe)
 const envPath = join(__dirname, '.env');
 if (existsSync(envPath)) {
     dotenv.config({ path: envPath });

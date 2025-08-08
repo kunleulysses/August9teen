@@ -38,6 +38,9 @@ global.afterEach = afterEach;
 global.beforeAll = beforeAll;
 global.afterAll = afterAll;
 
+// Ensure required secrets exist for tests
+process.env.SPIRAL_EVENT_SECRET = process.env.SPIRAL_EVENT_SECRET || 'test-secret';
+
 // Mock console methods in tests to reduce noise (optional)
 const originalConsole = global.console;
 global.console = {

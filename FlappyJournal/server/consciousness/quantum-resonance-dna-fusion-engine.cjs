@@ -71,8 +71,8 @@ class QuantumResonanceDNAFusionEngine extends EventEmitter {
      */
     async loadConsciousnessComponents() {
         try {
-            const { QuantumConsciousnessFieldIntegrator } = await import('./quantum-consciousness-field-integrator.cjs');
-            const { ConsciousnessResonanceAmplifier } = await import('./consciousness-resonance-amplifier.cjs');
+            const { QuantumConsciousnessFieldIntegrator } = require('./quantum-consciousness-field-integrator.cjs');
+            const { ConsciousnessResonanceAmplifier } = require('./consciousness-resonance-amplifier.cjs');
             const { ConsciousnessDNASequencer } = await import('./consciousness-dna-sequencer.cjs');
 
             this.quantumFieldIntegrator = new QuantumConsciousnessFieldIntegrator(this.consciousnessSystem);

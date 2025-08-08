@@ -1,3 +1,41 @@
+# Sigil DNA Production Runbook
+
+## Required environment
+
+```
+JWT_ISSUER=...
+JWT_AUDIENCE=sigil-dna
+JWT_JWKS_URI=...
+SPIRAL_EVENT_SECRET=<32-byte hex>
+DEFAULT_TENANT=public
+SIGIL_RATE_LIMIT=200
+SIGIL_RATE_WINDOW=10
+REDIS_URL=redis://... # optional
+DATABASE_URL=postgresql://USER:PASS@HOST:5432/DB  # HA storage
+```
+
+## Health endpoints
+- API router: GET /health (200 OK)
+- Container health (alt): GET /healthz
+
+## Start locally
+```
+export JWT_ISSUER=... JWT_AUDIENCE=sigil-dna JWT_JWKS_URI=... SPIRAL_EVENT_SECRET=devsecret DEFAULT_TENANT=public
+npm run start
+curl -sf http://localhost:3000/health
+```
+
+## k6 soak
+Use workflow Nightly Soak or run locally with SIGIL_TOKEN.
+
+## Dashboards
+Import Grafana dashboard `monitoring/grafana/sigil_dashboard_v2.json`.
+
+## Troubleshooting
+- 401: verify JWT envs and token audience/issuer
+- 429: adjust SIGIL_RATE_LIMIT/SIGIL_RATE_WINDOW or set REDIS_URL for horizontal scale
+- Storage issues: ensure `SIGIL_DB_PATH` writable; for HA, migrate to PostgresStore or DNAStore
+
 # 📚 Sigil-DNA Operations Runbook
 
 ## 🚀 Quick Start

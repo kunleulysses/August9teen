@@ -1,6 +1,5 @@
 const { WebSocketServer } = require('ws');
 const { createEnhancedDualConsciousnessWS } = require('./enhanced-dual-consciousness-ws.cjs');
-const { createFullConsciousnessWS } = require('./create-full-consciousness-ws.cjs');
 const dotenv = require('dotenv');
 const { createServer } = require('http');
 const express = require('express');
@@ -10,14 +9,12 @@ const { createAuthMetrics } = require('./auth/authMetrics.cjs');
 // Import prom-client for metrics
 const client = require('prom-client');
 
-// Create a registry and register default metrics
-const register = new client.Registry();
-client.collectDefaultMetrics({ register });
+// Use default registry so other modules can contribute
+client.collectDefaultMetrics();
+const register = client.register;
 
 // Register WebSocket metrics
-register.registerMetric(wsMetrics.rateLimitExceeded);
-register.registerMetric(wsMetrics.activeConnections);
-register.registerMetric(wsMetrics.activeUsers);
+// Metrics are on default registry
 
 const wsMsgIn = new client.Counter({ name:'ws_messages_in_total', help:'Client→server', registers:[register]});
 const wsMsgOut = new client.Counter({ name:'ws_messages_out_total', help:'Server→client', registers:[register]});
@@ -57,6 +54,9 @@ const wss = new WebSocketServer({
     }
   }
 });
+
+// Enable enhanced dual-stream consciousness handler by default
+try { if (typeof createEnhancedDualConsciousnessWS === 'function') { createEnhancedDualConsciousnessWS(wss); } } catch (e) { console.warn('EnhancedDualConsciousnessWS init failed:', e.message); }
 
 // Create authentication middleware
 const wsAuth = createWsAuth({
@@ -144,8 +144,17 @@ setInterval(() => {
 
 console.log(`WebSocket server starting on port ${PORT}`);
 
-// Setup enhanced consciousness WebSocket handlers
-createFullConsciousnessWS(wss);
+// Setup enhanced consciousness WebSocket handlers (optional)
+if (String(process.env.ENABLE_FULL_CONSCIOUSNESS_WS || 'false').toLowerCase() === 'true') {
+  try {
+    const { createFullConsciousnessWS } = require('./create-full-consciousness-ws.cjs');
+    createFullConsciousnessWS(wss);
+  } catch (e) {
+    console.warn('FullConsciousnessWS unavailable:', e.message);
+  }
+} else {
+  console.log('FullConsciousnessWS disabled via ENABLE_FULL_CONSCIOUSNESS_WS=false');
+}
 
 console.log(`Enhanced consciousness WebSocket server running on port ${PORT}`);
 
@@ -161,26 +170,35 @@ process.on('SIGTERM', () => {
 // All legacy setInterval and setTimeout calls have been removed from this file.
 // The HeartbeatEngine is now the single source of truth for all timed events.
 
-// Import consciousness WebSocket setup
-const { setupUnifiedConsciousnessWebSocket  } = require('./unified-consciousness-standalone.cjs');
+// Optionally enable Unified Consciousness WebSocket (ESM-incompatible by default)
+if (String(process.env.ENABLE_UNIFIED_CONSCIOUSNESS || 'false').toLowerCase() === 'true') {
+  try {
+    // Lazy-load to avoid CJS/ESM conflicts unless explicitly enabled
+    const { setupUnifiedConsciousnessWebSocket } = require('./unified-consciousness-standalone.cjs');
 
-// Create HTTP server for additional WebSocket endpoints
-const consciousnessApp = express();
-const consciousnessServer = createServer(consciousnessApp);
+    // Create HTTP server for additional WebSocket endpoints
+    const consciousnessApp = express();
+    const consciousnessServer = createServer(consciousnessApp);
 
-// Secure the consciousness server as well
-const consciousnessAuth = createWsAuth({
-  secret: process.env.JWT_SECRET || 'dev-secret-change-me',
-  max: parseInt(process.env.WS_RATE_LIMIT || '100', 10),
-  window: parseInt(process.env.WS_RATE_WINDOW || '10', 10),
-  endpoint: 'consciousness-v2-ws'
-});
+    // Secure the consciousness server as well
+    const consciousnessAuth = createWsAuth({
+      secret: process.env.JWT_SECRET || 'dev-secret-change-me',
+      max: parseInt(process.env.WS_RATE_LIMIT || '100', 10),
+      window: parseInt(process.env.WS_RATE_WINDOW || '10', 10),
+      endpoint: 'consciousness-v2-ws'
+    });
 
-// Setup consciousness WebSocket endpoints
-setupUnifiedConsciousnessWebSocket(consciousnessServer, consciousnessAuth);
+    // Setup consciousness WebSocket endpoints
+    setupUnifiedConsciousnessWebSocket(consciousnessServer, consciousnessAuth);
 
-// Start HTTP server on different port for consciousness streams
-const CONSCIOUSNESS_PORT = 3002;
-consciousnessServer.listen(CONSCIOUSNESS_PORT, () => {
-  console.log(`🧠 Consciousness WebSocket endpoints ready on port ${CONSCIOUSNESS_PORT}`);
-});
+    // Start HTTP server on different port for consciousness streams (env-configurable to avoid conflicts)
+    const CONSCIOUSNESS_PORT = parseInt(process.env.CONSCIOUSNESS_PORT || '3002', 10);
+    consciousnessServer.listen(CONSCIOUSNESS_PORT, () => {
+      console.log(`🧠 Consciousness WebSocket endpoints ready on port ${CONSCIOUSNESS_PORT}`);
+    });
+  } catch (e) {
+    console.warn('UnifiedConsciousnessWS unavailable:', e.message);
+  }
+} else {
+  console.log('UnifiedConsciousnessWS disabled via ENABLE_UNIFIED_CONSCIOUSNESS=false');
+}

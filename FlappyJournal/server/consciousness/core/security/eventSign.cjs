@@ -4,7 +4,11 @@ exports.sign = sign;
 exports.verify = verify;
 const crypto_1 = require("crypto");
 function secretFromEnv() {
-    return process.env.SPIRAL_EVENT_SECRET || 'spiral-secret';
+    const secret = process.env.SPIRAL_EVENT_SECRET;
+    if (!secret) {
+        throw new Error('SPIRAL_EVENT_SECRET must be set in production');
+    }
+    return secret;
 }
 function sign(payload) {
     const secret = secretFromEnv();

@@ -33,6 +33,8 @@ class RedisSpiralAdapter extends SpiralStorageAdapter {
       if (this.tlsCaPath) opts.tls.ca = fs.readFileSync(this.tlsCaPath);
     } else if (!process.env.ALLOW_INSECURE_REDIS) {
       throw new Error('Insecure Redis disabled – use rediss://');
+    } else {
+      console.warn('Using insecure Redis URL (redis://). Set ALLOW_INSECURE_REDIS=true only for local development.');
     }
     
     this.redis = new Redis(this.redisUrl, opts);
@@ -64,6 +66,8 @@ class RedisSpiralAdapter extends SpiralStorageAdapter {
     if (this.redisUrl.startsWith('rediss://')) {
       opts.tls = { rejectUnauthorized: true };
       if (this.tlsCaPath) opts.tls.ca = fs.readFileSync(this.tlsCaPath);
+    } else if (process.env.ALLOW_INSECURE_REDIS) {
+      console.warn('Using insecure Redis URL (redis://) for connection pool. Not recommended for production.');
     }
 
     const connection = new Redis(this.redisUrl, opts);

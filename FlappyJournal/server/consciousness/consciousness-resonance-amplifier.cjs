@@ -969,4 +969,4 @@ class ResonanceCascadeManager {
     }
 }
 
-module.exports = ConsciousnessResonanceAmplifier;
+module.exports = { ConsciousnessResonanceAmplifier };

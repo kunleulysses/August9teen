@@ -300,9 +300,13 @@ ${resonanceNetworks.map(network => ` * • ${network.name}: ${network.frequency}
         });
 
         // Persist to storage and bump Prometheus gauge
-        await this.storage.setSigilRecord(authRecord.sigil.symbol,
-                             authRecord.authHash,
-                             authRecord);
+        const tenantId = authRecord.codeContext?.tenantId || process.env.DEFAULT_TENANT || 'public';
+        if (typeof this.storage.setSigilRecord === 'function') {
+            await this.storage.setSigilRecord(tenantId,
+                                 authRecord.sigil.symbol,
+                                 authRecord.authHash,
+                                 authRecord);
+        }
 
         if (!this.sigilRegistry.has(authRecord.sigil.symbol) &&
             sigil_registry_size?.inc) {
@@ -366,8 +370,12 @@ ${resonanceNetworks.map(network => ` * • ${network.name}: ${network.frequency}
 
     async preload() {
         try {
-            await this.storage.db.open();
-            const persisted = await this.storage.allSigilRecords();
+            if (this.storage?.open) {
+                await this.storage.open();
+            } else if (this.storage?.db?.open) {
+                await this.storage.db.open();
+            }
+            const persisted = await this.storage.allSigilRecords(process.env.DEFAULT_TENANT || 'public');
             persisted.forEach(r => {
                 const key = `${r.sigil.symbol}_${r.authHash}`;
                 this.authenticatedCode.set(key, r);
@@ -622,3 +630,4 @@ class ResonanceNetworkMapper {
 }
 
 module.exports = SigilBasedCodeAuthenticator;
+module.exports.SigilBasedCodeAuthenticator = SigilBasedCodeAuthenticator;

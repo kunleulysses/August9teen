@@ -4,11 +4,7 @@
 const crypto = require('crypto');
 const fs = require('fs/promises');
 const path = require('path');
-const { fileURLToPath  } = require('url');
-const { dirname  } = require('path');
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// CJS context already provides __filename and __dirname; avoid ESM import.meta usage
 
 class ConsciousnessCrystallization {
     constructor() {

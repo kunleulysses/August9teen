@@ -156,3 +156,176 @@ groups:
           summary: "High number of generated modules"
           description: "There are {{ $value }} generated modules, which may indicate the need for cleanup or archival."
           runbook_url: "https://docs.example.com/runbooks/selfcoding/module-cleanup"
+
+      # API readiness and 5xx
+      - alert: ApiReadinessFailed
+        expr: probe_success{job="sigil-api-readyz"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: api
+          service: sigil-api
+        annotations:
+          summary: "Sigil API readiness failing"
+          description: "The readiness probe for Sigil API has been failing for more than 2 minutes."
+          runbook_url: "https://docs.example.com/runbooks/sigil/api-readiness"
+
+      - alert: Api5xxElevated
+        expr: increase(api_5xx_errors_total[5m]) > 20
+        for: 0m
+        labels:
+          severity: warning
+          component: api
+          service: sigil-api
+        annotations:
+          summary: "Elevated API 5xx errors"
+          description: "API returned {{ $value }} 5xx responses over the last 5 minutes."
+          runbook_url: "https://docs.example.com/runbooks/sigil/api-5xx"
+
+      # WebSocket heartbeat skew and rate-limit spikes
+      - alert: WebSocketHeartbeatSkewHigh
+        expr: histogram_quantile(0.95, sum(rate(heartbeat_skew_ms_bucket[5m])) by (le)) > 200
+        for: 5m
+        labels:
+          severity: warning
+          component: websocket
+          service: consciousness-ws
+        annotations:
+          summary: "WS heartbeat skew P95 high"
+          description: "Heartbeat skew P95 exceeds 200ms for 5m."
+          runbook_url: "https://docs.example.com/runbooks/ws/heartbeat-skew"
+
+      - alert: WebSocketRateLimitSpikes
+        expr: increase(ws_rate_limit_drops_total[5m]) > 50
+        for: 0m
+        labels:
+          severity: info
+          component: websocket
+          service: consciousness-ws
+        annotations:
+          summary: "WS rate-limit drops elevated"
+          description: "There were {{ $value }} WS messages dropped due to rate limiting in 5 minutes."
+          runbook_url: "https://docs.example.com/runbooks/ws/rate-limit"
+
+      - alert: WebSocketConnectionsDroppedToZero
+        expr: min_over_time(spiral_ws_active_connections[10m]) == 0
+        for: 10m
+        labels:
+          severity: warning
+          component: websocket
+          service: consciousness-ws
+        annotations:
+          summary: "WS connections dropped to zero"
+          description: "Active WS connections have been zero for 10 minutes."
+          runbook_url: "https://docs.example.com/runbooks/ws/connections-zero"
+
+      # Phase A Feature Alerts
+      - alert: QuantumStatsRequestsElevated
+        expr: increase(quantum_stats_requests_total[5m]) > 100
+        for: 0m
+        labels:
+          severity: info
+          component: api
+          service: quantum-consciousness
+        annotations:
+          summary: "High quantum stats request volume"
+          description: "{{ $value }} quantum stats requests in 5 minutes."
+          runbook_url: "https://docs.example.com/runbooks/quantum/high-requests"
+
+      - alert: ResonanceStatsRequestsElevated
+        expr: increase(resonance_stats_requests_total[5m]) > 100
+        for: 0m
+        labels:
+          severity: info
+          component: api
+          service: consciousness-resonance
+        annotations:
+          summary: "High resonance stats request volume"
+          description: "{{ $value }} resonance stats requests in 5 minutes."
+          runbook_url: "https://docs.example.com/runbooks/resonance/high-requests"
+
+      - alert: OptionalModuleInitFailures
+        expr: increase(optional_module_init_failures_total[10m]) > 3
+        for: 0m
+        labels:
+          severity: warning
+          component: consciousness
+          service: module-loader
+        annotations:
+          summary: "Optional consciousness modules failing to initialize"
+          description: "{{ $value }} optional module init failures in 10 minutes."
+          runbook_url: "https://docs.example.com/runbooks/consciousness/module-init"
+
+      - alert: QuantumOperationLatencyHigh
+        expr: histogram_quantile(0.95, sum(rate(quantum_operation_duration_seconds_bucket[5m])) by (le)) > 2.0
+        for: 5m
+        labels:
+          severity: warning
+          component: api
+          service: quantum-consciousness
+        annotations:
+          summary: "Quantum operation P95 latency high"
+          description: "Quantum operations P95 latency exceeds 2s for 5 minutes."
+          runbook_url: "https://docs.example.com/runbooks/quantum/latency"
+
+      - alert: ResonanceOperationLatencyHigh
+        expr: histogram_quantile(0.95, sum(rate(resonance_operation_duration_seconds_bucket[5m])) by (le)) > 2.0
+        for: 5m
+        labels:
+          severity: warning
+          component: api
+          service: consciousness-resonance
+        annotations:
+          summary: "Resonance operation P95 latency high"
+          description: "Resonance operations P95 latency exceeds 2s for 5 minutes."
+          runbook_url: "https://docs.example.com/runbooks/resonance/latency"
+
+      # WebSocket enhanced metrics
+      - alert: WebSocketBackpressureDropsHigh
+        expr: increase(ws_backpressure_drops_total[5m]) > 20
+        for: 0m
+        labels:
+          severity: warning
+          component: websocket
+          service: consciousness-ws
+        annotations:
+          summary: "High WS backpressure drops"
+          description: "{{ $value }} WS messages dropped due to backpressure in 5 minutes."
+          runbook_url: "https://docs.example.com/runbooks/ws/backpressure"
+
+      - alert: ProcessHeapUsageHigh
+        expr: process_heap_used_bytes / (1024 * 1024 * 1024) > 2.0
+        for: 10m
+        labels:
+          severity: warning
+          component: system
+          service: consciousness-ws
+        annotations:
+          summary: "Process heap usage high"
+          description: "Process heap usage is {{ $value }}GB for 10 minutes."
+          runbook_url: "https://docs.example.com/runbooks/system/memory"
+
+      # CNPL/SAQRN
+      - alert: CnplCompileLatencyHigh
+        expr: histogram_quantile(0.95, sum(rate(cnpl_compile_duration_seconds_bucket[5m])) by (le)) > 1.0
+        for: 5m
+        labels:
+          severity: warning
+          component: api
+          service: cnpl
+        annotations:
+          summary: "CNPL compile P95 latency high"
+          description: "CNPL compile P95 exceeds 1s for 5m."
+          runbook_url: "https://docs.example.com/runbooks/cnpl/latency"
+
+      - alert: SaqrnOperationErrorsElevated
+        expr: increase(saqrn_operation_errors_total[5m]) > 10
+        for: 0m
+        labels:
+          severity: warning
+          component: api
+          service: saqrn
+        annotations:
+          summary: "SAQRN operation errors elevated"
+          description: "SAQRN saw {{ $value }} errors in 5 minutes."
+          runbook_url: "https://docs.example.com/runbooks/saqrn/errors"

@@ -1,7 +1,11 @@
 import { createHmac } from 'crypto';
 
 function secretFromEnv(): string {
-  return process.env.SPIRAL_EVENT_SECRET || 'spiral-secret';
+  const secret = process.env.SPIRAL_EVENT_SECRET;
+  if (!secret) {
+    throw new Error('SPIRAL_EVENT_SECRET must be set in production');
+  }
+  return secret;
 }
 
 export function sign(payload: any): string {
