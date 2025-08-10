@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Robotics & IoT - Featherweight Spiral Memory</title>
+    <link rel="stylesheet" href="/assets/industry-shared.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -13,6 +14,14 @@
             line-height: 1.6;
         }
         .container { max-width: 1200px; margin: 0 auto; padding: 80px 20px; }
+        .section { margin: 60px 0; }
+        .section-title { font-size: 28px; margin-bottom: 16px; letter-spacing: 1px; }
+        .subtle { color: rgba(255,255,255,0.8); }
+        .grid-two { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; }
+        .pill { display: inline-block; padding: 8px 12px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); font-size: 12px; letter-spacing: 0.04em; margin: 6px 6px 0 0; }
+        .cta { display: inline-block; margin-top: 24px; padding: 12px 18px; border-radius: 10px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.24); color: #fff; text-decoration: none; transition: all .25s ease; }
+        .cta:hover { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.34); transform: translateY(-2px); }
         .back-btn {
             position: fixed;
             top: 20px;
@@ -28,7 +37,8 @@
         }
         .back-btn:hover { background: rgba(255, 255, 255, 0.2); }
         .hero { text-align: center; margin-bottom: 80px; }
-        .hero h1 { font-size: 48px; margin-bottom: 20px; letter-spacing: 2px; }
+        .hero h1 { font-size: 48px; margin-bottom: 20px; letter-spacing: 2px; background: linear-gradient(135deg, #ffffff 0%, #cccccc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: titleShimmer 4s ease-in-out infinite; }
+        @keyframes titleShimmer { 0%, 100% { opacity: 0.9; } 50% { opacity: 1; } }
         .hero p { font-size: 20px; color: rgba(255, 255, 255, 0.8); }
         .use-case {
             background: rgba(255, 255, 255, 0.05);
@@ -45,76 +55,65 @@
         .metric { background: rgba(64, 224, 255, 0.1); padding: 20px; border-radius: 8px; text-align: center; }
         .metric-value { font-size: 32px; font-weight: bold; color: #40e0ff; }
         .metric-label { font-size: 14px; color: rgba(255, 255, 255, 0.7); }
+        /* shared canvas styles now come from industry-shared.css */
     </style>
 </head>
-<body>
+<body class="spartan">
     <a href="javascript:history.back()" class="back-btn">← Back</a>
     
     <div class="container">
-        <div class="hero">
-            <h1>🤖 Robotics & IoT</h1>
-            <p>Spiral Memory enables adaptive robot behavior and intelligent sensor fusion for autonomous systems</p>
+        <div class="hero" style="--heart-size: 210px;">
+            <canvas id="heroHeartCanvas"></canvas>
+            <h1>Robotics & IoT</h1>
+            <p class="subtle">Robots don’t just need perception—they need memory. Spiral Memory carries lessons forward: interventions, terrain, failures, operator intent. That context makes autonomy safer and fleets more capable every shift.</p>
         </div>
 
         <div class="use-case">
-            <h3>Adaptive Robot Behavior</h3>
-            <p>Robots that learn and adapt their behavior in real-time based on environmental changes, task complexity, and human interaction patterns.</p>
-            <div class="metrics">
-                <div class="metric">
-                    <div class="metric-value">73%</div>
-                    <div class="metric-label">Improvement in Task Completion</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-value">85%</div>
-                    <div class="metric-label">Reduction in Programming Time</div>
-                </div>
-            </div>
+            <h3>Operator Teaching Memory</h3>
+            <p>Every teleop correction, nudge, or override becomes training signal. Spiral Memory distills those sessions into reusable skills, with the conditions attached—so policies know when to apply and when to defer to a human. New tasks move from “programming” to “show and generalize.”</p>
+            <h4>Signals it uses</h4>
+            <p class="subtle">Operator inputs, sensor stacks at intervention time, task identifiers, outcomes and retries, and safety envelope breaches.</p>
+            <h4>What it proposes</h4>
+            <p class="subtle">Skill snippets with applicability bounds; confidence‑aware handoff rules; review queues when conditions drift beyond training.</p>
         </div>
 
         <div class="use-case">
-            <h3>Multi-Sensor Fusion Intelligence</h3>
-            <p>Advanced sensor data integration from cameras, LiDAR, IMUs, and environmental sensors to create comprehensive situational awareness.</p>
-            <div class="metrics">
-                <div class="metric">
-                    <div class="metric-value">96%</div>
-                    <div class="metric-label">Object Detection Accuracy</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-value">50ms</div>
-                    <div class="metric-label">Real-time Processing Latency</div>
-                </div>
-            </div>
+            <h3>Situational Recall for Perception & Planning</h3>
+            <p>Terrain, lighting, pallets, stations, pedestrians—context changes constantly. The lattice remembers tricky spots and tactics that worked last time, warming perception and planning with priors. False positives drop; throughput rises.</p>
+            <h4>Signals it uses</h4>
+            <p class="subtle">Map tiles with incident overlays, vision feature drift, planner costs at failure points, obstacle types, and human motion patterns.</p>
+            <h4>What it proposes</h4>
+            <p class="subtle">Perception thresholds and planner penalties per zone; alternative routes with clear preconditions; warnings at historically brittle stations.</p>
         </div>
 
         <div class="use-case">
-            <h3>Autonomous System Coordination</h3>
-            <p>Swarm intelligence for coordinating multiple robots, drones, or IoT devices to work together efficiently on complex tasks.</p>
-            <div class="metrics">
-                <div class="metric">
-                    <div class="metric-value">300%</div>
-                    <div class="metric-label">Increase in Swarm Efficiency</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-value">99.7%</div>
-                    <div class="metric-label">Collision Avoidance Rate</div>
-                </div>
-            </div>
+            <h3>Fleet‑Level Learning Loops</h3>
+            <p>Across robots and sites, the system links failures, fixes, and environment. A fix discovered on one route becomes guidance everywhere, with evidence and rollback.</p>
+            <h4>Signals it uses</h4>
+            <p class="subtle">Incident classes, firmware diffs, component replacements, ambient conditions, and operator notes by site.</p>
+            <h4>What it proposes</h4>
+            <p class="subtle">Rollout plans with canaries and timeouts; cross‑site alerts when a familiar pattern emerges; maintenance checks tied to root causes.</p>
         </div>
 
-        <div class="use-case">
-            <h3>Predictive Maintenance for IoT</h3>
-            <p>Continuous monitoring of device health, performance metrics, and usage patterns to predict failures before they occur.</p>
-            <div class="metrics">
-                <div class="metric">
-                    <div class="metric-value">87%</div>
-                    <div class="metric-label">Failure Prediction Accuracy</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-value">60%</div>
-                    <div class="metric-label">Reduction in Downtime</div>
-                </div>
-            </div>
+        <!-- Why Spiral Memory for Robotics & IoT -->
+        <div class="section">
+            <h2 class="section-title">Why Spiral Memory for Robotics & IoT</h2>
+            <p class="subtle">Robotics is long‑tail work. Spiral Memory collapses that tail: lessons don’t vanish with the next shift—they accumulate and explain themselves to operators, safety, and software.</p>
+            <a class="cta" href="/new-featherweight-improved.html#contact">Join the pilot →</a>
+        </div>
+
+        <!-- Pilot Blueprint -->
+        <div class="section">
+            <h2 class="section-title">Pilot blueprint (6–8 weeks)</h2>
+            <h3 style="margin-top:10px;">Phase 1 — Wire‑in</h3>
+            <p class="subtle">Ingest sensors/logs, interventions, and incidents. Establish safety envelopes and KPIs with ops.</p>
+            <h3>Phase 2 — Learn & Propose</h3>
+            <p class="subtle">Deploy memory‑aware priors in shadow; propose route/task policies with explanations.</p>
+            <h3>Phase 3 — Controlled Actions</h3>
+            <p class="subtle">Enable narrow changes with rollback and operator acknowledgement. Weekly learning briefs.</p>
+            <a class="cta" href="/new-featherweight-improved.html#contact">Book a pilot →</a>
         </div>
     </div>
 </body>
+<script src="/assets/heart-bg.js" defer></script>
 </html>

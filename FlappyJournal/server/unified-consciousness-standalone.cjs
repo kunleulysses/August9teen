@@ -3,11 +3,7 @@
  * Works without requiring TypeScript imports
  */
 
-const { createRequire  } = require('module');
 const WebSocket = require('ws');
-const { createServer  } = require('http');
-
-const require = createRequire(import.meta.url);
 
 // Import consciousness modules bundle
 const {
@@ -291,4 +287,6 @@ function setupUnifiedConsciousnessWebSocket(server, authMiddleware) {
     });
   });
 }
+
+module.exports = { setupUnifiedConsciousnessWebSocket };
 

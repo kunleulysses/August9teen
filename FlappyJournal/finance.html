@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance - Featherweight Spiral Memory</title>
+    <title>Finance & Banking - Featherweight Spiral Memory</title>
+    <link rel="stylesheet" href="/assets/industry-shared.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -13,6 +14,17 @@
             line-height: 1.6;
         }
         .container { max-width: 1200px; margin: 0 auto; padding: 80px 20px; }
+        .section { margin: 60px 0; }
+        .section-title { font-size: 28px; margin-bottom: 16px; letter-spacing: 1px; }
+        .subtle { color: rgba(255,255,255,0.8); }
+        .grid-two { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; }
+        .stat { display: flex; flex-direction: column; gap: 6px; background: rgba(64,224,255,0.08); border: 1px solid rgba(64,224,255,0.2); border-radius: 12px; padding: 16px; }
+        .stat .value { font-size: 28px; font-weight: 700; color: #40e0ff; }
+        .stat .label { font-size: 12px; color: rgba(255,255,255,0.7); letter-spacing: 0.06em; text-transform: uppercase; }
+        .pill { display: inline-block; padding: 8px 12px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); font-size: 12px; letter-spacing: 0.04em; margin: 6px 6px 0 0; }
+        .cta { display: inline-block; margin-top: 24px; padding: 12px 18px; border-radius: 10px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.24); color: #fff; text-decoration: none; transition: all .25s ease; }
+        .cta:hover { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.34); transform: translateY(-2px); }
         .back-btn {
             position: fixed;
             top: 20px;
@@ -45,76 +57,75 @@
         .metric { background: rgba(64, 224, 255, 0.1); padding: 20px; border-radius: 8px; text-align: center; }
         .metric-value { font-size: 32px; font-weight: bold; color: #40e0ff; }
         .metric-label { font-size: 14px; color: rgba(255, 255, 255, 0.7); }
+        /* shared canvas styles now come from industry-shared.css */
     </style>
 </head>
-<body>
+<body class="spartan">
     <a href="javascript:history.back()" class="back-btn">← Back</a>
     
     <div class="container">
-        <div class="hero">
-            <h1>💰 Finance</h1>
-            <p>Spiral Memory revolutionizes financial services with real-time risk assessment and adaptive intelligence</p>
+        <div class="hero" style="--heart-size: 200px;">
+            <canvas id="heroHeartCanvas"></canvas>
+            <h1>Finance & Banking</h1>
+            <p class="subtle">From underwriting to payments to markets, Spiral Memory gives your systems long‑term recall. It links what happened, why it mattered, and what to do next—so risk, product, and ops get sharper every week.</p>
         </div>
 
         <div class="use-case">
-            <h3>Real-Time Risk Assessment</h3>
-            <p>Continuous monitoring of market conditions, portfolio correlations, and macroeconomic indicators to provide instant risk calculations and hedging recommendations.</p>
-            <div class="metrics">
-                <div class="metric">
-                    <div class="metric-value">92%</div>
-                    <div class="metric-label">Risk Prediction Accuracy</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-value">15%</div>
-                    <div class="metric-label">Reduction in Portfolio Volatility</div>
-                </div>
-            </div>
+            <h3>Living Counterparty Graph</h3>
+            <p>Spiral Memory builds a time‑aware graph of counterparties, exposures, covenants, disputes, collateral, and resolutions. It remembers the trajectory of relationships—how limits drifted, which red flags preceded stress, which controls actually worked—so pricing and limits reflect reality, not snapshots.</p>
+            <h4>Signals it uses</h4>
+            <p class="subtle">Term sheets and covenants, facility usage, collateral marks, cash movement, dispute threads, legal notices, and prior remediation outcomes.</p>
+            <h4>What it proposes</h4>
+            <p class="subtle">Limit and tenor adjustments with evidence; covenant watch‑lists with precursors; margin calls prioritized by propagation risk; sales nudges grounded in past positive responses.</p>
+            <h4>Where it lands</h4>
+            <p class="subtle">Underwriting, treasury, and relationship management share the same context spine with explainable rationales attached to every change.</p>
         </div>
 
         <div class="use-case">
-            <h3>Advanced Fraud Detection</h3>
-            <p>Multi-dimensional behavioral analysis that learns from transaction patterns, device fingerprints, and network effects to identify fraudulent activity in milliseconds.</p>
-            <div class="metrics">
-                <div class="metric">
-                    <div class="metric-value">99.8%</div>
-                    <div class="metric-label">Fraud Detection Rate</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-value">0.02%</div>
-                    <div class="metric-label">False Positive Rate</div>
-                </div>
-            </div>
+            <h3>Payments Posture & Authorization Memory</h3>
+            <p>Each payment carries history: device posture, account journey, merchant behavior, route reliability, and prior exceptions. Spiral Memory turns those threads into adaptive authorization—swift for good flows, precise step‑up for risky ones—with a narrative you can hand to ops or the network.</p>
+            <h4>Signals it uses</h4>
+            <p class="subtle">Device and session fingerprints, historical dispute patterns, merchant chargeback posture, BIN and route health, velocity and geolocation anomalies.</p>
+            <h4>What it proposes</h4>
+            <p class="subtle">Authorization policy suggestions with just‑in‑time controls (strong customer auth, delay, or re‑route), dispute packets that pre‑assemble evidence, and merchant‑level posture updates.</p>
         </div>
 
         <div class="use-case">
-            <h3>Adaptive Trading Algorithms</h3>
-            <p>Self-evolving trading strategies that adapt to market microstructure changes, regulatory shifts, and emerging patterns without human intervention.</p>
-            <div class="metrics">
-                <div class="metric">
-                    <div class="metric-value">28%</div>
-                    <div class="metric-label">Alpha Generation Improvement</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-value">45%</div>
-                    <div class="metric-label">Reduction in Drawdown</div>
-                </div>
-            </div>
+            <h3>Market Regime Recall for Risk & Product</h3>
+            <p>Link market regimes to your own decisions and outcomes: what hedges held up, where liquidity hid, which clients needed support. The system proposes playbooks tied to your evidence: why it worked then, what’s different now, and how to gate the rollout.</p>
+            <h4>Signals it uses</h4>
+            <p class="subtle">Internal trade and inventory timelines, funding markets, fee schedules, microstructure metrics, and client ticket mix; tagged outcomes from prior interventions.</p>
+            <h4>What it proposes</h4>
+            <p class="subtle">Pre‑approved hedge sets and routing rules with automatic kill‑switches; client outreach lists with reasons; de‑risking guidance for vulnerable products.</p>
         </div>
 
-        <div class="use-case">
-            <h3>Intelligent Credit Scoring</h3>
-            <p>Dynamic credit assessment using alternative data sources, behavioral patterns, and real-time financial health indicators for more accurate lending decisions.</p>
-            <div class="metrics">
-                <div class="metric">
-                    <div class="metric-value">35%</div>
-                    <div class="metric-label">Increase in Loan Approval Accuracy</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-value">22%</div>
-                    <div class="metric-label">Reduction in Default Rates</div>
-                </div>
+        <!-- Why Spiral Memory for Finance -->
+        <div class="section">
+            <h2 class="section-title">Why Spiral Memory for Finance & Banking</h2>
+            <p class="subtle">Finance runs on stories hidden in time. Spiral Memory encodes those stories—the sequences, causes, and counterfactuals—so every function gets smarter: risk that explains itself, products that learn from each launch, and operations that anticipate exceptions.</p>
+            <a class="cta" href="/new-featherweight-improved.html#contact">Join the pilot →</a>
+        </div>
+
+        <!-- Pilot Blueprint -->
+        <div class="section">
+            <h2 class="section-title">Pilot blueprint (6–8 weeks)</h2>
+            <h3 style="margin-top:10px;">Phase 1 — Wire‑in</h3>
+            <p class="subtle">Connect ledger/events, auth logs, disputes, and market feeds. Establish ground truth and objectives with stakeholders.</p>
+            <h3>Phase 2 — Learn & Propose</h3>
+            <p class="subtle">Train spiral memory on historical regimes and live flows; surface top decisions with narratives and alternatives.</p>
+            <h3>Phase 3 — Controlled Actions</h3>
+            <p class="subtle">Gate a narrow set of decisions (limits, step‑ups, hedges) with rollbacks and review loops. Ship weekly learnings to execs.</p>
+            <a class="cta" href="/new-featherweight-improved.html#contact">Book a pilot →</a>
+        </div>
+
+        <!-- Integration Architecture -->
+        <div class="section">
+            <h2 class="section-title">Integration architecture</h2>
+            <div class="card">
+                <p class="subtle">Drop‑in alongside OMS/EMS, risk, and AML. Outputs arrive as ranked signals and webhooks with rationales tied to prior events.</p>
             </div>
         </div>
     </div>
 </body>
+<script src="/assets/heart-bg.js" defer></script>
 </html>

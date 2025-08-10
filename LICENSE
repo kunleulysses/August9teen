@@ -1,0 +1,17 @@
+Business Source License 1.1 (BUSL-1.1)
+
+Licensor: Featherweight Labs
+Licensed Work: This repository (excluding any third-party code under separate licenses)
+
+Additional Use Grant: You may use, copy, and modify this work for non-production, evaluation, and demo purposes, including public demos (e.g., GitHub Pages), provided that you retain this license and attribution notices.
+
+Change Date: 36 months from the date of this file
+
+Change License: At the Change Date, this work will be made available under the Apache License, Version 2.0.
+
+Terms:
+- Production use (providing the Licensed Work to third parties as a service, or embedding it in production systems) requires a separate commercial license from the Licensor until the Change Date.
+- The Licensed Work is provided “as is,” without warranties or conditions of any kind.
+- See `KNOWN_LIMITS.md` and `SECURITY.md` for disclosures, redactions, and security posture.
+
+For the full text of BUSL-1.1, see: https://mariadb.com/bosl-1-1/

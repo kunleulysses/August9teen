@@ -70,23 +70,24 @@ function rateLimiter(req, res, next) {
   
   limiter.consume(userKey)
     .then((resRateLimiter) => {
-      // Set rate limit headers
+      // Set rate limit headers (guard msBeforeNext; some stores may not provide it)
+      const msUntilReset = Number(resRateLimiter && resRateLimiter.msBeforeNext) || (RATE_WINDOW * 1000);
       res.set({
         'X-RateLimit-Limit': RATE_LIMIT,
         'X-RateLimit-Remaining': resRateLimiter.remainingPoints,
-        'X-RateLimit-Reset': new Date(Date.now() + resRateLimiter.msBeforeNext).toISOString()
+        'X-RateLimit-Reset': new Date(Date.now() + msUntilReset).toISOString()
       });
       next();
     })
     .catch((rejRes) => {
-      // Rate limit exceeded
-      const retryAfter = Math.round(rejRes.msBeforeNext / 1000) || 1;
-      
+      // Rate limit exceeded or limiter error
+      const msUntilReset = Number(rejRes && rejRes.msBeforeNext) || (RATE_WINDOW * 1000);
+      const retryAfter = Math.ceil(msUntilReset / 1000) || 1;
       res.set({
         'Retry-After': retryAfter,
         'X-RateLimit-Limit': RATE_LIMIT,
         'X-RateLimit-Remaining': 0,
-        'X-RateLimit-Reset': new Date(Date.now() + rejRes.msBeforeNext).toISOString()
+        'X-RateLimit-Reset': new Date(Date.now() + msUntilReset).toISOString()
       });
       
       // Log rate limit violation
@@ -125,20 +126,22 @@ function createRateLimiter({ limit, window }) {
     }
     customLimiter.consume(userKey)
       .then((resRateLimiter) => {
+        const msUntilReset = Number(resRateLimiter && resRateLimiter.msBeforeNext) || (Number(window || RATE_WINDOW) * 1000);
         res.set({
           'X-RateLimit-Limit': limit || RATE_LIMIT,
           'X-RateLimit-Remaining': resRateLimiter.remainingPoints,
-          'X-RateLimit-Reset': new Date(Date.now() + resRateLimiter.msBeforeNext).toISOString()
+          'X-RateLimit-Reset': new Date(Date.now() + msUntilReset).toISOString()
         });
         next();
       })
       .catch((rejRes) => {
-        const retryAfter = Math.round(rejRes.msBeforeNext / 1000) || 1;
+        const msUntilReset = Number(rejRes && rejRes.msBeforeNext) || (Number(window || RATE_WINDOW) * 1000);
+        const retryAfter = Math.ceil(msUntilReset / 1000) || 1;
         res.set({
           'Retry-After': retryAfter,
           'X-RateLimit-Limit': limit || RATE_LIMIT,
           'X-RateLimit-Remaining': 0,
-          'X-RateLimit-Reset': new Date(Date.now() + rejRes.msBeforeNext).toISOString()
+          'X-RateLimit-Reset': new Date(Date.now() + msUntilReset).toISOString()
         });
         req.log && req.log.warn({ userKey, ip: req.ip, userAgent: req.get('User-Agent'), endpoint: req.path, method: req.method, retryAfter }, 'Rate limit exceeded');
         res.status(429).json({ 

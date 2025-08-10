@@ -6,8 +6,7 @@ const pinoHttp = require('pino-http');
 const promClient = require('prom-client');
 const { createAuthMetrics } = require('./auth/authMetrics.cjs');
 
-// Import our components
-const createSigilRouter = require('./sigil-api.cjs');
+// Import our components (lazy-load sigil router below to avoid side-effects)
 const { validateSigilCreatePayload } = require('./middleware/validateSchema.cjs');
 const { jwtMiddleware, requireRole } = require('./auth/jwtMiddleware.cjs');
 const { rateLimiter, createRateLimiter } = require('./middleware/rateLimiter.cjs');
@@ -143,6 +142,7 @@ app.get('/readyz', async (req, res) => {
 
 // Metrics endpoint (protected; allow anonymous via ALLOW_ANONYMOUS_METRICS=true for local only)
 const authMetrics = createAuthMetrics({
+  // prefer HS256 secret for metrics bearer validation; set ALLOW_ANONYMOUS_METRICS=false in staging/prod
   secret: process.env.JWT_SECRET || 'dev-secret-change-me'
 });
 app.get('/metrics', authMetrics, async (req, res) => {
@@ -256,9 +256,20 @@ if (ENABLE_RESONANCE) {
   });
 }
 
-// Mount sigil API
-const sigilRouter = createSigilRouter();
-app.use('/', sigilRouter);
+// Mount sigil API (optional; can be disabled for canary runs without DB)
+const DISABLE_SIGIL_ROUTER = String(process.env.DISABLE_SIGIL_ROUTER || 'false').toLowerCase() === 'true';
+if (DISABLE_SIGIL_ROUTER) {
+  logger.info('Sigil router disabled via DISABLE_SIGIL_ROUTER=true');
+} else {
+  try {
+    const createSigilRouter = require('./sigil-api.cjs');
+    const sigilRouter = createSigilRouter();
+    app.use('/', sigilRouter);
+  } catch (error) {
+    try { optionalInitFailures.inc({ module: 'sigil' }); } catch (_) {}
+    logger.warn({ err: error && (error.message || String(error)) }, 'Sigil router initialization failed; continuing without');
+  }
+}
 
 // Phase A: Minimal, gated endpoints for dormant high-value modules
 
@@ -466,18 +477,26 @@ app.post('/api/saqrn/publish', jwtMiddleware, idempotencyMiddleware, (() => {
   try {
     const { validateSaqrnPublish } = require('./middleware/validateSaqrn.cjs');
     if (!validateSaqrnPublish(req.body || {})) return res.status(400).json({ error: 'Invalid payload' });
-    let result = { accepted: true };
-    // Signature of payload for audit and future verification
+    // Verify signature if provided; otherwise sign and echo
+    const { sign, verify } = require('./consciousness/core/security/eventSign.cjs');
+    const payloadToSign = {
+      tenantId: req.user?.tenantId,
+      topic: req.body.topic,
+      nonce: req.body.nonce,
+      timestamp: req.body.timestamp,
+      message: req.body.message
+    };
+    const providedSig = req.body.signature;
+    let isValid = true;
     try {
-      const { sign } = require('./consciousness/core/security/eventSign.cjs');
-      result.signature = sign({
-        tenantId: req.user?.tenantId,
-        topic: req.body.topic,
-        nonce: req.body.nonce,
-        timestamp: req.body.timestamp,
-        message: req.body.message
-      });
-    } catch (_) {}
+      if (providedSig) {
+        isValid = verify(payloadToSign, providedSig);
+      }
+    } catch (_) {
+      isValid = false;
+    }
+    const signature = sign(payloadToSign);
+    const result = { accepted: true, valid: isValid, signature };
     try { const { auditAction } = require('./monitoring/alertManager.cjs'); auditAction('saqrn_publish', { tenantId: req.user?.tenantId, user: req.user?.sub }); } catch (_) {}
     const end = process.hrtime.bigint();
     saqrnOperationDuration.observe(Number(end - start) / 1e9);
@@ -494,7 +513,10 @@ app.post('/api/saqrn/subscribe', jwtMiddleware, rateLimiter, async (req, res) =>
   try {
     const { validateSaqrnSubscribe } = require('./middleware/validateSaqrn.cjs');
     if (!validateSaqrnSubscribe(req.body || {})) return res.status(400).json({ error: 'Invalid payload' });
-    return res.json({ ok: true, subscribed: true });
+    // Minimal echo subscription with signature for canary
+    const { sign } = require('./consciousness/core/security/eventSign.cjs');
+    const sub = { tenantId: req.user?.tenantId, topic: req.body.topic, subscribedAt: Date.now() };
+    return res.json({ ok: true, subscribed: true, subscription: sub, signature: sign(sub) });
   } catch (e) {
     saqrnOperationErrors.inc();
     return res.status(500).json({ error: 'SAQRN subscribe failed' });

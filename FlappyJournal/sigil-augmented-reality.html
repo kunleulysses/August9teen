@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DNA Sigil Identity — Augmented Reality</title>
+  <link rel="stylesheet" href="/assets/industry-shared.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Times New Roman', serif; background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%); color: #ffffff; line-height: 1.6; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 80px 20px; }
+    .back-btn { position: fixed; top: 20px; left: 20px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 10px 20px; border-radius: 8px; text-decoration: none; transition: all .3s ease; z-index: 1000; }
+    .back-btn:hover { background: rgba(255,255,255,0.2); }
+    .hero { text-align: center; margin-bottom: 80px; }
+    .hero h1 { font-size: 42px; margin-bottom: 16px; letter-spacing: 1px; }
+    .hero p { font-size: 20px; color: rgba(255,255,255,0.8); }
+    .use-case { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 32px; margin-bottom: 32px; transition: all .3s ease; }
+    .use-case:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.2); }
+    .use-case h3 { font-size: 22px; margin-bottom: 12px; color: #40e0ff; }
+    .use-case p { margin-bottom: 12px; }
+    .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 12px; }
+    .metric { background: rgba(64,224,255,0.1); padding: 16px; border-radius: 8px; text-align: center; }
+    .metric-value { font-size: 28px; font-weight: bold; color: #40e0ff; }
+    .metric-label { font-size: 13px; color: rgba(255,255,255,0.7); }
+    .section { margin: 56px 0; }
+    .section-title { font-size: 26px; margin-bottom: 14px; letter-spacing: 1px; }
+    .subtle { color: rgba(255,255,255,0.8); }
+    .card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; }
+    .cta { display: inline-block; margin-top: 20px; padding: 12px 18px; border-radius: 10px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.24); color: #fff; text-decoration: none; transition: all .25s ease; }
+    .cta:hover { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.34); transform: translateY(-2px); }
+    .pill { display: inline-block; padding: 8px 12px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); font-size: 12px; letter-spacing: 0.04em; margin: 6px 6px 0 0; }
+  </style>
+</head>
+<body>
+  <canvas id="heartBackgroundCanvas"></canvas>
+  <a href="javascript:history.back()" class="back-btn">← Back</a>
+  <div class="container">
+    <div class="hero">
+      <h1>DNA Sigil Identity — Augmented Reality</h1>
+      <p class="subtle">Verify people and devices in‑context—safer overlays and faster workflows with privacy by design.</p>
+    </div>
+
+    <div class="use-case">
+      <h3>On‑Device Attestation & Privacy</h3>
+      <p>Sigils prove device integrity and user consent locally; sensitive data access is scoped and logged for each scene.</p>
+      <div class="metrics">
+        <div class="metric"><div class="metric-value">-24%</div><div class="metric-label">Policy Breaches</div></div>
+        <div class="metric"><div class="metric-value">+17%</div><div class="metric-label">Workflow Adoption</div></div>
+      </div>
+    </div>
+
+    <div class="use-case">
+      <h3>Field Service Identity & Safety</h3>
+      <p>Role‑aware overlays and safety checks require appropriate sigils; risky steps demand higher assurance or supervisor co‑sign.</p>
+      <div class="metrics">
+        <div class="metric"><div class="metric-value">-28%</div><div class="metric-label">Incident Rate</div></div>
+        <div class="metric"><div class="metric-value">-15%</div><div class="metric-label">Truck Rolls</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">Why DNA Sigil Identity for AR</h2>
+      <div class="card">
+        <p class="subtle">Identity in context—fast, safe, and private.</p>
+        <div style="margin-top:16px;">
+          <span class="pill">Device attestation</span>
+          <span class="pill">Consent in scene</span>
+          <span class="pill">Risk‑aware steps</span>
+          <span class="pill">Local privacy</span>
+        </div>
+        <a class="cta" href="/new-featherweight-improved.html#contact">Book a pilot →</a>
+      </div>
+    </div>
+  </div>
+  <script src="/assets/heart-bg.js" defer></script>
+</body>
+</html>

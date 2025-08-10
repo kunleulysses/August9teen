@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manufacturing & Logistics - Featherweight Spiral Memory</title>
+    <link rel="stylesheet" href="/assets/industry-shared.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -13,6 +14,14 @@
             line-height: 1.6;
         }
         .container { max-width: 1200px; margin: 0 auto; padding: 80px 20px; }
+        .section { margin: 60px 0; }
+        .section-title { font-size: 28px; margin-bottom: 16px; letter-spacing: 1px; }
+        .subtle { color: rgba(255,255,255,0.8); }
+        .grid-two { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; }
+        .pill { display: inline-block; padding: 8px 12px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); font-size: 12px; letter-spacing: 0.04em; margin: 6px 6px 0 0; }
+        .cta { display: inline-block; margin-top: 24px; padding: 12px 18px; border-radius: 10px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.24); color: #fff; text-decoration: none; transition: all .25s ease; }
+        .cta:hover { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.34); transform: translateY(-2px); }
         .back-btn {
             position: fixed;
             top: 20px;
@@ -28,7 +37,8 @@
         }
         .back-btn:hover { background: rgba(255, 255, 255, 0.2); }
         .hero { text-align: center; margin-bottom: 80px; }
-        .hero h1 { font-size: 48px; margin-bottom: 20px; letter-spacing: 2px; }
+        .hero h1 { font-size: 48px; margin-bottom: 20px; letter-spacing: 2px; background: linear-gradient(135deg, #ffffff 0%, #cccccc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: titleShimmer 4s ease-in-out infinite; }
+        @keyframes titleShimmer { 0%, 100% { opacity: 0.9; } 50% { opacity: 1; } }
         .hero p { font-size: 20px; color: rgba(255, 255, 255, 0.8); }
         .use-case {
             background: rgba(255, 255, 255, 0.05);
@@ -45,76 +55,65 @@
         .metric { background: rgba(64, 224, 255, 0.1); padding: 20px; border-radius: 8px; text-align: center; }
         .metric-value { font-size: 32px; font-weight: bold; color: #40e0ff; }
         .metric-label { font-size: 14px; color: rgba(255, 255, 255, 0.7); }
+        /* shared canvas styles now come from industry-shared.css */
     </style>
 </head>
-<body>
+<body class="spartan">
     <a href="javascript:history.back()" class="back-btn">← Back</a>
     
     <div class="container">
-        <div class="hero">
-            <h1>🏭 Manufacturing & Logistics</h1>
-            <p>Spiral Memory transforms industrial operations with predictive intelligence and autonomous optimization</p>
+        <div class="hero" style="--heart-size: 220px;">
+            <canvas id="heroHeartCanvas"></canvas>
+            <h1>Manufacturing & Logistics</h1>
+            <p class="subtle">Spiral Memory connects supplier history, line states, QA outcomes, and demand signals into one long‑horizon memory. The plant stops reacting and starts anticipating—every run sharper than the last.</p>
         </div>
 
         <div class="use-case">
-            <h3>Predictive Supply Chain Management</h3>
-            <p>Spiral Memory analyzes global supply patterns, weather data, geopolitical events, and market fluctuations to predict disruptions weeks before they occur.</p>
-            <div class="metrics">
-                <div class="metric">
-                    <div class="metric-value">85%</div>
-                    <div class="metric-label">Disruption Prediction Accuracy</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-value">$2.3M</div>
-                    <div class="metric-label">Average Cost Savings per Plant</div>
-                </div>
-            </div>
+            <h3>Supplier & Process Memory</h3>
+            <p>Link lot genealogy, machine states, and QA outcomes to the specific suppliers, tools, and conditions that shaped them. The system proposes routing, acceptance, and recipe tweaks based on your history—not generic rules—so quality improves without whack‑a‑mole firefighting.</p>
+            <h4>Signals it uses</h4>
+            <p class="subtle">COAs and lot lineage, SPC traces, tooling IDs and maintenance windows, operator notes, ambient conditions, and downstream RMAs.</p>
+            <h4>What it proposes</h4>
+            <p class="subtle">Lot routing and acceptance thresholds, tool/recipe pairings by SKU and shift, and targeted supplier feedback with before/after evidence.</p>
         </div>
 
         <div class="use-case">
-            <h3>Autonomous Quality Control</h3>
-            <p>Real-time defect detection using multi-sensor fusion, learning from every product that passes through the line to continuously improve accuracy.</p>
-            <div class="metrics">
-                <div class="metric">
-                    <div class="metric-value">99.7%</div>
-                    <div class="metric-label">Defect Detection Rate</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-value">60%</div>
-                    <div class="metric-label">Reduction in Manual Inspection</div>
-                </div>
-            </div>
+            <h3>Self‑Optimizing Lines</h3>
+            <p>When the line drifts, Spiral Memory remembers how you recovered last time. It primes vision, adjusts windows, and recommends setpoints with clear explanations and safe rollback. Night shift inherits day shift’s lessons automatically.</p>
+            <h4>Signals it uses</h4>
+            <p class="subtle">Vision false‑positive clusters, OEE and micro‑stoppages, changeover recipes, scrap signatures, and sensor drift by station.</p>
+            <h4>What it proposes</h4>
+            <p class="subtle">Window and setpoint changes with guardrails; canary lots for validation; analysis of which adjustments held across shifts and which didn’t.</p>
         </div>
 
         <div class="use-case">
-            <h3>Self-Optimizing Production Lines</h3>
-            <p>Production parameters automatically adjust based on material properties, environmental conditions, and demand forecasts to maximize efficiency and minimize waste.</p>
-            <div class="metrics">
-                <div class="metric">
-                    <div class="metric-value">23%</div>
-                    <div class="metric-label">Increase in Overall Equipment Effectiveness</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-value">18%</div>
-                    <div class="metric-label">Reduction in Material Waste</div>
-                </div>
-            </div>
+            <h3>Logistics & Yard Intelligence</h3>
+            <p>Dock, yard, and routing patterns are learned over seasons—where congestion happens, which carriers slip, what weather actually disrupts you. The lattice proposes gate plans and pick sequences that match the day’s reality.</p>
+            <h4>Signals it uses</h4>
+            <p class="subtle">ASN arrivals, carrier SLAs, yard moves, dock door histories, labor rosters, and local weather/holiday calendars.</p>
+            <h4>What it proposes</h4>
+            <p class="subtle">Gate and door assignments; dynamic pick/put sequences; alerts when a plan departs from proven patterns for today’s conditions.</p>
         </div>
 
-        <div class="use-case">
-            <h3>Intelligent Warehouse Orchestration</h3>
-            <p>Dynamic routing and inventory placement that adapts to seasonal patterns, order velocity, and fulfillment priorities in real-time.</p>
-            <div class="metrics">
-                <div class="metric">
-                    <div class="metric-value">40%</div>
-                    <div class="metric-label">Faster Order Fulfillment</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-value">30%</div>
-                    <div class="metric-label">Reduction in Storage Costs</div>
-                </div>
-            </div>
+        <!-- Why Spiral Memory for Manufacturing & Logistics -->
+        <div class="section">
+            <h2 class="section-title">Why Spiral Memory for Manufacturing & Logistics</h2>
+            <p class="subtle">Plants improve when memory compounds. Spiral Memory captures the why behind every excursion and fix—so throughput, quality, and safety rise together, shift after shift.</p>
+            <a class="cta" href="/new-featherweight-improved.html#contact">Join the pilot →</a>
+        </div>
+
+        <!-- Pilot Blueprint -->
+        <div class="section">
+            <h2 class="section-title">Pilot blueprint (6–8 weeks)</h2>
+            <h3 style="margin-top:10px;">Phase 1 — Wire‑in</h3>
+            <p class="subtle">Tap PLC/SCADA, MES/ERP, QA, and yard data. Align with production and quality leads.</p>
+            <h3>Phase 2 — Learn & Propose</h3>
+            <p class="subtle">Spiral Memory learns historical drifts and recovery patterns; proposes line and yard changes with rationale.</p>
+            <h3>Phase 3 — Controlled Actions</h3>
+            <p class="subtle">Enable narrow adjustments with rollback and operator acknowledgement. Weekly ops briefs.</p>
+            <a class="cta" href="/new-featherweight-improved.html#contact">Book a pilot →</a>
         </div>
     </div>
 </body>
+<script src="/assets/heart-bg.js" defer></script>
 </html>

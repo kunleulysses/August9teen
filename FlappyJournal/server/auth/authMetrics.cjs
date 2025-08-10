@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-const createAuthMetrics = ({ jwk, secret }) => {
+const createAuthMetrics = ({ jwk, secret, expectedToken }) => {
   return (req, res, next) => {
     // Allow anonymous access if feature flag is set
     if (process.env.ALLOW_ANONYMOUS_METRICS === 'true') {
@@ -22,6 +22,13 @@ const createAuthMetrics = ({ jwk, secret }) => {
 
       if (!token) {
         throw new Error('No authentication token provided');
+      }
+
+      // Static bearer token path (no JWT verification), if configured
+      const envBearer = expectedToken || process.env.METRICS_BEARER_TOKEN;
+      if (envBearer && token === envBearer) {
+        req.auth = { method: 'bearer', scope: 'metrics' };
+        return next();
       }
 
       // Verify JWT

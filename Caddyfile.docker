@@ -1,1 +1,34 @@
+{
+  # Optional: set your ACME contact email for Let's Encrypt
+  # email ops@featherweight.world
+}
+
+# API over HTTPS → local API service (pm2 or host process on 3004)
+api.featherweight.world {
+  encode zstd gzip
+  reverse_proxy host.docker.internal:3004
+}
+
+# WS over WSS → local WS server on 3015; forward subprotocol header for HS256
+ws.featherweight.world {
+  reverse_proxy host.docker.internal:3015 {
+    header_up Sec-WebSocket-Protocol {>Sec-WebSocket-Protocol}
+  }
+}
+
+# IdP (Keycloak) over HTTPS → local Keycloak on 8080
+auth.featherweight.world {
+  reverse_proxy host.docker.internal:8080
+}
+
+# Consciousness Web site (secure-consciousness-server) on port 3000
+www.featherweight.world {
+  encode zstd gzip
+  reverse_proxy host.docker.internal:3000
+}
+
+featherweight.world {
+  redir https://www.featherweight.world{uri} permanent
+}
+
 
