@@ -7,4 +7,9 @@
 
 # Example: generated code area (optional separate owners)
 FlappyJournal/server/generated/**  @your-org/selfcoding-approvers
+# Autopilot canary change areas (update with Coinbase teams when live)
+services/<TARGET_SERVICE>/* @coinbase/platform-eng @coinbase/sre
+k8s/<TARGET_SERVICE>/manifests/canary/* @coinbase/platform-eng @coinbase/sre
+helm/<TARGET_SERVICE>/values-canary.yaml @coinbase/platform-eng @coinbase/sre
+terraform/<SAFE_MODULE>/* @coinbase/platform-eng @coinbase/sre
 

@@ -3454,44 +3454,17 @@
         const title = BRIEFING_DATA[vertical].title || (vertical + ' — Briefing');
         const isMfg = (vertical === 'manufacturing');
 
-        // If Manufacturing → render clean hero + context only, then stop
-        if (isMfg) {
-          const hero = document.createElement('section'); hero.className='video-hero';
-          hero.innerHTML = `
-            <video autoplay muted playsinline loop poster="/assets/verticals/${vertical}/hero-poster.jpg" aria-label="Cinematic background for ${vertical}">
-              <source src="/assets/verticals/${vertical}/hero-1080.webm" type="video/webm">
-              <source src="/assets/verticals/${vertical}/hero-1080.mp4" type="video/mp4">
-            </video>
-            <div class="container plate">
-              <h1>${title}</h1>
-              <p class="subhead">Make every shift faster and safer. Memory and simulation that raise throughput, cut scrap, and pass audits.</p>
-              <nav class="inline-ctas">
-                <button onclick="copyBriefLink()">Copy link</button>
-                <button onclick="copyBriefMarkdown()">Copy brief</button>
-                <button onclick="saveBriefMarkdown()">Save .md</button>
-                <button onclick="startPilot()">Start a pilot</button>
-              </nav>
-            </div>`;
-          node.appendChild(hero);
-
-          const ctxStrip = document.createElement('section'); ctxStrip.className='context-strip';
-          ctxStrip.innerHTML = `
-            <div class="roles">
-              <span class="chip" onclick="setPersona('investor')">Investor</span>
-              <span class="chip" onclick="setPersona('operator')">Operator</span>
-              <span class="chip" onclick="setPersona('engineer')">Engineer</span>
-            </div>
-            <div class="tech">
-              <span class="chip" onclick="setFeature('spiral')">Spiral Memory</span>
-              <span class="chip" onclick="setFeature('hrg')">Holographic Reality</span>
-              <span class="chip" onclick="setFeature('sigil')">DNA Sigil Identity</span>
-              <span class="chip" onclick="setFeature('selfcode')">Self-Coding</span>
-            </div>
-            <div class="persona">Persona: <strong>${BRIEFING_STATE.persona[0].toUpperCase()+BRIEFING_STATE.persona.slice(1)}</strong> — ${BRIEFING_STATE.persona==='investor'?'signal, moat, monetization':BRIEFING_STATE.persona==='operator'?'safety, uptime, throughput':'APIs, contracts, rollout gates'}</div>`;
-          node.appendChild(ctxStrip);
-
-          return;
-        }
+        // Minimal brief for ALL verticals: show persona + feature copy under the top card, nothing else
+        const personaNote = document.createElement('div');
+        personaNote.style.fontSize='12px'; personaNote.style.opacity='0.85'; personaNote.style.margin='10px 0 6px 0';
+        if (BRIEFING_STATE.persona==='investor') { personaNote.textContent='Persona: Investor — signal, moat, monetization.'; }
+        if (BRIEFING_STATE.persona==='operator') { personaNote.textContent='Persona: Operator — safety, uptime, throughput.'; }
+        if (BRIEFING_STATE.persona==='engineer') { personaNote.textContent='Persona: Engineer — APIs, contracts, rollout gates.'; }
+        const personaCopy = (data.introPersona && data.introPersona[BRIEFING_STATE.persona]) ? data.introPersona[BRIEFING_STATE.persona] : data.intro;
+        const introP = document.createElement('p'); introP.textContent = personaCopy;
+        node.appendChild(personaNote);
+        node.appendChild(introP);
+        return;
         // Persona preface and intro tone
         const personaNote = document.createElement('div'); personaNote.style.fontSize='12px'; personaNote.style.opacity='0.85'; personaNote.style.margin='-4px 0 10px 0';
         let introCopy = data.intro;

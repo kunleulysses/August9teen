@@ -489,6 +489,11 @@ class UnifiedMemorySystem extends EventEmitter {
       }
     }
     
+    // Emit consolidation event for observability
+    try {
+      this.emit && this.emit('memory_consolidation', { decayedCount, removedCount, timestamp: Date.now() });
+    } catch (_) {}
+
     console.log(`🧠 Memory consolidation complete: ${decayedCount} decayed, ${removedCount} removed`);
   }
 

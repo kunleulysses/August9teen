@@ -24,7 +24,12 @@ const executeSchema = {
   additionalProperties: false,
   properties: {
     programId: { type: 'string', minLength: 1 },
-    inputs: { type: 'object', additionalProperties: true }
+    inputs: { type: 'object', additionalProperties: true },
+    overrideCode: { type: 'string' },
+    entry: { type: 'string', minLength: 1 },
+    args: { type: 'array', items: {} },
+    timeoutMs: { type: 'integer', minimum: 1 },
+    memoryLimitMb: { type: 'integer', minimum: 16 }
   },
   required: ['programId']
 };
@@ -44,9 +49,14 @@ function validateCnplCompile(body) {
 function validateCnplExecute(body) {
   if (validateExecuteAjv) return Boolean(validateExecuteAjv(body));
   if (!body || typeof body !== 'object') return false;
-  const { programId, inputs } = body;
+  const { programId, inputs, overrideCode, entry, args, timeoutMs, memoryLimitMb } = body;
   if (!programId || typeof programId !== 'string') return false;
   if (inputs && typeof inputs !== 'object') return false;
+  if (overrideCode && typeof overrideCode !== 'string') return false;
+  if (entry && typeof entry !== 'string') return false;
+  if (args && !Array.isArray(args)) return false;
+  if (typeof timeoutMs !== 'undefined' && (!Number.isInteger(timeoutMs) || timeoutMs < 1)) return false;
+  if (typeof memoryLimitMb !== 'undefined' && (!Number.isInteger(memoryLimitMb) || memoryLimitMb < 16)) return false;
   return true;
 }
 

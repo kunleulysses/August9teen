@@ -18,7 +18,13 @@ const { authMiddleware, loginRoute } = auth;
 import storePkg from '../common/storeFactory.cjs';
 const { getStore, closeStore } = storePkg;
 import metricsPkg from './metrics.cjs';
-const { register: metricsRegister } = metricsPkg;
+const {
+  register: metricsRegister,
+  consciousnessActiveModules,
+  consciousnessMemoryTotalShards,
+  consciousnessStateQuality,
+  consciousnessMemoryConsolidationsTotal
+} = metricsPkg;
 import { fork } from 'child_process';
 
 const app = express();
@@ -91,6 +97,38 @@ app.get('/metrics', async (_req, res) => {
   res.set('Content-Type', metricsRegister.contentType);
   res.end(await metricsRegister.metrics());
 });
+
+// Mirror the WS bridge under API for easier access and auth layering
+app.get('/consciousness/bridge', async (_req, res) => {
+  try {
+    const axios = (await import('axios')).default;
+    const { data } = await axios.get(WS_BRIDGE_URL, { timeout: 1500 });
+    res.json(data);
+  } catch (e) {
+    res.status(502).json({ ok: false, error: e && e.message });
+  }
+});
+
+// Periodic bridge: pull from WS server and set gauges (no auth needed)
+import axios from 'axios';
+const WS_BRIDGE_URL = process.env.WS_BRIDGE_URL || `http://localhost:${process.env.WS_PORT || 3015}/consciousness/bridge`;
+setInterval(async () => {
+  try {
+    const { data } = await axios.get(WS_BRIDGE_URL, { timeout: 1500 });
+    if (data && data.ok) {
+      try { consciousnessActiveModules.set(Number(data.activeModules || 0)); } catch (_) {}
+      try { consciousnessMemoryTotalShards.set(Number(data.memoryTotalShards || 0)); } catch (_) {}
+      try { consciousnessStateQuality.set(Number(data.stateQuality || 0)); } catch (_) {}
+      const total = Number(data.consolidationsTotal || 0);
+      // Expose as a gauge proxy by setting a counter delta: simulate by setting stateful last seen
+      // Since Counter cannot be set directly, we increment by the delta from last
+      if (!global.__lastConsolTotal) global.__lastConsolTotal = 0;
+      const delta = total - global.__lastConsolTotal;
+      if (delta > 0) { try { consciousnessMemoryConsolidationsTotal.inc(delta); } catch (_) {} }
+      global.__lastConsolTotal = total;
+    }
+  } catch (_) { /* ignore */ }
+}, 2000);
 
 app.get('/health', (req, res) => {
   if (config.NODE_ENV !== 'production') {

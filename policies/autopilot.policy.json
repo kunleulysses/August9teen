@@ -1,0 +1,89 @@
+{
+  "id": "coinbase-default-v1",
+  "description": "Policy‑gated autonomy for Coinbase pilot",
+  "controls": {
+    "dryRun": true,
+    "requireApproval": true,
+    "sandboxVerify": true,
+    "canary": {
+      "enabled": true,
+      "applyRate": 1000,
+      "maxAppliesPerDay": 1,
+      "namespace": "autopilot-canary",
+      "rollbackOnSignal": true,
+      "signals": [
+        "http_5xx_spike",
+        "slo_breach",
+        "error_budget_burn",
+        "custom_regression_file"
+      ]
+    },
+    "killSwitch": true,
+    "audit": {
+      "enabled": true,
+      "retentionDays": 365,
+      "includeDiffs": true,
+      "includeSignatures": true
+    }
+  },
+  "allowlists": {
+    "paths": [
+      "services/<TARGET_SERVICE>/**",
+      "helm/<TARGET_SERVICE>/values-canary.yaml",
+      "k8s/<TARGET_SERVICE>/manifests/canary/**",
+      "terraform/<SAFE_MODULE>/**"
+    ],
+    "fileTypes": ["yaml", "yml", "json", "hcl", "tf", "md"]
+  },
+  "denylists": {
+    "paths": [
+      "**/secrets/**",
+      "**/prod-only/**",
+      "**/config/production.yaml",
+      "**/*.pem",
+      "**/*.key"
+    ],
+    "regex": [
+      "(?i)aws[_-]?access[_-]?key",
+      "(?i)aws[_-]?secret[_-]?key",
+      "(?i)private[_-]?key",
+      "(?i)api[_-]?key",
+      "(?i)secret"
+    ]
+  },
+  "review": {
+    "requiredOwners": ["@coinbase/platform-eng", "@coinbase/sre"],
+    "minApprovals": 1,
+    "blockedWords": ["TODO:", "HACK:", "DISABLE_SECURITY"],
+    "requiredChecks": [
+      "unit_tests",
+      "lint",
+      "terraform_plan_no_destroy",
+      "kubeconform_canary",
+      "smoke_test_canary"
+    ]
+  },
+  "rollbacks": {
+    "snapshotRequired": true,
+    "autoOnRegression": true,
+    "receipts": {
+      "include": [
+        "actor",
+        "commit",
+        "diff",
+        "tests",
+        "scan",
+        "kpi_before",
+        "kpi_after",
+        "rollback_if_any"
+      ]
+    }
+  },
+  "soxMapping": {
+    "changeAuth": "requireApproval",
+    "testingEvidence": ["unit_tests", "smoke_test_canary", "sandboxVerify"],
+    "segregationOfDuties": ["requiredOwners", "minApprovals"],
+    "rollbackEvidence": ["snapshotRequired", "autoOnRegression", "receipts"]
+  }
+}
+

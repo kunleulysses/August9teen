@@ -20,11 +20,16 @@ const server = http.createServer((req, res) => {
     register.metrics().then(m => res.end(m));
     return;
   }
+  if (req.url === '/healthz') {
+    return res.end(JSON.stringify({ status: 'ok', timestamp: Date.now() }));
+  }
   res.writeHead(200);
   res.end('ok');
 });
 
 const wss = new WebSocket.Server({ server });
+let sign;
+try { ({ sign } = require('../consciousness/core/security/eventSign.cjs')); } catch (_) { sign = null; }
 
 wss.on('connection', (ws, req) => {
   try {
@@ -35,7 +40,18 @@ wss.on('connection', (ws, req) => {
     }
     try { jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] }); } catch (_) { ws.close(1008, 'Invalid token'); return; }
     connectionsGauge.inc();
-    ws.on('message', (msg) => { messagesIn.inc(); /* no-op echo for now */ });
+    ws.on('message', (msg) => {
+      messagesIn.inc();
+      try {
+        const payload = { ts: Date.now(), echo: String(msg).slice(0, 4096) };
+        const signature = sign ? sign(payload) : undefined;
+        const out = JSON.stringify({ ok: true, payload, signature });
+        ws.send(out);
+        messagesOut.inc();
+      } catch (e) {
+        // best-effort
+      }
+    });
     ws.on('close', () => connectionsGauge.dec());
   } catch (e) {
     logger.error(e, 'WS connection error');

@@ -1,0 +1,12 @@
+const WebSocket=require('ws');
+const fs=require('fs');
+const path=(process.argv[2]||'/consciousness-stream').trim();
+const token=fs.readFileSync('/tmp/jwt_ws.txt','utf8').trim();
+const url='wss://api.featherweight.world'+path;
+const ws=new WebSocket(url, token, {rejectUnauthorized:true});
+let opened=false;
+ws.on('open',()=>{opened=true;console.log('OPEN', path);});
+ws.on('message',m=>{console.log('MSG', path, m.toString().slice(0,160)); ws.close();});
+ws.on('error',e=>{console.log('ERR', path, e.message); process.exit(2);});
+ws.on('close',()=>{console.log('CLOSE', path); process.exit(0);});
+setTimeout(()=>{ if (opened !== true) { console.log('TIMEOUT', path); process.exit(3);} }, 7000);

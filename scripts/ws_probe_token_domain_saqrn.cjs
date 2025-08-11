@@ -1,0 +1,10 @@
+const WebSocket = require('ws');
+const fs = require('fs');
+const token = fs.readFileSync('/tmp/jwt_ws.txt','utf8').trim();
+const url='wss://api.featherweight.world/saqrn-stream';
+const ws=new WebSocket(url,{rejectUnauthorized:true, headers:{'Sec-WebSocket-Protocol': token}});
+let opened=false;
+ws.on('open',()=>{opened=true;console.log('OPEN SAQRN');});
+ws.on('message',m=>{console.log('MSG SAQRN', m.toString().slice(0,160)); ws.close();});
+ws.on('error',e=>{console.log('ERR SAQRN', e.message); process.exit(2);});
+ws.on('close',()=>{console.log('CLOSE SAQRN'); process.exit(0);});

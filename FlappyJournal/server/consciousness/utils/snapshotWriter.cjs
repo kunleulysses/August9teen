@@ -27,6 +27,13 @@ class SnapshotWriter {
     this.prisma = new PrismaClient();
     this.snapshotDir = process.env.SNAPSHOT_DIR || '/tmp/snapshots';
     this.s3Bucket = process.env.S3_BUCKET || 'featherweight-snapshots';
+
+    // Allow local-only operation without S3 by env flag or missing creds
+    const s3Disabled = String(process.env.SNAPSHOT_S3_DISABLE || process.env.S3_DISABLE || 'false').toLowerCase() === 'true' ||
+      !process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY;
+    if (s3Disabled) {
+      this.s3Bucket = null;
+    }
     
     // Ensure snapshot directory exists
     if (!fs.existsSync(this.snapshotDir)) {

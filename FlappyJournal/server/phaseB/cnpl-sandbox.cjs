@@ -13,10 +13,10 @@ function createSandbox(timeoutMs = 500, memoryLimitMb = 64) {
     timeout: timeoutMs
   });
   return {
-    async execute(code, context = {}) {
-      const wrapper = `module.exports = async (ctx) => { ${code}\nreturn typeof main==='function'?await main(ctx):null; }`;
+    async execute(code, context = {}, entry = 'main', args = []) {
+      const wrapper = `module.exports = async (ctx, entry, args) => { ${code}\nconst fn = (typeof global[entry]==='function'? global[entry] : (typeof module[entry]==='function'? module[entry] : (typeof main==='function'? main : null))); if(!fn){ throw new Error('Entry function not found'); } return await fn.apply(null, args && Array.isArray(args) ? args : [ctx]); }`;
       const fn = vm.run(wrapper, 'cnpl-runtime.js');
-      return await fn(context);
+      return await fn(context, entry, args);
     }
   };
 }

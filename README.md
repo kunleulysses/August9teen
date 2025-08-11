@@ -224,3 +224,74 @@ docker compose --profile monitoring up --build
 MIT for open-source logic components. Proprietary assets like Flappy IP and the plush toy designs are developed and held under the August9teen creative studio.
 
 ---
+
+## Operations: SLOs, Alerts, and Runbook
+
+### Service Level Objectives (SLOs)
+- API availability: 99.9% monthly; 5xx error budget ≤ 0.1%
+- API latency: p95 ≤ 300ms, p99 ≤ 800ms (excluding client/network errors)
+- WebSocket uptime: 99.9% monthly; reconnect within 5s (client)
+- WebSocket stability: backpressure drop rate < 0.1% over 1h windows
+- Optional modules init failures: 0 sustained for >10m
+
+### Golden Signals & Dashboards
+- Dashboard: Consciousness System – Staging (Grafana)
+  - Requests, 5xx, latency per route
+  - WS connections, messages in/out, drops, errors
+  - Module init failures, process memory, GC pauses
+  - Quantum/Resonance/Phase A request and error rates
+
+### Alerting (Prometheus/Alertmanager)
+- High 5xx rate (per route, per tenant)
+- Auth failures burst (JWT invalid/expired)
+- Rate-limit drops sustained > 2m
+- WS backpressure drops > 0.5% 5m P95
+- Optional module init failure > 0 in 5m
+- Heap usage > 80% for 10m
+- Ready/Liveness failing
+
+See `deploy/prometheus/alerts/selfcoding_rules.yml` for concrete rules.
+
+### Tokens & Auth Runbook
+- API (RS256): JWKS-driven; rotate keys at IdP, no server restart required.
+- WS (HS256): `JWT_SECRET`; rotate by dual-publishing secrets and staggering client reconnects.
+- Metrics: `Authorization: Bearer <METRICS_BEARER_TOKEN>`; rotate via env and Grafana/Prometheus scrape config.
+
+### Rate Limits
+- API: per-route via `SIGIL_RATE_LIMIT_*` and `SIGIL_RATE_WINDOW_*` envs; defaults in `index.cjs`.
+- WS: configure client send rates; server counters exported via `/metrics`.
+
+### Backups
+- Postgres: daily cron 03:17 UTC dumping `sigil_staging` → `/var/backups/featherweight/postgres/` (14-day retention).
+  - Script: `/opt/featherweight/scripts/backup/postgres-daily.sh`
+  - Verify: `ls -lh /var/backups/featherweight/postgres/`
+- Redis: ephemeral; persistence not required for rate limiting.
+
+### Logs & Rotation
+- Pino JSON logs; pm2-logrotate: 10MB, retain 14 days, compress.
+- Change via `pm2 set pm2-logrotate:*`.
+
+### Health & Readiness
+- `/healthz`: process/module status
+- `/readyz`: DB + signing + deps
+- Unified WS: heartbeat panel on dashboard
+
+### Common Ops Tasks
+- Restart API/WS with env reload: `pm2 restart fw-api --update-env && pm2 restart fw-ws --update-env`
+- Rotate metrics token: update env, reload Prometheus scrape, notify Grafana
+- Validate JWT: `scripts/dev/gen-jwks-and-token.cjs` (dev only)
+
+### Incident Playbooks
+- High 5xx:
+  - Check `/metrics` for error counters; inspect logs by route
+  - Roll back recent deploy; verify DB/Redis health
+- Auth failures burst:
+  - Validate JWKS reachability, token exp
+  - Regenerate test tokens; inspect clock skew
+- WS instability:
+  - Check backpressure and message rates; reduce client rate; verify Nginx proxy pass headers
+
+### Change Management
+- Canary flags: `ENABLE_*` envs
+- Promote after 24h soak without SLO violations
+- Document changes in `monitoring/grafana/README.md` and `monitoring/prometheus/README.md`

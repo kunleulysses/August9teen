@@ -4,6 +4,15 @@ const dotenv = require('dotenv');
 const { createServer } = require('http');
 const express = require('express');
 const { createWsAuth, metrics: wsMetrics } = require('./auth/wsAuth.cjs');
+// Import consciousness bundle to expose bridge metrics
+let consciousnessEventBus, unifiedMemorySystem, consciousnessStateManager;
+try {
+  ({
+    consciousnessEventBus,
+    unifiedMemorySystem,
+    consciousnessStateManager
+  } = require('./consciousness-modules-bundle.cjs'));
+} catch (_) {}
 const { createAuthMetrics } = require('./auth/authMetrics.cjs');
 
 // Import prom-client for metrics
@@ -12,6 +21,14 @@ const client = require('prom-client');
 // Use default registry so other modules can contribute
 client.collectDefaultMetrics();
 const register = client.register;
+
+// Attempt to load environment from multiple known locations to ensure runtime flags are available
+try { dotenv.config({ path: '/opt/.env' }); } catch (_) {}
+try { dotenv.config({ path: '/opt/featherweight/.env' }); } catch (_) {}
+try { dotenv.config({ path: '/opt/featherweight/FlappyJournal/.env' }); } catch (_) {}
+// Legacy relative paths (cwd-dependent)
+dotenv.config({ path: '../.env' });
+dotenv.config();
 
 // Register WebSocket metrics
 // Metrics are on default registry
@@ -26,7 +43,7 @@ const heapUsed = new client.Gauge({ name: 'process_heap_used_bytes', help: 'Heap
 const metacogAnalysisLatency = new client.Histogram({ name: 'metacog_analysis_latency_ms', help: 'Metacognitive analysis latency in milliseconds', buckets: [100, 500, 1000, 2000, 5000], registers: [register] });
 
 // Load environment variables
-dotenv.config({ path: '../.env' });
+// dotenv.config({ path: '../.env' });
 
 const PORT = process.env.WS_PORT || 3001;
 
@@ -44,6 +61,55 @@ app.get('/metrics', authMetrics, async (req, res) => {
   res.set('Content-Type', register.contentType);
   res.end(await register.metrics());
 });
+
+// Lightweight JSON bridge for consciousness metrics (no auth)
+let bridgeConsolidations = 0;
+try {
+  if (unifiedMemorySystem && typeof unifiedMemorySystem.on === 'function') {
+    unifiedMemorySystem.on('memory_consolidation', (evt) => {
+      const incBy = evt && typeof evt.decayedCount === 'number' && typeof evt.removedCount === 'number'
+        ? Math.max(1, evt.decayedCount + evt.removedCount)
+        : 1;
+      bridgeConsolidations += incBy;
+    });
+  }
+} catch (_) {}
+
+app.get('/consciousness/bridge', (_req, res) => {
+  try {
+    const modules = consciousnessEventBus ? consciousnessEventBus.getRegisteredModules() : [];
+    const activeModules = modules.filter(m => m.isActive).length || 0;
+    const totalModules = modules.length || 0;
+    let totalShards = 0;
+    try {
+      if (unifiedMemorySystem && typeof unifiedMemorySystem.getStats === 'function') {
+        const s = unifiedMemorySystem.getStats();
+        totalShards = s && typeof s.totalShards === 'number' ? s.totalShards : 0;
+      }
+    } catch (_) {}
+    let stateQuality = 0;
+    try {
+      if (consciousnessStateManager && typeof consciousnessStateManager.getStateMetrics === 'function') {
+        const st = consciousnessStateManager.getStateMetrics();
+        stateQuality = st && typeof st.currentQuality === 'number' ? st.currentQuality : 0;
+      }
+    } catch (_) {}
+
+    res.json({
+      ok: true,
+      activeModules,
+      totalModules,
+      memoryTotalShards: totalShards,
+      stateQuality,
+      consolidationsTotal: bridgeConsolidations,
+      ts: Date.now()
+    });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e && e.message });
+  }
+});
+
+try { console.log('✅ WS bridge route registered at /consciousness/bridge'); } catch (_) {}
 
 // Create WebSocket server with noServer option
 const wss = new WebSocketServer({

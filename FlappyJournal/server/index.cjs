@@ -377,7 +377,7 @@ app.post('/api/transcendent/synthesize', jwtMiddleware, (() => {
 // Phase B: CNPL and SAQRN (kept disabled by default; endpoints gated and safe)
 
 // CNPL: compile
-app.post('/api/cnpl/compile', jwtMiddleware, idempotencyMiddleware, (() => {
+app.post('/api/cnpl/compile', jwtMiddleware, requireRole('admin'), idempotencyMiddleware, (() => {
   const limit = process.env.SIGIL_RATE_LIMIT_CNPL || process.env.SIGIL_RATE_LIMIT || '30';
   const window = process.env.SIGIL_RATE_WINDOW_CNPL || process.env.SIGIL_RATE_WINDOW || '10';
   return createRateLimiter({ limit, window });
@@ -420,7 +420,7 @@ app.post('/api/cnpl/compile', jwtMiddleware, idempotencyMiddleware, (() => {
 });
 
 // CNPL: execute
-app.post('/api/cnpl/execute', jwtMiddleware, idempotencyMiddleware, (() => {
+app.post('/api/cnpl/execute', jwtMiddleware, requireRole('admin'), idempotencyMiddleware, (() => {
   const limit = process.env.SIGIL_RATE_LIMIT_CNPL_EXEC || process.env.SIGIL_RATE_LIMIT || '30';
   const window = process.env.SIGIL_RATE_WINDOW_CNPL_EXEC || process.env.SIGIL_RATE_WINDOW || '10';
   return createRateLimiter({ limit, window });
@@ -438,14 +438,18 @@ app.post('/api/cnpl/execute', jwtMiddleware, idempotencyMiddleware, (() => {
       const artifact = await loadCompiledArtifact(req.user?.tenantId, req.body.programId);
       if (!artifact) return res.status(404).json({ error: 'Program not found' });
       const { createSandbox } = require('./phaseB/cnpl-sandbox.cjs');
-      const sandbox = createSandbox();
+      const timeoutMs = Number.isInteger(req.body.timeoutMs) ? req.body.timeoutMs : 500;
+      const memoryLimitMb = Number.isInteger(req.body.memoryLimitMb) ? req.body.memoryLimitMb : 64;
+      const sandbox = createSandbox(timeoutMs, memoryLimitMb);
       const code = typeof req.body.overrideCode === 'string' ? req.body.overrideCode : '';
+      const entry = typeof req.body.entry === 'string' && req.body.entry ? req.body.entry : 'main';
+      const args = Array.isArray(req.body.args) ? req.body.args : [req.body.inputs || {}];
       if (code) {
-        exec = { result: await sandbox.execute(code, req.body.inputs || {}) };
+        exec = { result: await sandbox.execute(code, req.body.inputs || {}, entry, args) };
       } else {
         exec = { artifact, executed: true };
       }
-    } catch (_) {}
+    } catch (e) { req.log && req.log.warn({ err: e && e.message }, 'CNPL execute error'); }
     const end = process.hrtime.bigint();
     cnplExecuteDuration.observe(Number(end - start) / 1e9);
     return res.json({ ok: true, exec });
@@ -466,7 +470,7 @@ app.get('/api/saqrn/nodes', jwtMiddleware, rateLimiter, async (req, res) => {
   }
 });
 
-app.post('/api/saqrn/publish', jwtMiddleware, idempotencyMiddleware, (() => {
+app.post('/api/saqrn/publish', jwtMiddleware, requireRole('admin'), idempotencyMiddleware, (() => {
   const limit = process.env.SIGIL_RATE_LIMIT_SAQRN || process.env.SIGIL_RATE_LIMIT || '30';
   const window = process.env.SIGIL_RATE_WINDOW_SAQRN || process.env.SIGIL_RATE_WINDOW || '10';
   return createRateLimiter({ limit, window });
@@ -507,7 +511,7 @@ app.post('/api/saqrn/publish', jwtMiddleware, idempotencyMiddleware, (() => {
   }
 });
 
-app.post('/api/saqrn/subscribe', jwtMiddleware, rateLimiter, async (req, res) => {
+app.post('/api/saqrn/subscribe', jwtMiddleware, requireRole('admin'), rateLimiter, async (req, res) => {
   if (!ENABLE_SAQRN) return res.status(503).json({ error: 'SAQRN disabled' });
   saqrnSubscribeRequests.inc();
   try {
