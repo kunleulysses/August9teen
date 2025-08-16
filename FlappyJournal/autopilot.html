@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Autopilot — Enterprise DevOps/SRE Automation | FEATHERWEIGHT</title>
+  <meta name="description" content="Featherweight Autopilot: policy-gated canary automation with rollback receipts. 2–3× deploy frequency, MTTR down 30–60% in 30–60 days. SOC2-ready, SSO, audit logs.">
+  <meta property="og:title" content="Autopilot — Enterprise DevOps/SRE Automation | FEATHERWEIGHT">
+  <meta property="og:description" content="Policy-gated canary + rollback receipts. DORA deltas in weeks. Pilot in 30 days.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://featherweight.world/autopilot">
+  <meta property="og:image" content="/server/public/8.png">
+  <link rel="canonical" href="https://featherweight.world/autopilot">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Autopilot — Enterprise DevOps/SRE Automation | FEATHERWEIGHT">
+  <meta name="twitter:description" content="Policy-gated canary + rollback receipts. DORA deltas in weeks. Pilot in 30 days.">
+  <meta name="twitter:image" content="/server/public/8.png">
+  <link rel="icon" href="/server/public/8.png" type="image/png">
+  <meta name="theme-color" content="#FAF7F0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Crimson+Text:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #FAF7F0;
+      --ink: #0B0B0B;
+      --muted: #3C3C3C;
+      --brand: #111111;
+      --accent: #0F766E; /* deep teal */
+      --card: #FFFFFF;
+      --shadow: rgba(10,10,10,0.06);
+      --border: rgba(0,0,0,0.08);
+      --soft: #FBFAF6;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background-color: var(--bg); color: var(--ink); }
+    html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+    body { font-family: 'Crimson Text', serif; font-size: 18px; line-height: 1.65; letter-spacing: 0.1px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; font-feature-settings: "liga" 1, "kern" 1; font-optical-sizing: auto; font-variant-numeric: lining-nums proportional-nums; accent-color: var(--accent); hyphens: auto; hanging-punctuation: first allow-end; background-image: radial-gradient(1200px 600px at 50% -200px, rgba(0,0,0,0.03), rgba(0,0,0,0) 60%); }
+    html, body { overscroll-behavior-y: none; }
+    p { max-width: 72ch; text-wrap: pretty; }
+    body::before { content: ""; position: fixed; inset: 0; pointer-events: none; background: radial-gradient(1200px 600px at 50% -180px, rgba(0,0,0,0.06), rgba(0,0,0,0) 55%), radial-gradient(800px 400px at -10% 10%, rgba(0,0,0,0.03), rgba(0,0,0,0) 50%), radial-gradient(800px 400px at 110% 10%, rgba(0,0,0,0.03), rgba(0,0,0,0) 50%); z-index: 0; }
+    a { color: var(--accent); text-decoration: none; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+    a:hover { text-decoration: underline; text-decoration-thickness: 2px; }
+    ::selection { background: rgba(15,118,110,0.12); color: var(--ink); }
+    :focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(15,118,110,0.25); border-radius: 10px; }
+
+    /* Header */
+    .nav { position: sticky; top: 0; backdrop-filter: saturate(1.2) blur(6px); background: rgba(250,247,240,0.75); border-bottom: 1px solid var(--border); z-index: 10; transition: background .2s ease, border-color .2s ease, box-shadow .2s ease; }
+    .nav.scrolled { background: rgba(250,247,240,0.92); border-bottom-color: rgba(0,0,0,0.12); box-shadow: 0 6px 24px var(--shadow); }
+    .nav-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 14px 22px; }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand img { width: 28px; height: 28px; border-radius: 4px; box-shadow: 0 2px 8px var(--shadow); }
+    .brand .name { font-family: 'Playfair Display', serif; font-size: 20px; letter-spacing: 2.2px; font-weight: 700; }
+    .links { display: flex; gap: 14px; align-items: center; }
+    .nav a.link { color: var(--brand); font-weight: 600; padding: 8px 10px; border-radius: 8px; transition: all .2s ease; position: relative; }
+    .nav a.link:hover { background: rgba(0,0,0,0.04); text-decoration: none; }
+    .nav a.link::after { content: ""; position: absolute; left: 10px; right: 10px; bottom: 6px; height: 1px; background: linear-gradient(90deg, rgba(14,14,14,0.6), rgba(14,14,14,0)); transform: scaleX(0); transform-origin: left; transition: transform .25s ease; }
+    .nav a.link:hover::after { transform: scaleX(1); }
+    .nav .btn-primary { padding: 10px 14px; border-radius: 10px; }
+
+    /* Hero */
+    .hero { max-width: 1200px; margin: 40px auto 24px; padding: 0 22px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 28px; align-items: center; }
+    .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(40px, 4.2vw, 56px); line-height: 1.08; margin: 0 0 14px; letter-spacing: 0.5px; text-wrap: balance; }
+    .hero p.sub { font-size: 22px; color: var(--muted); margin: 0 0 24px; }
+    .hero-cta { display: flex; gap: 14px; flex-wrap: wrap; }
+    .btn-primary, .btn-secondary { position: relative; overflow: hidden; }
+    .btn-primary { background: linear-gradient(180deg, #151515, #0E0E0E); color: #fff; border: 1px solid #0C0C0C; padding: 12px 18px; border-radius: 12px; font-weight: 700; letter-spacing: .2px; box-shadow: 0 10px 28px var(--shadow); transition: transform .2s ease, box-shadow .2s ease, background .2s ease; will-change: transform; }
+    .btn-primary::before { content: ""; position: absolute; top: 0; left: -35%; width: 28%; height: 100%; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.35), rgba(255,255,255,0)); transform: skewX(-20deg) translateX(-100%); transition: transform .7s cubic-bezier(.19,1,.22,1); }
+    .btn-primary:hover::before { transform: skewX(-20deg) translateX(240%); }
+    .btn-secondary { background: linear-gradient(180deg, #FFFFFF, #FBFAF6); color: var(--brand); border: 1px solid var(--border); padding: 12px 18px; border-radius: 12px; font-weight: 700; letter-spacing: .2px; box-shadow: 0 10px 24px var(--shadow); transition: transform .2s ease, box-shadow .2s ease; }
+    .btn-primary::after { content: ""; position: absolute; inset: 1px; border-radius: 11px; pointer-events: none; background: linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0) 40%); }
+    .btn-primary:hover, .btn-secondary:hover { text-decoration: none; transform: translateY(-1px); box-shadow: 0 14px 32px var(--shadow); }
+    .btn-secondary:focus-visible { box-shadow: 0 0 0 4px rgba(15,118,110,0.28), 0 14px 32px var(--shadow); }
+    .btn-primary:focus-visible { box-shadow: 0 0 0 4px rgba(15,118,110,0.28), 0 14px 32px var(--shadow); }
+    .hero-card { background: linear-gradient(180deg, #FFFFFF, #FBFAF6); border: 1px solid var(--border); border-radius: 18px; padding: 20px; box-shadow: 0 16px 40px var(--shadow); }
+    .kpi { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 16px; }
+    .chip { background: linear-gradient(180deg, #FFFFFF, #FBFAF6); border: 1px solid rgba(0,0,0,0.06); border-radius: 999px; padding: 10px 14px; font-weight: 700; text-align: center; letter-spacing: .2px; box-shadow: 0 6px 16px var(--shadow); transition: transform .2s ease, box-shadow .2s ease; min-height: 40px; display: grid; place-items: center; }
+    .chip:hover { transform: translateY(-1px); box-shadow: 0 10px 22px var(--shadow); }
+
+    /* Sections */
+    section { max-width: 1200px; margin: 52px auto; padding: 0 22px; }
+    section h2 { font-family: 'Playfair Display', serif; font-size: clamp(28px, 2.6vw, 36px); margin: 0 0 14px; letter-spacing: .25px; position: relative; text-wrap: balance; scroll-margin-top: 84px; }
+    section h2::after { content: ""; position: absolute; left: 0; bottom: -10px; width: 44px; height: 2px; background: linear-gradient(90deg, #0E0E0E, rgba(14,14,14,0)); border-radius: 2px; opacity: 0.6; }
+    section h3 { font-family: 'Playfair Display', serif; font-size: 24px; margin: 22px 0 10px; text-wrap: balance; }
+    .card { position: relative; background: linear-gradient(180deg, #FFFFFF, #FBFAF6); border: 1px solid var(--border); border-radius: 18px; padding: 22px; box-shadow: 0 14px 36px var(--shadow); will-change: transform; }
+    .card::before { content: ""; position: absolute; left: 12px; right: 12px; top: 10px; height: 1px; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.8), rgba(255,255,255,0)); pointer-events: none; }
+    .card::after { content: ""; position: absolute; inset: 0; border-radius: 18px; pointer-events: none; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6), inset 0 1px 0 rgba(255,255,255,0.5); }
+    .card:hover { transform: translateY(-1px); box-shadow: 0 18px 42px var(--shadow); border-color: rgba(0,0,0,0.12); }
+    .grid { display: grid; gap: 18px; }
+    .grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .muted { color: var(--muted); }
+    ul { list-style: none; padding-left: 0; margin: 0; }
+    li { position: relative; padding-left: 18px; }
+    li::before { content: ""; position: absolute; left: 0; top: 0.7em; width: 6px; height: 6px; border-radius: 50%; background: #0E0E0E; opacity: .75; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+    th, td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; }
+    th { background: var(--soft); font-family: 'Playfair Display', serif; font-weight: 600; letter-spacing: .3px; }
+    tbody tr:nth-child(odd) { background: rgba(0,0,0,0.015); }
+    tbody tr:hover { background: rgba(0,0,0,0.03); }
+
+    /* Reveal on scroll */
+    .reveal { opacity: 0; transform: translateY(8px); transition: opacity .5s ease, transform .5s ease; }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+
+    /* Section separators */
+    section + section { border-top: 1px solid transparent; border-image: linear-gradient(90deg, rgba(0,0,0,.08), rgba(0,0,0,0)) 1; padding-top: 48px; margin-top: 32px; }
+
+    /* Luxury scrollbar */
+    :root { scrollbar-color: rgba(0,0,0,0.25) transparent; }
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.16); border-radius: 999px; border: 2px solid rgba(255,255,255,0.85); }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.26); }
+
+    /* Editorial elements */
+    blockquote { margin: 18px 0; padding: 14px 18px; border-left: 2px solid rgba(0,0,0,0.12); background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(251,250,246,0.6)); border-radius: 12px; font-style: italic; }
+    blockquote cite { display: block; margin-top: 8px; font-style: normal; color: var(--muted); }
+    details { border: 1px solid var(--border); border-radius: 14px; background: var(--card); padding: 12px 14px; box-shadow: 0 8px 20px var(--shadow); }
+    details + details { margin-top: 10px; }
+    summary { cursor: pointer; list-style: none; font-weight: 700; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: '▾'; float: right; transition: transform .25s ease; }
+    details[open] summary::after { transform: rotate(-180deg); }
+    details:focus-within { box-shadow: 0 0 0 4px rgba(15,118,110,0.20); }
+    figure { margin: 18px 0; }
+    figure img { display: block; width: 100%; height: auto; border-radius: 14px; box-shadow: 0 12px 28px var(--shadow); border: 1px solid var(--border); }
+    figcaption { margin-top: 8px; color: var(--muted); font-size: 14px; text-align: center; }
+    hr { border: none; height: 1px; background: linear-gradient(90deg, rgba(0,0,0,0.12), rgba(0,0,0,0)); margin: 26px 0; }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+      .btn-primary::before { display: none; }
+      .chip:hover, .card:hover, .btn-primary:hover, .btn-secondary:hover { transform: none !important; box-shadow: none !important; }
+      .reveal, .reveal.in { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* Footer */
+    footer { margin: 44px 0 64px; text-align: center; color: var(--muted); font-size: 13px; font-variant-caps: all-small-caps; letter-spacing: 1px; }
+    footer span#year { font-variant-numeric: lining-nums tabular-nums; }
+
+    /* Responsive */
+    @media (max-width: 960px) {
+      .hero { grid-template-columns: 1fr; }
+      .grid.cols-2 { grid-template-columns: 1fr; }
+      .grid.cols-3 { grid-template-columns: 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <div class="nav-inner">
+      <div class="brand">
+        <img src="/server/public/8.png" alt="Featherweight logo">
+        <div class="name">FEATHERWEIGHT</div>
+      </div>
+      <div class="links">
+        <a class="link" href="/">Home</a>
+        <a class="btn-primary" href="/#contact">Book a demo</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <h1>Autopilot — Enterprise DevOps/SRE Automation</h1>
+        <p class="sub">Policy‑gated canary + instant rollback receipts. Read‑only by default; DRY_RUN first, then canary under approvals. DORA deltas in weeks.</p>
+        <div class="hero-cta">
+          <a class="btn-primary" href="/#contact">Book a demo</a>
+        </div>
+        <div class="kpi">
+          <div class="chip">Deploy frequency 2–3×</div>
+          <div class="chip">MTTR ↓ 30–60%</div>
+          <div class="chip">CFR ≤ 5–10%</div>
+        </div>
+      </div>
+      <div class="hero-card">
+        <h3>Lighthouse pick: Enterprise DevOps/SRE automation</h3>
+        <p class="muted">Winner: Fastest integrate, clearest buyers, cleanest 30–60 day proof, and widest cross‑sell runway.</p>
+        <ul>
+          <li>Plug into Git + CI + K8s with minimal perms</li>
+          <li>Show DORA deltas in weeks</li>
+          <li>Expand across Platform/SRE/Infra quickly</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="how-it-works" class="grid cols-2">
+      <div class="card">
+        <h2>How Autopilot works</h2>
+        <h3>1) Connect (read-only)</h3>
+        <ul>
+          <li>Connect GitHub/GitLab, CI, Kubernetes, and metrics with scoped tokens</li>
+          <li>Ingest change events and production signals with no writes enabled</li>
+        </ul>
+        <h3>2) Observe (DRY_RUN)</h3>
+        <ul>
+          <li>Generate proposed PRs every 15 minutes under your policies (no apply)</li>
+          <li>Surface impact previews, receipts, and dashboards</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>3) Approve (policy-gated)</h3>
+        <ul>
+          <li>CODEOWNERS + path/policy allowlists + explicit approvals</li>
+          <li>Security checks: secret scanning, drift detection, change windows</li>
+        </ul>
+        <h3>4) Apply or Rollback (canary)</h3>
+        <ul>
+          <li>Rate-limited canary applies with automatic rollback on SLO breach</li>
+          <li>Every action is signed with audit receipts (who/what/why/when)</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="integrations" class="card">
+      <h2>Integrations</h2>
+      <p class="muted">Plug into your existing stack in days — zero rip-and-replace.</p>
+      <div class="grid cols-3">
+        <div class="chip">GitHub / GitLab</div>
+        <div class="chip">GitHub Actions / Jenkins / CircleCI</div>
+        <div class="chip">Kubernetes API</div>
+        <div class="chip">ArgoCD / Flux / Spinnaker</div>
+        <div class="chip">Terraform</div>
+        <div class="chip">Prometheus / Grafana / Datadog</div>
+        <div class="chip">Jira / ServiceNow (optional)</div>
+        <div class="chip">SSO (Okta / Azure AD)</div>
+        <div class="chip">Webhook & API</div>
+      </div>
+    </section>
+
+    <section id="why-devops" class="card">
+      <h2>Why start with DevOps/SRE</h2>
+      <div class="grid cols-2">
+        <div>
+          <ul>
+            <li>Clear ownership and budget (Platform/SRE) with measurable DORA goals</li>
+            <li>Fast integration paths: Git, CI, Kubernetes, metrics already in place</li>
+            <li>Immediate business impact: deploy frequency, MTTR, CFR</li>
+          </ul>
+        </div>
+        <div>
+          <ul>
+            <li>Policy-first, read-only baseline removes security friction</li>
+            <li>Proof in 30 days creates runway for infra, developer productivity, risk</li>
+            <li>Easy internal references across teams once metrics are visible</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="gap" class="grid cols-2">
+      <div class="card">
+        <h2>2) Biggest gap (DevOps/SRE)</h2>
+        <h3>Current state</h3>
+        <ul>
+          <li>Manual PR reviews, infra drift, noisy CI flakes</li>
+          <li>Cautious deploy cadence, slow incident response</li>
+          <li>Inconsistent rollback practices</li>
+        </ul>
+        <h3>Autopilot interventions</h3>
+        <ul>
+          <li>Policy checks (CODEOWNERS, path/policy allowlists, secret scanning)</li>
+          <li>Sim/sandbox (SANDBOX_VERIFY=1) + PR artifacts every 15 min</li>
+          <li>Canary apply with rate caps + auto-rollback + signed receipts</li>
+          <li>Snapshots/rollback drills + audit trails (who/what/why/when)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Quantified deltas (30–60 days)</h3>
+        <ul>
+          <li>Deploy frequency: 2–3×</li>
+          <li>MTTR: ↓ 30–60%</li>
+          <li>Change fail rate: ↓ to 5–10% (with instant rollback)</li>
+          <li>Toil time saved: 8–12 hrs/eng/month</li>
+          <li>Incidents with “no‑rollback‑needed”: ↑ 20–30%</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="icp" class="grid cols-2">
+      <div class="card">
+        <h2>3) ICP + buyer map</h2>
+        <p><strong>ICP:</strong> 200–2,000 engineers; Kubernetes + GitHub/GitLab; ArgoCD/Flux/Spinnaker; Terraform; SOC 2/ISO 27001; SSO (Okta/AAD).</p>
+        <p><strong>Data sources:</strong> Git provider, CI logs, metrics (Prometheus/Grafana/Datadog), K8s API (read + canary write in a constrained namespace), change mgmt (Jira/ServiceNow optional).</p>
+        <p><strong>Buyers:</strong> Economic (CTO/VP Eng/COO); Technical (Head of SRE/Platform, DevX/Infra); Security (CISO/AppSec/Trust).</p>
+        <p><strong>Disqualifiers:</strong> No CI; no canary env; forbids any write even in staged namespaces; monolithic legacy with no automation hooks.</p>
+      </div>
+      <div class="card">
+        <h2>4) Value by role</h2>
+        <h3>CTO / VP Engineering</h3>
+        <ul>
+          <li>Ship faster with guardrails: 2–3× deploys without raising CFR</li>
+          <li>Proof in 30 days; expand by team, service, or platform-wide</li>
+          <li>Executive dashboards with before/after ROI</li>
+        </ul>
+        <h3>Head of SRE / Platform</h3>
+        <ul>
+          <li>Reduce toil with policy-driven automation and receipts</li>
+          <li>Safer changes: DRY_RUN → canary → auto-rollback</li>
+          <li>Integrates with your Git/CI/K8s, no vendor lock-in</li>
+        </ul>
+        <h3>Security / CISO / Trust</h3>
+        <ul>
+          <li>Read-only by default; least-privilege writes in canary namespaces</li>
+          <li>SSO, audit trails, and explicit approvals for every apply</li>
+          <li>SOC 2/ISO posture; data stays scoped with encryption</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="pilot" class="grid cols-2">
+      <div class="card">
+        <h2>Pilot offer (fixed fee, 30 days)</h2>
+        <ul>
+          <li><strong>Scope:</strong> 2 repos + 1 service (prod canary), 1 infra module (staging→prod); DRY_RUN → canary under approvals</li>
+          <li><strong>Success criteria:</strong> Deploy freq 2×; MTTR −30%; CFR ≤10%; ≥10 approved Autopilot PRs; ≥1 rollback drill pass</li>
+          <li><strong>Price:</strong> $50k fixed (includes integration, policy authoring, dashboards, training)</li>
+          <li><strong>We provide:</strong> Integration, policy packs, PR/canary bots, dashboards, audit bundle</li>
+          <li><strong>They provide:</strong> Limited tokens/creds, read‑only Git/CI, canary namespace writes, CODEOWNERS</li>
+          <li><strong>Expansion path:</strong> per‑team seats + per‑apply pricing or platform annual</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2>5) Onboarding runbook (4 weeks)</h2>
+        <p><strong>Week 0 (prep):</strong> SSO/JWKS, service accounts, CODEOWNERS, pick 2 repos + 1 service, define change policies.</p>
+        <p><strong>Week 1:</strong> Connect Git/CI/K8s (read), install WS metrics, set DRY_RUN=1, SANDBOX_VERIFY=1; Author policies; begin DRY_RUN PRs; dashboards live; rollback drill (staging).</p>
+        <p><strong>Week 2:</strong> Approve 2–3 PRs to canary; verify rollback receipts; tune policies; raise apply cadence.</p>
+        <p><strong>Week 3:</strong> Add infra module (Terraform); run canary plan/apply with auto‑rollback; incident simulation.</p>
+        <p><strong>Week 4:</strong> Expand to second service; increase cadence; executive readout; sign‑off on DORA + CFR; agree expansion.</p>
+        <p><em>Definition of Ready:</em> SSO/JWKS; canary namespace/SA; CODEOWNERS; metrics feed; secrets scanning policy.</p>
+        <p><em>Definition of Done:</em> DORA deltas met; ≥10 approved PRs; ≥1 rollback drill pass; stakeholder sign‑off; expansion plan.</p>
+      </div>
+    </section>
+
+    <section id="safety" class="grid cols-2">
+      <div class="card">
+        <h2>6) Safety & compliance posture</h2>
+        <ul>
+          <li><strong>Guardrails:</strong> DRY_RUN=1 baseline; SANDBOX_VERIFY=1; CANARY_APPLY_RATE high (rare applies); REQUIRE_APPROVAL=1; kill switch; audit log retention ≥90 days.</li>
+          <li><strong>Data handling:</strong> scoped tokens; no PII exfil; encrypt at rest/in transit; read‑only by default; write only in canary namespaces; all changes signed and attributable.</li>
+          <li><strong>Security review:</strong> SSO/JWKS, least‑privilege SAs, policy allowlists, secure secret management, network egress controls, audit reports.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2>7) Metrics & proof pack</h2>
+        <ul>
+          <li><strong>Dashboards:</strong> DORA (deploy freq, lead time, MTTR, CFR), Autopilot (PRs generated/approved/applied/rollbacks, TTA), Reliability (error budget burn, SLOs, incident volume).</li>
+          <li><strong>Study design:</strong> 2‑week pre baseline vs 4‑week pilot; same services; canary gates consistent.</li>
+          <li><strong>Case study template:</strong> customer, stack, scope; before→after metrics; controls; notable PRs; incident saved; ROI in 60 days; next steps.</li>
+        </ul>
+        
+      </div>
+    </section>
+
+    <section id="faq" class="grid cols-2">
+      <div class="card">
+        <h2>FAQ</h2>
+        <h3>Does Autopilot write to production?</h3>
+        <p>No. Default is read‑only DRY_RUN. Canary writes only after explicit approvals and under rate limits, with automatic rollback.</p>
+        <h3>Where does it run?</h3>
+        <p>Run in your cloud (preferred) or Featherweight‑managed. All creds are scoped and encrypted.</p>
+        <h3>How fast to value?</h3>
+        <p>Connect in days; proof in weeks. 30‑day fixed‑fee pilot with explicit DORA goals.</p>
+      </div>
+      <div class="card">
+        <h3>What integrations are required?</h3>
+        <p>Git provider and CI are sufficient to start. Kubernetes and metrics unlock canary + rollback receipts.</p>
+        <h3>How is security handled?</h3>
+        <p>SSO/JWKS, least‑privilege SAs, policy allowlists, secret scanning, audit retention ≥90 days.</p>
+        <h3>Pricing?</h3>
+        <p>30‑day pilot at $50k fixed (integration, policy, dashboards, training). Expansion by team/service or platform annual.</p>
+      </div>
+    </section>
+
+    <section id="cta" class="card">
+      <h2>Ready to see Autopilot on your stack?</h2>
+      <div class="hero-cta">
+        <a class="btn-primary" href="/#contact">Book a demo</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>PATENT PENDING — Featherweight Autopilot. © <span id="year"></span> Featherweight.</p>
+  </footer>
+
+  <script>
+    (function() {
+      document.getElementById('year').textContent = new Date().getFullYear();
+      const nav = document.querySelector('.nav');
+      const onScroll = () => {
+        if (!nav) return;
+        if (window.scrollY > 4) nav.classList.add('scrolled'); else nav.classList.remove('scrolled');
+      };
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+
+      // Reveal on scroll (honor reduced motion)
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!prefersReduced && 'IntersectionObserver' in window) {
+        const candidates = document.querySelectorAll('section, .card, .chip, .hero-card');
+        candidates.forEach(el => el.classList.add('reveal'));
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('in');
+              io.unobserve(entry.target);
+            }
+          });
+        }, { rootMargin: '0px 0px -10% 0px', threshold: 0.1 });
+        candidates.forEach(el => io.observe(el));
+      }
+    })();
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Featherweight Autopilot",
+    "operatingSystem": "Any",
+    "applicationCategory": "DevOpsAutomation",
+    "description": "Policy-gated canary automation with rollback receipts for DevOps/SRE. Improves DORA metrics in weeks.",
+    "url": "https://featherweight.world/autopilot",
+    "image": "https://featherweight.world/server/public/8.png",
+    "offers": {
+      "@type": "Offer",
+      "price": "50000",
+      "priceCurrency": "USD",
+      "description": "30-day fixed-fee pilot including integration, policy authoring, dashboards, and training"
+    }
+  }
+  </script>
+</body>
+</html>

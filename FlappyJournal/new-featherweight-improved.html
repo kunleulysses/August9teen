@@ -90,6 +90,9 @@
             border-radius: 20px;
             display: block;
         }
+        /* Spiral action pulse */
+        @keyframes fwPlatePulse { 0%{ box-shadow: 0 0 0 1px rgba(212,190,141,.35), inset 0 0 0 rgba(212,190,141,0) } 50%{ box-shadow: 0 0 0 2px rgba(212,190,141,.9), 0 0 32px rgba(212,190,141,.35) } 100%{ box-shadow: 0 0 0 1px rgba(212,190,141,.35), inset 0 0 0 rgba(212,190,141,0) } }
+        .feature-visual.pulse-plate { animation: fwPlatePulse 800ms ease-in-out 2; }
 
         /* Header Bar - Fixed */
         .header {
@@ -174,6 +177,8 @@
         }
 
         .header-right { justify-self: end; display: flex; gap: 10px; align-items: center; }
+        .header-right a { color: #ffffff; border: 1px solid rgba(255,255,255,0.35); padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: background 160ms ease, color 160ms ease, border-color 160ms ease; }
+        .header-right a:hover { background: #ffffff; color: #000000; border-color: #ffffff; text-decoration: none; }
 
         /* Section Styling */
         .section {
@@ -665,8 +670,9 @@
         }
 
         /* Inline Menu Canvas sizing */
-        .menu-canvas-wrap { width: 100%; display: grid; place-items: center; margin: 14px 0 24px 0; overscroll-behavior: contain; }
-        .menu-canvas-wrap canvas { width: min(680px, 92vw); height: 420px; display: block; border-radius: 16px; touch-action: none; user-select: none; cursor: grab; }
+        .menu-canvas-wrap { position: relative; z-index: 10; width: 100%; display: grid; place-items: center; margin: 14px 0 24px 0; overscroll-behavior: contain; }
+        .menu-canvas-wrap canvas { position: relative; z-index: 11; width: min(680px, 92vw); height: 420px; display: block; border-radius: 16px; touch-action: none; user-select: none; cursor: grab; pointer-events: auto; }
+        #industries-menu{ position: relative; z-index: 9; }
 
         /* Depth + Motion: reveals, tilt, parallax helpers */
         .reveal { opacity: 0; transform: translateY(16px) scale(0.985); filter: blur(6px); transition: transform 640ms cubic-bezier(0.22,1,0.36,1), opacity 500ms ease, filter 640ms ease; will-change: transform, opacity, filter; }
@@ -729,7 +735,6 @@
             .starburst-center { width: 96px; height: 96px; letter-spacing: 1px; font-size: 12px; }
             .starburst-item { width: auto; min-width: 140px; max-width: 70vw; min-height: 38px; padding: 8px 10px; background: rgba(255,255,255,0.035); border-color: rgba(255,255,255,0.1); box-shadow: 0 6px 14px rgba(0,0,0,0.22); }
             .starburst-item .sb-label { font-size: 11.5px; letter-spacing: 0.06em; line-height: 1.25; text-transform: none; }
-        }
 
         @media (max-width: 480px) {
         .starburst-menu { width: min(98vw, 360px); height: min(98vw, 520px); transform: none; }
@@ -821,7 +826,9 @@
         <div class="header-center">
             <div class="logo-spiral" role="button" aria-label="Back to top" title="Back to top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})"></div>
         </div>
-        <div class="header-right"></div>
+        <div class="header-right">
+            <a href="/autopilot" aria-label="Autopilot">Autopilot</a>
+        </div>
     </header>
 
     <!-- Hero Section -->
@@ -866,6 +873,9 @@
     <section class="section" id="holographic-reality">
         <h2 class="section-header holographic-clickable reveal" onclick="toggleStarburstHRG()">HOLOGRAPHIC REALITY GENERATOR</h2>
         <div class="feature-section">
+            <div class="feature-visual tilt reveal">
+                <canvas id="holographicCanvas"></canvas>
+            </div>
             <div class="feature-description reveal" data-parallax="3 2">
                 <div class="feature-tldr">
                     Simulate decisions before you commit. Explore many futures and keep the one that wins.
@@ -873,9 +883,6 @@
                 <div class="feature-content">
                     The Holographic Reality Generator runs fast, nested simulations with configurable physics and agents. It lets you test strategies safely, learn from outcomes, and ship with proof instead of hope.
                 </div>
-            </div>
-            <div class="feature-visual tilt reveal">
-                <canvas id="holographicCanvas"></canvas>
             </div>
         </div>
     </section>
@@ -1778,15 +1785,11 @@
                 const ady = Math.min(1, Math.abs(dy));
                 const scale = 0.9 + 0.18*(1-ady);
                 const pillH = 44*scale;
-                // Always center first, then open after animation if item intended
-                if (dist > pillH * 0.6) {
-                    centerIndex(idx, h);
-                } else {
-                    centerIndex(idx, h);
-                    const entry = MENU[idx];
-                    if (typeof window.openBriefing === 'function' && entry && BRIEFING_DATA && BRIEFING_DATA[entry.key]) {
-                        setTimeout(()=>{ try { window.openBriefing(entry.key); } catch{} }, 160);
-                    }
+                // Always center first, then open that briefing after a short settle
+                centerIndex(idx, h);
+                const entry = MENU[idx];
+                if (typeof window.openBriefing === 'function' && entry && BRIEFING_DATA && BRIEFING_DATA[entry.key]) {
+                    setTimeout(()=>{ try { window.openBriefing(entry.key); } catch{} }, 180);
                 }
             }
             canvas.addEventListener('click', (e)=>{ activateAtCanvasY(e.clientY); e.preventDefault(); e.stopPropagation(); }, { passive:false });
@@ -3466,12 +3469,12 @@
         node.appendChild(introP);
         return;
         // Persona preface and intro tone
-        const personaNote = document.createElement('div'); personaNote.style.fontSize='12px'; personaNote.style.opacity='0.85'; personaNote.style.margin='-4px 0 10px 0';
+        const personaNote2 = document.createElement('div'); personaNote2.style.fontSize='12px'; personaNote2.style.opacity='0.85'; personaNote2.style.margin='-4px 0 10px 0';
         let introCopy = data.intro;
-        if (BRIEFING_STATE.persona==='investor') { personaNote.textContent='Persona: Investor — signal, moat, monetization.'; }
-        if (BRIEFING_STATE.persona==='operator') { personaNote.textContent='Persona: Operator — safety, uptime, throughput.'; }
-        if (BRIEFING_STATE.persona==='engineer') { personaNote.textContent='Persona: Engineer — APIs, contracts, rollout gates.'; }
-        node.appendChild(personaNote);
+        if (BRIEFING_STATE.persona==='investor') { personaNote2.textContent='Persona: Investor — signal, moat, monetization.'; }
+        if (BRIEFING_STATE.persona==='operator') { personaNote2.textContent='Persona: Operator — safety, uptime, throughput.'; }
+        if (BRIEFING_STATE.persona==='engineer') { personaNote2.textContent='Persona: Engineer — APIs, contracts, rollout gates.'; }
+        node.appendChild(personaNote2);
         const intro = document.createElement('p'); intro.textContent = (data.introPersona && data.introPersona[BRIEFING_STATE.persona]) ? data.introPersona[BRIEFING_STATE.persona] : introCopy; node.appendChild(intro);
         // Build new scaffold
         const hero = document.createElement('section'); hero.className='video-hero';
@@ -3914,6 +3917,273 @@
     
     <!-- CONSCIOUSNESS TECHNOLOGY ANIMATIONS -->
     <script>
+        // Pro-spec Spiral Memory (intermediate build per spec)
+        function initSpiralMemoryPro(){
+            const host = document.getElementById('spiralMemoryCanvas');
+            if (!host || !window.THREE) return;
+            // Theme (subset)
+            const theme = { bg: 0x000000, passive: 0x6F6B63, active: 0xFFFFFF, ring: 0x2A2A2A, rOuter: 1.9, rInner: 1.0, turns: 6.0, pitch: 0.55, buckets: 12 };
+            const hashAngle = (topic, buckets = theme.buckets) => { const h = Array.from(topic).reduce((a,c)=> ((a*131 + c.charCodeAt(0))>>>0), 0); return (2*Math.PI) * ((h % buckets)/buckets); };
+            // Three core
+            const renderer = new THREE.WebGLRenderer({ canvas: host, antialias:true, alpha:true });
+            renderer.outputColorSpace = THREE.SRGBColorSpace;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            // Robust sizing with DPR and bounding rect
+            const DPR = Math.min(window.devicePixelRatio || 1, 2);
+            renderer.setPixelRatio(DPR);
+            const rect0 = host.getBoundingClientRect();
+            const initW = Math.max(1, Math.floor(rect0.width));
+            const initH = Math.max(1, Math.floor(rect0.height));
+            const scene = new THREE.Scene();
+            const root = new THREE.Group();
+            scene.add(root);
+            const camera = new THREE.PerspectiveCamera(45, initW/initH, 0.1, 100);
+            renderer.setSize(initW, initH, false);
+            camera.position.set(6,3.2,6);
+            camera.lookAt(0, theme.pitch*theme.turns*0.5, 0);
+            // Nudge composition slightly left so the stack on the right has space
+            root.position.x = -0.6;
+            // Responsive composition tuning
+            function applyComposition(){
+                const r = host.getBoundingClientRect();
+                const aspect = Math.max(0.5, r.width / Math.max(1, r.height));
+                if (aspect >= 2.1) {
+                    camera.fov = 40;
+                    root.position.x = -0.95;
+                    root.scale.setScalar(1.08);
+                } else if (aspect > 1.6) {
+                    camera.fov = 42;
+                    root.position.x = -0.75;
+                    root.scale.setScalar(1.03);
+                } else if (aspect > 1.3) {
+                    camera.fov = 44;
+                    root.position.x = -0.5;
+                    root.scale.setScalar(0.98);
+                } else if (aspect > 1.05) {
+                    camera.fov = 46;
+                    root.position.x = -0.25;
+                    root.scale.setScalar(0.93);
+                } else {
+                    camera.fov = 48;
+                    root.position.x = 0;
+                    root.scale.setScalar(0.88);
+                }
+                camera.updateProjectionMatrix();
+                camera.lookAt(0, theme.pitch*theme.turns*0.5, 0);
+            }
+            const hemi = new THREE.HemisphereLight(0xffffff, 0x999999, 0.65);
+            const key  = new THREE.DirectionalLight(0xffffff, 1.0); key.position.set(6,9,7);
+            root.add(hemi,key);
+            // Helix curve
+            class HelixCurve extends THREE.Curve { constructor(turns, pitch, radius){ super(); this.turns=turns; this.pitch=pitch; this.radius=radius; } getPoint(t, target=new THREE.Vector3()){ const a=2*Math.PI*this.turns*t; const y=this.pitch*this.turns*t; return target.set(this.radius*Math.cos(a), y, this.radius*Math.sin(a)); } }
+            const centerCurve = new HelixCurve(theme.turns, theme.pitch, (theme.rOuter+theme.rInner)/2);
+            const centerTube  = new THREE.TubeGeometry(centerCurve, 320, 0.012, 12, false);
+            root.add(new THREE.Mesh(centerTube, new THREE.MeshBasicMaterial({ color: theme.passive, transparent:true, opacity:0.35 })));
+            // Action Stack DOM (right side overlay)
+            const stackHost = document.createElement('div'); stackHost.style.position='absolute'; stackHost.style.right='8px'; stackHost.style.top='8px'; stackHost.style.zIndex='12'; stackHost.style.display='grid'; stackHost.style.gap='6px'; stackHost.style.width='min(260px, 38vw)'; stackHost.style.pointerEvents='none';
+            const stepTints = ['#8CC8FF','#ACEFBD','#FFD9A6','#A7C7FF','#F6B6E6'];
+            function hexToRgba(hex, a){ const h=hex.replace('#',''); const r=parseInt(h.substring(0,2),16), g=parseInt(h.substring(2,4),16), b=parseInt(h.substring(4,6),16); return `rgba(${r},${g},${b},${a})`; }
+            const makeCard = (label, idx)=>{ const c=document.createElement('div'); c.textContent=label; c.style.position='relative'; c.style.padding='10px 12px'; c.style.border='1px solid rgba(212,190,141,.25)'; c.style.borderRadius='10px'; c.style.background='rgba(16,16,18,.6)'; c.style.color='#F6F5F2'; c.style.fontWeight='600'; c.style.letterSpacing='.02em'; c.style.backdropFilter='blur(6px)'; c.style.boxShadow='0 6px 16px rgba(0,0,0,.25)'; c.style.pointerEvents='auto'; const badge=document.createElement('span'); badge.textContent='0'; badge.style.position='absolute'; badge.style.top='6px'; badge.style.right='8px'; badge.style.fontSize='11px'; badge.style.padding='2px 6px'; badge.style.borderRadius='999px'; badge.style.border='1px solid rgba(255,255,255,.25)'; badge.style.background=hexToRgba(stepTints[idx], 0.18); badge.style.color='#fff'; badge.style.lineHeight='1'; badge.style.transition='transform 160ms ease'; c.appendChild(badge); c.__counterEl = badge; return c; };
+            const steps = ['Retrieve','Simulate','Approve','Execute','Receipt']; const cards=steps.map((s,i)=>makeCard(s,i)); cards.forEach(c=>stackHost.appendChild(c));
+            const cardCounts = Array(steps.length).fill(0);
+            // Topics pool for intent selection
+            const demoTopics = ["robotics.path","factory.shift","qa.inspect","yard.move","supply.load"];
+            // Helper: basic GET/POST wrappers
+            async function getJSON(url){ const r = await fetch(url, { headers: { 'Accept': 'application/json' } }); if (!r.ok) throw new Error(`GET ${url} ${r.status}`); return r.json(); }
+            async function postJSON(url, body){ const r = await fetch(url, { method:'POST', headers:{ 'Content-Type':'application/json', 'Accept':'application/json' }, body: JSON.stringify(body||{}) }); if (!r.ok) throw new Error(`POST ${url} ${r.status}`); return r.json(); }
+            function setLoading(card, on){ try{ card.style.opacity = on? '0.8':'1'; card.style.cursor = on? 'progress':'pointer'; card.style.filter = on? 'grayscale(0.15)':'none'; card.style.pointerEvents = on? 'none':'auto'; } catch{} }
+            // Bind interactions: click/keyboard to call backend and drive the viz
+            cards.forEach((card, i) => {
+                try { card.setAttribute('role','button'); card.setAttribute('tabindex','0'); } catch {}
+                const activate = async () => {
+                    // Derive intent
+                    let topic = demoTopics[i % demoTopics.length];
+                    let timeRange = undefined;
+                    try {
+                        const start = tMin + (i/steps.length) * tSpan;
+                        const end   = tMin + Math.min(1, (i+1)/steps.length) * tSpan;
+                        timeRange = [start, end];
+                        api.setIntent({ topic, timeRange });
+                    } catch {}
+                    // Visual focus immediately
+                    try { highlightStep(i); } catch {}
+                    // Call backend per step
+                    try {
+                        setLoading(card, true);
+                        if (i === 0) { // Retrieve
+                            const data = await getJSON('/api/memory-data');
+                            const evts = Array.isArray(data?.events) ? data.events : [];
+                            api.load(evts);
+                        } else if (i === 1) { // Simulate
+                            const res = await postJSON('/api/simulate', { topic, timeRange });
+                            const processed = Math.max(0, Number(res?.processedCount || 0));
+                            const visual = Math.min(400, Math.max(60, Math.floor(processed * 0.2)));
+                            try { spawnStreamsToCard(i, visual); } catch {}
+                            const adjust = Math.max(0, processed - visual);
+                            if (adjust) try { incrementCard(i, adjust); } catch {}
+                        } else if (i === 2) { // Approve
+                            const res = await postJSON('/api/approve', { topic, timeRange });
+                            const processed = Math.max(0, Number(res?.processedCount || 0));
+                            const visual = Math.min(500, Math.max(80, Math.floor(processed * 0.25)));
+                            try { spawnStreamsToCard(i, visual); } catch {}
+                            const adjust = Math.max(0, processed - visual);
+                            if (adjust) try { incrementCard(i, adjust); } catch {}
+                        } else if (i === 3) { // Execute
+                            const res = await postJSON('/api/execute', { topic, timeRange });
+                            const processed = Math.max(0, Number(res?.processedCount || 0));
+                            const visual = Math.min(600, Math.max(100, Math.floor(processed * 0.3)));
+                            try { spawnStreamsToCard(i, visual); } catch {}
+                            const adjust = Math.max(0, processed - visual);
+                            if (adjust) try { incrementCard(i, adjust); } catch {}
+                        } else if (i === 4) { // Receipt
+                            const res = await postJSON('/api/receipt', { topic, timeRange });
+                            const processed = Math.max(0, Number(res?.processedCount || 0));
+                            const visual = Math.min(480, Math.max(80, Math.floor(processed * 0.22)));
+                            try { spawnStreamsToCard(i, visual); } catch {}
+                            const adjust = Math.max(0, processed - visual);
+                            if (adjust) try { incrementCard(i, adjust); } catch {}
+                        }
+                    } catch (err) {
+                        console.error('Action error:', err);
+                        try { card.style.borderColor = 'rgba(255,80,80,.85)'; setTimeout(()=>{ card.style.borderColor='rgba(212,190,141,.25)'; }, 900); } catch {}
+                    } finally {
+                        setLoading(card, false);
+                    }
+                };
+                card.addEventListener('click', activate);
+                card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(); } });
+            });
+            const spiralCanvas = document.getElementById('spiralMemoryCanvas'); if (spiralCanvas && spiralCanvas.parentElement){ const parent=spiralCanvas.parentElement; parent.style.position = 'relative'; parent.style.overflow='hidden'; parent.appendChild(stackHost); }
+            // Shared time uniform for all shaders
+            const timeUniform = { value: 0 };
+            // Receipt ribbon (scrolling highlight along centerline)
+            const ribbonCurve = new HelixCurve(theme.turns, theme.pitch, (theme.rOuter+theme.rInner)/2 - 0.08);
+            const ribbonGeo   = new THREE.TubeGeometry(ribbonCurve, 320, 0.006, 8, false);
+            const ribbonMat   = new THREE.ShaderMaterial({
+                uniforms: { time: timeUniform },
+                vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
+                fragmentShader: `uniform float time; varying vec2 vUv; void main(){ float trail = smoothstep(0.0, 0.15, fract(vUv.x - time*0.25)); vec3 c = mix(vec3(0.7,0.7,0.7), vec3(1.0), trail); float a = 0.18 + 0.32*trail; gl_FragColor = vec4(c, a); }`,
+                transparent: true, depthWrite: false, blending: THREE.AdditiveBlending
+            });
+            root.add(new THREE.Mesh(ribbonGeo, ribbonMat));
+            // Intent wedge (top+bottom ring sectors indicating selected slice & y-range)
+            const wedgeGroup = new THREE.Group(); root.add(wedgeGroup);
+            function makeSector(y, angle, halfW, inner, outer){ const geom = new THREE.RingGeometry(inner, outer, 64, 1, angle-halfW, 2*halfW); const mat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent:true, opacity:0.12, side: THREE.DoubleSide }); const mesh = new THREE.Mesh(geom, mat); mesh.rotation.x = -Math.PI/2; mesh.position.y = y; return mesh; }
+            function updateWedge(angle, y0, y1){ while (wedgeGroup.children.length) wedgeGroup.remove(wedgeGroup.children[0]); const halfW = Math.PI/theme.buckets; const inner = theme.rInner*0.98; const outer = theme.rOuter*1.02; wedgeGroup.add(makeSector(y0, angle, halfW, inner, outer)); wedgeGroup.add(makeSector(y1, angle, halfW, inner, outer)); }
+            updateWedge(0, 0, theme.pitch*theme.turns);
+            // Gate rings (simple sweep shader)
+            const ringUniforms = { ringPhase: { value: 0.0 } };
+            const ringVS = `varying vec3 vWorld; void main(){ vec4 w= modelMatrix * vec4(position,1.0); vWorld=w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`;
+            const ringFS = `uniform float ringPhase; varying vec3 vWorld; void main(){ float a=atan(vWorld.z, vWorld.x); float arc=smoothstep(0.0,0.2,cos(a - ringPhase)); vec3 base=vec3(0.16); vec3 glow=mix(base, vec3(1.0), arc*0.7); gl_FragColor=vec4(glow, 0.45 + 0.25*arc); }`;
+            const ringMat = new THREE.ShaderMaterial({ uniforms: ringUniforms, vertexShader: ringVS, fragmentShader: ringFS, transparent:true });
+            [theme.rOuter+0.35, theme.rOuter+0.6, theme.rOuter+0.85, theme.rOuter+1.1].forEach((r,i)=>{ const tor = new THREE.TorusGeometry(r, 0.015, 6, 96); const m = ringMat.clone(); const mesh = new THREE.Mesh(tor, m); mesh.rotation.x = Math.PI/2; mesh.renderOrder = -10 + i; root.add(mesh); });
+            // Instanced event beads
+            let inst=null; let tMin=0, tSpan=1; const uniforms = { time: timeUniform, turns:{value:theme.turns}, pitch:{value:theme.pitch}, wedgeAngle:{value:0}, wedgeHalfWidth:{value:Math.PI/theme.buckets}, yMin:{value:-1e9}, yMax:{value:1e9} };
+            const vsh = `attribute float t01, angle, radius, mag, status; uniform float turns, pitch, time; uniform float wedgeAngle, wedgeHalfWidth, yMin, yMax; varying float vSel; varying float vStat; void main(){ float a=angle; float y=pitch*turns*t01; vec3 base=vec3(radius*cos(a), y, radius*sin(a)); base += 0.02*vec3(cos(time + a), sin(time*0.5), sin(time + a*0.7)); float angDelta = abs(atan(sin(a - wedgeAngle), cos(a - wedgeAngle))); float inAngle = step(angDelta, wedgeHalfWidth); float inY = step(yMin, y)*step(y, yMax); vSel=inAngle*inY; vStat=status; vec3 finalPos = base + position*(0.5 + mag*0.8); gl_Position = projectionMatrix * modelViewMatrix * vec4(finalPos,1.0); }`;
+            const fsh = `varying float vSel; varying float vStat; void main(){ vec3 c = (vStat < 0.5)? vec3(1.0) : (vStat < 1.5 ? vec3(1.0,0.86,0.55) : vec3(0.43,0.07,0.08)); float alpha = 0.85 + 0.15*vSel; gl_FragColor = vec4(c, alpha); }`;
+            // Keep CPU copies for stream spawning
+            let evtT01=null, evtAngle=null, evtRadius=null, evtMag=null, evtStatus=null, evtCount=0;
+            function buildEvents(data){ if (inst){ root.remove(inst); inst.geometry.dispose(); inst.material.dispose(); inst=null; }
+                const count = data.length; const geo = new THREE.SphereGeometry(0.018, 8, 8);
+                const mat = new THREE.ShaderMaterial({ uniforms, vertexShader: vsh, fragmentShader: fsh, transparent:true });
+                const im = new THREE.InstancedMesh(geo, mat, count);
+                const tBuf = new Float32Array(count), aBuf=new Float32Array(count), rBuf=new Float32Array(count), mBuf=new Float32Array(count), sBuf=new Float32Array(count);
+                const minTs = Math.min(...data.map(d=>d.ts)); const maxTs = Math.max(...data.map(d=>d.ts)); const span = Math.max(1, maxTs-minTs); tMin=minTs; tSpan=span;
+                for (let i=0;i<count;i++){ const e=data[i]; tBuf[i] = (e.ts - minTs)/span; aBuf[i]= hashAngle(e.topic); rBuf[i]= theme.rOuter - (theme.rOuter-theme.rInner)*(e.granularity || 0); mBuf[i]= e.mag ?? 0.5; sBuf[i]= e.status==='block'?2:(e.status==='warn'?1:0); }
+                im.geometry.setAttribute('t01', new THREE.InstancedBufferAttribute(tBuf,1));
+                im.geometry.setAttribute('angle', new THREE.InstancedBufferAttribute(aBuf,1));
+                im.geometry.setAttribute('radius', new THREE.InstancedBufferAttribute(rBuf,1));
+                im.geometry.setAttribute('mag', new THREE.InstancedBufferAttribute(mBuf,1));
+                im.geometry.setAttribute('status', new THREE.InstancedBufferAttribute(sBuf,1));
+                inst = im; root.add(inst);
+                // mirror to CPU
+                evtT01=tBuf; evtAngle=aBuf; evtRadius=rBuf; evtMag=mBuf; evtStatus=sBuf; evtCount=count;
+            }
+            // Demo data if none loaded
+            function demoEvents(n=4000){ const now=Date.now(), day=86400000; return Array.from({length:n},(_,i)=>{ const topic=demoTopics[i%demoTopics.length]; const ts=now - Math.random()*60*day; const gran=Math.pow(Math.random(),1.4); const status = Math.random()<0.05?'block':(Math.random()<0.2?'warn':'ok'); return { id:String(i), ts, topic, granularity:gran, mag:Math.random(), status }; }); }
+            buildEvents(demoEvents());
+            // Stream system to action stack cards
+            let stream=null;
+            function ensureStreamSystem(){ if (stream) return stream; const capacity=1200; const geo=new THREE.BufferGeometry();
+                const p0=new Float32Array(capacity*3), p1=new Float32Array(capacity*3), p2=new Float32Array(capacity*3);
+                const t0=new Float32Array(capacity), dur=new Float32Array(capacity), size=new Float32Array(capacity), stepId=new Float32Array(capacity);
+                for (let i=0;i<capacity;i++){ t0[i]=1e9; dur[i]=1; size[i]=6; stepId[i]=0; }
+                geo.setAttribute('p0', new THREE.BufferAttribute(p0,3));
+                geo.setAttribute('p1', new THREE.BufferAttribute(p1,3));
+                geo.setAttribute('p2', new THREE.BufferAttribute(p2,3));
+                geo.setAttribute('t0', new THREE.BufferAttribute(t0,1));
+                geo.setAttribute('dur', new THREE.BufferAttribute(dur,1));
+                geo.setAttribute('size', new THREE.BufferAttribute(size,1));
+                geo.setAttribute('stepId', new THREE.BufferAttribute(stepId,1));
+                const vs=`attribute vec3 p0, p1, p2; attribute float t0, dur, size, stepId; uniform float time; varying float vT; varying float vStep; void main(){ float t=clamp((time - t0)/max(0.0001, dur), 0.0, 1.0); vT=t; vStep=stepId; vec3 a = mix(p0, p1, t); vec3 b = mix(p1, p2, t); vec3 pos = mix(a, b, t); vec4 mv = modelViewMatrix * vec4(pos,1.0); gl_Position = projectionMatrix * mv; float persp = 320.0 / max(1.0, -mv.z); gl_PointSize = size * persp; }`;
+                const fs=`varying float vT; varying float vStep; void main(){ float d=length(gl_PointCoord - vec2(0.5)); if (d>0.5) discard; float a = smoothstep(0.5, 0.0, d); float trail = smoothstep(0.0, 0.2, vT) * (1.0 - smoothstep(0.8,1.0,vT)); vec3 c = (vStep<0.5)? vec3(0.62,0.84,1.0) : (vStep<1.5? vec3(0.80,0.98,0.72) : (vStep<2.5? vec3(1.0,0.86,0.55) : (vStep<3.5? vec3(0.85,0.93,1.0) : vec3(0.98,0.78,0.92)))); gl_FragColor = vec4(c, a * (0.25 + 0.65*trail)); }`;
+                const mat=new THREE.ShaderMaterial({ uniforms:{ time: timeUniform }, vertexShader:vs, fragmentShader:fs, transparent:true, depthWrite:false, blending:THREE.AdditiveBlending });
+                const pts=new THREE.Points(geo, mat); pts.renderOrder = 50; root.add(pts);
+                stream={ capacity, geo, pts, p0, p1, p2, t0, dur, size, stepId, cursor:0 };
+                return stream;
+            }
+            function ndcToWorld(ndcX, ndcY, distance){ const v = new THREE.Vector3(ndcX, ndcY, 0.5).unproject(camera); const dir = v.sub(camera.position).normalize(); return camera.position.clone().add(dir.multiplyScalar(distance)); }
+            function cardWorldTarget(stepIndex){ try { const card = cards[stepIndex]; if (!card) return new THREE.Vector3(4,2,4); const cRect = card.getBoundingClientRect(); const canvasRect = host.getBoundingClientRect();
+                    // clamp to canvas bounds so particles stay within
+                    const clampedLeft = Math.max(canvasRect.left, Math.min(cRect.left + cRect.width/2, canvasRect.right));
+                    const clampedTop  = Math.max(canvasRect.top,  Math.min(cRect.top + cRect.height/2, canvasRect.bottom));
+                    const cx = (clampedLeft - canvasRect.left) / Math.max(1, canvasRect.width);
+                    const cy = (clampedTop  - canvasRect.top)  / Math.max(1, canvasRect.height);
+                    const ndcX = cx*2 - 1; const ndcY = -(cy*2 - 1); return ndcToWorld(ndcX, ndcY, 4.5); } catch { return new THREE.Vector3(4,2,4); } }
+            function sampleSelectedEvents(maxCount){ const out=[]; if (!evtCount) return out; const angle=uniforms.wedgeAngle.value, half=uniforms.wedgeHalfWidth.value; const y0=uniforms.yMin.value, y1=uniforms.yMax.value; function inSel(i){ const a=evtAngle[i]; let d = Math.atan2(Math.sin(a - angle), Math.cos(a - angle)); d = Math.abs(d); const y = theme.pitch*theme.turns*evtT01[i]; return (d <= half) && (y>=y0 && y<=y1); }
+                // collect indices meeting selection; fallback random if none
+                for (let i=0;i<evtCount;i++){ if (inSel(i)) out.push(i); if (out.length>=maxCount*2) break; }
+                if (!out.length){ for (let i=0;i<Math.min(maxCount*2, evtCount); i++){ out.push(Math.floor(Math.random()*evtCount)); } }
+                // shuffle and trim
+                for (let i=out.length-1;i>0;i--){ const j=(Math.random()* (i+1))|0; const tmp=out[i]; out[i]=out[j]; out[j]=tmp; }
+                out.length = Math.min(maxCount, out.length);
+                return out;
+            }
+            function eventWorldPos(i){ const a=evtAngle[i]; const r=evtRadius[i]; const y = theme.pitch*theme.turns*evtT01[i]; return new THREE.Vector3(r*Math.cos(a), y, r*Math.sin(a)); }
+            function incrementCard(stepIndex, by=1){ cardCounts[stepIndex]+=by; const el = cards[stepIndex] && cards[stepIndex].__counterEl; if (el){ el.textContent = String(cardCounts[stepIndex]); el.style.transform='scale(1.12)'; setTimeout(()=>{ el.style.transform='scale(1)'; }, 120); } }
+            function spawnStreamsToCard(stepIndex, count){ const s=ensureStreamSystem(); const indices = sampleSelectedEvents(count); const target = cardWorldTarget(stepIndex); const camDir = new THREE.Vector3(); camera.getWorldDirection(camDir); const right = new THREE.Vector3(0,1,0).cross(camDir).normalize();
+                for (let k=0;k<indices.length;k++){ const i = indices[k]; const p0 = eventWorldPos(i); const p2 = target.clone().addScaledVector(right, (Math.random()-0.5)*0.6).add(new THREE.Vector3(0, (Math.random()*0.6)-0.2, 0)); const mid = p0.clone().lerp(p2, 0.5).add(new THREE.Vector3(0, 0.6 + Math.random()*0.6, 0));
+                    const idx = s.cursor % s.capacity; s.cursor++;
+                    s.p0[idx*3+0]=p0.x; s.p0[idx*3+1]=p0.y; s.p0[idx*3+2]=p0.z;
+                    s.p1[idx*3+0]=mid.x; s.p1[idx*3+1]=mid.y; s.p1[idx*3+2]=mid.z;
+                    s.p2[idx*3+0]=p2.x; s.p2[idx*3+1]=p2.y; s.p2[idx*3+2]=p2.z;
+                    const start = uniforms.time.value + Math.random()*0.25; const duration = 1.1 + Math.random()*0.9; s.t0[idx]=start; s.dur[idx]=duration; const sizeBoost = (stepIndex>=3? 3.0 : stepIndex===2? 1.5 : 1.0); s.size[idx]= (5 + Math.random()*5) * sizeBoost; s.stepId[idx]=stepIndex; const delayMs = Math.max(0, (start + duration - uniforms.time.value)*1000); setTimeout(()=>{ incrementCard(stepIndex, 1); }, delayMs);
+                }
+                s.geo.attributes.p0.needsUpdate = true; s.geo.attributes.p1.needsUpdate = true; s.geo.attributes.p2.needsUpdate = true; s.geo.attributes.t0.needsUpdate = true; s.geo.attributes.dur.needsUpdate = true; s.geo.attributes.size.needsUpdate = true; s.geo.attributes.stepId.needsUpdate = true;
+            }
+            // API
+            const api = { load: (evts)=>buildEvents(evts||[]), setIntent: (q)=>{ if (q && q.topic){ const a=hashAngle(q.topic); uniforms.wedgeAngle.value=a; }
+                        if (q && q.timeRange){ const [t0,t1]=q.timeRange; const y0 = theme.pitch*theme.turns * ((t0 - tMin)/Math.max(1,tSpan)); const y1 = theme.pitch*theme.turns * ((t1 - tMin)/Math.max(1,tSpan)); uniforms.yMin.value = Math.min(y0,y1); uniforms.yMax.value = Math.max(y0,y1); updateWedge(uniforms.wedgeAngle.value, uniforms.yMin.value, uniforms.yMax.value); } },
+                        playHero: ()=>{ try { if (window.gsap){ const tl = window.gsap.timeline(); tl.to(ringUniforms.ringPhase, { value: Math.PI*2, duration: 6, ease: 'power2.inOut', repeat: -1 }); tl.call(()=>highlightStep(0)).to({}, {duration:2}).call(()=>highlightStep(1)).to({}, {duration:2}).call(()=>highlightStep(2)).to({}, {duration:2}).call(()=>highlightStep(3)).to({}, {duration:2}).call(()=>highlightStep(4)); } } catch{} }, dispose: ()=>{ try { renderer.dispose(); } catch{} }, resize: (w,h)=>{ camera.aspect=w/h; camera.updateProjectionMatrix(); renderer.setSize(w,h,true); } };
+            function highlightStep(i){ cards.forEach((c,idx)=>{ const active = idx===i; const tint = stepTints[idx]; c.style.borderColor = active ? hexToRgba(tint, 0.75) : 'rgba(212,190,141,.25)'; c.style.background = active ? `linear-gradient(180deg, ${hexToRgba(tint, 0.22)}, rgba(16,16,18,.65))` : 'rgba(16,16,18,.6)'; c.style.boxShadow = active ? `0 12px 32px ${hexToRgba(tint, 0.35)}` : '0 6px 16px rgba(0,0,0,.25)'; c.style.transition='box-shadow .35s ease, border-color .35s ease, background .35s ease'; });
+                try { const base=110; const mult = (i>=3? 2.8 : (i===2? 1.8 : 1.0)); spawnStreamsToCard(i, Math.round(base*mult)); } catch(_){}
+                try { const fv = document.querySelector('#spiral-memory .feature-visual'); if (fv){ fv.classList.remove('pulse-plate'); void fv.offsetWidth; fv.classList.add('pulse-plate'); if (i===2 || i===3){ fv.style.filter='brightness(.85)'; setTimeout(()=>{ fv.style.filter=''; }, 500); } } } catch(_){ }
+            }
+            window.spiral = api;
+            // Resize & loop
+            function resize(){
+                const r = host.getBoundingClientRect();
+                const w = Math.max(1, Math.floor(r.width));
+                const h = Math.max(1, Math.floor(r.height));
+                api.resize(w, h);
+                applyComposition();
+            }
+            resize();
+            if (window.ResizeObserver) {
+                try { const ro = new ResizeObserver(() => resize()); ro.observe(host); } catch {}
+            }
+            window.addEventListener('resize', resize, { passive:true });
+            // Pause rendering when offscreen/hidden to reduce jank
+            const gate = (typeof window.createCanvasActivityGate === 'function') ? window.createCanvasActivityGate(host) : null;
+            const clock = new THREE.Clock();
+            (function loop(){
+                if (gate && !gate.active) { requestAnimationFrame(loop); return; }
+                uniforms.time.value = clock.getElapsedTime();
+                ringUniforms.ringPhase.value += 0.01;
+                renderer.render(scene,camera);
+                requestAnimationFrame(loop);
+            })();
+        }
         // Initialize all consciousness technology animations
         document.addEventListener('DOMContentLoaded', function() {
             // Robust loader to ensure THREE and passes are available even if CDNs race or are blocked
@@ -4009,7 +4279,7 @@
 
             ensureThreeAndPasses().then(() => {
                 try { console.log('🧠 Starting heart background...'); initHeartBackgroundAnimation(); } catch (e) { console.error('❌ Heart background error:', e); }
-                try { console.log('🌀 Starting spiral memory...'); initSpiralMemoryAnimation(); } catch (e) { console.error('❌ Spiral memory error:', e); }
+                try { console.log('🌀 Starting spiral memory (pro spec)...'); initSpiralMemoryPro(); } catch (e) { console.error('❌ Spiral memory error:', e); }
                 try { console.log('🔮 Starting holographic reality...'); initHolographicRealityAnimation(); } catch (e) { console.error('❌ Holographic reality error:', e); }
                 try { console.log('🧬 Starting DNA sigil...'); initDNASigilAnimation(); } catch (e) { console.error('❌ DNA sigil error:', e); }
                 try { console.log('🛠️ Starting self coding canvas...'); initSelfCodingAnimation(); } catch (e) { console.error('❌ Self coding error:', e); }
