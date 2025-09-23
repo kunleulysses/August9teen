@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://flappyjournal.dev/schema/game/item.json",
+  "title": "Item",
+  "type": "object",
+  "required": ["id", "name", "type"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "type": { "type": "string", "enum": ["weapon", "armor", "consumable", "cosmetic", "housing", "key", "material"] },
+    "rarity": { "type": "string", "enum": ["common", "uncommon", "rare", "epic", "legendary", "mythic"] },
+    "attributes": { "type": "object", "additionalProperties": { "type": ["string", "number", "boolean"] } },
+    "owner": { "type": "string" },
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "sigil": { "type": "string" },
+        "hash": { "type": "string" },
+        "minted": { "type": "boolean" },
+        "tokenId": { "type": ["string", "null"] }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}
+

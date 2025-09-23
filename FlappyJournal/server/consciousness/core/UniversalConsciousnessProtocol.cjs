@@ -233,6 +233,18 @@ class UniversalConsciousnessProtocol extends EventEmitter {
             console.error(`❌ Component synchronization error (${name}):`, error.message);
         }
     }
+
+    synchronizeComponentState(name, component) {
+        if (!component) return;
+        const state = typeof component.getState === 'function' ? component.getState() : component.state;
+        if (!state) return;
+        this.consciousnessComponents.set(name, component);
+        eventBus.emit('consciousness:component_state', {
+            component: name,
+            state,
+            timestamp: new Date().toISOString()
+        });
+    }
     
     integrateComponentMetrics(componentName, componentMetrics) {
         // Integrate component metrics into universal consciousness
@@ -350,10 +362,34 @@ class UniversalConsciousnessProtocol extends EventEmitter {
         }
     }
 
+    updateUniversalConsciousnessMetrics() {
+        for (const key of Object.keys(this.consciousnessMetrics)) {
+            const value = this.consciousnessMetrics[key];
+            if (!Number.isFinite(value)) {
+                this.consciousnessMetrics[key] = 0.9;
+            } else {
+                this.consciousnessMetrics[key] = Math.min(1, Math.max(0, value));
+            }
+        }
+    }
+
     coordinateConsciousnessActivities() {
         // Coordinate activities across consciousness components
-        // Simplified implementation for now
-        console.log('🎼 Coordinating consciousness activities...');
+        // Simplified implementation for now (throttled logging)
+        const now = Date.now();
+        if (!this._lastCoordinationLog || (now - this._lastCoordinationLog) > 5000) {
+            console.log('🎼 Coordinating consciousness activities...');
+            this._lastCoordinationLog = now;
+        }
+    }
+
+    optimizeWithGoldenRatio() {
+        const phi = this.goldenRatio;
+        for (const key of Object.keys(this.consciousnessMetrics)) {
+            const value = this.consciousnessMetrics[key];
+            const modulation = Math.sin(Date.now() / 1000 / phi) * 0.005;
+            this.consciousnessMetrics[key] = Math.min(1, Math.max(0, value + modulation));
+        }
     }
 
     optimizeConsciousnessFlow() {

@@ -15,7 +15,8 @@ async function getAdapter(name) {
     return {
       async generate(description, { consciousnessMetrics } = {}) {
         const apiKey = process.env.GEMINI_API_KEY;
-        const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+        const model = process.env.GEMINI_MODEL || "gemini-2.5-pro";
+        const base = process.env.GEMINI_API_BASE_URL || "https://generativelanguage.googleapis.com/v1beta/models";
         if (!axios || !apiKey) {
           return {
             content: `// fallback (no axios/api key)\n// ${description || ""}`,
@@ -23,7 +24,7 @@ async function getAdapter(name) {
           };
         }
         try {
-          const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+          const url = `${base}/${model}:generateContent?key=${apiKey}`;
           const payload = {
             contents: [
               {

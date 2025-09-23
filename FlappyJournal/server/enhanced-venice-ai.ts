@@ -306,8 +306,8 @@ export class VeniceAI extends EventEmitter {
         }
       }
 
-      const data = await response.json();
-      const content = data.choices?.[0]?.message?.content;
+      const data: any = await response.json();
+      const content = data?.choices?.[0]?.message?.content as string | undefined;
 
       if (!content) {
         console.error('Venice AI response data:', data);
@@ -456,8 +456,9 @@ export class VeniceAI extends EventEmitter {
       result.rest = true;
       console.log('✅ Venice AI REST API connection successful');
     } catch (error) {
-      result.error = `REST API error: ${error.message}`;
-      console.log(`❌ Venice AI REST API connection failed: ${error.message}`);
+      const msg = error instanceof Error ? error.message : String(error);
+      result.error = `REST API error: ${msg}`;
+      console.log(`❌ Venice AI REST API connection failed: ${msg}`);
     }
 
     // Test WebSocket (if enabled)

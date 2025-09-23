@@ -1,0 +1,34 @@
+=== REALITY GENERATOR FILE LOADED ===
+=== REALITY GENERATOR FILE LOADED [MAIN] ===
+[ConsciousnessEventBus] Initialized
+🚀 Initializing Reality Generator Service on 2 CPU cores...
+🔴 Unhandled Rejection: Error: Cannot find module './consciousness/holographic-consciousness-reality-generator.js'
+Require stack:
+- /opt/featherweight/FlappyJournal/server/reality-generator-simple.cjs
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1212:15)
+    at Module._load (node:internal/modules/cjs/loader:1043:27)
+    at Module.require (node:internal/modules/cjs/loader:1298:19)
+    at require (node:internal/modules/helpers:182:18)
+    at initializeServices (/opt/featherweight/FlappyJournal/server/reality-generator-simple.cjs:169:31)
+    at Object.<anonymous> (/opt/featherweight/FlappyJournal/server/reality-generator-simple.cjs:232:1)
+    at Module._compile (node:internal/modules/cjs/loader:1529:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
+    at Module.load (node:internal/modules/cjs/loader:1275:32)
+    at Module._load (node:internal/modules/cjs/loader:1096:12) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/opt/featherweight/FlappyJournal/server/reality-generator-simple.cjs'
+  ]
+} Error: Cannot find module './consciousness/holographic-consciousness-reality-generator.js'
+Require stack:
+- /opt/featherweight/FlappyJournal/server/reality-generator-simple.cjs
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1212:15)
+    at Module._load (node:internal/modules/cjs/loader:1043:27)
+    at Module.require (node:internal/modules/cjs/loader:1298:19)
+    at require (node:internal/modules/helpers:182:18)
+    at initializeServices (/opt/featherweight/FlappyJournal/server/reality-generator-simple.cjs:169:31)
+    at Object.<anonymous> (/opt/featherweight/FlappyJournal/server/reality-generator-simple.cjs:232:1)
+    at Module._compile (node:internal/modules/cjs/loader:1529:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
+    at Module.load (node:internal/modules/cjs/loader:1275:32)
+    at Module._load (node:internal/modules/cjs/loader:1096:12)

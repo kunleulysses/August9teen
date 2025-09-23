@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://flappyjournal.dev/schema/game/loot/minted.json",
+  "title": "LootMintedEvent",
+  "type": "object",
+  "required": ["type", "zoneId"],
+  "properties": {
+    "type": { "const": "loot:minted" },
+    "zoneId": { "type": "string", "minLength": 1 },
+    "item": { "$ref": "https://flappyjournal.dev/schema/game/item.json" },
+    "moment": { "$ref": "https://flappyjournal.dev/schema/game/moment.json" }
+  },
+  "oneOf": [
+    { "required": ["item"] },
+    { "required": ["moment"] }
+  ],
+  "additionalProperties": true
+}
+

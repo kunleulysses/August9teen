@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://flappyjournal.dev/schema/game/npc/state.json",
+  "title": "NPCStateEvent",
+  "type": "object",
+  "required": ["type", "zoneId", "npc"],
+  "properties": {
+    "type": { "const": "npc:state" },
+    "zoneId": { "type": "string", "minLength": 1 },
+    "npc": { "$ref": "https://flappyjournal.dev/schema/game/npc.json" }
+  },
+  "additionalProperties": true
+}
+

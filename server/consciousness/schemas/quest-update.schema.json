@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://flappyjournal.dev/schema/game/quest/update.json",
+  "title": "QuestUpdateEvent",
+  "type": "object",
+  "required": ["type", "zoneId", "quest"],
+  "properties": {
+    "type": { "const": "quest:update" },
+    "zoneId": { "type": "string", "minLength": 1 },
+    "quest": { "$ref": "https://flappyjournal.dev/schema/game/quest.json" }
+  },
+  "additionalProperties": true
+}
+

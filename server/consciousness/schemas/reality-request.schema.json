@@ -17,5 +17,106 @@
     }
   },
   "additionalProperties": true,
-  "version": { "const": 1 }
-}
+  "version": { "const": 1 },
+  "$defs": {
+    "npc": {
+      "$id": "https://flappyjournal.dev/schema/game/npc.json",
+      "title": "NPC",
+      "type": "object",
+      "required": ["id", "name", "archetype"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "archetype": { "type": "string", "minLength": 1 },
+        "level": { "type": "integer", "minimum": 1 },
+        "mood": { "type": "string" },
+        "faction": { "type": "string" },
+        "memoryKeys": { "type": "array", "items": { "type": "string" } },
+        "stats": {
+          "type": "object",
+          "properties": {
+            "hp": { "type": "integer", "minimum": 0 },
+            "atk": { "type": "integer", "minimum": 0 },
+            "def": { "type": "integer", "minimum": 0 }
+          },
+          "additionalProperties": false
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "sigil": { "type": "string" },
+            "hash": { "type": "string" },
+            "origin": {
+              "type": "object",
+              "properties": {
+                "world": { "type": "string" },
+                "shard": { "type": "string" }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "quest": {
+      "$id": "https://flappyjournal.dev/schema/game/quest.json",
+      "title": "Quest",
+      "type": "object",
+      "required": ["id", "title", "objectives"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "title": { "type": "string", "minLength": 1 },
+        "description": { "type": "string" },
+        "shard": { "type": "string" },
+        "objectives": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["type"],
+            "properties": {
+              "type": { "type": "string", "enum": ["collect", "defeat", "talk", "explore", "craft"] },
+              "target": { "type": "string" },
+              "count": { "type": "integer", "minimum": 1 },
+              "status": { "type": "string", "enum": ["offered", "active", "completed", "failed"] }
+            },
+            "additionalProperties": false
+          }
+        },
+        "rewards": {
+          "type": "object",
+          "properties": {
+            "xp": { "type": "integer", "minimum": 0 },
+            "items": { "type": "array", "items": { "type": "string" } },
+            "currency": { "type": "integer", "minimum": 0 }
+          },
+          "additionalProperties": false
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "sigil": { "type": "string" },
+            "hash": { "type": "string" },
+            "origin": {
+              "type": "object",
+              "properties": {
+                "world": { "type": "string" },
+                "shard": { "type": "string" }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "item": {
+      "$id": "https://flappyjournal.dev/schema/game/item.json",
+      "title": "Item",
+      "type": "object",
+      "required": ["id", "name", "type"],
+      "properties": {
+   

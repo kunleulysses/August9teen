@@ -5,12 +5,8 @@
 test('server main entry loads without error', async () => {
   let err = null;
   try {
-    // Prefer TS, fallback to JS
-    try {
-      await import('../../index.ts');
-    } catch (e) {
-      await import('../../index.js');
-    }
+    // Import without extension so ts-jest can resolve to TS during tests (and JS otherwise)
+    await import('../../index');
   } catch (e) {
     err = e;
   }

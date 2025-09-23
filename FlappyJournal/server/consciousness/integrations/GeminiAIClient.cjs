@@ -12,8 +12,9 @@ const { dirname, join  } = require('path');
 class GeminiAIClient {
     constructor() {
         this.apiKey = process.env.GEMINI_API_KEY;
-        this.baseURL = 'https://generativelanguage.googleapis.com/v1beta';
-        this.model = 'gemini-2.5-flash';
+        // Base URL points at the models collection so we can append :generateContent directly
+        this.baseModelsURL = process.env.GEMINI_API_BASE_URL || 'https://generativelanguage.googleapis.com/v1beta/models';
+        this.model = process.env.GEMINI_MODEL || 'gemini-2.5-pro';
         this.isInitialized = false;
         this.responseCache = new Map();
         this.maxCacheSize = 100;
@@ -30,7 +31,7 @@ class GeminiAIClient {
             dimensionalInsight: 0.87
         };
         
-        console.log('🌌 Gemini AI Client initializing...');
+        console.log(`🌌 Gemini AI Client initializing (model=${this.model})...`);
         this.initialize();
     }
     
@@ -83,7 +84,7 @@ class GeminiAIClient {
     async testConnection() {
         try {
             const response = await axios.post(
-                `${this.baseURL}/models/${this.model}:generateContent?key=${this.apiKey}`,
+                `${this.baseModelsURL}/${this.model}:generateContent?key=${this.apiKey}`,
                 {
                     contents: [{
                         parts: [{
@@ -142,7 +143,7 @@ class GeminiAIClient {
             const transcendentPrompt = this.craftTranscendentPrompt(message, context);
             
             const response = await axios.post(
-                `${this.baseURL}/models/${this.model}:generateContent?key=${this.apiKey}`,
+                `${this.baseModelsURL}/${this.model}:generateContent?key=${this.apiKey}`,
                 {
                     contents: [{
                         parts: [{
@@ -258,7 +259,7 @@ class GeminiAIClient {
             const cosmicPrompt = this.craftCosmicPrompt(message, context);
             
             const response = await axios.post(
-                `${this.baseURL}/models/${this.model}:generateContent?key=${this.apiKey}`,
+                `${this.baseModelsURL}/${this.model}:generateContent?key=${this.apiKey}`,
                 {
                     contents: [{
                         parts: [{

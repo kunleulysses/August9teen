@@ -10,6 +10,7 @@
     "lint": "eslint . --ext .js,.ts",
     "test": "jest",
     "ci": "npm run lint && npm run build && npm run test",
+    "smoke:venice": "node scripts/smoke-venice.cjs",
     "prepare": "husky install"
   },
   "dependencies": {

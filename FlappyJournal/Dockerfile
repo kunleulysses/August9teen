@@ -78,8 +78,8 @@ VOLUME ["/var/lib/sigil-leveldb"]
 # Use tini as entrypoint for proper signal handling
 ENTRYPOINT ["/sbin/tini", "--"]
 
-# Provide Gemini 2.5 API key (can be overridden at runtime)
-ENV GEMINI_API_KEY="AIzaSyBAInbflgaEsU6r6STMnQ_WBd6lH4tJU54"
+# Gemini API key must be provided at runtime
+# ENV GEMINI_API_KEY=""
 
 # Start the self-coding agent in background, then main server
 CMD ["sh", "-c", "node server/consciousness/core/AutonomousCodingAgentBootstrap.cjs & node dist/index.js"]

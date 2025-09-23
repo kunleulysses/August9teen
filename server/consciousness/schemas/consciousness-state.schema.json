@@ -10,5 +10,11 @@
     "coherence": { "type": "number", "minimum": 0, "maximum": 1 }
   },
   "additionalProperties": true,
-  "version": { "const": 1 }
+  "version": { "const": 1 },
+  "$defs": {
+    "npc": { "$id": "https://flappyjournal.dev/schema/game/npc.json", "type": "object" },
+    "quest": { "$id": "https://flappyjournal.dev/schema/game/quest.json", "type": "object" },
+    "item": { "$id": "https://flappyjournal.dev/schema/game/item.json", "type": "object" },
+    "moment": { "$id": "https://flappyjournal.dev/schema/game/moment.json", "type": "object" }
+  }
 }

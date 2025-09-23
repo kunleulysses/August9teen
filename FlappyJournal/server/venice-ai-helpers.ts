@@ -4,6 +4,8 @@ import {
   ENHANCED_FLAPPY_PERSONALITY,
 } from './enhanced-flappy-personality';
 import { ConversationMemory } from '@shared/schema';
+import { veniceAI } from './enhanced-venice-ai';
+import type { GenerateOptions } from './enhanced-venice-ai';
 
 // Type imports for the helper functions
 type FlappyContentType =
@@ -74,7 +76,8 @@ export function analyzeConversationContext(
   } else if (content.length > 200) {
     context.userCommunicationStyle = 'detailed';
   } else {
-    context.userCommunicationStyle = 'balanced';
+    // Use a supported style; "balanced" is not part of ConversationContext type
+    context.userCommunicationStyle = 'detailed';
   }
 
   // Check for emotional language
@@ -207,7 +210,10 @@ export function buildEnhancedPrompt(
   if (memories && memories.length > 0) {
     basePrompt += 'Relevant memories about this user:\n';
     memories.slice(0, 3).forEach((memory) => {
-      basePrompt += `- ${memory.content}\n`;
+      const topic = (memory as any).topic;
+      const ctx = (memory as any).context;
+      const summary = topic ? `${topic}: ${ctx}` : ctx;
+      basePrompt += `- ${summary}\n`;
     });
     basePrompt += '\n';
   }
@@ -215,7 +221,7 @@ export function buildEnhancedPrompt(
   // Add memory references to weave in naturally
   if (memoryReferences.length > 0) {
     basePrompt += 'Naturally reference these memories in your response:\n';
-    memoryReferences.forEach((ref) => {
+    memoryReferences.forEach((ref: string) => {
       basePrompt += `- ${ref}\n`;
     });
     basePrompt += '\n';
@@ -224,7 +230,7 @@ export function buildEnhancedPrompt(
   // Add proactive support suggestions
   if (proactiveSupport.length > 0) {
     basePrompt += 'Consider offering these supportive suggestions:\n';
-    proactiveSupport.forEach((suggestion) => {
+    proactiveSupport.forEach((suggestion: string) => {
       basePrompt += `- ${suggestion}\n`;
     });
     basePrompt += '\n';
@@ -321,62 +327,6 @@ const safeVeniceLog = (...args: any[]) => {
     console.error(...args);
   }
   // Silently drop messages that exceed the rate limit
-
-// Rate-limited logger for Venice AI failures: 1 message per 30 seconds
-class VeniceRateLimiter {
-  private lastCallTime = 0;
-  private interval: number;
-
-  constructor(intervalMs: number) {
-    this.interval = intervalMs;
-  }
-
-  canCall(): boolean {
-    const now = Date.now();
-    if (now - this.lastCallTime >= this.interval) {
-      this.lastCallTime = now;
-      return true;
-    }
-    return false;
-  }
-}
-
-const veniceFailureLogger = new VeniceRateLimiter(30000);
-const safeVeniceLog = (...args: any[]) => {
-  if (veniceFailureLogger.canCall()) {
-    console.error(...args);
-
-// Rate-limited logger for Venice AI failures: 1 message per 30 seconds
-class VeniceRateLimiter {
-  private lastCallTime = 0;
-  private interval: number;
-
-
-// Rate-limited logger for Venice AI failures: 1 message per 30 seconds
-class VeniceRateLimiter {
-  private lastCallTime = 0;
-  private interval: number;
-
-  constructor(intervalMs: number) {
-    this.interval = intervalMs;
-  }
-
-  canCall(): boolean {
-    const now = Date.now();
-    if (now - this.lastCallTime >= this.interval) {
-      this.lastCallTime = now;
-      return true;
-    }
-    return false;
-  }
-}
-
-const veniceFailureLogger = new VeniceRateLimiter(30000);
-const safeVeniceLog = (...args: any[]) => {
-  if (veniceFailureLogger.canCall()) {
-    console.error(...args);
-  }
-  // Silently drop messages that exceed the rate limit
 };
 
 // Generic Venice client interface for the backoff helper
@@ -387,9 +337,29 @@ interface VeniceClientInterface {
 // Mock veniceClient that delegates to the actual Venice AI implementation
 const veniceClient: VeniceClientInterface = {
   async call(opts: any): Promise<any> {
-    // This is a placeholder that should be replaced with actual Venice AI client logic
-    // For now, it throws an error to indicate it needs to be implemented
-    throw new Error('veniceClient.call() needs to be implemented with actual Venice AI client');
+    const {
+      prompt,
+      systemPrompt,
+      maxTokens,
+      temperature,
+      topP,
+      enableWebSearch,
+    } = opts || {};
+
+    if (!prompt || typeof prompt !== 'string') {
+      throw new Error('veniceClient.call(): missing required "prompt" string');
+    }
+
+    const content = await veniceAI.generateResponse(prompt, {
+      systemPrompt,
+      maxTokens,
+      temperature,
+      topP,
+      enableWebSearch,
+    });
+
+    // Normalize to an object with content to keep future compatibility
+    return { content };
   }
 };
 
@@ -417,6 +387,74 @@ async function callVeniceWithBackoff(opts: any, retries: number = 5, delay: numb
     await new Promise(r => setTimeout(r, delay));
     return callVeniceWithBackoff(opts, retries - 1, Math.min(delay * 2, 30000));
   }
+}
+
+/**
+ * Orchestrates a complete adaptive Venice AI reply.
+ * Combines context analysis, personality adaptation, prompt building, and the backoff-enabled call.
+ */
+export async function generateAdaptiveVeniceReply(params: {
+  contentType: FlappyContentType;
+  userMessage: string;
+  userInfo?: any;
+  memories?: ConversationMemory[];
+  venice?: Partial<GenerateOptions> & { systemPrompt?: string };
+}): Promise<{
+  content: string;
+  prompt: string;
+  context: ConversationContext;
+  personality: ReturnType<typeof EnhancedFlappyPersonality.generatePersonalizedResponse>;
+}> {
+  const {
+    contentType,
+    userMessage,
+    userInfo,
+    memories = [],
+    venice: veniceOpts = {},
+  } = params;
+
+  // 1) Analyze conversation context
+  const context = analyzeConversationContext(userMessage, contentType, userInfo);
+
+  // 2) Prepare memory strings for personality adaptation
+  const memoryStrings = (memories || [])
+    .map((m) => {
+      const topic = (m as any).topic;
+      const ctx = (m as any).context;
+      return topic ? `${topic}: ${ctx}` : ctx;
+    })
+    .filter((s): s is string => Boolean(s));
+
+  // 3) Build personality response
+  const personalityResponse = EnhancedFlappyPersonality.generatePersonalizedResponse(
+    context,
+    memoryStrings,
+    userMessage
+  );
+
+  // 4) Construct enhanced prompt
+  const prompt = buildEnhancedPrompt(
+    contentType,
+    userMessage,
+    userInfo,
+    memories,
+    personalityResponse,
+    { userMemories: memories }
+  );
+
+  // 5) Call Venice with backoff
+  const veniceResponse = await callVeniceWithBackoff({
+    prompt,
+    systemPrompt: veniceOpts.systemPrompt,
+    maxTokens: veniceOpts.maxTokens,
+    temperature: veniceOpts.temperature,
+    topP: veniceOpts.topP,
+    enableWebSearch: veniceOpts.enableWebSearch,
+  });
+
+  const content = veniceResponse?.content ?? (typeof veniceResponse === 'string' ? veniceResponse : '');
+
+  return { content, prompt, context, personality: personalityResponse };
 }
 
 export { callVeniceWithBackoff, VeniceClientInterface, veniceClient };

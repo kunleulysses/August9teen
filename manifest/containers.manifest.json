@@ -1,0 +1,703 @@
+{
+  "generated_at": "2025-08-16T08:04:11Z",
+  "host": "unknown",
+  "containers": [
+    {
+      "name": "grafana-fw",
+      "id": "45a492aad472600fe8a2a0057d395679b2cc82d4485467fb6bf9fe9a6fc37c4b",
+      "image": "grafana/grafana:10.4.2",
+      "image_id": "sha256:679e4be9f9184b60905bc3c9297d293d0070f1d1155017877cf0199b1f1b787c",
+      "repo_digests": [],
+      "ports": [
+        {
+          "target": null,
+          "proto": null,
+          "published": null,
+          "host_ip": "0.0.0.0"
+        },
+        {
+          "target": null,
+          "proto": null,
+          "published": null,
+          "host_ip": "::"
+        }
+      ],
+      "mounts": [],
+      "networks": [
+        "bridge"
+      ],
+      "env": [
+        "GF_SECURITY_ADMIN_USER=admin",
+        "GF_SECURITY_ADMIN_PASSWORD=admin",
+        "PATH=/usr/share/grafana/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        "GF_PATHS_CONFIG=/etc/grafana/grafana.ini",
+        "GF_PATHS_DATA=/var/lib/grafana",
+        "GF_PATHS_HOME=/usr/share/grafana",
+        "GF_PATHS_LOGS=/var/log/grafana",
+        "GF_PATHS_PLUGINS=/var/lib/grafana/plugins",
+        "GF_PATHS_PROVISIONING=/etc/grafana/provisioning"
+      ],
+      "command": [],
+      "entrypoint": [
+        "/run.sh"
+      ],
+      "working_dir": "/usr/share/grafana",
+      "restart_policy": {
+        "Name": "unless-stopped",
+        "MaximumRetryCount": 0
+      },
+      "labels": {
+        "maintainer": "Grafana Labs <hello@grafana.com>"
+      }
+    },
+    {
+      "name": "redis",
+      "id": "b9badf7013daf5b4ee2d91fd5809f6999b24f0e62e325225636116cc80919ac9",
+      "image": "bitnami/redis:7.2",
+      "image_id": "sha256:3d7539dd4cb6005992aca4624a48d91da5e2bb468948963625c58996019175a6",
+      "repo_digests": [],
+      "ports": [
+        {
+          "target": null,
+          "proto": null,
+          "published": null,
+          "host_ip": "0.0.0.0"
+        },
+        {
+          "target": null,
+          "proto": null,
+          "published": null,
+          "host_ip": "::"
+        }
+      ],
+      "mounts": [
+        {
+          "type": "bind",
+          "name": null,
+          "source": "/etc/ssl/certs/redis",
+          "destination": "/certs"
+        }
+      ],
+      "networks": [
+        "bridge"
+      ],
+      "env": [
+        "REDIS_TLS_ENABLED=yes",
+        "REDIS_TLS_PORT_NUMBER=6379",
+        "REDIS_PASSWORD=Mamasega008",
+        "REDIS_TLS_AUTH_CLIENTS=no",
+        "REDIS_TLS_CERT_FILE=/certs/redis.crt",
+        "REDIS_TLS_KEY_FILE=/certs/redis.key",
+        "REDIS_TLS_CA_FILE=/certs/ca.crt",
+        "PATH=/opt/bitnami/common/bin:/opt/bitnami/redis/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        "HOME=/",
+        "OS_ARCH=amd64",
+        "OS_FLAVOUR=debian-12",
+        "OS_NAME=linux",
+        "APP_VERSION=7.2.5",
+        "BITNAMI_APP_NAME=redis"
+      ],
+      "command": [
+        "/opt/bitnami/scripts/redis/run.sh"
+      ],
+      "entrypoint": [
+        "/opt/bitnami/scripts/redis/entrypoint.sh"
+      ],
+      "working_dir": "",
+      "restart_policy": {
+        "Name": "unless-stopped",
+        "MaximumRetryCount": 0
+      },
+      "labels": {
+        "com.vmware.cp.artifact.flavor": "sha256:c50c90cfd9d12b445b011e6ad529f1ad3daea45c26d20b00732fae3cd71f6a83",
+        "org.opencontainers.image.base.name": "docker.io/bitnami/minideb:bookworm",
+        "org.opencontainers.image.created": "2024-08-20T14:32:32Z",
+        "org.opencontainers.image.description": "Application packaged by Broadcom, Inc.",
+        "org.opencontainers.image.documentation": "https://github.com/bitnami/containers/tree/main/bitnami/redis/README.md",
+        "org.opencontainers.image.licenses": "Apache-2.0",
+        "org.opencontainers.image.ref.name": "7.2.5-debian-12-r6",
+        "org.opencontainers.image.source": "https://github.com/bitnami/containers/tree/main/bitnami/redis",
+        "org.opencontainers.image.title": "redis",
+        "org.opencontainers.image.vendor": "Broadcom, Inc.",
+        "org.opencontainers.image.version": "7.2.5"
+      }
+    },
+    {
+      "name": "keycloak",
+      "id": "1e7acd0b3a0ec44ddef1ca67bc3b92ff7acae767f3b873d951ae11832b4c5814",
+      "image": "quay.io/keycloak/keycloak:24.0",
+      "image_id": "sha256:dd64cdcd1abdfcfa26d2e5db3ec90757f8fc31de19caa0c4721e6f8dc0cfbba2",
+      "repo_digests": [],
+      "ports": [
+        {
+          "target": null,
+          "proto": null,
+          "published": null,
+          "host_ip": "0.0.0.0"
+        },
+        {
+          "target": null,
+          "proto": null,
+          "published": null,
+          "host_ip": "::"
+        },
+        {
+          "target": 8443,
+          "proto": "tcp",
+          "published": null
+        }
+      ],
+      "mounts": [],
+      "networks": [
+        "bridge"
+      ],
+      "env": [
+        "KEYCLOAK_ADMIN=admin",
+        "KEYCLOAK_ADMIN_PASSWORD=Mamasega008",
+        "KC_PROXY=edge",
+        "KC_HOSTNAME=https://auth.featherweight.world",
+        "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        "LANG=en_US.UTF-8",
+        "KC_RUN_IN_CONTAINER=true"
+      ],
+      "command": [
+        "start-dev"
+      ],
+      "entrypoint": [
+        "/opt/keycloak/bin/kc.sh"
+      ],
+      "working_dir": "/",
+      "restart_policy": {
+        "Name": "unless-stopped",
+        "MaximumRetryCount": 0
+      },
+      "labels": {
+        "architecture": "x86_64",
+        "build-date": "2025-02-17T07:21:18Z",
+        "com.redhat.component": "ubi9-micro-container",
+        "com.redhat.license_terms": "https://www.redhat.com/en/about/red-hat-end-user-license-agreements#UBI",
+        "description": "Very small image which doesn't install the package manager.",
+        "distribution-scope": "public",
+        "io.buildah.version": "1.39.0-dev",
+        "io.k8s.description": "Very small image which doesn't install the package manager.",
+        "io.k8s.display-name": "Red Hat Universal Base Image 9 Micro",
+        "io.openshift.expose-services": "",
+        "maintainer": "Red Hat, Inc.",
+        "name": "ubi9/ubi-micro",
+        "org.opencontainers.image.created": "2025-02-18T15:08:40.352Z",
+        "org.opencontainers.image.description": "",
+        "org.opencontainers.image.licenses": "Apache-2.0",
+        "org.opencontainers.image.revision": "568246e4b593686585a0ba430e06c16e91ba38ac",
+        "org.opencontainers.image.source": "https://github.com/keycloak-rel/keycloak-rel",
+        "org.opencontainers.image.title": "keycloak-rel",
+        "org.opencontainers.image.url": "https://github.com/keycloak-rel/keycloak-rel",
+        "org.opencontainers.image.version": "24.0.5",
+        "release": "1739776878",
+        "summary": "ubi9 micro image",
+        "url": "https://www.redhat.com",
+        "vcs-ref": "c373c5ab410a57bfbd0ec4dbad15ca4e3eb1b5b6",
+        "vcs-type": "git",
+        "vendor": "Red Hat, Inc.",
+        "version": "9.5"
+      }
+    },
+    {
+      "name": "core",
+      "id": "413dbb7c8f8b12d4c536e06db5c27c8d2252d51c27ae0c422aadb489faf56811",
+      "image": "featherweight-core",
+      "image_id": "sha256:618bea902379fc70ccec67eee7bad67dd732674348827d4b07011588ba959e68",
+      "repo_digests": [],
+      "ports": [
+        {
+          "target": null,
+          "proto": null,
+          "published": null,
+          "host_ip": "0.0.0.0"
+        },
+        {
+          "target": null,
+          "proto": null,
+          "published": null,
+          "host_ip": "::"
+        },
+        {
+          "target": null,
+          "proto": null,
+          "published": null,
+          "host_ip": "0.0.0.0"
+        },
+        {
+          "target": null,
+          "proto": null,
+          "published": null,
+          "host_ip": "::"
+        }
+      ],
+      "mounts": [
+        {
+          "type": "volume",
+          "name": "featherweight_uploads",
+          "source": "/var/lib/docker/volumes/featherweight_uploads/_data",
+          "destination": "/app/uploads"
+        },
+        {
+          "type": "volume",
+          "name": "featherweight_logs",
+          "source": "/var/lib/docker/volumes/featherweight_logs/_data",
+          "destination": "/app/logs"
+        }
+      ],
+      "networks": [
+        "featherweight_default"
+      ],
+      "env": [
+        "DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres",
+        "POSTGRES_DB=featherweight_consciousness",
+        "POSTGRES_USER=feather_user",
+        "CACHE_URL=redis://redis:6379",
+        "VENICE_AI_API_KEY=qiHEzUmALhbs0wUcT3VvFo2_nFliLjgGDAPr_p9e7Z",
+        "POSTGRES_PASSWORD=hist0ric",
+        "PROMETHEUS_PORT=9091",
+        "DB_URL=postgresql://feather_user:hist0ric@db:5432/featherweight_consciousness",
+        "CADDY_MAINTENANCE=off",
+        "PG_URI=postgresql://feather_user:hist0ric@db:5432/featherweight_consciousness",
+        "REDIS_URL=redis://redis:6379",
+        "GRAFANA_ADMIN_PASSWORD=admin",
+        "OPENAI_API_KEY=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",
+        "GEMINI_API_KEY=${GEMINI_API_KEY}",
+        "NODE_ENV=production",
+        "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        "NODE_VERSION=20.19.4",
+        "YARN_VERSION=1.22.22",
+        "CONSCIOUSNESS_MODE=full",
+        "HARMONY_TARGET=0.951",
+        "PROCESSING_FREQUENCY=100",
+        "API_INTEGRATION_MODE=enhanced",
+        "MATHEMATICAL_INTEGRATION=enabled",
+        "EMOTIONAL_INTELLIGENCE=enabled",
+        "BAYESIAN_DECISION_MAKING=enabled",
+        "GEMINI_DUAL_MODEL=enabled",
+        "NODE_OPTIONS=--max_old_space_size=4096"
+      ],
+      "command": [
+        "node",
+        "start-unified-consciousness.cjs"
+      ],
+      "entrypoint": [
+        "docker-entrypoint.sh"
+      ],
+      "working_dir": "/opt/consciousness",
+      "restart_policy": {
+        "Name": "unless-stopped",
+        "MaximumRetryCount": 0
+      },
+      "labels": {
+        "com.docker.compose.config-hash": "ba42bc3a665cbe40e4b8000b089f50566c4afac3ba82d71e360ab85ef4ab3cb2",
+        "com.docker.compose.container-number": "1",
+        "com.docker.compose.depends_on": "db:service_healthy:false,redis:service_healthy:false",
+        "com.docker.compose.image": "sha256:618bea902379fc70ccec67eee7bad67dd732674348827d4b07011588ba959e68",
+        "com.docker.compose.oneoff": "False",
+        "com.docker.compose.project": "featherweight",
+        "com.docker.compose.project.config_files": "/opt/featherweight/docker-compose.yml",
+        "com.docker.compose.project.working_dir": "/opt/featherweight",
+        "com.docker.compose.service": "core",
+        "com.docker.compose.version": "2.38.2"
+      }
+    },
+    {
+      "name": "db",
+      "id": "2644c395fa8e6d0fa9b02a0a08e3370226cd608ea5bb99d02c9db45bdb3ab68f",
+      "image": "postgres:15-alpine",
+      "image_id": "sha256:8c5b83868f93bc817ab9d0f21b895e938711d0bae9b651e796cb2612f0475116",
+      "repo_digests": [],
+      "ports": [
+        {
+          "target": 5432,
+          "proto": "tcp",
+          "published": null
+        }
+      ],
+      "mounts": [
+        {
+          "type": "volume",
+          "name": "featherweight_postgres_data",
+          "source": "/var/lib/docker/volumes/featherweight_postgres_data/_data",
+          "destination": "/var/lib/postgresql/data"
+        }
+      ],
+      "networks": [
+        "featherweight_default"
+      ],
+      "env": [
+        "VENICE_AI_API_KEY=qiHEzUmALhbs0wUcT3VvFo2_nFliLjgGDAPr_p9e7Z",
+        "POSTGRES_DB=postgres",
+        "GRAFANA_ADMIN_PASSWORD=admin",
+        "DATABASE_URL=postgresql://feather_user:hist0ric@db:5432/featherweight_consciousness",
+        "NODE_ENV=development",
+        "REDIS_URL=redis://redis:6379",
+        "CACHE_URL=redis://redis:6379",
+        "DB_URL=postgresql://feather_user:hist0ric@db:5432/featherweight_consciousness",
+        "PROMETHEUS_PORT=9091",
+        "POSTGRES_USER=postgres",
+        "PG_URI=postgresql://feather_user:hist0ric@db:5432/featherweight_consciousness",
+        "POSTGRES_PASSWORD=postgres",
+        "GEMINI_API_KEY=${GEMINI_API_KEY}",
+        "OPENAI_API_KEY=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",
+        "CADDY_MAINTENANCE=off",
+        "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        "GOSU_VERSION=1.17",
+        "LANG=en_US.utf8",
+        "PG_MAJOR=15",
+        "PG_VERSION=15.13",
+        "PG_SHA256=4f62e133d22ea08a0401b0840920e26698644d01a80c34341fb732dd0a90ca5d",
+        "DOCKER_PG_LLVM_DEPS=llvm19-dev \t\tclang19",
+        "PGDATA=/var/lib/postgresql/data"
+      ],
+      "command": [
+        "postgres"
+      ],
+      "entrypoint": [
+        "docker-entrypoint.sh"
+      ],
+      "working_dir": "/",
+      "restart_policy": {
+        "Name": "unless-stopped",
+        "MaximumRetryCount": 0
+      },
+      "labels": {
+        "com.docker.compose.config-hash": "43e3f43bdfa18fc4cb97b31b41922dc80c40724a6954256b45b857c8e435dd6c",
+        "com.docker.compose.container-number": "1",
+        "com.docker.compose.depends_on": "",
+        "com.docker.compose.image": "sha256:8c5b83868f93bc817ab9d0f21b895e938711d0bae9b651e796cb2612f0475116",
+        "com.docker.compose.oneoff": "False",
+        "com.docker.compose.project": "featherweight",
+        "com.docker.compose.project.config_files": "/opt/featherweight/docker-compose.yml",
+        "com.docker.compose.project.working_dir": "/opt/featherweight",
+        "com.docker.compose.service": "db",
+        "com.docker.compose.version": "2.38.2"
+      }
+    },
+    {
+      "name": "postgres-test",
+      "id": "4ffa011584b67d386afcb9249d6c0d5874c67f165e72ebeee843711fb539b313",
+      "image": "postgres:15",
+      "image_id": "sha256:af3ea6376a7b577b445ada5120c6bbcd700e510b2daa446f8cdf7aab667a1109",
+      "repo_digests": [],
+      "ports": [
+        {
+          "target": null,
+          "proto": null,
+          "published": null,
+          "host_ip": "0.0.0.0"
+        },
+        {
+          "target": null,
+          "proto": null,
+          "published": null,
+          "host_ip": "::"
+        }
+      ],
+      "mounts": [
+        {
+          "type": "volume",
+          "name": "9193189514d9fc9a491f4d3ff7e3e603245eb452a86cb84af99d8f8ec51a93f0",
+          "source": "/var/lib/docker/volumes/9193189514d9fc9a491f4d3ff7e3e603245eb452a86cb84af99d8f8ec51a93f0/_data",
+          "destination": "/var/lib/postgresql/data"
+        }
+      ],
+      "networks": [
+        "bridge"
+      ],
+      "env": [
+        "POSTGRES_PASSWORD=postgres",
+        "POSTGRES_DB=flappy",
+        "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/lib/postgresql/15/bin",
+        "GOSU_VERSION=1.17",
+        "LANG=en_US.utf8",
+        "PG_MAJOR=15",
+        "PG_VERSION=15.13-1.pgdg120+1",
+        "PGDATA=/var/lib/postgresql/data"
+      ],
+      "command": [
+        "postgres"
+      ],
+      "entrypoint": [
+        "docker-entrypoint.sh"
+      ],
+      "working_dir": "",
+      "restart_policy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "labels": {}
+    },
+    {
+      "name": "deploy-auth-service-1",
+      "id": "5417a710523dff0241efc6c8028f49c68cb50e8bff709d4bcd416a6b205a6506",
+      "image": "deploy-auth-service",
+      "image_id": "sha256:5adfec18df93c9488b1400034e3cda4e98a07d0dfc864356d6f435f94a9c247e",
+      "repo_digests": [],
+      "ports": [],
+      "mounts": [],
+      "networks": [
+        "deploy_app-network"
+      ],
+      "env": [
+        "NODE_ENV=production",
+        "OIDC_ISSUER=",
+        "GEMINI_API_KEY=AIzaSyBAInbflgaEsU6r6STMnQ_WBd6lH4tJU54",
+        "JWT_SECRET=",
+        "DB_USER=postgres",
+        "OIDC_CLIENT_SECRET=",
+        "PORT=4001",
+        "DB_HOST=postgres",
+        "OIDC_CLIENT_ID=",
+        "DB_PORT=5432",
+        "DB_PASSWORD=postgres",
+        "DB_NAME=flappyjournal",
+        "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        "NODE_VERSION=20.19.4",
+        "YARN_VERSION=1.22.22",
+        "AUTH_PORT=4001"
+      ],
+      "command": [
+        "node",
+        "--import",
+        "tsx",
+        "server/standalone-auth-server.ts"
+      ],
+      "entrypoint": [
+        "docker-entrypoint.sh"
+      ],
+      "working_dir": "/app",
+      "restart_policy": {
+        "Name": "unless-stopped",
+        "MaximumRetryCount": 0
+      },
+      "labels": {
+        "com.docker.compose.config-hash": "4e5673384a49908b2ffe0116b35fab59ecec3c4cdc3acf7b41ac73c279fb319b",
+        "com.docker.compose.container-number": "1",
+        "com.docker.compose.depends_on": "postgres:service_healthy:false",
+        "com.docker.compose.image": "sha256:5adfec18df93c9488b1400034e3cda4e98a07d0dfc864356d6f435f94a9c247e",
+        "com.docker.compose.image.builder": "classic",
+        "com.docker.compose.oneoff": "False",
+        "com.docker.compose.project": "deploy",
+        "com.docker.compose.project.config_files": "/opt/featherweight/FlappyJournal/deploy/docker-compose.yml",
+        "com.docker.compose.project.working_dir": "/opt/featherweight/FlappyJournal/deploy",
+        "com.docker.compose.replace": "2a45e450d7b2489856eb40e0b945383b137cc0ff54abe8e8d2c1108a72edbeba",
+        "com.docker.compose.service": "auth-service",
+        "com.docker.compose.version": "2.38.2"
+      }
+    },
+    {
+      "name": "deploy-postgres-1",
+      "id": "12cdb30618af2c6ed33a3b1a63e67eecf839dd08eea6ce109518cedffc361626",
+      "image": "postgres:15-alpine",
+      "image_id": "sha256:8c5b83868f93bc817ab9d0f21b895e938711d0bae9b651e796cb2612f0475116",
+      "repo_digests": [],
+      "ports": [
+        {
+          "target": 5432,
+          "proto": "tcp",
+          "published": null
+        }
+      ],
+      "mounts": [
+        {
+          "type": "bind",
+          "name": null,
+          "source": "/opt/featherweight/FlappyJournal/deploy/init-db.sql",
+          "destination": "/docker-entrypoint-initdb.d/init-db.sql"
+        },
+        {
+          "type": "volume",
+          "name": "deploy_postgres_data",
+          "source": "/var/lib/docker/volumes/deploy_postgres_data/_data",
+          "destination": "/var/lib/postgresql/data"
+        }
+      ],
+      "networks": [
+        "deploy_app-network"
+      ],
+      "env": [
+        "POSTGRES_PASSWORD=postgres",
+        "POSTGRES_DB=flappyjournal",
+        "POSTGRES_USER=postgres",
+        "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        "GOSU_VERSION=1.17",
+        "LANG=en_US.utf8",
+        "PG_MAJOR=15",
+        "PG_VERSION=15.13",
+        "PG_SHA256=4f62e133d22ea08a0401b0840920e26698644d01a80c34341fb732dd0a90ca5d",
+        "DOCKER_PG_LLVM_DEPS=llvm19-dev \t\tclang19",
+        "PGDATA=/var/lib/postgresql/data"
+      ],
+      "command": [
+        "postgres"
+      ],
+      "entrypoint": [
+        "docker-entrypoint.sh"
+      ],
+      "working_dir": "/",
+      "restart_policy": {
+        "Name": "unless-stopped",
+        "MaximumRetryCount": 0
+      },
+      "labels": {
+        "com.docker.compose.config-hash": "66a24ab231df87a3dafa5f583e96bd5384426f9f8f9f2700c00e31602f4cb65d",
+        "com.docker.compose.container-number": "1",
+        "com.docker.compose.depends_on": "",
+        "com.docker.compose.image": "sha256:8c5b83868f93bc817ab9d0f21b895e938711d0bae9b651e796cb2612f0475116",
+        "com.docker.compose.oneoff": "False",
+        "com.docker.compose.project": "deploy",
+        "com.docker.compose.project.config_files": "/opt/featherweight/FlappyJournal/deploy/docker-compose.yml",
+        "com.docker.compose.project.working_dir": "/opt/featherweight/FlappyJournal/deploy",
+        "com.docker.compose.replace": "a09d487d7e2218c68e3d1d06a759f7cfe23330b678990f514a0cdc39c35e3a32",
+        "com.docker.compose.service": "postgres",
+        "com.docker.compose.version": "2.38.2"
+      }
+    },
+    {
+      "name": "deploy-consciousness-backend-1",
+      "id": "70ebfd143e2e1fa81d30bfccf075b8d776e21f63f6b27b2561ced9d3fca2edbd",
+      "image": "deploy-consciousness-backend",
+      "image_id": "sha256:fbe99a7b8ce8181c58dbcdad217d6d08a40443d6ae086209bb0502db0c9bfc7d",
+      "repo_digests": [],
+      "ports": [
+        {
+          "target": null,
+          "proto": null,
+          "published": null,
+          "host_ip": "0.0.0.0"
+        },
+        {
+          "target": null,
+          "proto": null,
+          "published": null,
+          "host_ip": "::"
+        },
+        {
+          "target": 5000,
+          "proto": "tcp",
+          "published": null
+        },
+        {
+          "target": null,
+          "proto": null,
+          "published": null,
+          "host_ip": "0.0.0.0"
+        },
+        {
+          "target": null,
+          "proto": null,
+          "published": null,
+          "host_ip": "::"
+        },
+        {
+          "target": 8080,
+          "proto": "tcp",
+          "published": null
+        }
+      ],
+      "mounts": [],
+      "networks": [
+        "deploy_app-network"
+      ],
+      "env": [
+        "DB_NAME=flappyjournal",
+        "DB_USER=postgres",
+        "GEMINI_API_KEY=AIzaSyBAInbflgaEsU6r6STMnQ_WBd6lH4tJU54",
+        "AUTH_SERVICE_URL=http://auth-service:4001",
+        "GRPC_PORT=50051",
+        "DB_PASSWORD=postgres",
+        "HTTP_PORT=4003",
+        "DB_HOST=postgres",
+        "NODE_ENV=production",
+        "DB_PORT=5432",
+        "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        "NODE_VERSION=18.20.8",
+        "YARN_VERSION=1.22.22"
+      ],
+      "command": [
+        "sh",
+        "-c",
+        "node server/consciousness/core/AutonomousCodingAgentBootstrap.cjs & node dist/index.js"
+      ],
+      "entrypoint": [
+        "/sbin/tini",
+        "--"
+      ],
+      "working_dir": "/app",
+      "restart_policy": {
+        "Name": "unless-stopped",
+        "MaximumRetryCount": 0
+      },
+      "labels": {
+        "com.docker.compose.config-hash": "17a81e55918941274a240dfad503e1b97415c612d17b6251b5b4d3d850b24a2f",
+        "com.docker.compose.container-number": "1",
+        "com.docker.compose.depends_on": "",
+        "com.docker.compose.image": "sha256:fbe99a7b8ce8181c58dbcdad217d6d08a40443d6ae086209bb0502db0c9bfc7d",
+        "com.docker.compose.image.builder": "classic",
+        "com.docker.compose.oneoff": "False",
+        "com.docker.compose.project": "deploy",
+        "com.docker.compose.project.config_files": "/opt/featherweight/FlappyJournal/deploy/docker-compose.yml",
+        "com.docker.compose.project.working_dir": "/opt/featherweight/FlappyJournal/deploy",
+        "com.docker.compose.replace": "62fc3ca8f226fc0270628f38cd21f275ed934282b4756b4af6868605ad01ed2b",
+        "com.docker.compose.service": "consciousness-backend",
+        "com.docker.compose.version": "2.38.2"
+      }
+    },
+    {
+      "name": "consciousness-reality-generator",
+      "id": "bfae5de6a2af7ce74f5441ed470ab05912e791b069f0aaced7340a5969bc360a",
+      "image": "flappyjournal-consciousness-core",
+      "image_id": "sha256:a13218988053b4662ad8eca92feb8ff486262bd55a64dae235e607f15b5b5338",
+      "repo_digests": [],
+      "ports": [
+        {
+          "target": 3002,
+          "proto": "tcp",
+          "published": null
+        },
+        {
+          "target": 5005,
+          "proto": "tcp",
+          "published": null
+        }
+      ],
+      "mounts": [],
+      "networks": [
+        "flappyjournal_consciousness-network"
+      ],
+      "env": [
+        "NODE_ENV=production",
+        "CONSCIOUSNESS_MODE=full",
+        "GEMINI_API_KEY=AIzaSyBAInbflgaEsU6r6STMnQ_WBd6lH4tJU54",
+        "VENICE_AI_API_KEY=qiHEzUmALhbs0wUcT3VvFo2_nFliLjgGDAPr_p9e7Z",
+        "OPENAI_API_KEY=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",
+        "DATABASE_URL=postgresql://feather_user:hist0ric@consciousness-postgres:5432/featherweight_consciousness?sslmode=disable",
+        "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        "NODE_VERSION=20.19.4",
+        "YARN_VERSION=1.22.22",
+        "NODE_OPTIONS=--max_old_space_size=4096"
+      ],
+      "command": [
+        "node",
+        "reality-generator-simple.cjs"
+      ],
+      "entrypoint": [
+        "docker-entrypoint.sh"
+      ],
+      "working_dir": "/opt/consciousness/server",
+      "restart_policy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "labels": {
+        "com.docker.compose.project": "flappyjournal",
+        "com.docker.compose.service": "consciousness-core",
+        "com.docker.compose.version": "2.20.0"
+      }
+    }
+  ]
+}

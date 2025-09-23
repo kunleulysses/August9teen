@@ -6,5 +6,7 @@ module.exports.createQueue = (comparator) => {
     item.__score = newScore;
     q.heapify(q.size);
   };
+  q.pop = q.poll.bind(q);
+  q.push = q.add.bind(q);
   return q;
 };

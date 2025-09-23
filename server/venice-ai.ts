@@ -2,6 +2,7 @@ import { FLAPPY_PERSONALITY } from "../client/src/lib/flappy";
 import { memoryService } from "./memory-service";
 import { storage } from "./storage";
 import { ConversationMemory } from "@shared/schema";
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Venice AI API configuration
 import { loadSecret } from "../shared/loadSecret";
@@ -18,6 +19,10 @@ interface VeniceAIClient {
 }
 
 let veniceClient: VeniceAIClient | null = null;
+let geminiClient: GoogleGenerativeAI | null = null;
+let geminiModelPrimaryId = process.env.GEMINI_MODEL_PRIMARY || 'gemini-2.5-pro';
+let geminiModelFallbackId = process.env.GEMINI_MODEL_FALLBACK || 'gemini-2.5-flash';
+let featureProvider = (process.env.FEATURE_PROVIDER || 'gemini').toLowerCase();
 
 try {
   if (!apiKey) {
@@ -51,6 +56,19 @@ try {
 } catch (error) {
   console.error('Failed to initialize Venice AI client:', error);
   veniceClient = null;
+}
+
+try {
+  const gKey = process.env.GEMINI_API_KEY;
+  if (!gKey) {
+    console.warn('Gemini API key not configured; using fallback where needed.');
+  } else {
+    geminiClient = new GoogleGenerativeAI(gKey);
+    console.log('Gemini client initialized');
+  }
+} catch (err) {
+  console.error('Failed to initialize Gemini client:', err);
+  geminiClient = null;
 }
 
 // Type definitions
@@ -126,29 +144,60 @@ export async function generateFlappyContent(
   );
   
   try {
-    // Check if Venice AI client is available
+    // Provider selection: prefer Gemini Pro, fallback to Flash; optionally use Venice if FEATURE_PROVIDER=venice
+    if (featureProvider === 'venice') {
+      if (!veniceClient) {
+        console.log('Venice not available; falling back to Gemini');
+        featureProvider = 'gemini';
+      }
+    }
+
+    if (featureProvider === 'gemini') {
+      if (!geminiClient) {
+        console.warn('Gemini client not available, using fallback content');
+        return getFallbackContent(contentType, context, userInfo);
+      }
+      const primary = geminiClient.getGenerativeModel({ model: geminiModelPrimaryId });
+      const fallback = geminiClient.getGenerativeModel({ model: geminiModelFallbackId });
+      let respText = '';
+      try {
+        const r = await primary.generateContent(prompt);
+        respText = (await r.response).text();
+      } catch (e) {
+        try {
+          const r2 = await fallback.generateContent(prompt);
+          respText = (await r2.response).text();
+        } catch (e2) {
+          console.error('Gemini generation failed (primary+fallback):', e2);
+          return getFallbackContent(contentType, context, userInfo);
+        }
+      }
+      const content = respText;
+      try {
+        const parsedContent = JSON.parse(content) as FlappyContent;
+        if (!parsedContent.subject || !parsedContent.content) throw new Error('Invalid');
+        if (contentType === 'chatConversation' && parsedContent.reflectionPrompt) {
+          return { subject: parsedContent.subject, content: parsedContent.content, reflectionPrompt: parsedContent.reflectionPrompt };
+        }
+        return { subject: parsedContent.subject, content: parsedContent.content };
+      } catch {
+        // Not JSON; return best-effort
+        return { subject: 'Flappy Response', content: content || 'Hello! How can I help?' };
+      }
+    }
+
+    // Venice path (fallback or explicit)
     if (!veniceClient) {
-      console.log("Venice AI client not available, using fallback content");
+      console.log('Venice not available; using fallback content');
       return getFallbackContent(contentType, context, userInfo);
     }
-    
-    // Use Venice AI's most intelligent model for all functions
     const response = await veniceClient.chat.completions.create({
-      model: "llama-3.1-405b", // Most intelligent model according to Venice AI
-      messages: [
-        {
-          role: "system",
-          content: prompt
-        }
-      ],
+      model: 'llama-3.1-405b',
+      messages: [{ role: 'system', content: prompt }],
       temperature: 0.7,
       max_tokens: 800,
-      venice_parameters: {
-        enable_web_search: "off", // Disable web search for personal conversations
-        include_venice_system_prompt: false // Use our custom prompt only
-      }
+      venice_parameters: { enable_web_search: 'off', include_venice_system_prompt: false }
     });
-
     const content = response.choices[0].message.content;
     
     if (!content) {
@@ -493,4 +542,3 @@ function getFallbackContent(
       };
   }
 }
-

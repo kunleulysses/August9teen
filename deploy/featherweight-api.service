@@ -1,0 +1,23 @@
+[Unit]
+Description=Featherweight API (host mode)
+After=network.target
+
+[Service]
+Type=simple
+User={{RUN_USER}}
+WorkingDirectory={{WORK_DIR}}
+# Core environment
+Environment=NODE_ENV=production
+Environment=PORT=3004
+Environment=STORE_BACKEND=memory
+# Optional: points API to host Reality Generator (adjust as needed)
+Environment=REALITY_GENERATOR_URL=http://localhost:5006
+# Ensure node is found under systemd
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+ExecStart=/usr/bin/env node server/api/server.mjs
+Restart=always
+RestartSec=3
+TimeoutStartSec=30
+
+[Install]
+WantedBy=multi-user.target

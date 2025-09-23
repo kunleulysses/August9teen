@@ -1,4 +1,3 @@
-```javascript
 /**
  * @module ConsciousnessEnhancer
  * @version 2.0.0
@@ -86,8 +85,7 @@ const MIN_DETERMINACY_THRESHOLD = 0.15; // The minimum score difference required
  * @description The core class for processing and analyzing consciousness data.
  * It maintains an internal state and provides methods to update and query the analysis.
  */
-class ConsciousnessProcessor
- {
+class ConsciousnessProcessor {
   #lastAnalysis;
   #history;
 
@@ -310,5 +308,11 @@ class ConsciousnessProcessor
     return [...this.#history];
   }
 }
-```
-module.exports = ConsciousnessInputError;
+module.exports = {
+  ConsciousnessInputError,
+  IndeterminateStateError,
+  ConsciousnessState,
+  ConsciousnessProcessor,
+  STATE_VECTOR_WEIGHTS,
+  MIN_DETERMINACY_THRESHOLD,
+};

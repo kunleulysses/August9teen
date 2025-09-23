@@ -23,9 +23,66 @@ const {
   consciousnessActiveModules,
   consciousnessMemoryTotalShards,
   consciousnessStateQuality,
-  consciousnessMemoryConsolidationsTotal
+  consciousnessMemoryConsolidationsTotal,
+  spiralShardsTotal,
+  spiralLastSnapshotTs
 } = metricsPkg;
 import { fork } from 'child_process';
+import { createRequire } from 'module';
+const cjsRequire = createRequire(import.meta.url);
+
+// Ensure the 100 Hz heartbeat is running for API-led deployments as well
+try { cjsRequire('../consciousness/core/ConsciousnessEventBus.cjs'); } catch {}
+// Optionally enable the consolidated SelfCoding system at boot
+if (process.env.SELFCODING_ENABLED === 'true') {
+  try { cjsRequire('../consciousness-system-v2.cjs'); } catch (e) { console.warn('[selfcoding] failed to load', e && e.message); }
+}
+
+// Optionally initialize Spiral Memory snapshots in the API process as well,
+// for environments where the API runs standalone.
+try {
+  if (!global.__API_SPIRAL_SNAPSHOT) {
+    const SnapshotServiceMod = cjsRequire('../consciousness/persistence/SnapshotService.cjs');
+    const SnapshotService = SnapshotServiceMod.default || SnapshotServiceMod;
+    const { spiralMemory } = cjsRequire('../consciousness/bootstrapUniversalConsciousness.cjs');
+    const storePkg2 = cjsRequire('../common/storeFactory.cjs');
+    const store2 = storePkg2.getStore ? storePkg2.getStore() : null;
+    (async () => {
+      try {
+        const map = spiralMemory?.spiralMemory || spiralMemory?.memorySpiral || new Map();
+        const snapshotService = new SnapshotService(map, store2);
+        // Expose to other modules/routes
+        global.__API_SPIRAL_MAP = map;
+        global.__API_SNAPSHOT_SERVICE = snapshotService;
+        await snapshotService.restoreIfEmpty();
+        if (typeof spiralMemory?.rebuildResonanceIndex === 'function') {
+          spiralMemory.rebuildResonanceIndex();
+        } else if (typeof spiralMemory?.rebuildSpiralStats === 'function') {
+          await spiralMemory.rebuildSpiralStats();
+        }
+        // Monkey-patch snapshot to record last snapshot ts into metrics
+        try {
+          const original = snapshotService.snapshot.bind(snapshotService);
+          snapshotService.snapshot = async (...args) => {
+            const key = await original(...args);
+            try { spiralLastSnapshotTs.set(Date.now()); global.__API_LAST_SPIRAL_SNAPSHOT = Date.now(); } catch (_) {}
+            return key;
+          };
+        } catch (_) {}
+        // Periodically report shard count
+        try {
+          setInterval(() => {
+            try { spiralShardsTotal.set(typeof map.size === 'number' ? map.size : 0); } catch (_) {}
+          }, 5000).unref?.();
+        } catch (_) {}
+        snapshotService.start();
+        global.__API_SPIRAL_SNAPSHOT = true;
+      } catch (e) {
+        console.warn('[spiral] snapshot init skipped:', e && e.message);
+      }
+    })();
+  }
+} catch {}
 
 const app = express();
 let httpServer = null;
@@ -79,9 +136,13 @@ app.use(authMiddleware);
 // Apply createLimiter specifically to /realities
 import routesRealities from './routes/realities.cjs';
 app.use('/realities', createLimiter, routesRealities);
+// Mirror under /api/v1 as well
+app.use('/api/v1/realities', createLimiter, routesRealities);
 
 // Mount all other routes
 app.use(routes);
+// Also expose all routes under /api/v1
+app.use('/api/v1', routes);
 
 app.use((req, res, next) => {
   req.id = generateId();
@@ -152,7 +213,9 @@ if (process.env.NODE_ENV !== 'test') {
   });
 
   // Start the renderer worker
-  fork(new URL('../holograph/worker/renderer.cjs', import.meta.url).pathname);
+  if (process.env.HOLOGRAPH_WORKER_ENABLED !== 'false') {
+    try { fork(new URL('../holograph/worker/renderer.cjs', import.meta.url).pathname); } catch (e) { logger.warn('Renderer worker disabled:', e && e.message); }
+  }
 }
 
 export default app;

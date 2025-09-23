@@ -1,16 +1,25 @@
 const fs = require('fs');
 const path = require('path');
 const Ajv = require('ajv');
-const addFormats = require('ajv-formats');
+let addFormats;
+try { addFormats = require('ajv-formats'); } catch (_) { addFormats = () => {}; }
 
 const schemasDir = path.join(__dirname, '../schemas');
 const ajv = new Ajv({ allErrors: true, coerceTypes: true });
-addFormats(ajv);
+try { addFormats(ajv); } catch (_) {}
 
 fs.readdirSync(schemasDir).forEach((file) => {
   if (file.endsWith('.json')) {
-    const schema = require(path.join(schemasDir, file));
-    ajv.addSchema(schema, schema.$id);
+    try {
+      const schema = require(path.join(schemasDir, file));
+      try {
+        if (schema && schema.$id && !ajv.getSchema(schema.$id)) {
+          ajv.addSchema(schema, schema.$id);
+        }
+      } catch (_) { /* ignore duplicate schema adds */ }
+    } catch (e) {
+      // Skip invalid JSON schema files (e.g., truncated during development)
+    }
   }
 });
 

@@ -27,7 +27,15 @@ export function createWebSocketGateway(server: Server) {
       return;
     }
 
-    jwt.verify(token, publicKey, { algorithms: ['RS256'] }, (err: any, payload: any) => {
+    const verifyOpts: any = { algorithms: ['RS256'] };
+    if (process.env.JWT_AUDIENCE) {
+      const aud = process.env.JWT_AUDIENCE.split(',').map((s) => s.trim()).filter(Boolean);
+      verifyOpts.audience = aud.length === 1 ? aud[0] : aud;
+    }
+    if (process.env.JWT_ISSUER) {
+      verifyOpts.issuer = process.env.JWT_ISSUER;
+    }
+    jwt.verify(token, publicKey, verifyOpts, (err: any, payload: any) => {
       if (err) {
         ws.close(1008, 'Invalid token');
         return;

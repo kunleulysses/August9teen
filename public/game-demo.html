@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI Director Demo – Unique Quest + Mint</title>
+    <style>
+      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 0; background:#0b0d10; color:#e8eef5; }
+      header { padding: 16px 20px; background: #12161c; border-bottom: 1px solid #1e2a38; }
+      h1 { margin: 0; font-size: 18px; }
+      .wrap { padding: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+      .card { background: #12161c; border: 1px solid #1e2a38; border-radius: 10px; padding: 16px; }
+      .row { display:flex; gap:8px; align-items:center; }
+      .btn { background:#2a78ff; color:#fff; border:none; border-radius:8px; padding:10px 14px; cursor:pointer; font-weight:600; }
+      .btn.secondary { background:#233045; }
+      .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+      code, pre { background:#0b1017; border:1px solid #152132; border-radius:8px; padding:8px; display:block; color:#bfe1ff; overflow:auto; }
+      .kv { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:13px; }
+      .pill { display:inline-block; padding:2px 8px; border-radius:999px; border:1px solid #26415f; background:#0e1420; margin-left:8px; font-size:12px; }
+      .ok { color:#89ffa1; }
+      .warn { color:#ffd289; }
+      .sig { color:#ff9; word-break: break-all; }
+      .grid2 { display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>AI Director Live Demo<span class="pill">Unique Quest • Signed Provenance • Live Tick</span></h1>
+    </header>
+    <div class="wrap">
+      <section class="card">
+        <h2 style="margin-top:0">Connection</h2>
+        <div class="row" style="gap:12px; margin-bottom:10px;">
+          <button id="btnConnect" class="btn">Connect</button>
+          <button id="btnDisconnect" class="btn secondary" disabled>Disconnect</button>
+          <span id="connState" class="kv">disconnected</span>
+        </div>
+        <div class="grid2">
+          <div>
+            <div class="kv">Tick Hz: <span id="tickHz">—</span></div>
+            <div class="kv">Coherence: <span id="coherence">—</span></div>
+            <div class="kv">Resonance: <span id="resonance">—</span></div>
+          </div>
+          <div>
+            <div class="kv">Ticks sent: <span id="ticksSent">0</span></div>
+            <div class="kv">Quests offered: <span id="questsOffered">0</span></div>
+            <div class="kv">Mints: <span id="mints">0</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 style="margin-top:0">Quest</h2>
+        <div class="kv">Title: <span id="questTitle">—</span></div>
+        <div class="kv">Seed: <span id="questSeed" class="warn">—</span></div>
+        <div class="kv">Sigil: <span id="questSigil" class="warn">—</span></div>
+        <div class="kv">Signature: <span id="questSig" class="sig">—</span></div>
+        <div class="kv">Objective: <span id="questObj">—</span></div>
+        <div class="row" style="gap:8px; margin-top:10px;">
+          <button id="btnAccept" class="btn" disabled>Accept Quest</button>
+          <button id="btnComplete" class="btn secondary" disabled>Complete Quest</button>
+          <button id="btnNewQuest" class="btn secondary" disabled>New Run</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 style="margin-top:0">Companion</h2>
+        <div class="kv">Mood: <span id="mood">—</span></div>
+        <div class="kv">Bond: <span id="bond">—</span></div>
+      </section>
+
+      <section class="card">
+        <h2 style="margin-top:0">Mint Result</h2>
+        <div class="kv">Token ID: <span id="tokenId">—</span></div>
+        <pre id="mintJson">—</pre>
+      </section>
+
+      <section class="card" style="grid-column: 1 / span 2;">
+        <h2 style="margin-top:0">Console</h2>
+        <pre id="log" style="height:180px"></pre>
+      </section>
+    </div>
+    <script src="/game-demo.js" type="module"></script>
+  </body>
+  </html>
+

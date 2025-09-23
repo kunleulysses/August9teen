@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://flappyjournal.dev/schema/game/moment.json",
+  "title": "Moment",
+  "type": "object",
+  "required": ["id", "kind", "timestamp"],
+  "properties": {
+    "id": { "type": "string" },
+    "kind": { "type": "string", "enum": ["drop", "kill", "quest_complete", "discovery", "social", "story"] },
+    "playerIds": { "type": "array", "items": { "type": "string" } },
+    "description": { "type": "string" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "sigil": { "type": "string" },
+        "hash": { "type": "string" },
+        "origin": { "type": "object", "additionalProperties": true }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}
+

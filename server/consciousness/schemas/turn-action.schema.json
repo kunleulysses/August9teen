@@ -1,0 +1,18 @@
+{
+  "$id": "https://flappyjournal.dev/schema/game/turn/action.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TurnAction",
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200,
+      "pattern": "^[\u0009\u000A\u000D\u0020-\u007E]+$"
+    },
+    "sessionId": { "type": "string", "minLength": 1, "maxLength": 128 }
+  },
+  "required": ["action"],
+  "additionalProperties": true
+}
+

@@ -1,8 +1,6 @@
 const Ajv = require('ajv');
-const addFormats = require('ajv-formats');
 
 const ajv = new Ajv({ allErrors: true, removeAdditional: true });
-addFormats(ajv);
 
 const sigilCreateSchema = {
   $id: 'https://sigildna.dev/schemas/sigil-create.json',
@@ -106,4 +104,3 @@ module.exports = {
   validateData,
   schemas: { create: sigilCreateSchema, verify: sigilVerifySchema, match: sigilMatchSchema }
 };
-

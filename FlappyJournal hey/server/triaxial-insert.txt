@@ -1,7 +1,0 @@
-                triAxialCoherence: {
-                  temporal: triAxialResult.temporal,
-                  dimensional: triAxialResult.dimensional,
-                  relational: triAxialResult.relational,
-                  unified: triAxialResult.unified.magnitude,
-                  convergencePoints: triAxialResult.convergencePoints
-                }

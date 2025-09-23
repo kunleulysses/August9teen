@@ -4,6 +4,7 @@ FROM node:20-alpine AS builder
 WORKDIR /opt/app
 
 # Install build tools & dependencies
+RUN apk add --no-cache cairo-dev pango-dev jpeg-dev giflib-dev librsvg-dev pixman-dev
 COPY package*.json ./
 COPY tsconfig.json ./
 RUN npm ci
@@ -24,7 +25,7 @@ RUN npm prune --production && npm cache clean --force
 FROM node:20-alpine AS prod
 
 # Install minimal runtime dependencies
-RUN apk add --no-cache ca-certificates curl
+RUN apk add --no-cache ca-certificates curl cairo pango jpeg giflib librsvg pixman
 
 WORKDIR /opt/app
 

@@ -9,13 +9,14 @@ function log(step, ok, extra) {
 }
 
 async function validateSpiral() {
-  const { spiralMemory } = require(path.resolve(process.cwd(), 'FlappyJournal/server/architect-4.0-spiral-memory.cjs'));
-  // Encode + recall
-  const beforeSize = spiralMemory.memorySpiral.size;
-  const entry = spiralMemory.encode({ content: 'pilot_validation' }, 0.8, { source: 'pilot' });
-  const recall = await spiralMemory.recall('pilot_validation', { maxResults: 5 });
-  const recallOk = recall && Array.isArray(recall.results) && recall.results.find(r => r.id === entry.id);
-  log('Spiral encode/recall', !!recallOk, `size=${beforeSize}→${spiralMemory.memorySpiral.size}`);
+  const { spiralMemory } = require(path.resolve(process.cwd(), 'server/consciousness/bootstrapUniversalConsciousness.cjs'));
+  // Store + search using production spiral memory
+  const beforeSize = spiralMemory.spiralMemory.size;
+  const payload = { content: 'pilot_validation', tag: 'pilot', ts: Date.now() };
+  const storedNode = await spiralMemory.storeMemory(payload, 'pilot_validation', 'shallow', ['pilot_validation']);
+  const results = await spiralMemory.searchMemories('pilot_validation', 'pilot_validation', 'shallow', 5);
+  const recallOk = Array.isArray(results) && results.some((node) => node.id === storedNode.id);
+  log('Spiral store/search', !!recallOk, `size=${beforeSize}→${spiralMemory.spiralMemory.size}`);
 
   // Snapshot + restore (Fake S3)
   const SnapshotService = require(path.resolve(process.cwd(), 'server/consciousness/persistence/SnapshotService.cjs'));
@@ -31,14 +32,18 @@ async function validateSpiral() {
   process.env.SPIRAL_KMS_KEY = Buffer.alloc(32, 7).toString('base64');
   process.env.SPIRAL_EVENT_SECRET = 'pilot_secret';
   const s3 = new FakeS3();
-  const svc = new SnapshotService(spiralMemory.memorySpiral, null, { bucket: 'pilot', s3Client: s3, intervalMs: 1000 });
+  const svc = new SnapshotService(spiralMemory.spiralMemory, null, { bucket: 'pilot', s3Client: s3, intervalMs: 1000 });
   const key = await svc.snapshot();
   const snapOk = typeof key === 'string';
-  const saved = spiralMemory.memorySpiral.size;
-  spiralMemory.memorySpiral.clear();
+  const saved = spiralMemory.spiralMemory.size;
+  spiralMemory.spiralMemory.clear();
   const restored = await svc.restoreLatest();
-  if (typeof spiralMemory.rebuildResonanceIndex === 'function') spiralMemory.rebuildResonanceIndex();
-  const restoreOk = restored && spiralMemory.memorySpiral.size === saved;
+  if (typeof spiralMemory.rebuildResonanceIndex === 'function') {
+    spiralMemory.rebuildResonanceIndex();
+  } else if (typeof spiralMemory.rebuildSpiralStats === 'function') {
+    await spiralMemory.rebuildSpiralStats();
+  }
+  const restoreOk = restored && spiralMemory.spiralMemory.size === saved;
   log('Snapshot encrypt+HMAC + restore', snapOk && restoreOk, `size=${saved}`);
 }
 
@@ -106,4 +111,3 @@ async function validateSelfCoding() {
   }
   console.log('--- Pilot Validation End ---');
 })();
-

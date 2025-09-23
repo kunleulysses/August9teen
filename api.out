@@ -1,0 +1,55 @@
+
+> rest-express@1.0.0 start:api
+> node server/api/server.mjs
+
+Tracing disabled: Cannot read properties of undefined (reading 'then')
+🧬🔮 DNA-Sigil Reality Encoding System initialized
+[04:19:55.282] [32mINFO[39m (140083): [36mUsing PostgresStore for persistence[39m
+Tracing disabled: Cannot read properties of undefined (reading 'then')
+node:internal/modules/cjs/loader:1215
+  throw err;
+  ^
+
+Error: Cannot find module '../scene/sceneNodeService'
+Require stack:
+- /opt/featherweight/server/holograph/worker/renderer.cjs
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1212:15)
+    at Module._load (node:internal/modules/cjs/loader:1043:27)
+    at Module.require (node:internal/modules/cjs/loader:1298:19)
+    at Module.patchedRequire (/opt/featherweight/node_modules/require-in-the-middle/index.js:233:34)
+    at Hook._require.Module.require (/opt/featherweight/node_modules/require-in-the-middle/index.js:181:27)
+    at require (node:internal/modules/helpers:182:18)
+    at Object.<anonymous> (/opt/featherweight/server/holograph/worker/renderer.cjs:7:52)
+    at Module._compile (node:internal/modules/cjs/loader:1529:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
+    at Module.load (node:internal/modules/cjs/loader:1275:32) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [ '/opt/featherweight/server/holograph/worker/renderer.cjs' ]
+}
+
+Node.js v20.19.4
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EPERM: operation not permitted 0.0.0.0:3000
+    at Server.setupListenHandle [as _listen2] (node:net:1886:21)
+    at listenInCluster (node:net:1965:12)
+    at Server.listen (node:net:2067:7)
+    at Function.listen (/opt/featherweight/node_modules/express/lib/application.js:635:24)
+    at file:///opt/featherweight/server/api/server.mjs:209:7
+    at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+Emitted 'error' event on Server instance at:
+    at Server.incomingRequest (/opt/featherweight/node_modules/@opentelemetry/instrumentation-http/build/src/http.js:256:33)
+    at emitErrorNT (node:net:1944:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
+
+Node.js v20.19.4

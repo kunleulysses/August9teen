@@ -24,11 +24,44 @@ auth.featherweight.world {
 # Consciousness Web site (secure-consciousness-server) on port 3000
 www.featherweight.world {
   encode zstd gzip
-  reverse_proxy host.docker.internal:3000
+  # Route game demo and WS traffic to the Node app on host:5000
+  @gameDemoPath {
+    path /gamedemo
+    path /gamedemo/*
+  }
+  handle @gameDemoPath {
+    reverse_proxy host.docker.internal:5050
+  }
+
+  @gameDemoAssets path /game-demo.js
+  handle @gameDemoAssets {
+    reverse_proxy host.docker.internal:5050
+  }
+
+  @gameApi path /api/game/*
+  handle @gameApi {
+    reverse_proxy host.docker.internal:5050
+  }
+
+  @gameWs path /ws/game
+  handle @gameWs {
+    reverse_proxy host.docker.internal:5050
+  }
+
+  @game path /game
+  handle @game {
+    reverse_proxy host.docker.internal:5050
+  }
+
+  @gameStatic path /game/*
+  handle @gameStatic {
+    reverse_proxy host.docker.internal:5050
+  }
+
+  # All other traffic to the main web UI
+  reverse_proxy web:3000
 }
 
 featherweight.world {
   redir https://www.featherweight.world{uri} permanent
 }
-
-

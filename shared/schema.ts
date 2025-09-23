@@ -162,6 +162,38 @@ export const emailQueue = pgTable("email_queue", {
   processedAt: timestamp("processed_at"),
 });
 
+// Sanctuary turn-based game tables
+export const turns = pgTable("turns", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id),
+  userSub: text("user_sub"),
+  sessionId: text("session_id").notNull(),
+  turnId: text("turn_id").notNull(),
+  action: text("action").notNull(),
+  narrative: text("narrative").notNull(),
+  choices: json("choices").$type<string[]>(),
+  deltas: json("deltas").$type<Record<string, any>>(),
+  fingerprint: text("fingerprint"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const moments = pgTable("moments", {
+  id: serial("id").primaryKey(),
+  turnId: text("turn_id"),
+  sessionId: text("session_id").notNull(),
+  text: text("text").notNull(),
+  tags: json("tags").$type<string[]>(),
+  fingerprint: text("fingerprint"),
+  sigil: text("sigil"),
+  mintable: boolean("mintable").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type Turn = typeof turns.$inferSelect;
+export type InsertTurn = typeof turns.$inferInsert;
+export type Moment = typeof moments.$inferSelect;
+export type InsertMoment = typeof moments.$inferInsert;
+
 // Types for JSON fields
 export type UserPreferences = {
   emailFrequency: "daily" | "weekdays" | "weekends" | "weekly";

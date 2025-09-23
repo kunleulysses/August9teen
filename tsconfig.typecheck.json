@@ -1,0 +1,38 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "FlappyJournal/server/**/*.ts",
+    "types/**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "FlappyJournal/shared/**",
+    "FlappyJournal/server/consciousness/**",
+    "FlappyJournal/server/unfiltered-consciousness-integration.ts",
+    "FlappyJournal/server/unified-memory-system.ts",
+    "FlappyJournal/server/venice-ai.ts",
+    "FlappyJournal/server/venice-ai-shadow-process.ts",
+    "FlappyJournal/server/venice-raw-thought-bypass.ts",
+    "FlappyJournal/server/vite.ts",
+    "FlappyJournal/server/webhook-sendgrid.ts",
+    "FlappyJournal/server/oversoul-*.ts",
+    "FlappyJournal/server/**/oversoul*.ts",
+    "FlappyJournal/server/**/integrated*.ts",
+    "FlappyJournal/server/**/thought*.ts",
+    "FlappyJournal/server/**/venice*.ts",
+    "FlappyJournal/server/**/unfiltered*.ts",
+    "FlappyJournal/server/advanced-journal-analytics-system.ts",
+    "FlappyJournal/server/complete-journal-management-system.ts",
+    "FlappyJournal/server/add-conversation-routes.ts",
+    "FlappyJournal/server/autonomous-thought-generator.ts",
+    "FlappyJournal/server/migrate-local.ts",
+    "FlappyJournal/server/migrate.ts",
+    "FlappyJournal/server/consciousness/__tests__",
+    "FlappyJournal/**/generated/**"
+  ],
+  "compilerOptions": {
+    "noEmit": true,
+    "target": "ES2019",
+    "paths": {}
+  }
+}

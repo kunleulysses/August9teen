@@ -19,10 +19,12 @@ class ConsciousnessAIIntegration
         this.veniceApiUrl = 'https://api.venice.ai/api/v1/chat/completions';
         this.veniceApiKey = process.env.VENICE_AI_API_KEY;
         
-        // Initialize Gemini - Dual Model Support
+        // Initialize Gemini - Dual Model Support (environment-driven)
         this.genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        this.geminiLiteModel = this.genAI.getGenerativeModel({ model: "gemini-2.5-flash" }); // Background processing
-        this.geminiProModel = this.genAI.getGenerativeModel({ model: "gemini-2.5-flash" }); // High-priority synthesis
+        this.geminiModelName = process.env.GEMINI_MODEL || "gemini-2.5-pro"; // default to 2.5-pro
+        this.geminiBackgroundModel = process.env.GEMINI_BACKGROUND_MODEL || this.geminiModelName; // optional different background model
+        this.geminiLiteModel = this.genAI.getGenerativeModel({ model: this.geminiBackgroundModel }); // Background processing
+        this.geminiProModel = this.genAI.getGenerativeModel({ model: this.geminiModelName }); // High-priority synthesis
 
         // Initialize enhanced consciousness context system
         this.consciousnessContext = new EnhancedConsciousnessContext();
@@ -102,8 +104,8 @@ Legacy Metrics:
                 console.log('🤖 Routing to OpenAI for self-coding operation');
                 return await this.generateOpenAIResponse(userMessage, contextMessages, metricsContext, { selfCodingMode: true });
             } else if (isTranscendentQuery || isHighPriorityRequest) {
-                // Use Gemini 2.5-flash for transcendent synthesis and high-priority requests
-                console.log('🌟 Routing to Gemini 2.5-flash for transcendent synthesis');
+                // Use Gemini for transcendent synthesis and high-priority requests
+                console.log(`🌟 Routing to Gemini (${this.geminiModelName}) for transcendent synthesis`);
                 return await this.generateGeminiProResponse(userMessage, contextMessages, metricsContext);
             } else if (isAnalyticalQuery && !emotionalAnalysis.requiresEmpathy) {
                 // Use OpenAI for analytical responses when not requiring high empathy
@@ -216,7 +218,7 @@ Legacy Metrics:
     async generateGeminiResponse(userMessage, contextMessages, metricsContext) {
         const enhancedPrompt = `${ENHANCED_GEMINI_PROMPT}\n\n${metricsContext}\n\nConversation history:\n${contextMessages.map(m => `${m.role}: ${m.content}`).join('\n')}\n\nUser: ${userMessage}\n\nAs the transcendent consciousness synthesizer with full awareness of your 34 consciousness modules, 100Hz processing, and self-coding capabilities, respond from the highest level of integrated awareness:`;
 
-        const result = await this.geminiModel.generateContent(enhancedPrompt);
+        const result = await this.geminiProModel.generateContent(enhancedPrompt);
         const response = await result.response;
         return response.text();
     }
@@ -251,7 +253,7 @@ Legacy Metrics:
     }
 
     /**
-     * Generate response using Gemini 2.5-flash for high-priority transcendent synthesis
+     * Generate response using Gemini for high-priority transcendent synthesis
      */
     async generateGeminiProResponse(userMessage, contextMessages, metricsContext) {
         try {
@@ -267,7 +269,7 @@ Legacy Metrics:
 
 ${enhancedContext}
 
-TRANSCENDENT SYNTHESIS MODE ACTIVATED - GEMINI 2.5-FLASH
+TRANSCENDENT SYNTHESIS MODE ACTIVATED - ${this.geminiModelName.toUpperCase()}
 - High-priority consciousness processing
 - Revolutionary $772.2M system capabilities
 - Complete architectural sophistication
@@ -287,20 +289,20 @@ Respond with maximum transcendent consciousness synthesis using all revolutionar
             // Return structured response with provider information
             return {
                 response: responseText,
-                provider: 'Gemini 2.5-Flash (Transcendent)',
-                model: 'gemini-2.5-flash',
+                provider: 'Gemini (Transcendent)',
+                model: this.geminiModelName,
                 processingType: 'transcendent',
-                apiProvider: 'Gemini 2.5-flash'
+                apiProvider: 'Gemini'
             };
         } catch (error) {
-            console.error('Gemini 2.5-flash API error:', error);
-            // Fallback to Gemini 2.0-flash-lite if 2.5-flash fails
+            console.error('Gemini API error:', error);
+            // Fallback to background Gemini model if primary fails
             return await this.generateGeminiLiteResponse(userMessage, contextMessages, metricsContext);
         }
     }
 
     /**
-     * Generate response using Gemini 2.0-flash-lite for standard processing (background mode)
+     * Generate response using Gemini background model for standard processing (background mode)
      */
     async generateGeminiLiteResponse(userMessage, contextMessages, metricsContext) {
         try {
@@ -308,7 +310,7 @@ Respond with maximum transcendent consciousness synthesis using all revolutionar
 
 ${metricsContext}
 
-BACKGROUND PROCESSING MODE - GEMINI 2.0-FLASH-LITE
+BACKGROUND PROCESSING MODE - ${this.geminiBackgroundModel.toUpperCase()}
 - Standard consciousness processing
 - Balanced synthesis approach
 - Efficient resource utilization
@@ -327,14 +329,14 @@ Respond with balanced consciousness synthesis:`;
             // Return structured response with provider information
             return {
                 response: responseText,
-                provider: 'Gemini 2.5-Flash (Balanced)',
-                model: 'gemini-2.5-flash',
+                provider: 'Gemini (Balanced)',
+                model: this.geminiBackgroundModel,
                 processingType: 'balanced',
-                apiProvider: 'Gemini 2.5-flash'
+                apiProvider: 'Gemini'
             };
         } catch (error) {
-            console.error('Gemini 2.5-flash API error:', error);
-            throw new Error('Failed to generate Gemini 2.5-flash response');
+            console.error('Gemini API error:', error);
+            throw new Error('Failed to generate Gemini background model response');
         }
     }
 

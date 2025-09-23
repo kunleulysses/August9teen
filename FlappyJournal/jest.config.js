@@ -20,6 +20,8 @@ export default {
     'server/metrics/sigilMetrics.cjs',
     '!**/*.test.*',
     '!**/__tests__/**',
+    '!server/consciousness/generated/**',
+    '!server/generated/**',
     '!**/node_modules/**',
     '!**/dist/**'
   ],

@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "Sanctuary Companion",
+    "slug": "sanctuary-companion",
+    "scheme": "sanctuary",
+    "platforms": ["ios", "android"],
+    "ios": {
+      "bundleIdentifier": "com.yourco.sanctuary"
+    },
+    "android": {
+      "package": "com.yourco.sanctuary"
+    },
+    "extra": {
+      "apiUrl": "https://YOUR_API_HOST",
+      "wssUrl": "wss://YOUR_API_HOST/ws/unified-chat",
+      "auth": {
+        "issuer": "https://auth.YOUR_DOMAIN/realms/featherweight",
+        "clientId": "mobile-public",
+        "scopes": ["openid", "profile", "email"],
+        "redirectScheme": "sanctuary"
+      }
+    }
+  }
+}
+

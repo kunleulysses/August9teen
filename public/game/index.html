@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Featherweight • Consciousness Visuals</title>
+    <style>
+      html, body { height: 100%; margin: 0; background: #0b0d10; color: #e8eef5; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+      :root { --primary: #2a78ff; --accent: #89ffa1; --glow: rgba(42,120,255,0.35); }
+      #wrap { position: fixed; inset: 0; }
+      #hud { position: fixed; left: 12px; top: 12px; background: rgba(14,20,32,0.6); border: 1px solid #1e2a38; border-radius: 8px; padding: 10px 12px; font-size: 12px; backdrop-filter: blur(4px); }
+      #hud .kv { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+      #hud .pill { display:inline-block; padding:2px 8px; border-radius:999px; border:1px solid #26415f; background:#0e1420; margin-left:8px; font-size:12px; }
+      #hint { position: fixed; right: 12px; bottom: 12px; opacity: 0.7; font-size: 12px; }
+      canvas { display:block; width: 100%; height: 100%; }
+      button { cursor: pointer; }
+      #ui .tab { background:#233045; color:#e8eef5; border:none; border-radius:6px; padding:6px 10px; }
+      #ui .tab:hover { outline:1px solid var(--primary); }
+      .secondary { background:#233045; color:#e8eef5; border:1px solid #1e2a38; border-radius:6px; padding:6px 10px; }
+      .primary { background: var(--primary); color:#fff; border:none; border-radius:6px; padding:8px 12px; box-shadow: 0 0 0 rgba(0,0,0,0); }
+      .glow { box-shadow: 0 0 16px var(--glow); }
+    </style>
+  </head>
+  <body>
+    <div id="wrap">
+      <canvas id="view"></canvas>
+      <div id="hud">
+        <div style="font-weight:600">Consciousness Visuals<span id="conn" class="pill">disconnected</span></div>
+        <div class="kv">Coherence: <span id="coh">—</span></div>
+        <div class="kv">Resonance: <span id="res">—</span></div>
+        <div class="kv">Evolve: <span id="evolve">—</span></div>
+      </div>
+      <div id="ui" style="position:fixed; right:12px; top:12px; background: rgba(14,20,32,0.6); border:1px solid #1e2a38; border-radius:8px; padding:10px 12px; font-size:12px; backdrop-filter: blur(4px); min-width: 280px; max-height: 80vh; overflow:auto;">
+        <div style="display:flex; gap:6px; margin-bottom:8px;">
+          <button class="tab" data-tab="controls">Controls</button>
+          <button class="tab" data-tab="inventory">Inventory</button>
+          <button class="tab" data-tab="journal">Journal</button>
+          <button class="tab" data-tab="ladder">Ladder</button>
+          <button class="tab" data-tab="spectate">Spectate</button>
+          <button class="tab" data-tab="chat">Chat</button>
+        </div>
+        <div id="tab-controls">
+          <div style="font-weight:600; margin-bottom:6px;">Game Controls</div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-bottom:8px;">
+            <button id="btnFeed">Feed</button>
+            <button id="btnPlay">Play</button>
+          </div>
+          <div style="display:flex; gap:6px; align-items:center; margin-bottom:8px;">
+            <select id="selArea" style="flex:1;">
+              <option value="town">Town</option>
+              <option value="forest">Forest</option>
+            <option value="beach">Beach</option>
+            <option value="mountains">Mountains</option>
+            <option value="desert">Desert</option>
+          </select>
+            <button id="btnExplore">Explore</button>
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-bottom:8px;">
+            <button id="btnBattleJoin">Queue</button>
+            <button id="btnBattleLeave">Leave</button>
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-bottom:8px;">
+            <button id="btnBattleAccept">Accept</button>
+            <button id="btnBattleDecline">Decline</button>
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-bottom:8px;">
+            <button id="btnAbilityAegis" disabled>Aegis</button>
+            <button id="btnAbilityStrike" disabled>Strike</button>
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-bottom:8px;">
+            <button id="btnSanctGet">Sanct.</button>
+            <button id="btnSanctAscend">Ascend</button>
+          </div>
+          <div class="kv">Area: <span id="area">town</span></div>
+          <div class="kv">Mood: <span id="mood">—</span> | Energy: <span id="energy">—</span></div>
+          <div style="display:flex; gap:6px; align-items:center; margin-top:6px;">
+            <input id="jwtToken" placeholder="JWT (optional)" style="width:50%"/>
+            <button id="btnSaveJwt" class="secondary">Save</button>
+            <input id="loginUser" placeholder="user (demo)" style="width:25%"/>
+            <button id="btnLoginDemo" class="secondary">Login</button>
+          </div>
+          <div class="kv">WS Auth: <span id="authState">—</span></div>
+          <div class="kv">Sanct Lvl: <span id="sanctL">—</span> XP: <span id="sanctX">—</span></div>
+          <div id="battleMsg" style="margin-top:6px; opacity:0.8;"></div>
+          <div style="margin-top:8px;">
+            <label><input type="checkbox" id="chkSpectate"/> Spectate current area</label>
+            <pre id="spectateLog" style="max-height:120px; overflow:auto; background:#0b1017; border:1px solid #152132; border-radius:6px; padding:6px; margin-top:6px;">Spectator log…</pre>
+          </div>
+        </div>
+        <div id="tab-inventory" style="display:none;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <div style="font-weight:600;">Inventory</div>
+            <div>
+              <button id="btnInvAddApple" class="secondary">+ Apple</button>
+              <button id="btnInvClear" class="secondary">Clear</button>
+            </div>
+          </div>
+          <div style="display:flex; gap:6px; align-items:center; margin-bottom:8px;">
+            <input id="invAddId" placeholder="id" style="width:25%"/>
+            <input id="invAddName" placeholder="name" style="width:35%"/>
+            <select id="invAddType">
+              <option value="misc">misc</option>
+              <option value="food">food</option>
+              <option value="toy">toy</option>
+              <option value="mint">mint</option>
+            </select>
+            <input id="invAddQty" type="number" value="1" min="1" style="width:60px"/>
+            <button id="btnInvAdd">Add</button>
+          </div>
+          <div id="invList" class="kv">No items yet.</div>
+        </div>
+        <div id="tab-journal" style="display:none;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <div style="font-weight:600;">Journal</div>
+          <button id="btnJournalRefresh" class="secondary">Refresh</button>
+          <div style="display:flex; gap:6px; align-items:center;">
+            <button id="btnJournalPrev" class="secondary">Prev</button>
+            <button id="btnJournalNext" class="secondary">Next</button>
+            <span class="kv">Page <span id="journalPage">1</span></span>
+          </div>
+          </div>
+          <div id="journalList" class="kv">Loading…</div>
+        </div>
+        <div id="tab-ladder" style="display:none;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <div style="font-weight:600;">Top Players</div>
+            <button id="btnLadderRefresh" class="secondary">Refresh</button>
+          </div>
+          <div id="ladderList" class="kv">Loading…</div>
+        </div>
+        <div id="tab-chat" style="display:none;">
+          <div style="font-weight:600; margin-bottom:6px;">Companion Chat</div>
+          <div id="chatLog" class="kv" style="height:160px; overflow:auto; background:#0b1017; border:1px solid #152132; border-radius:6px; padding:6px;">Say hi to your companion…</div>
+          <div style="display:flex; gap:6px; align-items:center; margin-top:8px;">
+            <input id="chatInput" placeholder="Type a message…" style="flex:1"/>
+            <button id="btnChatSend">Send</button>
+          </div>
+        </div>
+        <div id="tab-spectate" style="display:none;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <div style="font-weight:600;">Spectate Arena</div>
+            <button id="btnSpectateRefresh" class="secondary">Refresh</button>
+          </div>
+          <div style="display:flex; gap:6px; align-items:center; margin-bottom:8px;">
+            <select id="spectateArea">
+              <option value="">All</option>
+              <option value="town">Town</option>
+              <option value="forest">Forest</option>
+              <option value="beach">Beach</option>
+              <option value="mountains">Mountains</option>
+              <option value="desert">Desert</option>
+            </select>
+            <button id="btnSpectateList">List Battles</button>
+          </div>
+          <div id="spectateList" class="kv">No battles.</div>
+        </div>
+      </div>
+      <!-- Arena HUD Overlay -->
+      <div id="arenaHud" style="position:fixed; left:50%; top:10px; transform: translateX(-50%); display:none; background: rgba(11,13,16,0.85); border:1px solid #1e2a38; border-radius:10px; padding:10px 14px; min-width: 360px; text-align:center;">
+        <div style="font-weight:700; margin-bottom:6px;">Arena</div>
+        <div id="arenaNames" class="kv">— vs —</div>
+        <div style="display:flex; justify-content:space-between; margin-top:4px;">
+          <div class="kv" id="arenaStatusA"> </div>
+          <div class="kv" id="arenaStatusB"> </div>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center; margin-top:6px;">
+          <div style="flex:1; background:#152132; height:8px; border-radius:999px; overflow:hidden;"><div id="arenaBarA" style="height:100%; width:50%; background:#2a78ff;"></div></div>
+          <div style="flex:1; background:#152132; height:8px; border-radius:999px; overflow:hidden;"><div id="arenaBarB" style="height:100%; width:50%; background:#27AE60;"></div></div>
+        </div>
+        <div id="arenaRound" class="kv" style="margin-top:6px; opacity:0.8;">—</div>
+      </div>
+      <!-- Profile panel overlay -->
+      <div id="profilePanel" style="position:fixed; right:12px; bottom:12px; display:none; width:320px; background: rgba(14,20,32,0.9); border:1px solid #1e2a38; border-radius:8px; padding:10px 12px; font-size:12px; backdrop-filter: blur(4px);">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="font-weight:600;">Player Profile</div>
+          <button id="btnProfileClose" class="secondary">Close</button>
+        </div>
+        <div id="profileBody" class="kv">Loading…</div>
+        <div style="margin-top:8px; display:flex; gap:6px;">
+          <button id="btnProfileChallenge" disabled>Challenge</button>
+          <button id="btnProfileSpectate" class="secondary">Spectate</button>
+        </div>
+      </div>
+      <div id="hint">Tip: Switch areas in the mobile app to see different pulses. This web view reacts to director state.</div>
+    </div>
+    <!-- Cache-bust the game script so updates appear immediately -->
+    <script src="/game/app.js?v=2" type="module"></script>
+  </body>
+  </html>

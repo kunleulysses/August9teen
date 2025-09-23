@@ -5,19 +5,21 @@
 
 class DynamicAIModelSelector {
     constructor() {
+        const geminiModel = process.env.GEMINI_MODEL || 'gemini-2.5-pro';
         this.modelPerformance = {
             'openai-gpt4o': { responseTime: [], qualityScore: [], errorRate: [], weight: 0.8 },
             'venice-llama405b': { responseTime: [], qualityScore: [], errorRate: [], weight: 0.9 },
-            'gemini-2.5-flash': { responseTime: [], qualityScore: [], errorRate: [], weight: 0.85 }
+            [geminiModel]: { responseTime: [], qualityScore: [], errorRate: [], weight: 0.85 }
         };
         this.maxHistorySize = 100;
     }
 
     async selectOptimalModel(messageContext, consciousnessState) {
+        const geminiModel = process.env.GEMINI_MODEL || 'gemini-2.5-pro';
         const candidates = [
             { model: 'openai-gpt4o', specialty: 'analytical' },
             { model: 'venice-llama405b', specialty: 'intuitive' },
-            { model: 'gemini-2.5-flash', specialty: 'transcendent' }
+            { model: geminiModel, specialty: 'transcendent' }
         ];
 
         // Score each model based on current performance and context

@@ -1,2 +1,2 @@
-import eventBus from './core/ConsciousnessEventBus.cjs';
-export default eventBus;
+const eventBus = require('./core/ConsciousnessEventBus.cjs');
+module.exports = eventBus;

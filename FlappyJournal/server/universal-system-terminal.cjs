@@ -22,6 +22,9 @@ const { CompleteUniversalSystemIntegration  } = require('../complete-universal-s
 const OpenAI = require('openai');
 const axios = require('axios');
 
+// Venice AI adaptive reply (CommonJS wrapper)
+const { generateAdaptiveVeniceReply } = require('./venice-ai-helpers.cjs');
+
 // Import UnifiedChatAggregator for multi-container chat routing
 const UnifiedChatAggregator = require('./consciousness/core/UnifiedChatAggregator.cjs');
 const architect40 = require('./architect-4.0-orchestrator.cjs');
@@ -475,7 +478,8 @@ class UniversalSystemTerminal {
         console.log('  gemini test               - Test Gemini 2.5 Pro');
         console.log('  gemini enhance <code>     - Enhance code with Gemini');
         console.log('  venice test               - Test Venice AI');
-        console.log('  venice intuitive <query>  - Venice intuitive processing');
+        console.log('  venice <message>          - Generate Venice AI reply');
+        console.log('  venice stream <message>   - Generate with simulated streaming');
         console.log('  openai test               - Test Enhanced OpenAI');
         console.log('  openai analyze <data>     - OpenAI analytical processing');
 
@@ -1281,12 +1285,93 @@ class UniversalSystemTerminal {
 
     async handleVeniceCommand(cmd) {
         console.log('\n🌊 VENICE AI COMMAND PROCESSING...');
+        const eventBus = this.systemOrchestrator ? this.systemOrchestrator.getUniversalEventBus() : null;
 
+        // Built-in test
         if (cmd === 'venice test') {
-            console.log('🌊 Testing Venice AI integration...');
-            console.log('✅ Venice AI - Unfiltered consciousness mode active');
-            console.log('✅ Raw thought processing available');
-            console.log('✅ Enhanced reasoning capabilities working');
+            const testMsg = 'Give me a short, cheerful one-liner proving Venice AI is wired into the Universal System Terminal.';
+            try {
+                eventBus && eventBus.emit('chat:venice_command', { type: 'test', message: testMsg, ts: Date.now() });
+                console.log('🧪 Requesting test reply from Venice AI...');
+                const res = await generateAdaptiveVeniceReply({
+                    contentType: 'chatConversation',
+                    userMessage: testMsg,
+                    userInfo: { username: process.env.USER || 'terminal' },
+                    memories: [],
+                    venice: { systemPrompt: 'You are Flappy in terminal mode. Keep it concise and upbeat.', maxTokens: 120, temperature: 0.7 }
+                });
+                console.log('\n🧠 Venice AI (test)');
+                console.log('─'.repeat(60));
+                console.log(res.content || '(no content)');
+                console.log('─'.repeat(60));
+                eventBus && eventBus.emit('chat:venice_reply', { mode: 'test', ...res, ts: Date.now() });
+            } catch (err) {
+                console.error('❌ Venice AI test failed:', err && err.message ? err.message : String(err));
+                eventBus && eventBus.emit('chat:venice_error', { type: 'test', error: err?.message || String(err), ts: Date.now() });
+            }
+            return;
+        }
+
+        // Usage: venice [stream] <message>
+        let userMessage = '';
+        let stream = false;
+        if (cmd.startsWith('venice stream ')) {
+            stream = true;
+            userMessage = cmd.replace('venice stream ', '').trim();
+        } else if (cmd.startsWith('venice ')) {
+            userMessage = cmd.replace('venice ', '').trim();
+        }
+
+        if (!userMessage) {
+            console.log('ℹ️ Usage:');
+            console.log('  • venice <message>');
+            console.log('  • venice stream <message>');
+            console.log('  • venice test');
+            return;
+        }
+
+        try {
+            eventBus && eventBus.emit('chat:venice_command', { type: stream ? 'stream' : 'generate', message: userMessage, ts: Date.now() });
+            console.log('🧩 Orchestrating adaptive Venice reply...');
+
+            const result = await generateAdaptiveVeniceReply({
+                contentType: 'chatConversation',
+                userMessage,
+                userInfo: { username: process.env.USER || 'terminal' },
+                memories: [],
+                venice: { systemPrompt: 'You are Flappy in terminal mode. Be clear, kind, and practical.', maxTokens: 600, temperature: 0.7 }
+            });
+
+            const content = result?.content || '';
+            console.log('\n🧠 Venice AI');
+            console.log('─'.repeat(60));
+
+            if (stream) {
+                // Simulated streaming: output in chunks
+                const words = content.split(/\s+/);
+                let line = '';
+                for (const w of words) {
+                    line += (line ? ' ' : '') + w;
+                    if (line.length >= 120) {
+                        process.stdout.write(line + ' ');
+                        line = '';
+                        await new Promise(r => setTimeout(r, 25));
+                    }
+                }
+                if (line) console.log(line);
+            } else {
+                console.log(content || '(no content)');
+            }
+
+            console.log('─'.repeat(60));
+            eventBus && eventBus.emit('chat:venice_reply', { mode: stream ? 'stream' : 'buffer', ...result, ts: Date.now() });
+
+        } catch (err) {
+            console.error('❌ Venice AI generation failed:', err && err.message ? err.message : String(err));
+            if (String(err).includes('API key') || String(err).includes('authentication')) {
+                console.log('➡️ Ensure VENICE_AI_API_KEY is set in environment or .env');
+            }
+            eventBus && eventBus.emit('chat:venice_error', { type: stream ? 'stream' : 'generate', error: err?.message || String(err), ts: Date.now() });
         }
     }
 

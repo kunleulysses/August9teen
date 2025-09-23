@@ -13,6 +13,7 @@ const __dirname = path.dirname(__filename);
 
 const KEYCLOAK_URL = process.env.KEYCLOAK_URL || 'http://localhost:8082';
 const REALM = process.env.KEYCLOAK_REALM || 'featherweight';
+const EXPECTED_AUDIENCE = process.env.JWT_AUDIENCE || 'featherweight-frontend';
 
 const client = jwksClient({
   jwksUri: `${KEYCLOAK_URL}/realms/${REALM}/protocol/openid-connect/certs`,
@@ -68,8 +69,12 @@ module.exports.setupWebSocketServer = setupWebSocketServer;
       return;
     }
     
-    // Verify JWT token
-    jwt.verify(token, getKey, { algorithms: ['RS256'] }, async (err, decoded) => {
+    // Verify JWT token with audience/issuer parity to HTTP middleware
+    jwt.verify(token, getKey, {
+      algorithms: ['RS256'],
+      audience: EXPECTED_AUDIENCE,
+      issuer: `${KEYCLOAK_URL}/realms/${REALM}`
+    }, async (err, decoded) => {
       if (err) {
         console.error('JWT verification failed:', err);
         ws.send(JSON.stringify({ type: 'error', message: 'Authentication failed' }));
@@ -670,4 +675,3 @@ async function activateConsciousnessMonitoring(ws) {
 
 module.exports.handleResearchMessage = handleResearchMessage;
 module.exports.activateConsciousnessMonitoring = activateConsciousnessMonitoring;
-

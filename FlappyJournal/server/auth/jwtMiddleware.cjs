@@ -2,22 +2,29 @@ const jwt = require('jsonwebtoken');
 const jwksRsa = require('jwks-rsa');
 const { trackAuthFailure } = require('../monitoring/alertManager.cjs');
 
+const insecureMode = process.env.JWT_ALLOW_INSECURE === '1';
+
 const issuer = process.env.JWT_ISSUER;
 const audience = process.env.JWT_AUDIENCE;
 const jwksUri = process.env.JWT_JWKS_URI;
 
-if (!issuer || !audience || !jwksUri) {
+if (!insecureMode && (!issuer || !audience || !jwksUri)) {
   throw new Error('JWT configuration missing: JWT_ISSUER, JWT_AUDIENCE, and JWT_JWKS_URI are required');
 }
 
-const jwksClient = jwksRsa({
-  cache: true,
-  rateLimit: true,
-  jwksRequestsPerMinute: 5,
-  jwksUri
-});
+const jwksClient = insecureMode
+  ? null
+  : jwksRsa({
+      cache: true,
+      rateLimit: true,
+      jwksRequestsPerMinute: 5,
+      jwksUri
+    });
 
 function getKey(header, cb) {
+  if (!jwksClient) {
+    return cb(new Error('JWKS client not configured'));
+  }
   jwksClient.getSigningKey(header.kid, (err, key) => {
     if (err) {
       return cb(err);
@@ -28,6 +35,19 @@ function getKey(header, cb) {
 }
 
 function jwtMiddleware(req, res, next) {
+  if (insecureMode) {
+    req.user = {
+      sub: 'local-dev',
+      tenantId: 'local',
+      roles: ['admin'],
+      email: 'local@featherweight.world',
+      name: 'Local Development User',
+      iat: Math.floor(Date.now() / 1000),
+      exp: Math.floor(Date.now() / 1000) + 3600,
+    };
+    return next();
+  }
+
   const auth = req.headers.authorization;
   
   if (!auth || !auth.startsWith('Bearer ')) {
@@ -108,4 +128,3 @@ function requireRole(role) {
 }
 
 module.exports = { jwtMiddleware, requireRole };
-

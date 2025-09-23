@@ -1,0 +1,20 @@
+{
+  "$id": "https://flappyjournal.dev/schema/game/turn.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Turn",
+  "type": "object",
+  "properties": {
+    "turnId": { "type": "string", "minLength": 1 },
+    "userId": {},
+    "sessionId": { "type": "string", "minLength": 1 },
+    "action": { "type": "string", "minLength": 1, "maxLength": 200 },
+    "narrative": { "type": "string", "minLength": 1 },
+    "choices": { "type": "array", "items": { "type": "string", "minLength": 1 }, "maxItems": 5 },
+    "deltas": { "type": "object" },
+    "ts": { "type": "number" },
+    "fingerprint": { "type": "string", "minLength": 6 }
+  },
+  "required": ["turnId", "sessionId", "action", "narrative", "choices"],
+  "additionalProperties": true
+}
+

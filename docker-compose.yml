@@ -110,7 +110,7 @@ services:
 
   web:
     build:
-      context: .
+      context: ./FlappyJournal
       dockerfile: Dockerfile.ui
     container_name: web
     restart: unless-stopped
@@ -126,7 +126,7 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV}
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:4173/"]
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
       interval: 10s
       timeout: 5s
       retries: 5

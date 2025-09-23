@@ -32,18 +32,10 @@ module.exports = {
   /* ---------- Coverage ---------- */
   collectCoverage: true,
   collectCoverageFrom: [
-    // Detailed Spiral-Memory coverage (upstream)
-    'FlappyJournal/server/consciousness/core/SpiralMemoryArchitecture.cjs',
-    'FlappyJournal/server/consciousness/core/SpiralMemoryFacade.cjs',
-    'FlappyJournal/server/consciousness/core/ConsciousnessEventBus.cjs',
-    'FlappyJournal/server/consciousness/core/utils/*.cjs',
-    'FlappyJournal/server/consciousness/core/security/*.{cjs,ts}',
-    'server/consciousness/**reality*',
-
-    // Broad catch-all (stashed)
-    'FlappyJournal/server/**/*.cjs',
-
-    // Exclusions
+    'server/consciousness/core/ConsciousnessEventBus.cjs',
+    'server/consciousness/bootstrapUniversalConsciousness.cjs',
+    'server/consciousness/game/SpiralMemoryBridge.cjs',
+    'FlappyJournal/server/utils/priorityQueue.cjs',
     '!**/*.test.*',
     '!**/__tests__/**'
   ],

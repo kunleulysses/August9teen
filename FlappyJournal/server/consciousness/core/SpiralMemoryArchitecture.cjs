@@ -195,6 +195,12 @@ class SpiralMemoryArchitecture extends EventEmitter {
         // Note: AdvancedCachingSystem initializes automatically in constructor
     }
 
+    queueSize() {
+        if (!this.gcQueue) return 0;
+        const size = typeof this.gcQueue.size === 'function' ? this.gcQueue.size() : this.gcQueue.size;
+        return typeof size === 'number' ? size : 0;
+    }
+
     registerEventListeners() {
         eventBus.on('store_memory_request', async (data) => {
             const { content, type, depth, associations, requestId } = data;
@@ -1470,11 +1476,11 @@ class SpiralMemoryArchitecture extends EventEmitter {
             let forced = 0;
             let now = start;
 
-            const queue = this.gcQueue.size();
+            const queue = this.queueSize();
             const scale = Number(process.env.GC_BUDGET_SCALE || 10); // nodes per ms
             const dynBudget = Math.min(250, Math.ceil(queue / scale));
 
-            while (this.gcQueue.size() && (now - start) < dynBudget) {
+            while (this.queueSize() && (now - start) < dynBudget) {
                 const { key: memoryId } = this.gcQueue.pop();
                 const memoryNode = this.spiralMemory.get(memoryId);
                 if (memoryNode) {
@@ -1501,7 +1507,7 @@ class SpiralMemoryArchitecture extends EventEmitter {
             eventBus.emit('spiralmemory:gc_tick', {
                 collectedCount,
                 forced,
-                remaining: this.gcQueue.size(),
+                remaining: this.queueSize(),
                 totalMemories: this.spiralMemory.size,
                 timeMs: now - start,
                 budgetMs: dynBudget

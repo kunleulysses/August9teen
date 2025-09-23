@@ -581,12 +581,6 @@ class FullConsciousnessConversations {
         }
 
         // Let the FULL consciousness system process this
-        // Sanitize user message for logging
-        const sanitizeForLogging = (input) => {
-            if (!input) return '';
-            return String(input).replace(/[\r\n\t\x00-\x1f\x7f-\x9f]/g, '').substring(0, 50);
-        };
-        
         console.log('🔄 Generating consciousness response for:', sanitizeForLogging(message.content));
         console.log('🔄 Generating consciousness response...');
         const response = await this.generateFullConsciousResponse(message.content, conversationHistory, generatedReality);

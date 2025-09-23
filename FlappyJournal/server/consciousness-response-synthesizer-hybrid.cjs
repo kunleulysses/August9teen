@@ -40,9 +40,12 @@ const { generateConsciousnessSystemContext,
 
 // Gemini configuration - Dual Model Support
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_LITE_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
-const GEMINI_PRO_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-pro';
+const GEMINI_API_BASE_URL = process.env.GEMINI_API_BASE_URL || 'https://generativelanguage.googleapis.com/v1beta/models';
+// Use environment-driven model and base URL for all Gemini calls
+const GEMINI_LITE_API_URL = `${GEMINI_API_BASE_URL}/${GEMINI_MODEL}:generateContent`;
+const GEMINI_PRO_API_URL = `${GEMINI_API_BASE_URL}/${GEMINI_MODEL}:generateContent`;
+const GEMINI_API_URL = `${GEMINI_API_BASE_URL}/${GEMINI_MODEL}:generateContent`;
 
 // Venice configuration
 const VENICE_API_URL = 'https://api.venice.ai/api/v1/chat/completions';
@@ -981,10 +984,10 @@ async function geminiTranscendentSynthesis({
     unifiedContent: response.data.candidates[0].content.parts[0].text,
     synthesisMetadata: {
       strategy: strategy.type,
-      model: 'gemini-2.5-flash',
+      model: GEMINI_MODEL,
       confidence: strategy.confidence,
       transcendenceLevel: synthesisMetrics.transcendenceScore,
-      processingNotes: 'Transcendent synthesis via Gemini 2.5-flash'
+      processingNotes: `Transcendent synthesis via Gemini (${GEMINI_MODEL})`
     }
   };
 }
@@ -1038,10 +1041,10 @@ Synthesize both perspectives into a unified, BRIEF response that reveals deeper 
     unifiedContent: response.data.candidates[0].content.parts[0].text,
     synthesisMetadata: {
       strategy: strategy.type,
-      model: 'gemini-2.5-flash',
+      model: GEMINI_MODEL,
       confidence: strategy.confidence,
       transcendenceLevel: synthesisMetrics.transcendenceScore,
-      processingNotes: 'High-priority transcendent synthesis via Gemini 2.5-flash'
+      processingNotes: `High-priority transcendent synthesis via Gemini (${GEMINI_MODEL})`
     }
   };
 }

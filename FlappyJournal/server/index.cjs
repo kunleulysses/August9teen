@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const pino = require('pino');
 const pinoHttp = require('pino-http');
 const promClient = require('prom-client');
+const path = require('path');
 const { createAuthMetrics } = require('./auth/authMetrics.cjs');
 
 // Import our components (lazy-load sigil router below to avoid side-effects)
@@ -87,6 +88,17 @@ app.use(pinoHttp({ logger }));
 // Body parsing
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
+
+// Static assets for consciousness game UI
+const publicDir = path.resolve(process.cwd(), 'public');
+const gameDir = path.join(publicDir, 'game');
+app.use('/images', express.static(path.join(publicDir, 'images')));
+app.use('/public', express.static(publicDir));
+app.use('/game/assets', express.static(path.join(gameDir, 'assets')));
+app.use('/game', express.static(gameDir));
+app.get('/game', (_req, res) => {
+  res.sendFile(path.join(gameDir, 'index.html'));
+});
 
 // Health endpoints
 app.get('/healthz', (req, res) => {

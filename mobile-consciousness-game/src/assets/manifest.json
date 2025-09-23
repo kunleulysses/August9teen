@@ -1,0 +1,16 @@
+{
+  "companions": {
+    "nyx": { "idle": "/images/pixel/companion/nyx_idle.png" }
+  },
+  "items": {
+    "apple": { "icon": "/images/pixel/items/apple.png" },
+    "ball": { "icon": "/images/pixel/items/ball.png" }
+  },
+  "areas": {
+    "town": { "icon": "/images/pixel/areas/town.png" },
+    "forest": { "icon": "/images/pixel/areas/forest.png" },
+    "beach": { "icon": "/images/pixel/areas/beach.png" },
+    "mountains": { "icon": "/images/pixel/areas/mountains.png" }
+  }
+}
+
